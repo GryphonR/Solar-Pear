@@ -33,6 +33,12 @@ const Trash2 = ({ size = 24, className = "" }) => (
 const RotateCcw = ({ size = 24, className = "" }) => (
     <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
 );
+const Download = ({ size = 24, className = "" }) => (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
+);
+const Upload = ({ size = 24, className = "" }) => (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
+);
 const InfoIcon = ({ size = 24, className = "" }) => (
     <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
 );
@@ -50,6 +56,41 @@ const ChevronDown = ({ size = 24, className = "" }) => (
 );
 const Cpu = ({ size = 24, className = "" }) => (
     <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" /><line x1="9" y1="2" x2="9" y2="4" /><line x1="15" y1="2" x2="15" y2="4" /><line x1="9" y1="20" x2="9" y2="22" /><line x1="15" y1="20" x2="15" y2="22" /><line x1="20" y1="9" x2="22" y2="9" /><line x1="20" y1="14" x2="22" y2="14" /><line x1="2" y1="9" x2="4" y2="9" /><line x1="2" y1="14" x2="4" y2="14" /></svg>
+);
+
+const SolarPearLogo = ({ className = "w-full h-auto" }) => (
+    <svg viewBox="0 0 160 56" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <clipPath id="rightPear">
+                <path d="M 26 12 C 33 12, 35 19, 37 25 C 39 31, 45 35, 43 42 C 41 49, 31 51, 26 51 Z" />
+            </clipPath>
+        </defs>
+
+        {/* Stacked Text - Adjusted for balanced nesting */}
+        <text x="30" y="26" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="800" fontSize="16" fill="#f8fafc" letterSpacing="1.5">SOLAR</text>
+        <text x="22" y="46" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="22" fill="#4ade80" letterSpacing="0.5">PEAR</text>
+
+        {/* Pear Graphic - Translated down and slightly right to fix overlap */}
+        <g transform="translate(88, 2) rotate(14, 26, 31)">
+            {/* Left Half (Light Green) */}
+            <path d="M 26 12 C 19 12, 17 19, 15 25 C 13 31, 7 35, 9 42 C 11 49, 21 51, 26 51 Z" fill="#4ade80" />
+
+            {/* Left Highlight (Cell shading highlight) */}
+            <path d="M 24 15 C 20 15, 19 20, 18 25 C 17 29, 11 34, 13 39 C 14 44, 21 46, 24 46 Z" fill="#86efac" opacity="0.6" />
+
+            {/* Right Half (Darker Green) */}
+            <path d="M 26 12 C 33 12, 35 19, 37 25 C 39 31, 45 35, 43 42 C 41 49, 31 51, 26 51 Z" fill="#16a34a" />
+
+            {/* Solar Grid inside Right Half */}
+            <g clipPath="url(#rightPear)">
+                <path d="M26 22 L50 22 M26 32 L50 32 M26 42 L50 42" stroke="#14532d" strokeWidth="1.5" />
+                <path d="M31 12 L31 51 M38 12 L38 51" stroke="#14532d" strokeWidth="1.5" />
+            </g>
+
+            {/* Stem */}
+            <path d="M 26 12 Q 26 2, 33 4" stroke="#78350f" strokeWidth="2.5" strokeLinecap="round" />
+        </g>
+    </svg>
 );
 
 // Smart buy button: disabled if no links, plain link if one, dropdown if many
@@ -175,8 +216,13 @@ export default function App() {
     const [addChargerModal, setAddChargerModal] = useState({ open: false, data: {} });
     const [addAreaModal, setAddAreaModal] = useState({ open: false, data: '' });
     const [addArrayModal, setAddArrayModal] = useState({ open: false, data: {} });
+    const [confirmModal, setConfirmModal] = useState({ open: false, title: '', message: '', action: null });
     const [isLoaded, setIsLoaded] = useState(false);
     const [userNotes, setUserNotes] = useState({});
+
+    const openConfirm = (title, message, action) => {
+        setConfirmModal({ open: true, title, message, action });
+    };
 
     // Load initial data
     useEffect(() => {
@@ -417,14 +463,17 @@ export default function App() {
             alert("You must have at least one Area remaining.");
             return;
         }
-        if (window.confirm(`Are you sure you want to delete the Area "${areaName}"? Any arrays assigned to it will be moved to the first available area.`)) {
-            const newAreas = areasData.filter(a => a !== areaName);
-            setAreasData(newAreas);
-
-            setArraysData(prev => prev.map(a =>
-                a.area === areaName ? { ...a, area: newAreas[0] } : a
-            ));
-        }
+        openConfirm(
+            "Delete Area",
+            `Are you sure you want to delete the Area "${areaName}"? Any arrays assigned to it will be safely moved to the first available area.`,
+            () => {
+                const newAreas = areasData.filter(a => a !== areaName);
+                setAreasData(newAreas);
+                setArraysData(prev => prev.map(a =>
+                    a.area === areaName ? { ...a, area: newAreas[0] } : a
+                ));
+            }
+        );
     };
 
     const isCompatibleFormat = (array, panel) => {
@@ -1724,16 +1773,92 @@ export default function App() {
         );
     };
 
+    const handleDownload = () => {
+        const exportData = {
+            areasData, arraysData, panelsData, chargersData, selections,
+            systemVoltage, hiddenChargerMfr, hideHeavyPanels, hideMarginalPanels, userNotes
+        };
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `solar_selector_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const handleUploadClick = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        openConfirm(
+            "Upload Backup File",
+            "This will completely overwrite your CURRENT configuration with the loaded file. Do you wish to proceed?",
+            () => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        if (imported.areasData) setAreasData(imported.areasData);
+                        if (imported.arraysData) setArraysData(imported.arraysData);
+                        if (imported.panelsData) setPanelsData(imported.panelsData);
+                        if (imported.chargersData) setChargersData(imported.chargersData);
+                        if (imported.selections) setSelections(imported.selections);
+                        if (imported.systemVoltage) setSystemVoltage(imported.systemVoltage);
+                        if (imported.hiddenChargerMfr) setHiddenChargerMfr(imported.hiddenChargerMfr);
+                        if (imported.hideHeavyPanels !== undefined) setHideHeavyPanels(imported.hideHeavyPanels);
+                        if (imported.hideMarginalPanels !== undefined) setHideMarginalPanels(imported.hideMarginalPanels);
+                        if (imported.userNotes) {
+                            setUserNotes(imported.userNotes);
+                            localStorage.setItem('victron_user_notes', JSON.stringify(imported.userNotes));
+                        }
+                        alert("Backup loaded successfully! You may need to refresh the page to see all changes.");
+                    } catch (err) {
+                        alert("Failed to parse the backup JSON file.");
+                    }
+                };
+                reader.readAsText(file);
+            }
+        );
+        e.target.value = ''; // reset file input
+    };
+
+    const handleResetClick = () => {
+        openConfirm(
+            "Reset Application",
+            "Are you sure you want to completely reset the application? All custom panels, PV controllers, arrays, and selections will be permanently lost.",
+            () => {
+                localStorage.clear();
+                window.location.reload();
+            }
+        );
+    };
+
+    const renderConfirmModal = () => {
+        if (!confirmModal.open) return null;
+        return (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full flex flex-col">
+                    <div className="p-6 pb-4">
+                        <h2 className="text-xl font-bold text-slate-800 mb-2">{confirmModal.title}</h2>
+                        <p className="text-slate-600 text-sm leading-relaxed">{confirmModal.message}</p>
+                    </div>
+                    <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 rounded-b-xl">
+                        <button onClick={() => setConfirmModal({ open: false })} className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-50 font-medium transition-colors">Cancel</button>
+                        <button onClick={() => { if (confirmModal.action) confirmModal.action(); setConfirmModal({ open: false, title: '', message: '', action: null }); }} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-medium transition-colors shadow-sm">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="flex h-screen bg-slate-100 font-sans">
             {renderPanelInfoModal()}
 
             <div className="w-64 bg-slate-900 text-slate-300 flex flex-col z-10">
-                <div className="p-6 border-b border-slate-800">
-                    <h1 className="text-xl font-bold text-white flex items-center">
-                        <Zap className="mr-2 text-blue-400" size={20} />
-                        Array Config
-                    </h1>
+                <div className="p-4 border-b border-slate-800 flex justify-center">
+                    <SolarPearLogo className="w-48 h-auto" />
                 </div>
 
                 <div className="flex-1 overflow-y-auto">
@@ -1788,20 +1913,35 @@ export default function App() {
 
                 <div className="p-4 border-t border-slate-800 space-y-2">
                     <button
-                        onClick={resetToDefaults}
-                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg text-center transition-colors text-sm text-slate-400 hover:bg-slate-800 hover:text-red-400"
-                        title="Wipe persistent storage and load factory defaults"
-                    >
-                        <RotateCcw className="mr-2" size={14} />
-                        Reset Data
-                    </button>
-                    <button
                         onClick={() => setActiveTab('SUMMARY')}
                         className={`w-full flex items-center justify-center px-4 py-3 rounded-lg text-center transition-colors ${activeTab === 'SUMMARY' ? 'bg-green-600 text-white font-medium' : 'bg-slate-800 hover:bg-slate-700 hover:text-white'}`}
                     >
                         <LayoutDashboard className="mr-2" size={18} />
                         System Summary
                     </button>
+                    <div className="flex gap-2 w-full pt-1">
+                        <button
+                            onClick={handleResetClick}
+                            className="flex-1 flex items-center justify-center px-1 py-2 rounded-lg text-center transition-colors text-red-500 bg-slate-800 hover:bg-slate-700 hover:text-white"
+                            title="Reset all settings to factory defaults"
+                        >
+                            <RotateCcw size={16} />
+                        </button>
+                        <button
+                            onClick={handleDownload}
+                            className="flex-1 flex items-center justify-center px-1 py-2 rounded-lg text-center transition-colors text-blue-500 bg-slate-800 hover:bg-slate-700 hover:text-white"
+                            title="Download backup of all current data"
+                        >
+                            <Download size={16} />
+                        </button>
+                        <label
+                            className="flex-1 flex items-center justify-center px-1 py-2 rounded-lg text-center transition-colors text-emerald-500 bg-slate-800 hover:bg-slate-700 hover:text-white cursor-pointer"
+                            title="Upload backup file to restore"
+                        >
+                            <Upload size={16} />
+                            <input type="file" accept=".json" className="hidden" onChange={handleUploadClick} />
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -1819,6 +1959,7 @@ export default function App() {
             {renderAddAreaModal()}
             {renderAddArrayModal()}
             {renderPanelInfoModal()}
+            {renderConfirmModal()}
         </div>
     );
 }
