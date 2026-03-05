@@ -105,12 +105,12 @@ function BuyButton({ buyLinks = {} }) {
 }
 
 const initialArrays = [
-    { id: 'NE', name: 'Array NE', orientation: 'East', count: 6, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
-    { id: 'NW1', name: 'Array NW1', orientation: 'West', count: 8, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
-    { id: 'NW2', name: 'Array NW2', orientation: 'West', count: 3, format: 'Landscape', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
-    { id: 'S', name: 'Array S', orientation: 'South', count: 5, format: 'Landscape', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
-    { id: 'SW', name: 'Array SW', orientation: 'West', count: 4, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
-    { id: 'Garage', name: 'Array Garage', orientation: 'East', count: 3, format: 'Portrait', mounting: 'On Roof', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'NE', name: 'Array NE', area: 'House', orientation: 'East', count: 6, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'NW1', name: 'Array NW1', area: 'House', orientation: 'West', count: 8, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'NW2', name: 'Array NW2', area: 'House', orientation: 'West', count: 3, format: 'Landscape', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'S', name: 'Array S', area: 'House', orientation: 'South', count: 5, format: 'Landscape', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'SW', name: 'Array SW', area: 'House', orientation: 'West', count: 4, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'Garage', name: 'Array Garage', area: 'Garage', orientation: 'East', count: 3, format: 'Portrait', mounting: 'On Roof', maxPanelHeight: '', maxPanelWidth: '' },
 ];
 
 
@@ -165,11 +165,16 @@ export default function App() {
     const [systemVoltage, setSystemVoltage] = useLocalStorage('victron_system_voltage', 48);
     const [hiddenChargerMfr, setHiddenChargerMfr] = useLocalStorage('victron_hidden_charger_mfr', []);
 
+    // Active custom areas for logical grouping
+    const [areasData, setAreasData] = useLocalStorage('solar_areas', ['House', 'Garage']);
+
     // Modals & Sorting
     const [panelSort, setPanelSort] = useState({ key: 'peakPower', dir: 'desc' });
     const [infoModalPanelId, setInfoModalPanelId] = useState(null);
     const [addPanelModal, setAddPanelModal] = useState({ open: false, data: {} });
     const [addChargerModal, setAddChargerModal] = useState({ open: false, data: {} });
+    const [addAreaModal, setAddAreaModal] = useState({ open: false, data: '' });
+    const [addArrayModal, setAddArrayModal] = useState({ open: false, data: {} });
     const [isLoaded, setIsLoaded] = useState(false);
     const [userNotes, setUserNotes] = useState({});
 
@@ -190,7 +195,8 @@ export default function App() {
                     format: a.format || 'Portrait',
                     mounting: a.mounting || 'In-Roof (GSE)',
                     maxPanelHeight: a.maxPanelHeight || '',
-                    maxPanelWidth: a.maxPanelWidth || ''
+                    maxPanelWidth: a.maxPanelWidth || '',
+                    area: a.area || (a.id.toLowerCase().includes('garage') ? 'Garage' : 'House')
                 })));
             }
             const savedSelections = localStorage.getItem('victron_selections');
@@ -390,13 +396,35 @@ export default function App() {
         });
     };
 
-    const addArray = () => {
-        const newId = `array_${Date.now()}`;
-        setArraysData([...arraysData, { id: newId, name: 'New Array', orientation: 'South', count: 6, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' }]);
-        setSelections(prev => ({
-            ...prev,
-            [newId]: { panel: panelsData[0].model, controller: chargersData[0].id }
-        }));
+    const openAddArrayModal = () => {
+        setAddArrayModal({
+            open: true,
+            data: {
+                name: 'New Array',
+                area: areasData[0] || 'House',
+                orientation: 'South',
+                count: 6,
+                format: 'Portrait',
+                mounting: 'In-Roof (GSE)',
+                maxPanelHeight: '',
+                maxPanelWidth: ''
+            }
+        });
+    };
+
+    const deleteArea = (areaName) => {
+        if (areasData.length <= 1) {
+            alert("You must have at least one Area remaining.");
+            return;
+        }
+        if (window.confirm(`Are you sure you want to delete the Area "${areaName}"? Any arrays assigned to it will be moved to the first available area.`)) {
+            const newAreas = areasData.filter(a => a !== areaName);
+            setAreasData(newAreas);
+
+            setArraysData(prev => prev.map(a =>
+                a.area === areaName ? { ...a, area: newAreas[0] } : a
+            ));
+        }
     };
 
     const isCompatibleFormat = (array, panel) => {
@@ -482,6 +510,119 @@ export default function App() {
         const costPerKWp = peakPower > 0 ? cost / (peakPower / 1000) : 0;
 
         return { panel, controller, array, coldVoc, hotVmp, peakPower, status, messages, cost, costPerKWp };
+    };
+
+    const renderAddAreaModal = () => {
+        if (!addAreaModal.open) return null;
+        const d = addAreaModal.data;
+        const updateName = (val) => setAddAreaModal(prev => ({ ...prev, data: val }));
+
+        const handleSave = () => {
+            if (!d || !d.trim()) return;
+            const trimmed = d.trim();
+            if (areasData.some(a => a.toLowerCase() === trimmed.toLowerCase())) {
+                alert(`An Area named "${trimmed}" already exists.`);
+                return;
+            }
+            setAreasData([...areasData, trimmed]);
+            setAddAreaModal({ open: false, data: '' });
+        };
+
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="bg-white rounded-xl shadow-2xl max-w-md w-full flex flex-col">
+                    <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50 rounded-t-xl">
+                        <h2 className="text-xl font-bold text-slate-800">Add New Area</h2>
+                        <button onClick={() => setAddAreaModal({ open: false, data: '' })} className="p-2 text-slate-400 hover:text-slate-700 bg-white rounded-full shadow-sm border border-slate-200 transition-colors"><XIcon size={20} /></button>
+                    </div>
+                    <div className="p-6 bg-white space-y-4">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Area Name</label>
+                            <input
+                                type="text"
+                                autoFocus
+                                placeholder="e.g. Outbuilding, Cabin"
+                                className="w-full p-3 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-slate-700"
+                                value={d}
+                                onChange={(e) => updateName(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === 'Enter') handleSave() }}
+                            />
+                        </div>
+                    </div>
+                    <div className="p-6 border-t border-slate-100 bg-slate-50 rounded-b-xl flex justify-end gap-3">
+                        <button onClick={() => setAddAreaModal({ open: false, data: '' })} className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-50 font-medium transition-colors">Cancel</button>
+                        <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm">Save Area</button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderAddArrayModal = () => {
+        if (!addArrayModal.open) return null;
+        const d = addArrayModal.data;
+        const updateField = (field, value) => {
+            setAddArrayModal(prev => ({ ...prev, data: { ...prev.data, [field]: value } }));
+        };
+        const handleSave = () => {
+            const newId = `array_${Date.now()}`;
+            setArraysData([...arraysData, { id: newId, ...d }]);
+            setSelections(prev => ({
+                ...prev,
+                [newId]: { panel: panelsData[0].model, controller: chargersData[0].id }
+            }));
+            setAddArrayModal({ open: false, data: {} });
+        };
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full flex flex-col max-h-[90vh]">
+                    <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50 rounded-t-xl">
+                        <h2 className="text-2xl font-bold text-slate-800">Add Physical Array</h2>
+                        <button onClick={() => setAddArrayModal({ open: false, data: {} })} className="p-2 text-slate-400 hover:text-slate-700 bg-white rounded-full shadow-sm border border-slate-200 transition-colors"><XIcon size={20} /></button>
+                    </div>
+                    <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-white">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Array Name</label>
+                                <input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.name} onChange={(e) => updateField('name', e.target.value)} />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Area</label>
+                                <select className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.area} onChange={(e) => updateField('area', e.target.value)}>
+                                    {areasData.map(ar => <option key={ar} value={ar}>{ar}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Roof Direction</label>
+                                <input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. South, SW" value={d.orientation} onChange={(e) => updateField('orientation', e.target.value)} />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Panel Count</label>
+                                <input type="number" step="1" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.count} onChange={(e) => updateField('count', parseInt(e.target.value) || 0)} />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mounting System</label>
+                                <select className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.mounting} onChange={(e) => updateField('mounting', e.target.value)}>
+                                    <option value="In-Roof (GSE)">In-Roof (GSE)</option>
+                                    <option value="On Roof">On Roof</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Panel Orientation</label>
+                                <select disabled={d.mounting !== 'In-Roof (GSE)'} className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-50" value={d.format} onChange={(e) => updateField('format', e.target.value)}>
+                                    <option value="Portrait">Portrait</option>
+                                    <option value="Landscape">Landscape</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="p-6 border-t border-slate-100 bg-slate-50 rounded-b-xl flex justify-end gap-3">
+                        <button onClick={() => setAddArrayModal({ open: false, data: {} })} className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-50 font-medium transition-colors">Cancel</button>
+                        <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm">Save Array</button>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     const renderAddPanelModal = () => {
@@ -1074,71 +1215,123 @@ export default function App() {
         );
     };
 
-    const renderArraysDb = () => (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center pb-4 border-b border-slate-200">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-800">Array Configuration</h2>
-                    <p className="text-slate-500">Add, edit, or remove physical roof arrays from the project scope.</p>
+    const renderArraysDb = () => {
+        const handleAddArea = () => {
+            const newArea = window.prompt("Enter new Physical Area name (e.g. Outbuilding, Cabin):");
+            if (!newArea || !newArea.trim()) return;
+
+            const trimmed = newArea.trim();
+            // Case-insensitive check for existing areas
+            if (areasData.some(a => a.toLowerCase() === trimmed.toLowerCase())) {
+                alert(`An Area named "${trimmed}" already exists.`);
+                return;
+            }
+            setAreasData([...areasData, trimmed]);
+        };
+
+        return (
+            <div className="space-y-6">
+                <div className="flex justify-between items-center pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 className="text-2xl font-bold text-slate-800">Array Configuration & Areas</h2>
+                        <p className="text-slate-500">Group your physical arrays into distinct Areas. Calculate separate System Summaries per Area.</p>
+                    </div>
+                    <div className="flex gap-2">
+                        <button onClick={() => setAddAreaModal({ open: true, data: '' })} className="flex items-center px-4 py-2 bg-slate-100 text-slate-700 border border-slate-300 rounded hover:bg-slate-200 transition-colors">
+                            <Plus size={16} className="mr-2" /> Add Area
+                        </button>
+                        <button onClick={openAddArrayModal} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow-sm transition-colors">
+                            <Plus size={16} className="mr-2" /> Add Array
+                        </button>
+                    </div>
                 </div>
-                <button onClick={addArray} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    <Plus size={16} className="mr-2" /> Add Array
-                </button>
+
+                {areasData.map(areaName => {
+                    const areaArrays = arraysData.filter(a => a.area === areaName);
+                    return (
+                        <div key={areaName} className="mb-6">
+                            <div className="flex justify-between items-center mb-2 px-1">
+                                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+                                    {areaName} <span className="font-normal text-slate-400 normal-case">({areaArrays.length} arrays)</span>
+                                </h3>
+                                <button onClick={() => deleteArea(areaName)} className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors" title="Delete Area">
+                                    Delete Area
+                                </button>
+                            </div>
+                            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-slate-50 border-b border-slate-200">
+                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Array Name</th>
+                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Physical Area</th>
+                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Roof Direction</th>
+                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Panel Count</th>
+                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Panel Orientation</th>
+                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Mounting System</th>
+                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {areaArrays.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="7" className="py-6 px-4 text-center text-slate-400 italic">No arrays assigned to {areaName}.</td>
+                                            </tr>
+                                        ) : (
+                                            areaArrays.map(a => (
+                                                <tr key={a.id} className="border-b border-slate-100 hover:bg-slate-50 focus-within:bg-blue-50">
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="text" value={a.name} onChange={(e) => updateArray(a.id, 'name', e.target.value)} /></td>
+                                                    <td className="p-1">
+                                                        <select
+                                                            className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
+                                                            value={a.area || 'House'}
+                                                            onChange={(e) => updateArray(a.id, 'area', e.target.value)}
+                                                        >
+                                                            {areasData.map(ar => <option key={ar} value={ar}>{ar}</option>)}
+                                                        </select>
+                                                    </td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="text" value={a.orientation} onChange={(e) => updateArray(a.id, 'orientation', e.target.value)} /></td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={a.count} onChange={(e) => updateArray(a.id, 'count', parseInt(e.target.value) || 0)} /></td>
+                                                    <td className="p-1">
+                                                        {(a.mounting || 'In-Roof (GSE)') === 'In-Roof (GSE)' ? (
+                                                            <select
+                                                                className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
+                                                                value={a.format || 'Portrait'}
+                                                                onChange={(e) => updateArray(a.id, 'format', e.target.value)}
+                                                            >
+                                                                <option value="Portrait">Portrait</option>
+                                                                <option value="Landscape">Landscape</option>
+                                                            </select>
+                                                        ) : (
+                                                            <div className="w-full p-2 text-slate-400 text-sm italic">Flexible (Rail)</div>
+                                                        )}
+                                                    </td>
+                                                    <td className="p-1">
+                                                        <select
+                                                            className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
+                                                            value={a.mounting || 'In-Roof (GSE)'}
+                                                            onChange={(e) => updateArray(a.id, 'mounting', e.target.value)}
+                                                        >
+                                                            <option value="In-Roof (GSE)">In-Roof (GSE)</option>
+                                                            <option value="On Roof">On Roof</option>
+                                                        </select>
+                                                    </td>
+                                                    <td className="p-1 text-center">
+                                                        <button onClick={() => deleteArray(a.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Delete Array">
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="bg-slate-50 border-b border-slate-200">
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Array Name</th>
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Roof Direction</th>
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Panel Count</th>
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Panel Orientation</th>
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Mounting System</th>
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {arraysData.map(a => (
-                            <tr key={a.id} className="border-b border-slate-100 hover:bg-slate-50 focus-within:bg-blue-50">
-                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="text" value={a.name} onChange={(e) => updateArray(a.id, 'name', e.target.value)} /></td>
-                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="text" value={a.orientation} onChange={(e) => updateArray(a.id, 'orientation', e.target.value)} /></td>
-                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={a.count} onChange={(e) => updateArray(a.id, 'count', parseInt(e.target.value) || 0)} /></td>
-                                <td className="p-1">
-                                    {(a.mounting || 'In-Roof (GSE)') === 'In-Roof (GSE)' ? (
-                                        <select
-                                            className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                            value={a.format || 'Portrait'}
-                                            onChange={(e) => updateArray(a.id, 'format', e.target.value)}
-                                        >
-                                            <option value="Portrait">Portrait</option>
-                                            <option value="Landscape">Landscape</option>
-                                        </select>
-                                    ) : (
-                                        <div className="w-full p-2 text-slate-400 text-sm italic">Flexible (Rail)</div>
-                                    )}
-                                </td>
-                                <td className="p-1">
-                                    <select
-                                        className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                        value={a.mounting || 'In-Roof (GSE)'}
-                                        onChange={(e) => updateArray(a.id, 'mounting', e.target.value)}
-                                    >
-                                        <option value="In-Roof (GSE)">In-Roof (GSE)</option>
-                                        <option value="On Roof">On Roof</option>
-                                    </select>
-                                </td>
-                                <td className="p-1 text-center">
-                                    <button onClick={() => deleteArray(a.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Delete Array">
-                                        <Trash2 size={18} />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+        );
+    };
 
     const renderPanelsDb = () => {
         const manufacturers = [...new Set(panelsData.map(p => p.manufacturer || 'Unknown'))];
@@ -1351,10 +1544,12 @@ export default function App() {
 
     const renderSummary = () => {
         let totalCost = 0;
-        let mainSystemPower = 0;
-        let mainSystemCost = 0;
-        let garagePower = 0;
-        let garageCost = 0;
+
+        // Dynamic area totals
+        const areaTotals = {};
+        areasData.forEach(area => {
+            areaTotals[area] = { power: 0, cost: 0 };
+        });
 
         // Trackers for hardware ratio validation
         let rs450_100_primary = 0;
@@ -1373,13 +1568,13 @@ export default function App() {
 
             totalCost += analysis.cost;
 
-            if (array.id.toLowerCase().includes('garage') || array.name.toLowerCase().includes('garage')) {
-                garagePower += analysis.peakPower;
-                garageCost += analysis.cost;
-            } else {
-                mainSystemPower += analysis.peakPower;
-                mainSystemCost += analysis.cost;
+            // Tally against the array's assigned area
+            const assignedArea = array.area || 'House';
+            if (!areaTotals[assignedArea]) {
+                areaTotals[assignedArea] = { power: 0, cost: 0 };
             }
+            areaTotals[assignedArea].power += analysis.peakPower;
+            areaTotals[assignedArea].cost += analysis.cost;
 
             if (analysis.status === 'error') hasErrors = true;
 
@@ -1421,9 +1616,6 @@ export default function App() {
         const trackerError200 = rs450_200_shared > (rs450_200_primary * 3);
         const hasTrackerError = trackerError100 || trackerError200;
 
-        const mainCostPerKWp = mainSystemPower > 0 ? mainSystemCost / (mainSystemPower / 1000) : 0;
-        const garageCostPerKWp = garagePower > 0 ? garageCost / (garagePower / 1000) : 0;
-
         return (
             <div className="space-y-8">
                 <div className="flex justify-between items-end pb-4 border-b border-slate-200">
@@ -1433,27 +1625,25 @@ export default function App() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-slate-800 p-6 rounded-lg text-white shadow-md flex justify-between items-end">
-                        <div>
-                            <p className="text-sm text-slate-400 uppercase tracking-wider font-semibold mb-1">Main System Peak Power</p>
-                            <p className="text-4xl font-light">{mainSystemPower.toLocaleString()} <span className="text-xl">W</span></p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Hardware Cost</p>
-                            <p className="text-xl font-medium text-slate-300">£{mainCostPerKWp.toFixed(2)} / kWp</p>
-                        </div>
-                    </div>
-                    <div className="bg-slate-700 p-6 rounded-lg text-white shadow-md flex justify-between items-end">
-                        <div>
-                            <p className="text-sm text-slate-400 uppercase tracking-wider font-semibold mb-1">Garage Peak Power (Separated)</p>
-                            <p className="text-4xl font-light">{garagePower.toLocaleString()} <span className="text-xl">W</span></p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Hardware Cost</p>
-                            <p className="text-xl font-medium text-slate-300">£{garageCostPerKWp.toFixed(2)} / kWp</p>
-                        </div>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {Object.entries(areaTotals).map(([areaName, totals], index) => {
+                        const costPerKWp = totals.power > 0 ? totals.cost / (totals.power / 1000) : 0;
+                        // Alternate card colors slightly for visual distinction
+                        const bgClass = index % 2 === 0 ? 'bg-slate-800' : 'bg-slate-700';
+
+                        return (
+                            <div key={areaName} className={`${bgClass} p-6 rounded-lg text-white shadow-md flex justify-between items-end`}>
+                                <div>
+                                    <p className="text-sm text-slate-400 uppercase tracking-wider font-semibold mb-1">{areaName} Peak Power</p>
+                                    <p className="text-4xl font-light">{totals.power.toLocaleString()} <span className="text-xl">W</span></p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Hardware Cost</p>
+                                    <p className="text-xl font-medium text-slate-300">£{costPerKWp.toFixed(2)} / kWp</p>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {hasErrors && (
@@ -1547,23 +1737,32 @@ export default function App() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto">
-                    <div className="p-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Physical Arrays</div>
-                    <nav className="px-2 space-y-1">
-                        {arraysData.map(array => {
-                            const analysis = getArrayAnalysis(array.id);
-                            if (!analysis) return null;
-                            return (
-                                <button
-                                    key={array.id}
-                                    onClick={() => setActiveTab(array.id)}
-                                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-colors ${activeTab === array.id ? 'bg-blue-600 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
-                                >
-                                    <span className="text-sm truncate mr-2">{array.name}</span>
-                                    {analysis.status === 'error' && <AlertTriangle size={16} className={`flex-shrink-0 ${activeTab === array.id ? 'text-red-200' : 'text-red-500'}`} />}
-                                </button>
-                            )
-                        })}
-                    </nav>
+                    {areasData.map(areaName => {
+                        const areaArrays = arraysData.filter(a => a.area === areaName);
+                        if (areaArrays.length === 0) return null;
+
+                        return (
+                            <div key={areaName} className="mb-4">
+                                <div className="p-3 pb-1 text-[10px] font-bold text-slate-500 uppercase tracking-widest">{areaName} Arrays</div>
+                                <nav className="px-2 space-y-1">
+                                    {areaArrays.map(array => {
+                                        const analysis = getArrayAnalysis(array.id);
+                                        if (!analysis) return null;
+                                        return (
+                                            <button
+                                                key={array.id}
+                                                onClick={() => setActiveTab(array.id)}
+                                                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-colors ${activeTab === array.id ? 'bg-blue-600 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
+                                            >
+                                                <span className="text-sm truncate mr-2">{array.name}</span>
+                                                {analysis.status === 'error' && <AlertTriangle size={16} className={`flex-shrink-0 ${activeTab === array.id ? 'text-red-200' : 'text-red-500'}`} />}
+                                            </button>
+                                        )
+                                    })}
+                                </nav>
+                            </div>
+                        );
+                    })}
 
                     <nav className="px-2 space-y-1">
                         <button
@@ -1617,6 +1816,8 @@ export default function App() {
             </div>
             {renderAddPanelModal()}
             {renderAddChargerModal()}
+            {renderAddAreaModal()}
+            {renderAddArrayModal()}
             {renderPanelInfoModal()}
         </div>
     );
