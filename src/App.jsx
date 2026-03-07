@@ -1,97 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import initialPanels from './data/panels.json';
 import initialChargers from './data/chargers.json';
-
-// Inline SVG Icons
-const AlertTriangle = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
-);
-const CheckCircle = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" /></svg>
-);
-const Zap = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
-);
-const LayoutDashboard = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>
-);
-const Database = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5V19A9 3 0 0 0 21 19V5" /><path d="M3 12A9 3 0 0 0 21 12" /></svg>
-);
-const Plus = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
-);
-const Server = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="8" x="2" y="2" rx="2" ry="2" /><rect width="20" height="8" x="2" y="14" rx="2" ry="2" /><line x1="6" x2="6.01" y1="6" y2="6" /><line x1="6" x2="6.01" y1="18" y2="18" /></svg>
-);
-const Layers = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>
-);
-const Trash2 = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
-);
-const RotateCcw = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
-);
-const Download = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
-);
-const Upload = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
-);
-const InfoIcon = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
-);
-const XIcon = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-);
-const ExternalLink = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" x2="21" y1="14" y2="3" /></svg>
-);
-const ShoppingCart = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" /></svg>
-);
-const ChevronDown = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
-);
-const Cpu = ({ size = 24, className = "" }) => (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" /><line x1="9" y1="2" x2="9" y2="4" /><line x1="15" y1="2" x2="15" y2="4" /><line x1="9" y1="20" x2="9" y2="22" /><line x1="15" y1="20" x2="15" y2="22" /><line x1="20" y1="9" x2="22" y2="9" /><line x1="20" y1="14" x2="22" y2="14" /><line x1="2" y1="9" x2="4" y2="9" /><line x1="2" y1="14" x2="4" y2="14" /></svg>
-);
-
-const SolarPearLogo = ({ className = "w-full h-auto" }) => (
-    <svg viewBox="0 0 160 56" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <clipPath id="rightPear">
-                <path d="M 26 12 C 33 12, 35 19, 37 25 C 39 31, 45 35, 43 42 C 41 49, 31 51, 26 51 Z" />
-            </clipPath>
-        </defs>
-
-        {/* Stacked Text - Adjusted for balanced nesting */}
-        <text x="30" y="26" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="800" fontSize="16" fill="#f8fafc" letterSpacing="1.5">SOLAR</text>
-        <text x="22" y="46" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="22" fill="#4ade80" letterSpacing="0.5">PEAR</text>
-
-        {/* Pear Graphic - Translated down and slightly right to fix overlap */}
-        <g transform="translate(88, 2) rotate(14, 26, 31)">
-            {/* Left Half (Light Green) */}
-            <path d="M 26 12 C 19 12, 17 19, 15 25 C 13 31, 7 35, 9 42 C 11 49, 21 51, 26 51 Z" fill="#4ade80" />
-
-            {/* Left Highlight (Cell shading highlight) */}
-            <path d="M 24 15 C 20 15, 19 20, 18 25 C 17 29, 11 34, 13 39 C 14 44, 21 46, 24 46 Z" fill="#86efac" opacity="0.6" />
-
-            {/* Right Half (Darker Green) */}
-            <path d="M 26 12 C 33 12, 35 19, 37 25 C 39 31, 45 35, 43 42 C 41 49, 31 51, 26 51 Z" fill="#16a34a" />
-
-            {/* Solar Grid inside Right Half */}
-            <g clipPath="url(#rightPear)">
-                <path d="M26 22 L50 22 M26 32 L50 32 M26 42 L50 42" stroke="#14532d" strokeWidth="1.5" />
-                <path d="M31 12 L31 51 M38 12 L38 51" stroke="#14532d" strokeWidth="1.5" />
-            </g>
-
-            {/* Stem */}
-            <path d="M 26 12 Q 26 2, 33 4" stroke="#78350f" strokeWidth="2.5" strokeLinecap="round" />
-        </g>
-    </svg>
-);
+import SolarPearLogo from './components/SolarPearLogo';
+import Guide from './components/Guide';
+import {
+    AlertTriangle, CheckCircle, Zap, LayoutDashboard, Database, Plus, Server, Layers,
+    Trash2, RotateCcw, Download, Upload, Info, XIcon, ExternalLink, ShoppingCart, ChevronDown, Cpu
+} from './components/Icons';
 
 // Smart buy button: disabled if no links, plain link if one, dropdown if many
 function BuyButton({ buyLinks = {} }) {
@@ -195,16 +110,17 @@ function useLocalStorage(key, initialValue) {
 }
 
 export default function App() {
-    const [activeTab, setActiveTab] = useState('SUMMARY');
+    const [activeTab, setActiveTab] = useState('GUIDE');
 
-    const [arraysData, setArraysData] = useLocalStorage('victron_arrays', initialArrays);
+    const [arraysData, setArraysData] = useLocalStorage('solar_arrays', initialArrays);
     const [panelsData, setPanelsData] = useState(initialPanels);
-    const [chargersData, setChargersData] = useLocalStorage('victron_chargers', initialChargers);
-    const [selections, setSelections] = useLocalStorage('victron_selections', initialSelections);
-    const [hideHeavyPanels, setHideHeavyPanels] = useLocalStorage('victron_hide_heavy_panels', false);
-    const [hideMarginalPanels, setHideMarginalPanels] = useLocalStorage('victron_hide_marginal_panels', false);
-    const [systemVoltage, setSystemVoltage] = useLocalStorage('victron_system_voltage', 48);
-    const [hiddenChargerMfr, setHiddenChargerMfr] = useLocalStorage('victron_hidden_charger_mfr', []);
+    const [chargersData, setChargersData] = useLocalStorage('solar_chargers', initialChargers);
+    const [siteControllers, setSiteControllers] = useLocalStorage('solar_site_controllers', []);
+    const [selections, setSelections] = useLocalStorage('solar_selections', initialSelections);
+    const [hideHeavyPanels, setHideHeavyPanels] = useLocalStorage('solar_hide_heavy_panels', false);
+    const [hideMarginalPanels, setHideMarginalPanels] = useLocalStorage('solar_hide_marginal_panels', false);
+    const [systemVoltage, setSystemVoltage] = useLocalStorage('solar_system_voltage', 48);
+    const [hiddenChargerMfr, setHiddenChargerMfr] = useLocalStorage('solar_hidden_charger_mfr', []);
     // Global system mode: 'dc-charger' | 'grid-connected' | 'off-grid-ac'
     const [systemType, setSystemType] = useLocalStorage('solar_system_type', 'grid-connected');
 
@@ -232,12 +148,12 @@ export default function App() {
     useEffect(() => {
         try {
             let extractedNotes = {};
-            const savedNotes = localStorage.getItem('victron_user_notes');
+            const savedNotes = localStorage.getItem('user_notes');
             if (savedNotes) {
                 extractedNotes = JSON.parse(savedNotes);
             }
 
-            const savedArrays = localStorage.getItem('victron_arrays');
+            const savedArrays = localStorage.getItem('solar_arrays');
             if (savedArrays) {
                 const parsed = JSON.parse(savedArrays);
                 setArraysData(parsed.map(a => ({
@@ -250,24 +166,61 @@ export default function App() {
                     islanding: a.islanding ?? false
                 })));
             }
-            const savedSelections = localStorage.getItem('victron_selections');
+            const savedSiteControllers = localStorage.getItem('solar_site_controllers');
+            let initialSiteControllers = savedSiteControllers ? JSON.parse(savedSiteControllers) : [];
+
+            const savedSelections = localStorage.getItem('solar_selections');
             if (savedSelections) {
                 const parsed = JSON.parse(savedSelections);
-                // Migration: mppt -> controller
-                const migrated = {};
+                let migratedSelections = {};
+                let generatedInstances = [];
+                let instancesByModel = {};
+
                 for (const arrId in parsed) {
-                    migrated[arrId] = {
-                        panel: parsed[arrId].panel,
-                        controller: parsed[arrId].controller || parsed[arrId].mppt
-                    };
+                    const sel = parsed[arrId];
+                    if (sel.controller && typeof sel.controller === 'string' && !sel.controllerInstanceId) {
+                        // Needs migration: old format string ID
+                        // Instead of spawning 5 inverters of the same type, try to group them by model temporarily if we can safely assume they shared trackers...
+                        // Actually, safely assume each legacy string maps to a unique tracker index.
+                        // Let's create an instance per unique model, and increment MPPT tracker assignment.
+                        const modelId = sel.controller;
+                        if (!instancesByModel[modelId]) {
+                            const model = initialChargers.find(c => c.id === modelId) || { name: 'Migrated Controller', manufacturer: 'Unknown' };
+                            instancesByModel[modelId] = {
+                                instance: {
+                                    id: `inst_${modelId}_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+                                    modelId: modelId,
+                                    name: `${model.manufacturer ? model.manufacturer + ' ' : ''}${model.name}`
+                                },
+                                mpptCount: 1
+                            };
+                            generatedInstances.push(instancesByModel[modelId].instance);
+                        } else {
+                            instancesByModel[modelId].mpptCount++; // just assign next tracker
+                        }
+
+                        migratedSelections[arrId] = {
+                            panel: sel.panel,
+                            controllerInstanceId: instancesByModel[modelId].instance.id,
+                            controllerMppt: instancesByModel[modelId].mpptCount
+                        };
+                    } else {
+                        migratedSelections[arrId] = { ...sel };
+                    }
                 }
-                setSelections(migrated);
+                setSelections(migratedSelections);
+                if (generatedInstances.length > 0) {
+                    initialSiteControllers = [...initialSiteControllers, ...generatedInstances];
+                }
+            }
+            if (initialSiteControllers.length > 0) {
+                setSiteControllers(initialSiteControllers);
             }
 
             // Migration mapping for old mppts/inverters keys to new unified chargers list
-            const savedMppts = localStorage.getItem('victron_mppts');
-            const savedInverters = localStorage.getItem('victron_inverters');
-            const savedChargers = localStorage.getItem('victron_chargers');
+            const savedMppts = localStorage.getItem('solar_mppts');
+            const savedInverters = localStorage.getItem('solar_inverters');
+            const savedChargers = localStorage.getItem('solar_chargers');
             let mergedChargersMap = new Map();
             initialChargers.forEach(c => mergedChargersMap.set(c.id, { ...c }));
 
@@ -304,7 +257,7 @@ export default function App() {
             }
             setChargersData(Array.from(mergedChargersMap.values()));
 
-            const savedPanels = localStorage.getItem('victron_panels');
+            const savedPanels = localStorage.getItem('solar_panels');
             if (savedPanels) {
                 const parsed = JSON.parse(savedPanels);
                 const initPanelsMap = new Map(initialPanels.map(p => [p.model, p]));
@@ -334,20 +287,22 @@ export default function App() {
     useEffect(() => {
         if (!isLoaded) return;
         try {
-            localStorage.setItem('victron_arrays', JSON.stringify(arraysData));
-            localStorage.setItem('victron_selections', JSON.stringify(selections));
-            localStorage.setItem('victron_user_notes', JSON.stringify(userNotes));
-            localStorage.setItem('victron_hide_heavy_panels', JSON.stringify(hideHeavyPanels));
-            localStorage.setItem('victron_hide_marginal_panels', JSON.stringify(hideMarginalPanels));
+            localStorage.setItem('solar_arrays', JSON.stringify(arraysData));
+            localStorage.setItem('solar_site_controllers', JSON.stringify(siteControllers));
+            localStorage.setItem('solar_selections', JSON.stringify(selections));
+            localStorage.setItem('user_notes', JSON.stringify(userNotes));
+            localStorage.setItem('solar_hide_heavy_panels', JSON.stringify(hideHeavyPanels));
+            localStorage.setItem('solar_hide_marginal_panels', JSON.stringify(hideMarginalPanels));
             localStorage.setItem('solar_system_type', JSON.stringify(systemType));
         } catch (e) { }
-    }, [arraysData, selections, userNotes, hideHeavyPanels, hideMarginalPanels, systemType, isLoaded]);
+    }, [arraysData, siteControllers, selections, userNotes, hideHeavyPanels, hideMarginalPanels, systemType, isLoaded]);
 
     const resetToDefaults = () => {
         if (!confirm('This will wipe all custom panels, settings, pricing, and system state. Are you sure?')) return;
         setArraysData(initialArrays);
         setPanelsData(initialPanels);
         setChargersData(initialChargers);
+        setSiteControllers([]);
         setSelections(initialSelections);
         setHideHeavyPanels(false);
         setHideMarginalPanels(false);
@@ -355,15 +310,60 @@ export default function App() {
         setHiddenChargerMfr([]);
         setSystemType('grid-connected');
         setUserNotes({});
-        localStorage.removeItem('victron_user_notes');
+        localStorage.removeItem('user_notes');
         setActiveTab('SUMMARY');
     };
 
-    const updateSelection = (arrayId, unitType, valueId) => {
-        setSelections(prev => ({
-            ...prev,
-            [arrayId]: { ...prev[arrayId], [unitType]: valueId }
-        }));
+    const createControllerInstance = (modelId) => {
+        const model = chargersData.find(c => c.id === modelId);
+        if (!model) return null;
+        // Use a functional state update to ensure accurate length for naming
+        let newInstanceId = `inst_${modelId}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+        setSiteControllers(prev => {
+            const newInstance = {
+                id: newInstanceId,
+                modelId,
+                name: `${model.manufacturer ? model.manufacturer + ' ' : ''}${model.name} (#${prev.length + 1})`
+            };
+            return [...prev, newInstance];
+        });
+        return newInstanceId;
+    };
+
+    const deleteControllerInstance = (instanceId) => {
+        // Remove from site controllers
+        setSiteControllers(prev => prev.filter(sc => sc.id !== instanceId));
+        // Also scrub any rogue references out of selections just in case
+        setSelections(prev => {
+            const next = { ...prev };
+            Object.entries(next).forEach(([arrId, sel]) => {
+                if (sel.controllerInstanceId === instanceId) {
+                    next[arrId] = { ...sel, controllerInstanceId: '', controllerMppt: 1, controller: '' };
+                }
+            });
+            return next;
+        });
+    };
+
+    const updateSelection = (arrayId, unitType, valueId, mpptIndex = 1) => {
+        setSelections(prev => {
+            if (unitType === 'controllerInstance') {
+                return {
+                    ...prev,
+                    [arrayId]: { ...prev[arrayId], controllerInstanceId: valueId, controllerMppt: mpptIndex }
+                };
+            }
+            if (unitType === 'clearController') {
+                return {
+                    ...prev,
+                    [arrayId]: { ...prev[arrayId], controllerInstanceId: '', controllerMppt: 1, controller: '' }
+                };
+            }
+            return {
+                ...prev,
+                [arrayId]: { ...prev[arrayId], [unitType]: valueId }
+            };
+        });
     };
 
     const updateArray = (id, field, value) => {
@@ -513,24 +513,75 @@ export default function App() {
 
         const sel = selections[arrayId] || {};
 
-        let panel = panelsData.find(p => p.model === sel.panel);
-        if (!panel) {
-            panel = panelsData.find(p => p.active !== false && isCompatibleFormat(array, p)) || panelsData[0];
+        let panel = null;
+        if (sel.panel !== '') {
+            panel = panelsData.find(p => p.model === sel.panel);
+            // Optional: fallback to first compatible if the selected one is completely missing from DB somehow, but don't default if intentionally cleared.
+            if (!panel && sel.panel) {
+                panel = panelsData.find(p => p.active !== false && isCompatibleFormat(array, p)) || panelsData[0];
+            }
         }
 
-        const controller = chargersData.find(c => c.id === sel.controller) || availableChargers[0] || chargersData[0];
+        let controllerInstance = null;
+        let controller = null;
+        let mpptIndex = sel.controllerMppt || 1;
+
+        if (sel.controllerInstanceId) {
+            controllerInstance = siteControllers.find(sc => sc.id === sel.controllerInstanceId);
+            if (controllerInstance) {
+                controller = chargersData.find(c => c.id === controllerInstance.modelId);
+            }
+        } else if (sel.controller) { // Legacy fallback
+            controller = chargersData.find(c => c.id === sel.controller);
+        }
+
+        if (!panel || !controller) {
+            let coldVoc = 0;
+            let hotVmp = 0;
+            let peakPower = 0;
+            let cost = 0;
+
+            if (panel) {
+                peakPower = panel.power * array.count;
+                const pStrings = array.parallelStrings || 1;
+                const panelsPerSeriesString = array.count / pStrings;
+                coldVoc = (panel.voc * panelsPerSeriesString) * 1.084;
+                hotVmp = (panel.vmp * panelsPerSeriesString) * 0.90;
+                cost = panel.price * array.count;
+            }
+
+            return {
+                array,
+                panel,
+                controller,
+                controllerInstance,
+                mpptIndex,
+                status: 'warning',
+                messages: ["Please select both a Solar Panel and a PV Controller to view system analysis."],
+                peakPower,
+                cost,
+                costPerKWp: peakPower > 0 ? (cost / (peakPower / 1000)) : 0,
+                coldVoc,
+                hotVmp
+            };
+        }
 
         const peakPower = panel.power * array.count;
-        const stringVocSTC = panel.voc * array.count;
+        const pStrings = array.parallelStrings || 1;
+        const panelsPerSeriesString = array.count / pStrings;
+
+        const stringVocSTC = panel.voc * panelsPerSeriesString;
         const coldVoc = stringVocSTC * 1.084;
 
-        const stringVmpSTC = panel.vmp * array.count;
+        const stringVmpSTC = panel.vmp * panelsPerSeriesString;
         const hotVmp = stringVmpSTC * 0.90;
+        const cost = panel.price * array.count;
 
         const isVocError = coldVoc > controller.maxV;
         const isVocWarn = coldVoc > (controller.maxV * 0.94) && !isVocError;
         const isVmpError = hotVmp < controller.startupV;
-        const isIscError = panel.isc > controller.maxIsc;
+        const arrayIsc = panel.isc * pStrings;
+        const isIscError = arrayIsc > controller.maxIsc;
         const isFormatError = !isCompatibleFormat(array, panel);
 
         let status = 'valid';
@@ -555,7 +606,7 @@ export default function App() {
 
         if (isVocError) {
             status = 'error';
-            messages.push(`FATAL ELECTRICAL: Cold Voc (${coldVoc.toFixed(1)}V) exceeds PV controller limit (${controller.maxV}V). Will destroy hardware.`);
+            messages.push(`FATAL: Cold Voc (${coldVoc.toFixed(1)}V) exceeds PV controller limit (${controller.maxV}V). Will destroy hardware.`);
         } else if (isVocWarn) {
             if (status !== 'error') status = 'warning';
             messages.push(`Cold Voc (${coldVoc.toFixed(1)}V) is dangerously close to PV controller limit (${controller.maxV}V). Margin is too tight.`);
@@ -563,22 +614,32 @@ export default function App() {
 
         if (isVmpError) {
             status = 'error';
-            messages.push(`FATAL ELECTRICAL: Hot Vmp (${hotVmp.toFixed(1)}V) is below PV controller startup threshold (${controller.startupV}V). Will not start on hot days.`);
+            messages.push(`FATAL: Hot Vmp (${hotVmp.toFixed(1)}V) is below PV controller startup threshold (${controller.startupV}V). Will not start on hot days.`);
         }
 
         if (isIscError) {
             status = 'error';
-            messages.push(`FATAL ELECTRICAL: Panel Isc (${panel.isc}A) exceeds PV controller tracker limit (${controller.maxIsc}A).`);
+            messages.push(`FATAL: Array Isc (${arrayIsc.toFixed(2)}A) exceeds PV controller tracker limit (${controller.maxIsc}A).`);
         }
 
         if (messages.length === 0) {
-            messages.push("Engineering verified. Configuration is safe.");
+            messages.push("Configuration is safe.");
         }
 
-        const cost = (panel.price * array.count) + controller.price;
-        const costPerKWp = peakPower > 0 ? cost / (peakPower / 1000) : 0;
-
-        return { panel, controller, array, coldVoc, hotVmp, peakPower, status, messages, cost, costPerKWp };
+        return {
+            array,
+            panel,
+            controller,
+            controllerInstance,
+            mpptIndex,
+            status,
+            messages,
+            peakPower,
+            cost, // Note: controller cost is no longer folded into this array-level figure
+            costPerKWp: peakPower > 0 ? (cost / (peakPower / 1000)) : 0,
+            coldVoc,
+            hotVmp
+        };
     };
 
     const renderAddAreaModal = () => {
@@ -929,7 +990,7 @@ export default function App() {
                         {/* Engineering Notes */}
                         <div className="bg-slate-50 p-5 rounded-lg border border-slate-200">
                             <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center">
-                                <InfoIcon size={14} className="mr-2" /> Engineering Design Notes
+                                <Info size={14} className="mr-2" /> Engineering Design Notes
                             </h3>
                             <p className="text-sm text-slate-700 leading-relaxed">
                                 {p.notes || "No specific architectural notes for this module. Refer to standard datasheets."}
@@ -963,17 +1024,21 @@ export default function App() {
 
         const validPanels = panelsData.map(p => {
             const pPeakPower = p.power * array.count;
-            const pStringVocSTC = p.voc * array.count;
+            const pStrings = array.parallelStrings || 1;
+            const panelsPerSeriesString = array.count / pStrings;
+
+            const pStringVocSTC = p.voc * panelsPerSeriesString;
             const pColdVoc = pStringVocSTC * 1.084;
-            const pStringVmpSTC = p.vmp * array.count;
+            const pStringVmpSTC = p.vmp * panelsPerSeriesString;
             const pHotVmp = pStringVmpSTC * 0.90;
             const pCost = p.price * array.count;
             const pCostPerKWp = pPeakPower > 0 ? pCost / (pPeakPower / 1000) : 0;
 
             const isPhysicallyOk = isCompatibleFormat(array, p);
-            const isVocOk = pColdVoc <= controller.maxV;
-            const isVmpOk = pHotVmp >= controller.startupV;
-            const isIscOk = p.isc <= controller.maxIsc;
+            const isVocOk = !controller || pColdVoc <= controller.maxV;
+            const isVmpOk = !controller || pHotVmp >= controller.startupV;
+            const arrayIsc = p.isc * pStrings;
+            const isIscOk = !controller || arrayIsc <= controller.maxIsc;
 
             const isWeightOk = !hideHeavyPanels || (p.weight && p.weight <= 25);
 
@@ -982,13 +1047,13 @@ export default function App() {
             const isSizeOk = isHeightOk && isWidthOk;
 
             // Marginal warning: Cold Voc within 6% of PV controller maximum limit
-            const isVocWarn = pColdVoc > (controller.maxV * 0.94) && isVocOk;
+            const isVocWarn = controller && pColdVoc > (controller.maxV * 0.94) && isVocOk;
             const isMarginalOk = !hideMarginalPanels || !isVocWarn;
 
             const isFullyCompatible = p.active !== false && isPhysicallyOk && isVocOk && isVmpOk && isIscOk && isWeightOk && isSizeOk && isMarginalOk;
 
             return { ...p, peakPower: pPeakPower, panelCost: pCost, costPerKWp: pCostPerKWp, isFullyCompatible, isVocWarn };
-        }).filter(p => p.isFullyCompatible);
+        }).filter(p => !controller ? p.active !== false && p.isFullyCompatible : p.isFullyCompatible);
 
         validPanels.sort((a, b) => {
             const valA = a[panelSort.key];
@@ -1005,12 +1070,36 @@ export default function App() {
             }));
         };
 
+        const divisors = [];
+        for (let i = 1; i <= array.count; i++) {
+            if (array.count % i === 0) divisors.push(i);
+        }
+
         return (
             <div className="space-y-6 pb-12">
                 <div className="flex justify-between items-end pb-4 border-b border-slate-200">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-800">{array.name}</h2>
-                        <p className="text-slate-500">{array.orientation} Roof Direction • {array.count} Panels • {array.mounting === 'In-Roof (GSE)' ? `${array.format} Orientation (GSE)` : array.mounting}</p>
+                        <h2 className="text-2xl font-bold text-slate-800">
+                            {array.name}
+                        </h2>
+                        <p className="text-slate-500 mb-2">{array.orientation} Roof Direction • {array.count} Panels • {array.mounting === 'In-Roof (GSE)' ? `${array.format} Orientation (GSE)` : array.mounting}</p>
+                        {divisors.length > 1 && (
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-slate-500 font-medium">Wiring Configuration:</span>
+                                <select
+                                    className="text-sm font-medium border border-slate-300 rounded-md px-2 py-1 bg-blue-50 text-blue-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    value={array.parallelStrings || 1}
+                                    onChange={(e) => updateArray(arrayId, 'parallelStrings', parseInt(e.target.value, 10))}
+                                    title="Series / Parallel String Wiring"
+                                >
+                                    {divisors.map(d => (
+                                        <option key={d} value={d}>
+                                            {(array.count / d)}S{d}P ({(array.count / d)} Series x {d} Parallel)
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
                     </div>
                     <div className="flex space-x-8 text-right">
                         <div>
@@ -1030,50 +1119,52 @@ export default function App() {
 
                 <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-6">
+                        {/* Currently Selected Panel Readout */}
                         <div>
-                            <label className="block text-sm font-semibold text-slate-700 mb-2">Currently Selected Panel</label>
-                            <select
-                                className="w-full p-3 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
-                                value={selections[arrayId]?.panel || analysis.panel.model}
-                                onChange={(e) => updateSelection(arrayId, 'panel', e.target.value)}
-                            >
-                                {panelsData.filter(p => (p.active !== false && isCompatibleFormat(array, p)) || p.model === selections[arrayId]?.panel).map(p => (
-                                    <option key={p.model} value={p.model}>{p.name} ({p.power}W) - £{p.price}</option>
-                                ))}
-                            </select>
+                            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex justify-between items-center">
+                                <div>
+                                    <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Currently Selected Panel</span>
+                                    {panel ? (
+                                        <span className="text-sm font-bold text-slate-800">{panel.name} ({panel.power}W)</span>
+                                    ) : (
+                                        <span className="text-sm font-bold text-slate-400 italic">No Panel Selected</span>
+                                    )}
+                                </div>
+                                {panel && (
+                                    <button
+                                        onClick={() => updateSelection(arrayId, 'panel', '')}
+                                        className="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Clear Panel Selection"
+                                    >
+                                        <XIcon size={16} />
+                                    </button>
+                                )}
+                            </div>
                             {panelsData.some(p => p.active !== false && !isCompatibleFormat(array, p)) && (
                                 <p className="text-xs text-slate-400 mt-2 italic">Some panels in the database are hidden as they physically conflict with this array's GSE requirements.</p>
                             )}
                         </div>
 
+                        {/* Currently Selected Controller Readout */}
                         <div>
-                            <label className="block text-sm font-semibold text-slate-700 mb-2">Select PV Controller</label>
-                            <select
-                                className="w-full p-3 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
-                                value={selections[arrayId]?.controller || availableChargers[0]?.id || chargersData[0]?.id}
-                                onChange={(e) => updateSelection(arrayId, 'controller', e.target.value)}
-                            >
-                                {(() => {
-                                    // Per-array filter: further restrict by islanding if required
-                                    const arrayChargers = availableChargers.filter(c =>
-                                        !(systemType === 'grid-connected' && array.islanding && !c.islanding)
-                                    );
-                                    const mfrs = [...new Set(arrayChargers.map(c => c.manufacturer || 'Unknown'))];
-                                    return mfrs.filter(mfr => !hiddenChargerMfr.includes(mfr)).map(mfr => {
-                                        const mfrChargers = arrayChargers.filter(c => (c.manufacturer || 'Unknown') === mfr);
-                                        if (mfrChargers.length === 0) return null;
-                                        return (
-                                            <optgroup key={mfr} label={mfr}>
-                                                {mfrChargers.map(c => (
-                                                    <option key={c.id} value={c.id}>
-                                                        {c.name} (Max: {c.maxV}V){c.price > 0 ? ` — £${c.price}` : ''}
-                                                    </option>
-                                                ))}
-                                            </optgroup>
-                                        );
-                                    });
-                                })()}
-                            </select>
+                            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex justify-between items-center">
+                                <div>
+                                    <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Currently Selected Controller</span>
+                                    {controller ? (
+                                        <span className="text-sm font-bold text-slate-800">{controller.name}</span>
+                                    ) : (
+                                        <span className="text-sm font-bold text-slate-400 italic">No Controller Selected</span>
+                                    )}
+                                </div>
+                                {controller && (
+                                    <button
+                                        onClick={() => updateSelection(arrayId, 'clearController')}
+                                        className="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Clear Controller Selection"
+                                    >
+                                        <XIcon size={16} />
+                                    </button>
+                                )}
+                            </div>
+
                             {/* Islanding checkbox — only in grid-connected mode */}
                             {systemType === 'grid-connected' && (
                                 <label className="flex items-center gap-2 mt-3 cursor-pointer select-none">
@@ -1087,18 +1178,7 @@ export default function App() {
                                     <span className="text-xs text-slate-400">(EPS / backup switching)</span>
                                 </label>
                             )}
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                                {chargerManufacturers.map(mfr => (
-                                    <button key={mfr} onClick={() => toggleChargerMfr(mfr)}
-                                        className={`text-[10px] px-2 py-0.5 rounded-full border font-medium transition-colors ${hiddenChargerMfr.includes(mfr)
-                                            ? 'bg-slate-100 text-slate-400 border-slate-200'
-                                            : 'bg-blue-50 text-blue-700 border-blue-200'
-                                            }`}>
-                                        {hiddenChargerMfr.includes(mfr) ? '+ ' : '✓ '}{mfr}
-                                    </button>
-                                ))}
-                            </div>
-                            {controller.type === 'hybrid_inverter' && (
+                            {controller && controller.type === 'hybrid_inverter' && (
                                 <p className="text-xs text-slate-500 mt-2 italic">⚡ Hybrid inverter with built-in MPPT selected. PV string connects directly to this unit.</p>
                             )}
                         </div>
@@ -1121,53 +1201,107 @@ export default function App() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Cold Voc (-10°C)</p>
-                                <p className={`text-2xl font-light ${coldVoc > controller.maxV ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{coldVoc.toFixed(1)} <span className="text-sm">V</span></p>
-                                <p className="text-xs text-slate-400 mt-1">Controller Limit: {controller.maxV}V</p>
-                            </div>
+                        {panel && controller && (
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Cold Voc (-10°C)</p>
+                                    <p className={`text-2xl font-light ${coldVoc > controller.maxV ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{coldVoc.toFixed(1)} <span className="text-sm">V</span></p>
+                                    <p className="text-xs text-slate-400 mt-1">Controller Limit: {controller.maxV}V</p>
+                                </div>
 
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Hot Vmp (65°C)</p>
-                                <p className={`text-2xl font-light ${hotVmp < controller.startupV ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{hotVmp.toFixed(1)} <span className="text-sm">V</span></p>
-                                <p className="text-xs text-slate-400 mt-1">Required to Start: {controller.startupV}V</p>
-                            </div>
+                                <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Hot Vmp (65°C)</p>
+                                    <p className={`text-2xl font-light ${hotVmp < controller.startupV ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{hotVmp.toFixed(1)} <span className="text-sm">V</span></p>
+                                    <p className="text-xs text-slate-400 mt-1">Required to Start: {controller.startupV}V</p>
+                                </div>
 
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">String Isc</p>
-                                <p className={`text-2xl font-light ${panel.isc > controller.maxIsc ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{panel.isc.toFixed(2)} <span className="text-sm">A</span></p>
-                                <p className="text-xs text-slate-400 mt-1">Controller Limit: {controller.maxIsc}A</p>
+                                <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Array Isc</p>
+                                    <p className={`text-2xl font-light ${(panel.isc * (array.parallelStrings || 1)) > controller.maxIsc ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{(panel.isc * (array.parallelStrings || 1)).toFixed(2)} <span className="text-sm">A</span></p>
+                                    <p className="text-xs text-slate-400 mt-1">Controller Limit: {controller.maxIsc}A</p>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 
                 {/* Selected Panel Info Readout */}
-                <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mt-6 mb-8">
-                    <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
-                        <InfoIcon size={16} className="mr-2 text-blue-600" />
-                        Selected Panel Intelligence: <span className="ml-2 font-normal">{panel.name}</span>
-                    </h3>
-                    <div className="grid grid-cols-2 gap-8 items-stretch">
-                        <div className="flex flex-col">
-                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Engineering Notes</p>
-                            <div className="text-sm text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">
-                                {panel.notes || 'No specific architectural notes for this module.'}
+                {panel && (
+                    <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mt-6 mb-4">
+                        <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
+                            <InfoIcon size={16} className="mr-2 text-blue-600" />
+                            Panel Notes: <span className="ml-2 font-normal">{panel.name}</span>
+                        </h3>
+                        <div className="grid grid-cols-2 gap-8 items-stretch">
+                            <div className="flex flex-col">
+                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Engineering Notes</p>
+                                <div className="text-sm text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">
+                                    {panel.notes || 'No specific architectural notes for this module.'}
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex justify-between items-end">
+                                    <span>Your Notes</span>
+                                    <span className="text-slate-400 text-[10px] normal-case font-normal">Autosaves</span>
+                                </p>
+                                <textarea
+                                    className="flex-1 w-full p-3 border border-yellow-300 rounded-lg bg-yellow-50 focus:ring-2 focus:ring-blue-500 outline-none text-sm text-slate-700 placeholder-slate-400 resize-y shadow-inner min-h-[80px]"
+                                    placeholder="Log supplier quotes, lead times, compatibility thoughts, or personal preferences here..."
+                                    value={userNotes[panel.model] || ''}
+                                    onChange={(e) => updateUserNote(panel.model, e.target.value)}
+                                />
                             </div>
                         </div>
-                        <div className="flex flex-col">
-                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex justify-between items-end">
-                                <span>Your Persistent Notes</span>
-                                <span className="text-slate-400 text-[10px] normal-case font-normal">Autosaves</span>
-                            </p>
-                            <textarea
-                                className="flex-1 w-full p-3 border border-yellow-300 rounded-lg bg-yellow-50 focus:ring-2 focus:ring-blue-500 outline-none text-sm text-slate-700 placeholder-slate-400 resize-y shadow-inner min-h-[80px]"
-                                placeholder="Log supplier quotes, lead times, compatibility thoughts, or personal preferences here..."
-                                value={userNotes[panel.model] || ''}
-                                onChange={(e) => updateUserNote(panel.model, e.target.value)}
-                            />
+                    </div>
+                )}
+
+                {/* Selected Controller Info Readout */}
+                {controller && (
+                    <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-4">
+                        <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
+                            <InfoIcon size={16} className="mr-2 text-emerald-600" />
+                            Controller Notes: <span className="ml-2 font-normal">{controller.name}</span>
+                        </h3>
+                        <div className="grid grid-cols-2 gap-8 items-stretch">
+                            <div className="flex flex-col">
+                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Engineering Notes</p>
+                                <div className="text-sm text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">
+                                    {controller.notes || 'No specific architectural notes for this controller.'}
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex justify-between items-end">
+                                    <span>Your Notes</span>
+                                    <span className="text-slate-400 text-[10px] normal-case font-normal">Autosaves</span>
+                                </p>
+                                <textarea
+                                    className="flex-1 w-full p-3 border border-yellow-300 rounded-lg bg-yellow-50 focus:ring-2 focus:ring-blue-500 outline-none text-sm text-slate-700 placeholder-slate-400 resize-y shadow-inner min-h-[80px]"
+                                    placeholder="Log supplier quotes, lead times, compatibility thoughts, or personal preferences here..."
+                                    value={userNotes[controller.id] || ''}
+                                    onChange={(e) => updateUserNote(controller.id, e.target.value)}
+                                />
+                            </div>
                         </div>
+                    </div>
+                )}
+
+                {/* Array User Notes */}
+                <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8">
+                    <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
+                        <InfoIcon size={16} className="mr-2 text-indigo-600" />
+                        Array Notes: <span className="ml-2 font-normal">{array.name}</span>
+                    </h3>
+                    <div className="flex flex-col">
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex justify-between items-end">
+                            <span>Your Notes</span>
+                            <span className="text-slate-400 text-[10px] normal-case font-normal">Autosaves</span>
+                        </p>
+                        <textarea
+                            className="w-full p-3 border border-yellow-300 rounded-lg bg-yellow-50 focus:ring-2 focus:ring-blue-500 outline-none text-sm text-slate-700 placeholder-slate-400 resize-y shadow-inner min-h-[80px]"
+                            placeholder="Log installation notes, conduit routing, shading issues, or specific array details here..."
+                            value={userNotes[`array_${array.id}`] || ''}
+                            onChange={(e) => updateUserNote(`array_${array.id}`, e.target.value)}
+                        />
                     </div>
                 </div>
 
@@ -1177,8 +1311,8 @@ export default function App() {
                         <button
                             onClick={() => setActiveSelectorTabs(prev => ({ ...prev, [arrayId]: 'panels' }))}
                             className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${(activeSelectorTabs[arrayId] || 'panels') === 'panels'
-                                    ? 'border-blue-600 text-blue-700 bg-blue-50/50'
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                                ? 'border-blue-600 text-blue-700 bg-blue-50/50'
+                                : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
                                 }`}
                         >
                             Panel Selector
@@ -1186,8 +1320,8 @@ export default function App() {
                         <button
                             onClick={() => setActiveSelectorTabs(prev => ({ ...prev, [arrayId]: 'controllers' }))}
                             className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${activeSelectorTabs[arrayId] === 'controllers'
-                                    ? 'border-blue-600 text-blue-700 bg-blue-50/50'
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                                ? 'border-blue-600 text-blue-700 bg-blue-50/50'
+                                : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
                                 }`}
                         >
                             Controller Selector
@@ -1199,7 +1333,12 @@ export default function App() {
                             <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
                                 <div>
                                     <h3 className="text-lg font-bold text-slate-800">Compatible Panels Explorer</h3>
-                                    <p className="text-sm text-slate-500">Showing active panels that pass physical limits and strictly match the {controller.name} limits.</p>
+                                    <p className="text-sm text-slate-500">
+                                        {controller
+                                            ? `Showing active panels that pass physical limits and strictly match the ${controller.name} limits.`
+                                            : `Showing active panels that pass physical limits (select a controller to see electrical compatibility).`
+                                        }
+                                    </p>
                                 </div>
 
                                 <div className="flex items-stretch space-x-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
@@ -1272,7 +1411,7 @@ export default function App() {
                                     <tbody>
                                         {validPanels.length > 0 ? (
                                             validPanels.map(p => {
-                                                const isSelected = (selections[arrayId]?.panel || analysis.panel.model) === p.model;
+                                                const isSelected = (selections[arrayId]?.panel) === p.model;
                                                 return (
                                                     <tr key={p.model} className={`border-b border-slate-100 transition-colors ${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}>
                                                         <td className="py-3 px-4">
@@ -1332,6 +1471,10 @@ export default function App() {
 
                         const validControllersList = currentArrayChargers.filter(c => {
                             if (hiddenChargerMfr.includes(c.manufacturer || 'Unknown')) return false;
+
+                            // If no panel is selected, don't execute electrical bounds checks
+                            if (!panel) return true;
+
                             const isVoltageOk = coldVoc <= c.maxV;
                             const isStartupOk = hotVmp >= c.startupV;
                             const isCurrentOk = panel.isc <= c.maxIsc;
@@ -1354,82 +1497,176 @@ export default function App() {
                         });
 
                         return (
-                            <div>
-                                <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
+                            <div className="space-y-8">
+                                {/* Section 1: Existing Site Controllers */}
+                                {siteControllers.length > 0 && (
                                     <div>
-                                        <h3 className="text-lg font-bold text-slate-800">Compatible PV Controllers Explorer</h3>
-                                        <p className="text-sm text-slate-500">Showing {systemType === 'dc-charger' ? 'mppt charge controllers' : 'hybrid inverters'} that handle strictly the electrical limits of {array.count}x {panel.name} ({array.mounting === 'Parallel' ? 'Parallel' : 'Series'}).</p>
-                                    </div>
-                                </div>
+                                        <div className="mb-4">
+                                            <h3 className="text-lg font-bold text-slate-800">Available Area Controllers</h3>
+                                            <p className="text-sm text-slate-500">Pick an MPPT port on an existing controller already added to your area.</p>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            {siteControllers.map(sc => {
+                                                const model = chargersData.find(c => c.id === sc.modelId);
+                                                if (!model) return null;
 
-                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                                    <table className="w-full text-left border-collapse">
-                                        <thead>
-                                            <tr className="bg-slate-50 border-b border-slate-200">
-                                                <th onClick={() => toggleControllerSort('name')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                    Controller Name {controllerSort.key === 'name' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
-                                                </th>
-                                                <th onClick={() => toggleControllerSort('maxV')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                    Max DC {controllerSort.key === 'maxV' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
-                                                </th>
-                                                <th onClick={() => toggleControllerSort('maxIsc')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                    Max Isc {controllerSort.key === 'maxIsc' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
-                                                </th>
-                                                <th onClick={() => toggleControllerSort('price')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                    Price {controllerSort.key === 'price' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
-                                                </th>
-                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
-                                                    Action
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {sortedControllersList.length > 0 ? (
-                                                sortedControllersList.map(c => {
-                                                    const isSelected = (selections[arrayId]?.controller || availableChargers[0]?.id || chargersData[0]?.id) === c.id;
-                                                    return (
-                                                        <tr key={c.id} className={`border-b border-slate-100 transition-colors ${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}>
-                                                            <td className="py-3 px-4">
-                                                                <div className="flex items-center gap-1.5 flex-wrap">
-                                                                    <span className="font-medium text-slate-800">{c.name}</span>
-                                                                    <span className="text-xs text-slate-400">({c.manufacturer})</span>
-                                                                    {c.datasheetUrl && (
-                                                                        <a href={c.datasheetUrl} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
-                                                                            <ExternalLink size={16} />
-                                                                        </a>
-                                                                    )}
-                                                                </div>
-                                                            </td>
-                                                            <td className="py-3 px-4 text-slate-700">{c.maxV} V</td>
-                                                            <td className="py-3 px-4 text-slate-700">{c.maxIsc} A</td>
-                                                            <td className="py-3 px-4 font-medium text-blue-700">£{c.price}</td>
-                                                            <td className="py-3 px-4 text-right">
-                                                                {isSelected ? (
-                                                                    <span className="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded">
-                                                                        <CheckCircle size={14} className="mr-1" /> Selected
-                                                                    </span>
-                                                                ) : (
+                                                // Check electrical compatibility for this instance
+                                                let isElectricalValid = true;
+                                                if (panel) {
+                                                    const isVoltageOk = coldVoc <= model.maxV;
+                                                    const isStartupOk = hotVmp >= model.startupV;
+                                                    const isCurrentOk = panel.isc <= model.maxIsc;
+                                                    isElectricalValid = isVoltageOk && isStartupOk && isCurrentOk;
+                                                }
+
+                                                // Find existing array assignments for this controller instance
+                                                const assignments = {};
+                                                for (let i = 1; i <= model.trackers; i++) {
+                                                    assignments[i] = Object.entries(selections).find(([arrId, sel]) =>
+                                                        sel.controllerInstanceId === sc.id && sel.controllerMppt === i
+                                                    )?.[0];
+                                                }
+
+                                                return (
+                                                    <div key={sc.id} className={`p-4 rounded-lg border ${isElectricalValid ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200 opacity-60'}`}>
+                                                        <div className="flex justify-between items-start mb-1">
+                                                            <div className="font-bold text-slate-800">{sc.name}</div>
+                                                            {Object.values(assignments).every(val => !val) && (
+                                                                <button
+                                                                    onClick={() => deleteControllerInstance(sc.id)}
+                                                                    className="text-slate-400 hover:text-red-500 transition-colors p-1 rounded"
+                                                                    title="Delete empty controller from site"
+                                                                >
+                                                                    <Trash2 size={14} />
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                        <div className="text-xs text-slate-500 mb-3">{model.manufacturer} • {model.trackers} MPPTs</div>
+                                                        {!isElectricalValid && (
+                                                            <div className="text-xs text-red-500 mb-3 font-semibold">
+                                                                <AlertTriangle size={12} className="inline mr-1" />
+                                                                Incompatible with this array's electrical properties.
+                                                            </div>
+                                                        )}
+                                                        <div className="space-y-2">
+                                                            {Array.from({ length: model.trackers }).map((_, idx) => {
+                                                                const mpptIdx = idx + 1;
+                                                                const assignedArrayId = assignments[mpptIdx];
+                                                                const isBoundToCurrentArray = assignedArrayId === arrayId;
+
+                                                                return (
+                                                                    <div key={mpptIdx} className="flex items-center justify-between text-sm">
+                                                                        <span className="font-medium text-slate-600">MPPT {mpptIdx}</span>
+                                                                        {isBoundToCurrentArray ? (
+                                                                            <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded">
+                                                                                <CheckCircle size={12} className="mr-1" /> Selected
+                                                                            </span>
+                                                                        ) : assignedArrayId ? (
+                                                                            <span className="text-xs text-slate-400 italic">
+                                                                                Used by {arraysData.find(a => a.id === assignedArrayId)?.name || assignedArrayId}
+                                                                            </span>
+                                                                        ) : (
+                                                                            <button
+                                                                                disabled={!isElectricalValid}
+                                                                                onClick={() => updateSelection(arrayId, 'controllerInstance', sc.id, mpptIdx)}
+                                                                                className={`px-3 py-1 text-xs font-bold rounded transition-colors ${isElectricalValid ? 'bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600' : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                                                                                    }`}
+                                                                            >
+                                                                                Assign
+                                                                            </button>
+                                                                        )}
+                                                                    </div>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Section 2: Controller DB Selector */}
+                                <div>
+                                    <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
+                                        <div>
+                                            <h3 className="text-lg font-bold text-slate-800">Add New PV Controller from Database</h3>
+                                            <p className="text-sm text-slate-500">
+                                                {panel ? (
+                                                    `Showing models that handle strictly the electrical limits of ${array.count}x ${panel.name}. Selecting one will create a new physical unit.`
+                                                ) : (
+                                                    `Showing all active models. Select a panel above to filter by electrical limits.`
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="bg-slate-50 border-b border-slate-200">
+                                                    <th onClick={() => toggleControllerSort('name')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                        Controller Model {controllerSort.key === 'name' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
+                                                    </th>
+                                                    <th onClick={() => toggleControllerSort('maxV')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                        Max DC {controllerSort.key === 'maxV' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
+                                                    </th>
+                                                    <th onClick={() => toggleControllerSort('maxIsc')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                        Max Isc {controllerSort.key === 'maxIsc' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
+                                                    </th>
+                                                    <th onClick={() => toggleControllerSort('price')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                        Price {controllerSort.key === 'price' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
+                                                    </th>
+                                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {sortedControllersList.length > 0 ? (
+                                                    sortedControllersList.map(c => {
+                                                        const isSelected = selections[arrayId]?.controller && chargersData.find(x => x.id === selections[arrayId].controller)?.id === c.id && !selections[arrayId].controllerInstanceId;
+                                                        return (
+                                                            <tr key={c.id} className={`border-b border-slate-100 transition-colors ${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}>
+                                                                <td className="py-3 px-4">
+                                                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                                                        <span className="font-medium text-slate-800">{c.name}</span>
+                                                                        <span className="text-xs text-slate-400">({c.manufacturer})</span>
+                                                                        {c.datasheetUrl && (
+                                                                            <a href={c.datasheetUrl} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
+                                                                                <ExternalLink size={16} />
+                                                                            </a>
+                                                                        )}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="py-3 px-4 text-slate-700">{c.maxV} V</td>
+                                                                <td className="py-3 px-4 text-slate-700">{c.maxIsc} A</td>
+                                                                <td className="py-3 px-4 font-medium text-blue-700">£{c.price}</td>
+                                                                <td className="py-3 px-4 text-right">
                                                                     <button
-                                                                        onClick={() => updateSelection(arrayId, 'controller', c.id)}
+                                                                        onClick={() => {
+                                                                            const newInstId = createControllerInstance(c.id);
+                                                                            updateSelection(arrayId, 'controllerInstance', newInstId, 1);
+                                                                        }}
                                                                         className="px-3 py-1.5 bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-xs font-bold rounded transition-colors"
                                                                     >
-                                                                        Select Controller
+                                                                        Add New Instance
                                                                     </button>
-                                                                )}
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                })
-                                            ) : (
-                                                <tr>
-                                                    <td colSpan="5" className="py-8 px-4 text-center text-slate-500 italic">
-                                                        <AlertTriangle className="mx-auto mb-2 text-slate-400" size={24} />
-                                                        No PV controllers meet the electrical limits of your selected panel config in this array.
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan="5" className="py-8 px-4 text-center text-slate-500 italic">
+                                                            <AlertTriangle className="mx-auto mb-2 text-slate-400" size={24} />
+                                                            No PV controllers meet the electrical limits of your selected panel config in this array.
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -1629,7 +1866,7 @@ export default function App() {
                                                 <td className="p-1 text-center">
                                                     <div className="flex justify-center items-center gap-1">
                                                         <button onClick={() => setInfoModalPanelId(p.model)} className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Technical Specs">
-                                                            <InfoIcon size={18} />
+                                                            <Info size={18} />
                                                         </button>
                                                         {p.datasheetUrl && (
                                                             <a href={p.datasheetUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
@@ -1830,7 +2067,7 @@ export default function App() {
 
             totalCost += analysis.cost;
 
-            // Tally against the array's assigned area
+            // Tally against the array's assigned area (panels only cost)
             const assignedArea = array.area || 'House';
             if (!areaTotals[assignedArea]) {
                 areaTotals[assignedArea] = { power: 0, cost: 0 };
@@ -1840,36 +2077,64 @@ export default function App() {
 
             if (analysis.status === 'error') hasErrors = true;
 
-            if (analysis.controller.id === 'rs450_100') rs450_100_primary++;
-            if (analysis.controller.id === 'rs450_100_shared') rs450_100_shared++;
-            if (analysis.controller.id === 'rs450_200') rs450_200_primary++;
-            if (analysis.controller.id === 'rs450_200_shared') rs450_200_shared++;
-
-            if (!bomPanels[analysis.panel.model]) {
-                bomPanels[analysis.panel.model] = { item: analysis.panel, qty: 0 };
+            if (analysis.panel) {
+                if (!bomPanels[analysis.panel.model]) {
+                    bomPanels[analysis.panel.model] = { item: analysis.panel, qty: 0 };
+                }
+                bomPanels[analysis.panel.model].qty += array.count;
             }
-            bomPanels[analysis.panel.model].qty += array.count;
-
-            if (!bomControllers[analysis.controller.id]) {
-                bomControllers[analysis.controller.id] = { item: analysis.controller, qty: 0 };
-            }
-            bomControllers[analysis.controller.id].qty += 1;
 
             return (
                 <tr key={array.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                     <td className="py-3 px-4 font-semibold">{array.name}</td>
-                    <td className="py-3 px-4">{analysis.panel.name} ({array.count}x)</td>
+                    <td className="py-3 px-4">{analysis.panel ? `${analysis.panel.name} (${array.count}x)` : <span className="text-slate-400 italic">No Panel</span>}</td>
                     <td className="py-3 px-4 font-medium text-blue-700">{analysis.peakPower.toLocaleString()} W</td>
-                    <td className="py-3 px-4">{analysis.controller.name}</td>
+                    <td className="py-3 px-4">
+                        {analysis.controllerInstance ? (
+                            <span>{analysis.controllerInstance.name} <span className="text-xs text-slate-400">({analysis.controller.modelNumber})</span> MPPT {analysis.mpptIndex}</span>
+                        ) : <span className="text-slate-400 italic">No Controller</span>}
+                    </td>
                     <td className="py-3 px-4">
                         {analysis.status === 'error' ? <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold">FAILED</span> :
                             analysis.status === 'warning' ? <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-bold">WARNING</span> :
                                 <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">OK</span>}
                     </td>
                     <td className="py-3 px-4">£{analysis.costPerKWp.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-right">£{analysis.cost.toLocaleString()}</td>
+                    <td className="py-3 px-4 text-right text-slate-500 italic">£{analysis.cost.toLocaleString()} (Panels)</td>
                 </tr>
             );
+        });
+
+        // Loop through all site controllers and see if they are actively assigned to ANY array to include them in the BOM tally
+        const activeInstanceIds = new Set(
+            arraysData.map(a => getArrayAnalysis(a.id)?.controllerInstance?.id).filter(Boolean)
+        );
+
+        siteControllers.forEach(sc => {
+            if (activeInstanceIds.has(sc.id)) {
+                const model = chargersData.find(c => c.id === sc.modelId);
+                if (model) {
+                    if (!bomControllers[model.id]) {
+                        bomControllers[model.id] = { item: model, qty: 0 };
+                    }
+                    bomControllers[model.id].qty += 1;
+
+                    // Add hardware cost globally, but we'll try to attribute the cost to the first area that uses this inverter
+                    totalCost += model.price;
+                    const assignedArrayId = Object.entries(selections).find(([_, sel]) => sel.controllerInstanceId === sc.id)?.[0];
+                    if (assignedArrayId) {
+                        const arr = arraysData.find(a => a.id === assignedArrayId);
+                        if (arr && areaTotals[arr.area || 'House']) {
+                            areaTotals[arr.area || 'House'].cost += model.price;
+                        }
+                    }
+
+                    if (model.id === 'rs450_100') rs450_100_primary++;
+                    if (model.id === 'rs450_100_shared') rs450_100_shared++;
+                    if (model.id === 'rs450_200') rs450_200_primary++;
+                    if (model.id === 'rs450_200_shared') rs450_200_shared++;
+                }
+            }
         });
 
         // The RS 450/100 has 2 total trackers (1 primary + 1 shared)
@@ -2012,7 +2277,7 @@ export default function App() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `solar_selector_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `solar_pear_backup_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
     };
@@ -2088,10 +2353,44 @@ export default function App() {
 
             <div className="w-64 bg-slate-900 text-slate-300 flex flex-col z-10">
                 <div className="p-4 border-b border-slate-800 flex justify-center">
-                    <SolarPearLogo className="w-48 h-auto" />
+                    <SolarPearLogo className="w-48 h-auto text-slate-100" />
                 </div>
 
                 <div className="flex-1 overflow-y-auto">
+                    <nav className="px-2 pt-4 space-y-1">
+                        <button
+                            onClick={() => setActiveTab('GUIDE')}
+                            className={`w-full flex items-center px-3 py-2.5 rounded-lg text-left transition-colors text-sm ${activeTab === 'GUIDE' ? 'bg-slate-700 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
+                        >
+                            <Info className="mr-3" size={16} /> Guide
+                        </button>
+                    </nav>
+
+                    <div className="my-4 mx-4 border-t border-slate-800" />
+
+                    <nav className="px-2 space-y-1">
+                        <button
+                            onClick={() => setActiveTab('DB_ARRAYS')}
+                            className={`w-full flex items-center px-3 py-2.5 rounded-lg text-left transition-colors text-sm ${activeTab === 'DB_ARRAYS' ? 'bg-slate-700 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
+                        >
+                            <Layers className="mr-3" size={16} /> Array Config
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('DB_CHARGERS')}
+                            className={`w-full flex items-center px-3 py-2.5 rounded-lg text-left transition-colors text-sm ${activeTab === 'DB_CHARGERS' ? 'bg-slate-700 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
+                        >
+                            <Server className="mr-3" size={16} /> PV Controllers
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('DB_PANELS')}
+                            className={`w-full flex items-center px-3 py-2.5 rounded-lg text-left transition-colors text-sm ${activeTab === 'DB_PANELS' ? 'bg-slate-700 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
+                        >
+                            <Database className="mr-3" size={16} /> Panels
+                        </button>
+                    </nav>
+
+                    <div className="my-4 mx-4 border-t border-slate-800" />
+
                     {areasData.map(areaName => {
                         const areaArrays = arraysData.filter(a => a.area === areaName);
                         if (areaArrays.length === 0) return null;
@@ -2118,27 +2417,6 @@ export default function App() {
                             </div>
                         );
                     })}
-
-                    <nav className="px-2 space-y-1">
-                        <button
-                            onClick={() => setActiveTab('DB_ARRAYS')}
-                            className={`w-full flex items-center px-3 py-2.5 rounded-lg text-left transition-colors text-sm ${activeTab === 'DB_ARRAYS' ? 'bg-slate-700 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
-                        >
-                            <Layers className="mr-3" size={16} /> Arrays Config
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('DB_PANELS')}
-                            className={`w-full flex items-center px-3 py-2.5 rounded-lg text-left transition-colors text-sm ${activeTab === 'DB_PANELS' ? 'bg-slate-700 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
-                        >
-                            <Database className="mr-3" size={16} /> Panels Specs
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('DB_CHARGERS')}
-                            className={`w-full flex items-center px-3 py-2.5 rounded-lg text-left transition-colors text-sm ${activeTab === 'DB_CHARGERS' ? 'bg-slate-700 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
-                        >
-                            <Server className="mr-3" size={16} /> PV Controllers
-                        </button>
-                    </nav>
                 </div>
 
                 <div className="p-4 border-t border-slate-800 space-y-2">
@@ -2149,6 +2427,7 @@ export default function App() {
                         <LayoutDashboard className="mr-2" size={18} />
                         System Summary
                     </button>
+                    <div className="border-t border-slate-800 my-2" />
                     <div className="flex gap-2 w-full pt-1">
                         <button
                             onClick={handleResetClick}
@@ -2176,12 +2455,20 @@ export default function App() {
             </div>
 
             <div className="flex-1 overflow-y-auto">
-                <div className="max-w-7xl mx-auto p-8 relative">
-                    {activeTab === 'SUMMARY' ? renderSummary() :
-                        activeTab === 'DB_ARRAYS' ? renderArraysDb() :
-                            activeTab === 'DB_PANELS' ? renderPanelsDb() :
-                                activeTab === 'DB_CHARGERS' ? renderChargersDb() :
-                                    renderArrayTab(activeTab)}
+                <div className="max-w-7xl mx-auto p-8 relative min-h-full flex flex-col">
+                    <div className="flex-1">
+                        {activeTab === 'GUIDE' ? <Guide /> :
+                            activeTab === 'SUMMARY' ? renderSummary() :
+                                activeTab === 'DB_ARRAYS' ? renderArraysDb() :
+                                    activeTab === 'DB_PANELS' ? renderPanelsDb() :
+                                        activeTab === 'DB_CHARGERS' ? renderChargersDb() :
+                                            renderArrayTab(activeTab)}
+                    </div>
+
+                    <footer className="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400 text-[10px] uppercase tracking-widest pb-4">
+                        <p>© Copyright eChook 2026</p>
+                        <p className="mt-1 normal-case italic tracking-normal">This site uses affiliate links.</p>
+                    </footer>
                 </div>
             </div>
             {renderAddPanelModal()}

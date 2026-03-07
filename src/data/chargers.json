@@ -16,8 +16,99 @@
         "startupV": 5,
         "trackers": 1,
         "price": 60,
-        "notes": "Startup voltage is Vbat + 5V. Entry-level MPPT for small 12V/24V systems.",
+        "notes": "Non-RS: Startup Vbat + 5V. Max PV power ~220W (12V) / 440W (24V).",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-75-10,-75-15,-100-15,-100-20-EN.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "ss100_20",
+        "name": "SmartSolar MPPT 100/20",
+        "manufacturer": "Victron Energy",
+        "modelNumber": "SCC110020060R",
+        "type": "mppt",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            48
+        ],
+        "maxV": 100,
+        "maxIsc": 20,
+        "startupV": 5,
+        "trackers": 1,
+        "price": 85,
+        "notes": "Non-RS: Startup Vbat + 5V. Max Isc 20A. Common for boats and off-grid cabins.",
+        "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-75-10,-75-15,-100-15,-100-20-EN.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "ss150_45",
+        "name": "SmartSolar MPPT 150/45",
+        "manufacturer": "Victron Energy",
+        "modelNumber": "SCC115045222",
+        "type": "mppt",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48
+        ],
+        "maxV": 150,
+        "maxIsc": 50,
+        "startupV": 5,
+        "trackers": 1,
+        "price": 195,
+        "notes": "Non-RS: Startup Vbat + 5V. Max Isc 50A (not 45A). Bridges 12/24V and 48V systems.",
+        "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-150-35-%26-150-45-EN.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "m150_70",
+        "name": "SmartSolar MPPT 150/70 VE.Can",
+        "manufacturer": "Victron Energy",
+        "modelNumber": "SCC115070411",
+        "type": "mppt",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48
+        ],
+        "maxV": 150,
+        "maxIsc": 50,
+        "startupV": 5,
+        "trackers": 1,
+        "price": 330,
+        "notes": "Non-RS: Startup Vbat + 5V. Max Isc 50A. High current output but limited PV string length (max 3 panels).",
+        "datasheetUrl": "https://www.victronenergy.com/media/pg/Manual_BlueSolar_MPPT_150-70_up_to_250-100_VE.Can/en/technical-specifications.html",
+        "buyLinks": {}
+    },
+    {
+        "id": "m250_100",
+        "name": "SmartSolar MPPT 250/100 VE.Can",
+        "manufacturer": "Victron Energy",
+        "modelNumber": "SCC125110412",
+        "type": "mppt",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48
+        ],
+        "maxV": 250,
+        "maxIsc": 70,
+        "startupV": 5,
+        "trackers": 1,
+        "price": 380,
+        "notes": "Non-RS: Startup Vbat + 5V. 250V input cap allows 4-6 panels in series.",
+        "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-250-70-up-to-250-100-VE.Can-EN.pdf",
         "buyLinks": {}
     },
     {
@@ -36,8 +127,188 @@
         "startupV": 120,
         "trackers": 2,
         "price": 920,
-        "notes": "RS Series: Fixed 120V startup threshold. Isolated PV inputs.",
+        "notes": "RS Series: Fixed 120V startup. 2x 20A trackers. Isolated architecture.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-MPPT-RS-EN-.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "rs450_200",
+        "name": "SmartSolar MPPT RS 450/200",
+        "manufacturer": "Victron Energy",
+        "modelNumber": "SCC145120410",
+        "type": "mppt",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            48
+        ],
+        "maxV": 450,
+        "maxIsc": 25,
+        "startupV": 120,
+        "trackers": 4,
+        "price": 1650,
+        "notes": "RS Series: Fixed 120V startup. 4x 25A trackers. 11.5kW total charge capacity.",
+        "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-MPPT-RS-EN-.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "solis_s6_6000",
+        "name": "Solis S6 Hybrid 6kW",
+        "manufacturer": "Solis",
+        "modelNumber": "S6-EH1P6K-L-PLUS",
+        "type": "hybrid_inverter",
+        "systemType": "grid-connected",
+        "islanding": false,
+        "systemVoltages": [
+            48
+        ],
+        "maxV": 500,
+        "maxIsc": 20,
+        "startupV": 90,
+        "trackers": 2,
+        "price": 950,
+        "notes": "S6 Series: 2x 20A MPPTs. Startup at 90V. Max PV power 9000W.",
+        "datasheetUrl": "https://www.google.com/search?q=https://www.ginlong.com/uploads/file/Solis_Datasheet_S6-EH1P(3-8)K-L-PLUS_EN_V1.1_2023_04.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "growatt_sph_6000",
+        "name": "Growatt SPH 6000 Hybrid",
+        "manufacturer": "Growatt",
+        "modelNumber": "SPH6000TL-BL-UP",
+        "type": "hybrid_inverter",
+        "systemType": "grid-connected",
+        "islanding": false,
+        "systemVoltages": [
+            48
+        ],
+        "maxV": 550,
+        "maxIsc": 13.5,
+        "startupV": 150,
+        "trackers": 2,
+        "price": 780,
+        "notes": "Classic SPH: High startup voltage (150V). Tight Isc limit (13.5A) - check panel ratings carefully.",
+        "datasheetUrl": "https://www.stralendgroen.nl/en/product/growatt-hybrid-inverter-sph6000-1-phase/",
+        "buyLinks": {}
+    },
+    {
+        "id": "solaredge_hub_6000",
+        "name": "SolarEdge Home Hub 6kW",
+        "manufacturer": "SolarEdge",
+        "modelNumber": "SE6000H-UK",
+        "type": "hybrid_inverter",
+        "systemType": "grid-connected",
+        "islanding": false,
+        "systemVoltages": [
+            400
+        ],
+        "maxV": 480,
+        "maxIsc": 16.5,
+        "startupV": 0,
+        "trackers": 1,
+        "price": 1400,
+        "notes": "Optimizer Required: 16.5A input limit. Startup handled by optimizers. 400V nominal battery voltage.",
+        "datasheetUrl": "https://knowledge-center.solaredge.com/sites/kc/files/se-home-hub-single-phase-inverter-datasheet-eu.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "givenergy_gen3_50",
+        "name": "GivEnergy Gen 3 Hybrid 5.0kW",
+        "manufacturer": "GivEnergy",
+        "modelNumber": "GIV-HY5.0-G3",
+        "type": "hybrid_inverter",
+        "systemType": "grid-connected",
+        "islanding": false,
+        "systemVoltages": [
+            48
+        ],
+        "maxV": 580,
+        "maxIsc": 15,
+        "startupV": 150,
+        "trackers": 2,
+        "price": 1250,
+        "notes": "Gen 3: 15A limit per string. High startup (150V). 12-year UK warranty.",
+        "datasheetUrl": "https://givenergy.co.uk/wp-content/uploads/UK-Datasheet-Hybrid-Gen-3-5.0.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "foxess_h1_50",
+        "name": "Fox ESS H1 5.0kW Hybrid",
+        "manufacturer": "Fox ESS",
+        "modelNumber": "FE-H1-5.0-G2",
+        "type": "hybrid_inverter",
+        "systemType": "grid-connected",
+        "islanding": false,
+        "systemVoltages": [
+            48
+        ],
+        "maxV": 600,
+        "maxIsc": 20,
+        "startupV": 50,
+        "trackers": 2,
+        "price": 1050,
+        "notes": "Very low startup (50V-75V). 20A Isc per tracker. High battery charge/discharge (100A).",
+        "datasheetUrl": "https://www.powerland.co.uk/collections/inverters/hybridinverters",
+        "buyLinks": {}
+    },
+    {
+        "id": "luxpower_lxp_3600",
+        "name": "LuxPower LXP 3600 Hybrid",
+        "manufacturer": "LuxPower",
+        "modelNumber": "LXP-3600-HB",
+        "type": "hybrid_inverter",
+        "systemType": "grid-connected",
+        "islanding": false,
+        "systemVoltages": [
+            48
+        ],
+        "maxV": 550,
+        "maxIsc": 20,
+        "startupV": 140,
+        "trackers": 2,
+        "price": 750,
+        "notes": "LXP: Startup 140V. 20A Isc. Good Octopus Agile integration.",
+        "datasheetUrl": "https://www.infinityinnovations.co.uk/product/lxp-3600-single-phase-hybrid-inverter-3-6kw/",
+        "buyLinks": {}
+    },
+    {
+        "id": "sofar_hyd_5000",
+        "name": "Sofar HYD 5000-EP",
+        "manufacturer": "Sofar Solar",
+        "modelNumber": "HYD-5000-EP",
+        "type": "hybrid_inverter",
+        "systemType": "grid-connected",
+        "islanding": false,
+        "systemVoltages": [
+            48
+        ],
+        "maxV": 600,
+        "maxIsc": 18,
+        "startupV": 100,
+        "trackers": 2,
+        "price": 980,
+        "notes": "EP Series: 100V startup. 18A Isc. Fast EPS changeover time (<10ms).",
+        "datasheetUrl": "https://midsummerwholesale.co.uk/pdfs/sofarsolar-hyd-1ph-datasheet-en-202012-v1-20201216.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "conversol_max_8k",
+        "name": "Voltacon Conversol MAX II 8kW",
+        "manufacturer": "Voltacon",
+        "modelNumber": "MAX-II-8000",
+        "type": "hybrid_inverter",
+        "systemType": "off-grid",
+        "islanding": false,
+        "systemVoltages": [
+            48
+        ],
+        "maxV": 500,
+        "maxIsc": 150,
+        "startupV": 90,
+        "trackers": 2,
+        "price": 1150,
+        "notes": "Off-grid only: 150A total charge current. Dual 4kW trackers.",
+        "datasheetUrl": "https://www.google.com/search?q=https://voltaconsolar.com/conversol-8kw-max-ii.html",
         "buyLinks": {}
     },
     {
@@ -58,68 +329,8 @@
         "startupV": 15,
         "trackers": 1,
         "price": 550,
-        "notes": "Industrial grade, fanless cooling. 150V Voc limit. High reliability for telecom and remote infrastructure.",
+        "notes": "Industrial: Fanless. 150V limit. Proven in telecom/rail sectors.",
         "datasheetUrl": "https://www.morningstarcorp.com/wp-content/uploads/operation-manual-tristar-mppt-en.pdf",
-        "buyLinks": {}
-    },
-    {
-        "id": "conversol_max_8k",
-        "name": "Voltacon Conversol MAX II 8kW",
-        "manufacturer": "Voltacon",
-        "modelNumber": "MAX-II-8000",
-        "type": "hybrid_inverter",
-        "systemType": "off-grid",
-        "islanding": false,
-        "systemVoltages": [
-            48
-        ],
-        "maxV": 500,
-        "maxIsc": 150,
-        "startupV": 90,
-        "trackers": 2,
-        "price": 1150,
-        "notes": "Off-grid powerhouse. Massive 150A total charge current. Dual 4000W MPPT inputs. MPPT range 90-450VDC.",
-        "datasheetUrl": "https://www.google.com/search?q=https://voltaconsolar.com/conversol-8kw-max-ii.html",
-        "buyLinks": {}
-    },
-    {
-        "id": "elios_5k",
-        "name": "Voltacon Elios Hybrid 5kW",
-        "manufacturer": "Voltacon",
-        "modelNumber": "HSI5000",
-        "type": "hybrid_inverter",
-        "systemType": "grid-connected",
-        "islanding": false,
-        "systemVoltages": [
-            48
-        ],
-        "maxV": 900,
-        "maxIsc": 20,
-        "startupV": 225,
-        "trackers": 2,
-        "price": 1750,
-        "notes": "G99 compliant for UK grid. Very high PV input voltage (900V max). Startup requires 225V.",
-        "datasheetUrl": "https://voltaconsolar.com/products/hybrid-solar-inverter-5kw-plus-mppt-48v-230vac",
-        "buyLinks": {}
-    },
-    {
-        "id": "deye_sg04_8k",
-        "name": "Deye 8kW Hybrid SUN-SG04",
-        "manufacturer": "Deye",
-        "modelNumber": "SUN-8K-SG04LP1-EU",
-        "type": "hybrid_inverter",
-        "systemType": "grid-connected",
-        "islanding": false,
-        "systemVoltages": [
-            48
-        ],
-        "maxV": 500,
-        "maxIsc": 17,
-        "startupV": 125,
-        "trackers": 2,
-        "price": 1200,
-        "notes": "Global version of the Sunsynk platform. 17A Isc per tracker. Highly flexible load/gen port.",
-        "datasheetUrl": "https://www.deyeinverter.com/deyeinverter/2025/10/16/DatasheetSUN-3-6K-SG04LP1-AU-updated.pdf",
         "buyLinks": {}
     },
     {
@@ -138,28 +349,8 @@
         "startupV": 100,
         "trackers": 2,
         "price": 1450,
-        "notes": "Modular 96V battery architecture. Allows 200% PV oversizing (10kW PV on 5kW AC). 18.75A Isc per tracker.",
+        "notes": "Smile G3: High voltage 96V battery platform. Startup 100V.",
         "datasheetUrl": "https://alphaess.solshare.nl/documents/datasheets/res/datasheet_eu_alphaess_smile-g3-s3.6&s5&b5_v10.10012024_solshare.pdf",
-        "buyLinks": {}
-    },
-    {
-        "id": "goodwe_es_5k",
-        "name": "GoodWe ES Series 5kW",
-        "manufacturer": "GoodWe",
-        "modelNumber": "GW5048D-ES",
-        "type": "hybrid_inverter",
-        "systemType": "grid-connected",
-        "islanding": false,
-        "systemVoltages": [
-            48
-        ],
-        "maxV": 580,
-        "maxIsc": 13.8,
-        "startupV": 125,
-        "trackers": 2,
-        "price": 950,
-        "notes": "Classic hybrid choice. Startup 125V. Short circuit limit is 13.8A per MPPT; careful with high-current 550W+ panels.",
-        "datasheetUrl": "https://jp.goodwe.com/Ftp/EN/Downloads/Datasheet/GW_ES_Datasheet-EN.pdf",
         "buyLinks": {}
     },
     {
@@ -181,8 +372,144 @@
         "startupV": 2,
         "trackers": 1,
         "price": 380,
-        "notes": "Budget off-grid staple. Startup is Vbat + 2V. MPP range up to 108V.",
+        "notes": "Budget Staple: Startup Vbat + 2V. 150V input max.",
         "datasheetUrl": "https://solarv.de/EPEVERMPPT-Solar-Charge-Controller-Tracer-10415AN-100A-150V-12V-24V-36V-48VDC",
+        "buyLinks": {}
+    },
+    {
+        "id": "outback_fm100_afci",
+        "name": "OutBack FLEXmax 100 AFCI",
+        "manufacturer": "OutBack Power",
+        "modelNumber": "FM100-300VDC-AFCI",
+        "type": "mppt",
+        "systemType": "off-grid",
+        "islanding": false,
+        "systemVoltages": [
+            24,
+            36,
+            48
+        ],
+        "maxV": 300,
+        "maxIsc": 64,
+        "startupV": 30,
+        "trackers": 1,
+        "price": 1150,
+        "notes": "Premium industrial MPPT. 300V max input allows for longer strings. Integrated Arc Fault Circuit Interruption (AFCI). Note: Idle consumption is ~2.5W, very low for its power class. Heavy-duty thermal mass prevents derating up to 40°C.",
+        "datasheetUrl": "https://outbackpower.com/downloads/documents/flexmax_100/fm100_datasheet.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "powmr_keeper_60",
+        "name": "PowMr Keeper 60A MPPT",
+        "manufacturer": "PowMr",
+        "modelNumber": "KEEPER-60A",
+        "type": "mppt",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48
+        ],
+        "maxV": 100,
+        "maxIsc": 50,
+        "startupV": 12,
+        "trackers": 1,
+        "price": 85,
+        "notes": "WARNING: Common Positive Grounding—risk of short circuit if mounted to a UK vehicle chassis. Max Voc is only 100V; cold-weather spikes can exceed this easily. High self-consumption draw (up to 4W) can drain small batteries over winter nights.",
+        "datasheetUrl": "https://powmr.com/products/mppt-solar-charge-controller-60a",
+        "buyLinks": {}
+    },
+    {
+        "id": "makeskyblue_v118_60",
+        "name": "MakeSkyBlue 60A MPPT V118",
+        "manufacturer": "MakeSkyBlue",
+        "modelNumber": "MSB-60A-V118",
+        "type": "mppt",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48
+        ],
+        "maxV": 160,
+        "maxIsc": 50,
+        "startupV": 12,
+        "trackers": 1,
+        "price": 95,
+        "notes": "Budget staple with V118 firmware. WARNING: High acoustic noise from cooling fans under load. Peak efficiency requires Voc to be precisely 1.5x-2.0x battery voltage. Internal components have lower thermal headroom; expect power derating above 35°C ambient.",
+        "datasheetUrl": "https://makeskyblue.com/products/60a-mppt-solar-charge-controller",
+        "buyLinks": {}
+    },
+    {
+        "id": "srne_mc2460",
+        "name": "SRNE 60A MC Series MPPT",
+        "manufacturer": "SRNE",
+        "modelNumber": "MC2460N15",
+        "type": "mppt",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24
+        ],
+        "maxV": 150,
+        "maxIsc": 50,
+        "startupV": 5,
+        "trackers": 1,
+        "price": 110,
+        "notes": "Common-Negative grounding (safe for UK vehicles). Reliable OEM hardware used by many brands. Faster MPPT sweep speed than PowMr, resulting in better harvest during patchy UK cloud cover. Idle consumption is moderate (~1.5W).",
+        "datasheetUrl": "https://www.srnesolar.com/userfiles/files/2023/07/18/Shiner_User%20Manual_V1.05.pdf",
+        "buyLinks": {}
+    },
+    {
+        "id": "fangpusun_flexmax_80",
+        "name": "Fangpusun FLEXmax 80",
+        "manufacturer": "Fangpusun",
+        "modelNumber": "FP-FM80",
+        "type": "mppt",
+        "systemType": "off-grid",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48,
+            60
+        ],
+        "maxV": 150,
+        "maxIsc": 64,
+        "startupV": 15,
+        "trackers": 1,
+        "price": 280,
+        "notes": "Functional replica of OutBack FM80. High build quality for a 'value' brand. Note: Uses significant standby power (~3-4W). Large physical footprint required for passive heat dissipation. No official UK warranty support network.",
+        "datasheetUrl": "https://www.fangpusun.com/mppt-solar-charge-controller/mppt-80a.html",
+        "buyLinks": {}
+    },
+    {
+        "id": "renogy_rover_60",
+        "name": "Renogy Rover 60A MPPT",
+        "manufacturer": "Renogy",
+        "modelNumber": "RNG-CTRL-RVR60",
+        "type": "mppt",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48
+        ],
+        "maxV": 150,
+        "maxIsc": 50,
+        "startupV": 15,
+        "trackers": 1,
+        "price": 180,
+        "notes": "Market-dominant consumer brand. Common-Negative grounding. Includes Bluetooth/RS232 support. Maximum efficiency is lower than Victron/SRNE in low-light conditions. Better aesthetics but technical specs are mid-tier.",
+        "datasheetUrl": "https://www.renogy.com/content/Manual/Rover%2060%20Manual.pdf",
         "buyLinks": {}
     }
 ]
