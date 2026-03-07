@@ -120,7 +120,6 @@ export default function App() {
     const [hideHeavyPanels, setHideHeavyPanels] = useLocalStorage('solar_hide_heavy_panels', false);
     const [hideMarginalPanels, setHideMarginalPanels] = useLocalStorage('solar_hide_marginal_panels', false);
     const [systemVoltage, setSystemVoltage] = useLocalStorage('solar_system_voltage', 48);
-    const [hiddenChargerMfr, setHiddenChargerMfr] = useLocalStorage('solar_hidden_charger_mfr', []);
     // Global system mode: 'dc-charger' | 'grid-connected' | 'off-grid-ac'
     const [systemType, setSystemType] = useLocalStorage('solar_system_type', 'grid-connected');
 
@@ -132,6 +131,7 @@ export default function App() {
     const [controllerSort, setControllerSort] = useState({ key: 'price', dir: 'asc' });
     const [activeSelectorTabs, setActiveSelectorTabs] = useState({});
     const [infoModalPanelId, setInfoModalPanelId] = useState(null);
+    const [infoModalChargerId, setInfoModalChargerId] = useState(null);
     const [addPanelModal, setAddPanelModal] = useState({ open: false, data: {} });
     const [addChargerModal, setAddChargerModal] = useState({ open: false, data: {} });
     const [addAreaModal, setAddAreaModal] = useState({ open: false, data: '' });
@@ -307,7 +307,6 @@ export default function App() {
         setHideHeavyPanels(false);
         setHideMarginalPanels(false);
         setSystemVoltage(48);
-        setHiddenChargerMfr([]);
         setSystemType('grid-connected');
         setUserNotes({});
         localStorage.removeItem('user_notes');
@@ -389,7 +388,7 @@ export default function App() {
         setAddChargerModal({
             open: true,
             data: {
-                id: `charger_${Date.now()}`,
+                id: ``,
                 name: '',
                 manufacturer: '',
                 type: 'mppt',
@@ -408,26 +407,21 @@ export default function App() {
 
     // Derived manufacturer list for chargers
     const chargerManufacturers = [...new Set(chargersData.map(c => c.manufacturer || 'Unknown'))];
-    const toggleChargerMfr = (mfr) => setHiddenChargerMfr(prev =>
-        prev.includes(mfr) ? prev.filter(m => m !== mfr) : [...prev, mfr]
-    );
-
-    // PV Controllers visible for the current system voltage and not hidden by manufacturer (used in Chargers DB tab)
+    // PV Controllers visible for the current system voltage (used in Chargers DB tab)
     // systemVoltage === null means "Any voltage"
     const visibleChargers = chargersData.filter(c =>
-        (systemVoltage === null || (c.systemVoltages || [48]).includes(systemVoltage)) &&
-        !hiddenChargerMfr.includes(c.manufacturer || 'Unknown')
+        (systemVoltage === null || (c.systemVoltages || [48]).includes(systemVoltage))
     );
 
     // Controllers filtered by global system type (used in array controller dropdowns)
     // systemType values: 'dc-charger' | 'grid-connected' | 'off-grid-ac' | 'any'
     const availableChargers = chargersData.filter(c => {
+        // Now using 'active' as the primary filter for what appears in arrays
+        if (c.active === false) return false;
+
+        // Still need to filter by voltage to ensure compatibility with system battery
         if (systemVoltage !== null && !(c.systemVoltages || [48]).includes(systemVoltage)) return false;
-        if (systemType !== 'any') {
-            const ct = c.systemType || 'grid-connected';
-            if (ct !== systemType) return false;
-        }
-        if (hiddenChargerMfr.includes(c.manufacturer || 'Unknown')) return false;
+
         return true;
     });
 
@@ -1017,6 +1011,102 @@ export default function App() {
         );
     };
 
+    const renderChargerInfoModal = () => {
+        if (!infoModalChargerId) return null;
+        const c = chargersData.find(x => x.id === infoModalChargerId);
+        if (!c) return null;
+
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh] relative animate-in zoom-in-95 duration-200">
+
+                    {/* Header */}
+                    <div className="flex justify-between items-start p-6 border-b border-slate-100 bg-slate-50">
+                        <div>
+                            <h2 className="text-2xl font-bold text-slate-800">{c.name}</h2>
+                            <div className="flex items-center space-x-4 mt-2">
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.type === 'hybrid_inverter' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
+                                    {c.type === 'hybrid_inverter' ? 'Hybrid Inverter' : 'MPPT Charger'}
+                                </span>
+                                <span className="text-sm font-medium text-slate-600">£{c.price || 0} per unit</span>
+                                {c.datasheetUrl && (
+                                    <a href={c.datasheetUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors">
+                                        <ExternalLink size={12} className="mr-1" /> Datasheet
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => setInfoModalChargerId(null)}
+                            className="p-2 text-slate-400 hover:text-slate-700 bg-white rounded-full shadow-sm border border-slate-200 transition-colors"
+                        >
+                            <XIcon size={20} />
+                        </button>
+                    </div>
+
+                    {/* Body */}
+                    <div className="p-6 overflow-y-auto space-y-8 bg-white">
+                        <div className="grid grid-cols-2 gap-6">
+                            {/* Electrical Specs */}
+                            <div>
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Input Specifications</h3>
+                                <dl className="space-y-3 text-sm">
+                                    <div className="flex justify-between">
+                                        <dt className="text-slate-500 font-medium">Max PV Voltage</dt>
+                                        <dd className="text-red-700 font-bold">{c.maxV} V</dd>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <dt className="text-slate-500 font-medium">Startup Voltage</dt>
+                                        <dd className="text-slate-800 font-semibold">{c.startupV} V</dd>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <dt className="text-slate-500 font-medium">Max Short Circuit Current</dt>
+                                        <dd className="text-slate-800 font-semibold">{c.maxIsc || 'N/A'} A</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            {/* System Specs */}
+                            <div>
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">System Compatibility</h3>
+                                <dl className="space-y-3 text-sm">
+                                    <div className="flex justify-between">
+                                        <dt className="text-slate-500 font-medium">Battery Voltages</dt>
+                                        <dd className="text-slate-800 font-semibold">{(c.systemVoltages || [48]).join('V, ')}V</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+
+                        {/* Engineering Notes */}
+                        <div className="bg-slate-50 p-5 rounded-lg border border-slate-200">
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center">
+                                <Info size={14} className="mr-2" /> Engineering Design Notes
+                            </h3>
+                            <p className="text-sm text-slate-700 leading-relaxed">
+                                {c.notes || "No specific architectural notes for this controller. Refer to manufacturer specifications."}
+                            </p>
+                        </div>
+
+                        {/* User Custom Notes */}
+                        <div>
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center">
+                                Your Persistent Notes
+                            </h3>
+                            <textarea
+                                className="w-full p-4 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm text-slate-700 placeholder-slate-400 min-h-[100px] resize-y shadow-inner"
+                                placeholder="Log supplier quotes, lead times, compatibility thoughts, or personal preferences here..."
+                                value={userNotes[c.id] || ''}
+                                onChange={(e) => updateUserNote(c.id, e.target.value)}
+                            />
+                            <p className="text-xs text-slate-400 mt-2 text-right">Notes autosave to your browser.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     const renderArrayTab = (arrayId) => {
         const analysis = getArrayAnalysis(arrayId);
         if (!analysis) return null;
@@ -1229,7 +1319,7 @@ export default function App() {
                 {panel && (
                     <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mt-6 mb-4">
                         <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
-                            <InfoIcon size={16} className="mr-2 text-blue-600" />
+                            <Info size={16} className="mr-2 text-blue-600" />
                             Panel Notes: <span className="ml-2 font-normal">{panel.name}</span>
                         </h3>
                         <div className="grid grid-cols-2 gap-8 items-stretch">
@@ -1259,7 +1349,7 @@ export default function App() {
                 {controller && (
                     <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-4">
                         <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
-                            <InfoIcon size={16} className="mr-2 text-emerald-600" />
+                            <Info size={16} className="mr-2 text-emerald-600" />
                             Controller Notes: <span className="ml-2 font-normal">{controller.name}</span>
                         </h3>
                         <div className="grid grid-cols-2 gap-8 items-stretch">
@@ -1288,7 +1378,7 @@ export default function App() {
                 {/* Array User Notes */}
                 <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8">
                     <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
-                        <InfoIcon size={16} className="mr-2 text-indigo-600" />
+                        <Info size={16} className="mr-2 text-indigo-600" />
                         Array Notes: <span className="ml-2 font-normal">{array.name}</span>
                     </h3>
                     <div className="flex flex-col">
@@ -1388,79 +1478,81 @@ export default function App() {
                             </div>
 
                             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-slate-50 border-b border-slate-200">
-                                            <th onClick={() => togglePanelSort('name')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                Panel Name {panelSort.key === 'name' && (panelSort.dir === 'asc' ? '↑' : '↓')}
-                                            </th>
-                                            <th onClick={() => togglePanelSort('peakPower')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                Total Array Power {panelSort.key === 'peakPower' && (panelSort.dir === 'asc' ? '↑' : '↓')}
-                                            </th>
-                                            <th onClick={() => togglePanelSort('costPerKWp')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                Cost per kWp {panelSort.key === 'costPerKWp' && (panelSort.dir === 'asc' ? '↑' : '↓')}
-                                            </th>
-                                            <th onClick={() => togglePanelSort('panelCost')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                Total Panels Cost {panelSort.key === 'panelCost' && (panelSort.dir === 'asc' ? '↑' : '↓')}
-                                            </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {validPanels.length > 0 ? (
-                                            validPanels.map(p => {
-                                                const isSelected = (selections[arrayId]?.panel) === p.model;
-                                                return (
-                                                    <tr key={p.model} className={`border-b border-slate-100 transition-colors ${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}>
-                                                        <td className="py-3 px-4">
-                                                            <div className="flex items-center gap-1.5 flex-wrap">
-                                                                <span>{p.name}</span>
-                                                                <button onClick={() => setInfoModalPanelId(p.model)} className="text-slate-400 hover:text-blue-600 transition-colors" title="View Technical Specs">
-                                                                    <InfoIcon size={16} />
-                                                                </button>
-                                                                {p.datasheetUrl && (
-                                                                    <a href={p.datasheetUrl} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
-                                                                        <ExternalLink size={16} />
-                                                                    </a>
-                                                                )}
-                                                                {p.isVocWarn && (
-                                                                    <AlertTriangle size={16} className="text-orange-500" title="Voltage Warning: Cold Voc is within 6% of MPPT limit. Margin is dangerously tight." />
-                                                                )}
-                                                                <BuyButton buyLinks={p.buyLinks} />
-                                                            </div>
-                                                        </td>
-                                                        <td className="py-3 px-4 font-medium text-blue-700">{p.peakPower.toLocaleString()} W</td>
-                                                        <td className="py-3 px-4">£{p.costPerKWp.toFixed(2)}</td>
-                                                        <td className="py-3 px-4">£{p.panelCost.toLocaleString()}</td>
-                                                        <td className="py-3 px-4 text-right">
-                                                            {isSelected ? (
-                                                                <span className="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded">
-                                                                    <CheckCircle size={14} className="mr-1" /> Selected
-                                                                </span>
-                                                            ) : (
-                                                                <button
-                                                                    onClick={() => updateSelection(arrayId, 'panel', p.model)}
-                                                                    className="px-3 py-1.5 bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-xs font-bold rounded transition-colors"
-                                                                >
-                                                                    Select Panel
-                                                                </button>
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })
-                                        ) : (
+                                <div className="max-h-[600px] overflow-y-auto">
+                                    <table className="w-full text-left border-collapse relative">
+                                        <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                                             <tr>
-                                                <td colSpan="5" className="py-8 px-4 text-center text-slate-500 italic">
-                                                    <AlertTriangle className="mx-auto mb-2 text-slate-400" size={24} />
-                                                    No active panels meet both the physical format and the electrical constraints of the currently selected MPPT.
-                                                </td>
+                                                <th onClick={() => togglePanelSort('name')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                    Panel Name {panelSort.key === 'name' && (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                                </th>
+                                                <th onClick={() => togglePanelSort('peakPower')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                    Total Array Power {panelSort.key === 'peakPower' && (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                                </th>
+                                                <th onClick={() => togglePanelSort('costPerKWp')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                    Cost per kWp {panelSort.key === 'costPerKWp' && (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                                </th>
+                                                <th onClick={() => togglePanelSort('panelCost')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                    Total Panels Cost {panelSort.key === 'panelCost' && (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                                </th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                                    Action
+                                                </th>
                                             </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {validPanels.length > 0 ? (
+                                                validPanels.map(p => {
+                                                    const isSelected = (selections[arrayId]?.panel) === p.model;
+                                                    return (
+                                                        <tr key={p.model} className={`border-b border-slate-100 transition-colors ${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}>
+                                                            <td className="py-3 px-4">
+                                                                <div className="flex items-center gap-1.5 flex-wrap">
+                                                                    <span>{p.name}</span>
+                                                                    <button onClick={() => setInfoModalPanelId(p.model)} className="text-slate-400 hover:text-blue-600 transition-colors" title="View Technical Specs">
+                                                                        <Info size={16} />
+                                                                    </button>
+                                                                    {p.datasheetUrl && (
+                                                                        <a href={p.datasheetUrl} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
+                                                                            <ExternalLink size={16} />
+                                                                        </a>
+                                                                    )}
+                                                                    {p.isVocWarn && (
+                                                                        <AlertTriangle size={16} className="text-orange-500" title="Voltage Warning: Cold Voc is within 6% of MPPT limit. Margin is dangerously tight." />
+                                                                    )}
+                                                                    <BuyButton buyLinks={p.buyLinks} />
+                                                                </div>
+                                                            </td>
+                                                            <td className="py-3 px-4 font-medium text-blue-700">{p.peakPower.toLocaleString()} W</td>
+                                                            <td className="py-3 px-4">£{p.costPerKWp.toFixed(2)}</td>
+                                                            <td className="py-3 px-4">£{p.panelCost.toLocaleString()}</td>
+                                                            <td className="py-3 px-4 text-right">
+                                                                {isSelected ? (
+                                                                    <span className="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded">
+                                                                        <CheckCircle size={14} className="mr-1" /> Selected
+                                                                    </span>
+                                                                ) : (
+                                                                    <button
+                                                                        onClick={() => updateSelection(arrayId, 'panel', p.model)}
+                                                                        className="px-3 py-1.5 bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-xs font-bold rounded transition-colors"
+                                                                    >
+                                                                        Select Panel
+                                                                    </button>
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="5" className="py-8 px-4 text-center text-slate-500 italic">
+                                                        <AlertTriangle className="mx-auto mb-2 text-slate-400" size={24} />
+                                                        No active panels meet both the physical format and the electrical constraints of the currently selected MPPT.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     ) : (() => {
@@ -1470,9 +1562,7 @@ export default function App() {
                         );
 
                         const validControllersList = currentArrayChargers.filter(c => {
-                            if (hiddenChargerMfr.includes(c.manufacturer || 'Unknown')) return false;
-
-                            // If no panel is selected, don't execute electrical bounds checks
+                            // Electrical bounds checks
                             if (!panel) return true;
 
                             const isVoltageOk = coldVoc <= c.maxV;
@@ -1602,70 +1692,75 @@ export default function App() {
                                     </div>
 
                                     <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                                        <table className="w-full text-left border-collapse">
-                                            <thead>
-                                                <tr className="bg-slate-50 border-b border-slate-200">
-                                                    <th onClick={() => toggleControllerSort('name')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                        Controller Model {controllerSort.key === 'name' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
-                                                    </th>
-                                                    <th onClick={() => toggleControllerSort('maxV')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                        Max DC {controllerSort.key === 'maxV' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
-                                                    </th>
-                                                    <th onClick={() => toggleControllerSort('maxIsc')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                        Max Isc {controllerSort.key === 'maxIsc' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
-                                                    </th>
-                                                    <th onClick={() => toggleControllerSort('price')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
-                                                        Price {controllerSort.key === 'price' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
-                                                    </th>
-                                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
-                                                        Action
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {sortedControllersList.length > 0 ? (
-                                                    sortedControllersList.map(c => {
-                                                        const isSelected = selections[arrayId]?.controller && chargersData.find(x => x.id === selections[arrayId].controller)?.id === c.id && !selections[arrayId].controllerInstanceId;
-                                                        return (
-                                                            <tr key={c.id} className={`border-b border-slate-100 transition-colors ${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}>
-                                                                <td className="py-3 px-4">
-                                                                    <div className="flex items-center gap-1.5 flex-wrap">
-                                                                        <span className="font-medium text-slate-800">{c.name}</span>
-                                                                        <span className="text-xs text-slate-400">({c.manufacturer})</span>
-                                                                        {c.datasheetUrl && (
-                                                                            <a href={c.datasheetUrl} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
-                                                                                <ExternalLink size={16} />
-                                                                            </a>
-                                                                        )}
-                                                                    </div>
-                                                                </td>
-                                                                <td className="py-3 px-4 text-slate-700">{c.maxV} V</td>
-                                                                <td className="py-3 px-4 text-slate-700">{c.maxIsc} A</td>
-                                                                <td className="py-3 px-4 font-medium text-blue-700">£{c.price}</td>
-                                                                <td className="py-3 px-4 text-right">
-                                                                    <button
-                                                                        onClick={() => {
-                                                                            const newInstId = createControllerInstance(c.id);
-                                                                            updateSelection(arrayId, 'controllerInstance', newInstId, 1);
-                                                                        }}
-                                                                        className="px-3 py-1.5 bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-xs font-bold rounded transition-colors"
-                                                                    >
-                                                                        Add New Instance
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })
-                                                ) : (
+                                        <div className="max-h-[600px] overflow-y-auto">
+                                            <table className="w-full text-left border-collapse relative">
+                                                <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                                                     <tr>
-                                                        <td colSpan="5" className="py-8 px-4 text-center text-slate-500 italic">
-                                                            <AlertTriangle className="mx-auto mb-2 text-slate-400" size={24} />
-                                                            No PV controllers meet the electrical limits of your selected panel config in this array.
-                                                        </td>
+                                                        <th onClick={() => toggleControllerSort('name')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                            Controller Model {controllerSort.key === 'name' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
+                                                        </th>
+                                                        <th onClick={() => toggleControllerSort('maxV')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                            Max DC {controllerSort.key === 'maxV' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
+                                                        </th>
+                                                        <th onClick={() => toggleControllerSort('maxIsc')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                            Max Isc {controllerSort.key === 'maxIsc' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
+                                                        </th>
+                                                        <th onClick={() => toggleControllerSort('price')} className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none">
+                                                            Price {controllerSort.key === 'price' && (controllerSort.dir === 'asc' ? '↑' : '↓')}
+                                                        </th>
+                                                        <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                                            Action
+                                                        </th>
                                                     </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    {sortedControllersList.length > 0 ? (
+                                                        sortedControllersList.map(c => {
+                                                            const isSelected = selections[arrayId]?.controller && chargersData.find(x => x.id === selections[arrayId].controller)?.id === c.id && !selections[arrayId].controllerInstanceId;
+                                                            return (
+                                                                <tr key={c.id} className={`border-b border-slate-100 transition-colors ${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}>
+                                                                    <td className="py-3 px-4">
+                                                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                                                            <span className="font-medium text-slate-800">{c.name}</span>
+                                                                            <span className="text-xs text-slate-400">({c.manufacturer})</span>
+                                                                            <button onClick={() => setInfoModalChargerId(c.id)} className="text-slate-400 hover:text-blue-600 transition-colors" title="View Technical Specs">
+                                                                                <Info size={16} />
+                                                                            </button>
+                                                                            {c.datasheetUrl && (
+                                                                                <a href={c.datasheetUrl} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
+                                                                                    <ExternalLink size={16} />
+                                                                                </a>
+                                                                            )}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-slate-700">{c.maxV} V</td>
+                                                                    <td className="py-3 px-4 text-slate-700">{c.maxIsc} A</td>
+                                                                    <td className="py-3 px-4 font-medium text-blue-700">£{c.price}</td>
+                                                                    <td className="py-3 px-4 text-right">
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                const newInstId = createControllerInstance(c.id);
+                                                                                updateSelection(arrayId, 'controllerInstance', newInstId, 1);
+                                                                            }}
+                                                                            className="px-3 py-1.5 bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-xs font-bold rounded transition-colors"
+                                                                        >
+                                                                            Add New Instance
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })
+                                                    ) : (
+                                                        <tr>
+                                                            <td colSpan="5" className="py-8 px-4 text-center text-slate-500 italic">
+                                                                <AlertTriangle className="mx-auto mb-2 text-slate-400" size={24} />
+                                                                No PV controllers meet the electrical limits of your selected panel config in this array.
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1795,7 +1890,7 @@ export default function App() {
     };
 
     const renderPanelsDb = () => {
-        const manufacturers = [...new Set(panelsData.map(p => p.manufacturer || 'Unknown'))];
+        const manufacturers = [...new Set(panelsData.map(p => p.manufacturer || 'Unknown'))].sort((a, b) => a.localeCompare(b));
         const toggleAllPanelMfr = (mfr, active) => {
             setPanelsData(prev => prev.map(p =>
                 (p.manufacturer || 'Unknown') === mfr ? { ...p, active } : p
@@ -1834,67 +1929,69 @@ export default function App() {
                                 </div>
                             </div>
                             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-slate-50 border-b border-slate-200">
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">Active</th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Panel Name</th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Model ID</th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">Info</th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">GSE Compat.</th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Power (W)</th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Voc (V)</th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Vmp (V)</th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Isc (A)</th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Price (£)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {mfrPanels.map(p => (
-                                            <tr key={p.model} className={`border-b border-slate-100 transition-colors ${p.active === false ? 'bg-slate-50 opacity-60' : 'hover:bg-slate-50 focus-within:bg-blue-50'}`}>
-                                                <td className="p-1 text-center">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
-                                                        checked={p.active !== false}
-                                                        onChange={(e) => updatePanel(p.model, 'active', e.target.checked)}
-                                                        title="Include in array dropdown menus"
-                                                    />
-                                                </td>
-                                                <td className="p-1"><input className="min-w-[220px] w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="text" value={p.name} onChange={(e) => updatePanel(p.model, 'name', e.target.value)} /></td>
-                                                <td className="p-1 px-2"><span className="text-xs text-slate-400 font-mono whitespace-nowrap">{p.model}</span></td>
-                                                <td className="p-1 text-center">
-                                                    <div className="flex justify-center items-center gap-1">
-                                                        <button onClick={() => setInfoModalPanelId(p.model)} className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Technical Specs">
-                                                            <Info size={18} />
-                                                        </button>
-                                                        {p.datasheetUrl && (
-                                                            <a href={p.datasheetUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
-                                                                <ExternalLink size={18} />
-                                                            </a>
-                                                        )}
-                                                    </div>
-                                                </td>
-                                                <td className="p-1">
-                                                    <select
-                                                        className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                        value={p.gseCompatibility || 'Both'}
-                                                        onChange={(e) => updatePanel(p.model, 'gseCompatibility', e.target.value)}
-                                                    >
-                                                        <option value="Both">Both GSE</option>
-                                                        <option value="Portrait Only">Portrait Only</option>
-                                                        <option value="Landscape Only">Landscape Only</option>
-                                                    </select>
-                                                </td>
-                                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={p.power} onChange={(e) => updatePanel(p.model, 'power', parseFloat(e.target.value) || 0)} /></td>
-                                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="0.01" value={p.voc} onChange={(e) => updatePanel(p.model, 'voc', parseFloat(e.target.value) || 0)} /></td>
-                                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="0.01" value={p.vmp} onChange={(e) => updatePanel(p.model, 'vmp', parseFloat(e.target.value) || 0)} /></td>
-                                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="0.01" value={p.isc} onChange={(e) => updatePanel(p.model, 'isc', parseFloat(e.target.value) || 0)} /></td>
-                                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={p.price} onChange={(e) => updatePanel(p.model, 'price', parseFloat(e.target.value) || 0)} /></td>
+                                <div className="max-h-[500px] overflow-y-auto">
+                                    <table className="w-full text-left border-collapse relative">
+                                        <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
+                                            <tr className="bg-slate-50 border-b border-slate-200">
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">Active</th>
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Panel Name</th>
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Model ID</th>
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">Info</th>
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">GSE Compat.</th>
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Power (W)</th>
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Voc (V)</th>
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Vmp (V)</th>
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Isc (A)</th>
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">Price (£)</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {mfrPanels.map(p => (
+                                                <tr key={p.model} className={`border-b border-slate-100 transition-colors ${p.active === false ? 'bg-slate-50 opacity-60' : 'hover:bg-slate-50 focus-within:bg-blue-50'}`}>
+                                                    <td className="p-1 text-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                                            checked={p.active !== false}
+                                                            onChange={(e) => updatePanel(p.model, 'active', e.target.checked)}
+                                                            title="Include in array dropdown menus"
+                                                        />
+                                                    </td>
+                                                    <td className="p-1"><input className="min-w-[220px] w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="text" value={p.name} onChange={(e) => updatePanel(p.model, 'name', e.target.value)} /></td>
+                                                    <td className="p-1 px-2"><span className="text-xs text-slate-400 font-mono whitespace-nowrap">{p.model}</span></td>
+                                                    <td className="p-1 text-center">
+                                                        <div className="flex justify-center items-center gap-1">
+                                                            <button onClick={() => setInfoModalPanelId(p.model)} className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Technical Specs">
+                                                                <Info size={18} />
+                                                            </button>
+                                                            {p.datasheetUrl && (
+                                                                <a href={p.datasheetUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
+                                                                    <ExternalLink size={18} />
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="p-1">
+                                                        <select
+                                                            className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
+                                                            value={p.gseCompatibility || 'Both'}
+                                                            onChange={(e) => updatePanel(p.model, 'gseCompatibility', e.target.value)}
+                                                        >
+                                                            <option value="Both">Both GSE</option>
+                                                            <option value="Portrait Only">Portrait Only</option>
+                                                            <option value="Landscape Only">Landscape Only</option>
+                                                        </select>
+                                                    </td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={p.power} onChange={(e) => updatePanel(p.model, 'power', parseFloat(e.target.value) || 0)} /></td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="0.01" value={p.voc} onChange={(e) => updatePanel(p.model, 'voc', parseFloat(e.target.value) || 0)} /></td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="0.01" value={p.vmp} onChange={(e) => updatePanel(p.model, 'vmp', parseFloat(e.target.value) || 0)} /></td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="0.01" value={p.isc} onChange={(e) => updatePanel(p.model, 'isc', parseFloat(e.target.value) || 0)} /></td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={p.price} onChange={(e) => updatePanel(p.model, 'price', parseFloat(e.target.value) || 0)} /></td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     );
@@ -1904,13 +2001,38 @@ export default function App() {
     };
 
     const renderChargersDb = () => {
-        const manufacturers = [...new Set(chargersData.map(c => c.manufacturer || 'Unknown'))];
+        const manufacturers = [...new Set(chargersData.map(c => c.manufacturer || 'Unknown'))].sort((a, b) => a.localeCompare(b));
+        const toggleAllChargersMfr = (mfr, active) => {
+            setChargersData(prev => prev.map(c =>
+                (c.manufacturer || 'Unknown') === mfr ? { ...c, active } : c
+            ));
+        };
+
+        const handleSetSystemVoltage = (v) => {
+            setSystemVoltage(v);
+            setChargersData(prev => prev.map(c => {
+                const volts = c.systemVoltages || [48];
+                const matchesVoltage = v === null || volts.includes(v);
+                const matchesType = systemType === 'any' || (c.systemType || 'grid-connected') === systemType;
+                return { ...c, active: matchesVoltage && matchesType };
+            }));
+        };
+
+        const handleSetSystemType = (t) => {
+            setSystemType(t);
+            setChargersData(prev => prev.map(c => {
+                const matchesType = t === 'any' || (c.systemType || 'grid-connected') === t;
+                const volts = c.systemVoltages || [48];
+                const matchesVoltage = systemVoltage === null || volts.includes(systemVoltage);
+                return { ...c, active: matchesType && matchesVoltage };
+            }));
+        };
         return (
             <div className="space-y-6">
                 <div className="flex justify-between items-center pb-3 border-b border-slate-200">
                     <div>
                         <h2 className="text-2xl font-bold text-slate-800">PV Controllers Database</h2>
-                        <p className="text-slate-500">Standalone MPPT chargers and hybrid inverters. All connect directly to your PV strings.</p>
+                        <p className="text-slate-500">Standalone MPPT chargers and hybrid inverters.</p>
                     </div>
                     <button onClick={addCharger} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                         <Plus size={16} className="mr-2" /> Add Controller
@@ -1920,7 +2042,7 @@ export default function App() {
                     <div className="flex items-center gap-3">
                         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">DC Bus Voltage</span>
                         <div className="flex gap-1">
-                            <button onClick={() => setSystemVoltage(null)}
+                            <button onClick={() => handleSetSystemVoltage(null)}
                                 className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${systemVoltage === null
                                     ? 'bg-slate-600 text-white'
                                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
@@ -1928,7 +2050,7 @@ export default function App() {
                                 Any
                             </button>
                             {[12, 24, 48].map(v => (
-                                <button key={v} onClick={() => setSystemVoltage(v)}
+                                <button key={v} onClick={() => handleSetSystemVoltage(v)}
                                     className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${systemVoltage === v
                                         ? 'bg-blue-600 text-white'
                                         : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
@@ -1942,97 +2064,120 @@ export default function App() {
                         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Controller Type</span>
                         <div className="flex rounded-lg overflow-hidden border border-slate-300 shadow-sm text-sm font-medium">
                             <button
-                                onClick={() => setSystemType('any')}
+                                onClick={() => handleSetSystemType('any')}
                                 className={`px-3 py-1.5 transition-colors ${systemType === 'any' ? 'bg-slate-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
                             >
                                 Any
                             </button>
                             <button
-                                onClick={() => setSystemType('dc-charger')}
+                                onClick={() => handleSetSystemType('dc-charger')}
                                 className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${systemType === 'dc-charger' ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
                             >
                                 🔌 DC Charger
                             </button>
                             <button
-                                onClick={() => setSystemType('grid-connected')}
+                                onClick={() => handleSetSystemType('grid-connected')}
                                 className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${systemType === 'grid-connected' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
                             >
                                 ⚡ Grid-Connected AC
                             </button>
                             <button
-                                onClick={() => setSystemType('off-grid-ac')}
+                                onClick={() => handleSetSystemType('off-grid-ac')}
                                 className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${systemType === 'off-grid-ac' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
                             >
                                 🔋 Off-Grid AC
                             </button>
                         </div>
-                        <p className="text-xs text-slate-400 italic">Filters the controller dropdown on each array tab.</p>
+                        <p className="text-xs text-slate-400 italic">Sets Active state for matching hardware.</p>
                     </div>
                 </div>
                 {manufacturers.map(mfr => {
                     const mfrChargers = chargersData.filter(c => (c.manufacturer || 'Unknown') === mfr);
-                    const isHidden = hiddenChargerMfr.includes(mfr);
+                    const allActive = mfrChargers.every(c => c.active !== false);
+                    const noneActive = mfrChargers.every(c => c.active === false);
                     return (
                         <div key={mfr}>
                             <div className="flex items-center justify-between mb-2 px-1">
                                 <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
                                     {mfr} <span className="font-normal text-slate-400 normal-case">({mfrChargers.length} controllers)</span>
                                 </h3>
-                                <button
-                                    onClick={() => toggleChargerMfr(mfr)}
-                                    className={`text-xs px-2 py-1 rounded border transition-colors ${isHidden
-                                        ? 'border-green-300 text-green-700 bg-green-50 hover:bg-green-100'
-                                        : 'border-slate-300 text-slate-600 bg-white hover:bg-slate-100'
-                                        }`}
-                                >
-                                    {isHidden ? 'Show in Arrays' : 'Hide from Arrays'}
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => toggleAllChargersMfr(mfr, true)}
+                                        disabled={allActive}
+                                        className="text-xs px-2 py-1 rounded border border-green-300 text-green-700 bg-green-50 hover:bg-green-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                    >Select All</button>
+                                    <button
+                                        onClick={() => toggleAllChargersMfr(mfr, false)}
+                                        disabled={noneActive}
+                                        className="text-xs px-2 py-1 rounded border border-slate-300 text-slate-600 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                    >Deselect All</button>
+                                </div>
                             </div>
                             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-slate-50 border-b border-slate-200">
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Name</th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">ID</th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Type</th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Voltages</th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Max DC (V)</th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Max Isc (A)</th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Startup (V)</th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Price (£)</th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Buy</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {chargersData.filter(c => (c.manufacturer || 'Unknown') === mfr).map(c => (
-                                            <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-50 focus-within:bg-blue-50">
-                                                <td className="p-1">
-                                                    <div className="flex items-center gap-1">
-                                                        <input className="min-w-[220px] w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="text" value={c.name} onChange={(e) => updateCharger(c.id, 'name', e.target.value)} />
-                                                        {c.datasheetUrl && (
-                                                            <a href={c.datasheetUrl} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 flex-shrink-0" title="View Datasheet"><ExternalLink size={16} /></a>
-                                                        )}
-                                                    </div>
-                                                </td>
-                                                <td className="p-1 px-4"><span className="text-xs text-slate-400 font-mono whitespace-nowrap">{c.id}</span></td>
-                                                <td className="p-1 px-4">
-                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${c.type === 'hybrid_inverter'
-                                                        ? 'bg-purple-100 text-purple-700'
-                                                        : 'bg-blue-100 text-blue-700'
-                                                        }`}>
-                                                        {c.type === 'hybrid_inverter' ? 'Hybrid' : 'MPPT'}
-                                                    </span>
-                                                </td>
-                                                <td className="p-1 px-4 text-xs text-slate-500">{(c.systemVoltages || [48]).join('V / ')}V</td>
-                                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={c.maxV} onChange={(e) => updateCharger(c.id, 'maxV', parseFloat(e.target.value) || 0)} /></td>
-                                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={c.maxIsc} onChange={(e) => updateCharger(c.id, 'maxIsc', parseFloat(e.target.value) || 0)} /></td>
-                                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={c.startupV} onChange={(e) => updateCharger(c.id, 'startupV', parseFloat(e.target.value) || 0)} /></td>
-                                                <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={c.price} onChange={(e) => updateCharger(c.id, 'price', parseFloat(e.target.value) || 0)} /></td>
-                                                <td className="p-1 px-4"><BuyButton buyLinks={c.buyLinks ?? {}} /></td>
+                                <div className="max-h-[500px] overflow-y-auto">
+                                    <table className="w-full text-left border-collapse relative">
+                                        <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
+                                            <tr className="bg-slate-50 border-b border-slate-200">
+                                                <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">Active</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Name</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Model ID</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase text-center">Info</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Type</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Voltages</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Max DC (V)</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Max Isc (A)</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Startup (V)</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Price (£)</th>
+                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">Buy</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {chargersData.filter(c => (c.manufacturer || 'Unknown') === mfr).map(c => (
+                                                <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-50 focus-within:bg-blue-50">
+                                                    <td className="p-1 px-2 text-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                                            checked={c.active !== false}
+                                                            onChange={(e) => updateCharger(c.id, 'active', e.target.checked)}
+                                                        />
+                                                    </td>
+                                                    <td className="p-1">
+                                                        <input className="min-w-[220px] w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="text" value={c.name} onChange={(e) => updateCharger(c.id, 'name', e.target.value)} />
+                                                    </td>
+                                                    <td className="p-1 px-4"><span className="text-xs text-slate-400 font-mono whitespace-nowrap">{c.id}</span></td>
+                                                    <td className="p-1 text-center">
+                                                        <div className="flex justify-center items-center gap-1">
+                                                            <button onClick={() => setInfoModalChargerId(c.id)} className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Technical Specs">
+                                                                <Info size={18} />
+                                                            </button>
+                                                            {c.datasheetUrl && (
+                                                                <a href={c.datasheetUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="View Manufacturer Datasheet">
+                                                                    <ExternalLink size={18} />
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="p-1 px-4">
+                                                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${c.type === 'hybrid_inverter'
+                                                            ? 'bg-purple-100 text-purple-700'
+                                                            : 'bg-blue-100 text-blue-700'
+                                                            }`}>
+                                                            {c.type === 'hybrid_inverter' ? 'Hybrid' : 'MPPT'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-1 px-4 text-xs text-slate-500">{(c.systemVoltages || [48]).join('V / ')}V</td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={c.maxV} onChange={(e) => updateCharger(c.id, 'maxV', parseFloat(e.target.value) || 0)} /></td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={c.maxIsc} onChange={(e) => updateCharger(c.id, 'maxIsc', parseFloat(e.target.value) || 0)} /></td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={c.startupV} onChange={(e) => updateCharger(c.id, 'startupV', parseFloat(e.target.value) || 0)} /></td>
+                                                    <td className="p-1"><input className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm" type="number" step="1" value={c.price} onChange={(e) => updateCharger(c.id, 'price', parseFloat(e.target.value) || 0)} /></td>
+                                                    <td className="p-1 px-4"><BuyButton buyLinks={c.buyLinks ?? {}} /></td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     );
@@ -2206,22 +2351,24 @@ export default function App() {
 
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                     <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 font-semibold text-slate-700">Array Configuration Breakdown</div>
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-slate-50 border-b border-slate-200">
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Array</th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Panels</th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Array Peak</th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">PV Controller</th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">£/kWp</th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Cost</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {summaryRows}
-                        </tbody>
-                    </table>
+                    <div className="max-h-[400px] overflow-y-auto">
+                        <table className="w-full text-left border-collapse relative">
+                            <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
+                                <tr>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Array</th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Panels</th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Array Peak</th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">PV Controller</th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">£/kWp</th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {summaryRows}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden mt-6">
@@ -2349,7 +2496,6 @@ export default function App() {
 
     return (
         <div className="flex h-screen bg-slate-100 font-sans">
-            {renderPanelInfoModal()}
 
             <div className="w-64 bg-slate-900 text-slate-300 flex flex-col z-10">
                 <div className="p-4 border-b border-slate-800 flex justify-center">
@@ -2476,6 +2622,7 @@ export default function App() {
             {renderAddAreaModal()}
             {renderAddArrayModal()}
             {renderPanelInfoModal()}
+            {renderChargerInfoModal()}
             {renderConfirmModal()}
         </div>
     );
