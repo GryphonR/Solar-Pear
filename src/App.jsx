@@ -61,12 +61,12 @@ function BuyButton({ buyLinks = {} }) {
 }
 
 const initialArrays = [
-    { id: 'NE', name: 'Array NE', area: 'House', orientation: 'East', count: 6, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '', islanding: false },
-    { id: 'NW1', name: 'Array NW1', area: 'House', orientation: 'West', count: 8, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '', islanding: false },
-    { id: 'NW2', name: 'Array NW2', area: 'House', orientation: 'West', count: 3, format: 'Landscape', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '', islanding: false },
-    { id: 'S', name: 'Array S', area: 'House', orientation: 'South', count: 5, format: 'Landscape', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '', islanding: false },
-    { id: 'SW', name: 'Array SW', area: 'House', orientation: 'West', count: 4, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '', islanding: false },
-    { id: 'Garage', name: 'Array Garage', area: 'Garage', orientation: 'East', count: 3, format: 'Portrait', mounting: 'On Roof', maxPanelHeight: '', maxPanelWidth: '', islanding: false },
+    { id: 'NE', name: 'Array NE', area: 'House', orientation: 'East', count: 6, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'NW1', name: 'Array NW1', area: 'House', orientation: 'West', count: 8, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'NW2', name: 'Array NW2', area: 'House', orientation: 'West', count: 3, format: 'Landscape', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'S', name: 'Array S', area: 'House', orientation: 'South', count: 5, format: 'Landscape', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'SW', name: 'Array SW', area: 'House', orientation: 'West', count: 4, format: 'Portrait', mounting: 'In-Roof (GSE)', maxPanelHeight: '', maxPanelWidth: '' },
+    { id: 'Garage', name: 'Array Garage', area: 'Garage', orientation: 'East', count: 3, format: 'Portrait', mounting: 'On Roof', maxPanelHeight: '', maxPanelWidth: '' },
 ];
 
 
@@ -122,6 +122,8 @@ export default function App() {
     const [systemVoltage, setSystemVoltage] = useLocalStorage('solar_system_voltage', 48);
     // Global system mode: 'dc-charger' | 'grid-connected' | 'off-grid-ac'
     const [systemType, setSystemType] = useLocalStorage('solar_system_type', 'grid-connected');
+    const [filterEps, setFilterEps] = useLocalStorage('solar_filter_eps', false);
+    const [filterHouseBackup, setFilterHouseBackup] = useLocalStorage('solar_filter_house_backup', false);
 
     // Active custom areas for logical grouping
     const [areasData, setAreasData] = useLocalStorage('solar_areas', ['House', 'Garage']);
@@ -162,8 +164,7 @@ export default function App() {
                     mounting: a.mounting || 'In-Roof (GSE)',
                     maxPanelHeight: a.maxPanelHeight || '',
                     maxPanelWidth: a.maxPanelWidth || '',
-                    area: a.area || (a.id.toLowerCase().includes('garage') ? 'Garage' : 'House'),
-                    islanding: a.islanding ?? false
+                    area: a.area || (a.id.toLowerCase().includes('garage') ? 'Garage' : 'House')
                 })));
             }
             const savedSiteControllers = localStorage.getItem('solar_site_controllers');
@@ -214,7 +215,26 @@ export default function App() {
                 }
             }
             if (initialSiteControllers.length > 0) {
-                setSiteControllers(initialSiteControllers);
+                // Migration: Ensure all site controllers have an area
+                // If they are used by any array, assign that array's area.
+                // If they are unused, they might be orphans, we can leave them for now or assign a default.
+                const updatedSiteControllers = initialSiteControllers.map(sc => {
+                    if (sc.area) return sc;
+
+                    // Look for an array using this controller instance in selections
+                    // (We need the arraysData to find the area)
+                    const currentArrays = JSON.parse(localStorage.getItem('solar_arrays') || JSON.stringify(initialArrays));
+                    const currentSelections = JSON.parse(localStorage.getItem('solar_selections') || JSON.stringify(initialSelections));
+
+                    const assignedArrayId = Object.entries(currentSelections).find(([arrId, sel]) =>
+                        sel.controllerInstanceId === sc.id
+                    )?.[0];
+
+                    const assignedArea = assignedArrayId ? currentArrays.find(a => a.id === assignedArrayId)?.area : 'House';
+
+                    return { ...sc, area: assignedArea || 'House' };
+                });
+                setSiteControllers(updatedSiteControllers);
             }
 
             // Migration mapping for old mppts/inverters keys to new unified chargers list
@@ -313,7 +333,7 @@ export default function App() {
         setActiveTab('SUMMARY');
     };
 
-    const createControllerInstance = (modelId) => {
+    const createControllerInstance = (modelId, area = 'House') => {
         const model = chargersData.find(c => c.id === modelId);
         if (!model) return null;
         // Use a functional state update to ensure accurate length for naming
@@ -322,6 +342,7 @@ export default function App() {
             const newInstance = {
                 id: newInstanceId,
                 modelId,
+                area,
                 name: `${model.manufacturer ? model.manufacturer + ' ' : ''}${model.name} (#${prev.length + 1})`
             };
             return [...prev, newInstance];
@@ -1076,6 +1097,31 @@ export default function App() {
                                     </div>
                                 </dl>
                             </div>
+
+                            {/* Grid Certifications */}
+                            <div className="col-span-2">
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">UK Grid Certifications</h3>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div className={`p-3 rounded-lg border ${c.g98_cert ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
+                                        <div className="flex items-center gap-2">
+                                            {c.g98_cert ? <CheckCircle size={16} /> : <XIcon size={16} />}
+                                            <span className="text-sm font-bold">G98 Cert</span>
+                                        </div>
+                                    </div>
+                                    <div className={`p-3 rounded-lg border ${c.g99_cert ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
+                                        <div className="flex items-center gap-2">
+                                            {c.g99_cert ? <CheckCircle size={16} /> : <XIcon size={16} />}
+                                            <span className="text-sm font-bold">G99 Cert</span>
+                                        </div>
+                                    </div>
+                                    <div className={`p-3 rounded-lg border ${c.g100_cert ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
+                                        <div className="flex items-center gap-2">
+                                            {c.g100_cert ? <CheckCircle size={16} /> : <XIcon size={16} />}
+                                            <span className="text-sm font-bold">G100 Cert</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Engineering Notes */}
@@ -1255,19 +1301,7 @@ export default function App() {
                                 )}
                             </div>
 
-                            {/* Islanding checkbox — only in grid-connected mode */}
-                            {systemType === 'grid-connected' && (
-                                <label className="flex items-center gap-2 mt-3 cursor-pointer select-none">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
-                                        checked={array.islanding || false}
-                                        onChange={e => updateArray(array.id, 'islanding', e.target.checked)}
-                                    />
-                                    <span className="text-sm text-slate-700 font-medium">Islanding Capability Required</span>
-                                    <span className="text-xs text-slate-400">(EPS / backup switching)</span>
-                                </label>
-                            )}
+
                             {controller && controller.type === 'hybrid_inverter' && (
                                 <p className="text-xs text-slate-500 mt-2 italic">⚡ Hybrid inverter with built-in MPPT selected. PV string connects directly to this unit.</p>
                             )}
@@ -1557,9 +1591,7 @@ export default function App() {
                         </div>
                     ) : (() => {
                         // Controller Selector block inner logic
-                        const currentArrayChargers = availableChargers.filter(c =>
-                            !(systemType === 'grid-connected' && array.islanding && !c.islanding)
-                        );
+                        const currentArrayChargers = availableChargers;
 
                         const validControllersList = currentArrayChargers.filter(c => {
                             // Electrical bounds checks
@@ -1586,17 +1618,19 @@ export default function App() {
                             return 0;
                         });
 
+                        // Section 1: Existing Site Controllers - Filter by Area
+                        const areaControllers = siteControllers.filter(sc => sc.area === array.area);
+
                         return (
                             <div className="space-y-8">
-                                {/* Section 1: Existing Site Controllers */}
-                                {siteControllers.length > 0 && (
+                                {areaControllers.length > 0 && (
                                     <div>
                                         <div className="mb-4">
-                                            <h3 className="text-lg font-bold text-slate-800">Available Area Controllers</h3>
-                                            <p className="text-sm text-slate-500">Pick an MPPT port on an existing controller already added to your area.</p>
+                                            <h3 className="text-lg font-bold text-slate-800">Available Area Controllers ({array.area})</h3>
+                                            <p className="text-sm text-slate-500">Pick an MPPT port on an existing controller already added to this area.</p>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                            {siteControllers.map(sc => {
+                                            {areaControllers.map(sc => {
                                                 const model = chargersData.find(c => c.id === sc.modelId);
                                                 if (!model) return null;
 
@@ -1739,7 +1773,7 @@ export default function App() {
                                                                     <td className="py-3 px-4 text-right">
                                                                         <button
                                                                             onClick={() => {
-                                                                                const newInstId = createControllerInstance(c.id);
+                                                                                const newInstId = createControllerInstance(c.id, array.area);
                                                                                 updateSelection(arrayId, 'controllerInstance', newInstId, 1);
                                                                             }}
                                                                             className="px-3 py-1.5 bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-xs font-bold rounded transition-colors"
@@ -2008,25 +2042,52 @@ export default function App() {
             ));
         };
 
-        const handleSetSystemVoltage = (v) => {
-            setSystemVoltage(v);
+        const updateChargerFilters = (newType, newVoltage, newEps, newHouseBackup) => {
             setChargersData(prev => prev.map(c => {
                 const volts = c.systemVoltages || [48];
-                const matchesVoltage = v === null || volts.includes(v);
-                const matchesType = systemType === 'any' || (c.systemType || 'grid-connected') === systemType;
+                const matchesVoltage = newVoltage === null || volts.includes(newVoltage);
+
+                let matchesType = false;
+                if (newType === 'any') {
+                    matchesType = true;
+                } else if (newType === 'dc-charger') {
+                    matchesType = c.systemType === 'dc-charger';
+                } else if (newType === 'grid-connected') {
+                    matchesType = !!(c.g98_cert || c.g99_cert);
+                    if (matchesType) {
+                        if (newEps && !c.eps) matchesType = false;
+                        if (newHouseBackup && !c.house_backup) matchesType = false;
+                    }
+                } else if (newType === 'off-grid-ac') {
+                    matchesType = !!c.pure_off_grid_native;
+                }
+
                 return { ...c, active: matchesVoltage && matchesType };
             }));
         };
 
+        const handleSetSystemVoltage = (v) => {
+            setSystemVoltage(v);
+            updateChargerFilters(systemType, v, filterEps, filterHouseBackup);
+        };
+
         const handleSetSystemType = (t) => {
             setSystemType(t);
-            setChargersData(prev => prev.map(c => {
-                const matchesType = t === 'any' || (c.systemType || 'grid-connected') === t;
-                const volts = c.systemVoltages || [48];
-                const matchesVoltage = systemVoltage === null || volts.includes(systemVoltage);
-                return { ...c, active: matchesType && matchesVoltage };
-            }));
+            updateChargerFilters(t, systemVoltage, filterEps, filterHouseBackup);
         };
+
+        const handleToggleEps = () => {
+            const next = !filterEps;
+            setFilterEps(next);
+            updateChargerFilters(systemType, systemVoltage, next, filterHouseBackup);
+        };
+
+        const handleToggleHouseBackup = () => {
+            const next = !filterHouseBackup;
+            setFilterHouseBackup(next);
+            updateChargerFilters(systemType, systemVoltage, filterEps, next);
+        };
+
         return (
             <div className="space-y-6">
                 <div className="flex justify-between items-center pb-3 border-b border-slate-200">
@@ -2038,7 +2099,7 @@ export default function App() {
                         <Plus size={16} className="mr-2" /> Add Controller
                     </button>
                 </div>
-                <div className="flex flex-wrap items-center gap-6 pb-4 border-b border-slate-200">
+                <div className="space-y-4 pb-4 border-b border-slate-200">
                     <div className="flex items-center gap-3">
                         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">DC Bus Voltage</span>
                         <div className="flex gap-1">
@@ -2049,7 +2110,7 @@ export default function App() {
                                     }`}>
                                 Any
                             </button>
-                            {[12, 24, 48].map(v => (
+                            {[12, 24, 36, 48, 96].map(v => (
                                 <button key={v} onClick={() => handleSetSystemVoltage(v)}
                                     className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${systemVoltage === v
                                         ? 'bg-blue-600 text-white'
@@ -2060,35 +2121,60 @@ export default function App() {
                             ))}
                         </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Controller Type</span>
-                        <div className="flex rounded-lg overflow-hidden border border-slate-300 shadow-sm text-sm font-medium">
-                            <button
-                                onClick={() => handleSetSystemType('any')}
-                                className={`px-3 py-1.5 transition-colors ${systemType === 'any' ? 'bg-slate-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
-                            >
-                                Any
-                            </button>
-                            <button
-                                onClick={() => handleSetSystemType('dc-charger')}
-                                className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${systemType === 'dc-charger' ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
-                            >
-                                🔌 DC Charger
-                            </button>
-                            <button
-                                onClick={() => handleSetSystemType('grid-connected')}
-                                className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${systemType === 'grid-connected' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
-                            >
-                                ⚡ Grid-Connected AC
-                            </button>
-                            <button
-                                onClick={() => handleSetSystemType('off-grid-ac')}
-                                className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${systemType === 'off-grid-ac' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
-                            >
-                                🔋 Off-Grid AC
-                            </button>
+
+                    <div className="flex flex-wrap items-center gap-6">
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Controller Type</span>
+                            <div className="flex rounded-lg overflow-hidden border border-slate-300 shadow-sm text-sm font-medium">
+                                <button
+                                    onClick={() => handleSetSystemType('any')}
+                                    className={`px-3 py-1.5 transition-colors ${systemType === 'any' ? 'bg-slate-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                                >
+                                    Any
+                                </button>
+                                <button
+                                    onClick={() => handleSetSystemType('dc-charger')}
+                                    className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${systemType === 'dc-charger' ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                                >
+                                    🔌 DC Charger
+                                </button>
+                                <button
+                                    onClick={() => handleSetSystemType('grid-connected')}
+                                    className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${systemType === 'grid-connected' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                                >
+                                    ⚡ Grid-Connected AC
+                                </button>
+                                <button
+                                    onClick={() => handleSetSystemType('off-grid-ac')}
+                                    className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${systemType === 'off-grid-ac' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                                >
+                                    🔋 Off-Grid AC
+                                </button>
+                            </div>
                         </div>
-                        <p className="text-xs text-slate-400 italic">Sets Active state for matching hardware.</p>
+
+                        {systemType === 'grid-connected' && (
+                            <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
+                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
+                                    <input
+                                        type="checkbox"
+                                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                        checked={filterEps}
+                                        onChange={handleToggleEps}
+                                    />
+                                    Emergency Power (EPS)
+                                </label>
+                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
+                                    <input
+                                        type="checkbox"
+                                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                        checked={filterHouseBackup}
+                                        onChange={handleToggleHouseBackup}
+                                    />
+                                    House Blackout protection
+                                </label>
+                            </div>
+                        )}
                     </div>
                 </div>
                 {manufacturers.map(mfr => {
@@ -2410,6 +2496,11 @@ export default function App() {
                             </tr>
                         </tfoot>
                     </table>
+                    <div className="px-4 py-3 bg-slate-50 border-t border-slate-200">
+                        <p className="text-xs text-slate-500 italic">
+                            * Reminder: This hardware cost estimate includes ONLY the selected solar panels and PV controllers/inverters. It does not include mounting hardware, cabling, batteries, or installation labor.
+                        </p>
+                    </div>
                 </div>
             </div>
         );
