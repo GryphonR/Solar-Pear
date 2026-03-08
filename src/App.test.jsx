@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor, within, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AppStateProvider } from "./context/AppStateContext";
 import App from "./App";
@@ -194,8 +194,7 @@ describe("App UI flows", () => {
 
         const dialog = screen.getByRole("dialog");
         const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
-        await userEvent.clear(modelIdInput);
-        await userEvent.type(modelIdInput, "TSM-430NEG9R.28");
+        fireEvent.change(modelIdInput, { target: { value: "TSM-430NEG9R.28" } });
         await userEvent.click(screen.getByRole("button", { name: /Add Panel to Database/i }));
 
         expect(alertSpy).toHaveBeenCalledWith(
@@ -223,8 +222,7 @@ describe("App UI flows", () => {
 
         const dialog = screen.getByRole("dialog");
         const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
-        await userEvent.clear(modelIdInput);
-        await userEvent.type(modelIdInput, "ss75_15");
+        fireEvent.change(modelIdInput, { target: { value: "ss75_15" } });
         await userEvent.click(screen.getByRole("button", { name: /Add Controller to Database/i }));
 
         expect(alertSpy).toHaveBeenCalledWith(
