@@ -41,18 +41,6 @@ npm run preview
 
 ---
 
-## Deployment
-
-The repo includes a GitHub Actions workflow that runs on every push to `main`: it runs tests, builds the app, and deploys to **GitHub Pages**.
-
-1. In your repo: **Settings → Pages**.
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-3. Push to `main`; the workflow does the rest.
-
-The site will be available at `https://<username>.github.io/Solar-Selector/`.
-
----
-
 ## Tech stack
 
 - **Vite 7** — Build and dev server
@@ -64,14 +52,16 @@ The site will be available at `https://<username>.github.io/Solar-Selector/`.
 
 ## Project structure (high level)
 
-| Area | Purpose |
-|------|--------|
-| `src/App.jsx` | Main app shell, tabs, backup/restore |
-| `src/context/AppStateContext.jsx` | Shared state and persistence |
-| `src/views/` | Summary, array selector, panels/chargers/arrays DB views |
-| `src/components/` | Modals, guide, logo, icons |
-| `src/lib/` | Array analysis, compatibility, migration |
-| `src/data/` | Default panels and chargers (JSON) |
+
+| Area                              | Purpose                                                  |
+| --------------------------------- | -------------------------------------------------------- |
+| `src/App.jsx`                     | Main app shell, tabs, backup/restore                     |
+| `src/context/AppStateContext.jsx` | Shared state and persistence                             |
+| `src/views/`                      | Summary, array selector, panels/chargers/arrays DB views |
+| `src/components/`                 | Modals, guide, logo, icons                               |
+| `src/lib/`                        | Array analysis, compatibility, migration                 |
+| `src/data/`                       | Default panels and chargers (JSON)                       |
+
 
 ---
 
@@ -87,14 +77,16 @@ The site will be available at `https://<username>.github.io/Solar-Selector/`.
 
 ## Scripts reference
 
-| Command | Description |
-|--------|-------------|
-| `npm run dev` | Start Vite dev server |
-| `npm run build` | Production build (output in `dist/`) |
-| `npm run preview` | Serve the production build locally |
-| `npm run test` | Run Vitest in watch mode |
-| `npx vitest run` | Run tests once (e.g. in CI) |
-| `npm run test:coverage` | Run tests with coverage report |
+
+| Command                 | Description                          |
+| ----------------------- | ------------------------------------ |
+| `npm run dev`           | Start Vite dev server                |
+| `npm run build`         | Production build (output in `dist/`) |
+| `npm run preview`       | Serve the production build locally   |
+| `npm run test`          | Run Vitest in watch mode             |
+| `npx vitest run`        | Run tests once (e.g. in CI)          |
+| `npm run test:coverage` | Run tests with coverage report       |
+
 
 ---
 

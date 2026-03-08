@@ -58,8 +58,8 @@ export function AppStateProvider({ children }) {
         'solar_hide_marginal_panels',
         false
     );
-    const [systemVoltage, setSystemVoltage] = useLocalStorage('solar_system_voltage', 48);
-    const [systemType, setSystemType] = useLocalStorage('solar_system_type', 'grid-connected');
+    const [systemVoltage, setSystemVoltage] = useLocalStorage('solar_system_voltage', null);
+    const [systemType, setSystemType] = useLocalStorage('solar_system_type', 'any');
     const [filterEps, setFilterEps] = useLocalStorage('solar_filter_eps', false);
     const [filterHouseBackup, setFilterHouseBackup] = useLocalStorage(
         'solar_filter_house_backup',
@@ -224,7 +224,7 @@ export function AppStateProvider({ children }) {
                 name: '',
                 manufacturer: '',
                 type: 'mppt',
-                systemVoltages: [systemVoltage],
+                systemVoltages: systemVoltage != null ? [systemVoltage] : [48],
                 maxV: 0,
                 maxIsc: 0,
                 startupV: 0,
