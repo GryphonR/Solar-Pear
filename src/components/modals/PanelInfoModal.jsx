@@ -32,20 +32,33 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
                     <div>
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Physical Specifications</h3>
                         <dl className="space-y-3 text-sm">
-                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Dimensions</dt><dd className="text-slate-800 font-semibold">{p.height || 'Unknown'} x {p.width || 'Unknown'} mm</dd></div>
-                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Weight</dt><dd className="text-slate-800 font-semibold">{p.weight ? `${p.weight} kg` : 'Unknown'}</dd></div>
-                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Glass Type</dt><dd className="text-slate-800 font-semibold">{p.glass || 'Unknown'}</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Dimensions</dt><dd className="text-slate-800 font-semibold">{p.height || '—'} × {p.width || '—'} mm</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Frame depth</dt><dd className="text-slate-800 font-semibold">{p.depth != null ? `${p.depth} mm` : '—'}</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Weight</dt><dd className="text-slate-800 font-semibold">{p.weight ? `${p.weight} kg` : '—'}</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Glass Type</dt><dd className="text-slate-800 font-semibold">{p.glass || '—'}</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Bifaciality</dt><dd className="text-slate-800 font-semibold">{p.bifacial ? 'Yes (Rear Yield)' : 'No (Mono-facial)'}</dd></div>
-                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Cell Layout</dt><dd className="text-slate-800 font-semibold">{p.cells || 'Unknown'}</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Cell Layout</dt><dd className="text-slate-800 font-semibold">{p.cells || '—'}</dd></div>
                         </dl>
                     </div>
                     <div>
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Electrical Limits (STC)</h3>
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Electrical (STC)</h3>
                         <dl className="space-y-3 text-sm">
-                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Efficiency</dt><dd className="text-slate-800 font-semibold text-blue-700">{p.efficiency ? `${p.efficiency}%` : 'Unknown'}</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Efficiency</dt><dd className="text-slate-800 font-semibold text-blue-700">{p.efficiency ? `${p.efficiency}%` : '—'}</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Voc (Open Circuit)</dt><dd className="text-slate-800 font-semibold">{p.voc} V</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Vmp (Max Power)</dt><dd className="text-slate-800 font-semibold">{p.vmp} V</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Isc (Short Circuit)</dt><dd className="text-slate-800 font-semibold">{p.isc} A</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Imp (Max Power Current)</dt><dd className="text-slate-800 font-semibold">{p.imp != null ? `${p.imp} A` : '—'}</dd></div>
+                        </dl>
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 mt-4 border-b border-slate-100 pb-2">Temperature coefficients (%/°C)</h3>
+                        <dl className="space-y-3 text-sm">
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Pmax</dt><dd className="text-slate-800 font-semibold">{p.tempCoefPmax != null ? `${p.tempCoefPmax}%` : '—'}</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Voc</dt><dd className="text-slate-800 font-semibold">{p.tempCoefVoc != null ? `${p.tempCoefVoc}%` : '—'}</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Isc</dt><dd className="text-slate-800 font-semibold">{p.tempCoefIsc != null ? `${p.tempCoefIsc}%` : '—'}</dd></div>
+                        </dl>
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 mt-4 border-b border-slate-100 pb-2">Safety / system limits</h3>
+                        <dl className="space-y-3 text-sm">
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Max series fuse</dt><dd className="text-slate-800 font-semibold">{p.maxSeriesFuse != null ? `${p.maxSeriesFuse} A` : '—'}</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Max system voltage</dt><dd className="text-slate-800 font-semibold">{p.maxSystemVoltage != null ? `${p.maxSystemVoltage} V DC` : '—'}</dd></div>
                         </dl>
                     </div>
                 </div>

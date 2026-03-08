@@ -151,7 +151,7 @@ const Guide = () => {
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 text-blue-600 font-bold">
                             <Download size={18} />
-                            <span>Backup (Save)</span>
+                            <span>Save</span>
                         </div>
                         <p className="text-sm text-slate-600 leading-relaxed">
                             Click the blue download button in the sidebar to export your entire project as a <span className="font-mono bg-slate-100 px-1 rounded">.json</span> file. This is the only way to save your work permanently outside of this browser.
@@ -160,7 +160,7 @@ const Guide = () => {
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 text-emerald-600 font-bold">
                             <Upload size={18} />
-                            <span>Restore (Load)</span>
+                            <span>Restore</span>
                         </div>
                         <p className="text-sm text-slate-600 leading-relaxed">
                             To view your project on another computer or after clearing your cache, use the green upload button to import your saved backup file.
@@ -169,7 +169,7 @@ const Guide = () => {
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 text-red-600 font-bold">
                             <RotateCcw size={18} />
-                            <span>Reset (Factory)</span>
+                            <span>Reset</span>
                         </div>
                         <p className="text-sm text-slate-600 leading-relaxed">
                             Use the red reset button to wipe all local data and return the application to its default state. Warning: this cannot be undone without a backup!

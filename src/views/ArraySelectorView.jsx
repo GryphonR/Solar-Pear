@@ -8,7 +8,7 @@ import {
     Trash2,
 } from '../components/Icons';
 import BuyButton from '../components/BuyButton';
-import { isCompatibleFormat } from '../lib/arrayAnalysis';
+import { isCompatibleFormat, coldVocFactor, hotVmpFactor, hotIscFactor } from '../lib/arrayAnalysis';
 import { useAppState } from '../context/AppStateContext';
 
 export default function ArraySelectorView({ arrayId }) {
@@ -48,6 +48,7 @@ export default function ArraySelectorView({ arrayId }) {
         controller,
         coldVoc,
         hotVmp,
+        arrayIscHot,
         peakPower,
         status,
         messages,
@@ -61,16 +62,16 @@ export default function ArraySelectorView({ arrayId }) {
             const pStrings = array.parallelStrings || 1;
             const panelsPerSeriesString = array.count / pStrings;
             const pStringVocSTC = p.voc * panelsPerSeriesString;
-            const pColdVoc = pStringVocSTC * 1.084;
+            const pColdVoc = pStringVocSTC * coldVocFactor(p);
             const pStringVmpSTC = p.vmp * panelsPerSeriesString;
-            const pHotVmp = pStringVmpSTC * 0.9;
+            const pHotVmp = pStringVmpSTC * hotVmpFactor(p);
+            const pArrayIscHot = p.isc * pStrings * hotIscFactor(p);
             const pCost = p.price * array.count;
             const pCostPerKWp = pPeakPower > 0 ? pCost / (pPeakPower / 1000) : 0;
             const isPhysicallyOk = isCompatibleFormat(array, p);
             const isVocOk = !controller || pColdVoc <= controller.maxV;
             const isVmpOk = !controller || pHotVmp >= controller.startupV;
-            const arrayIsc = p.isc * pStrings;
-            const isIscOk = !controller || arrayIsc <= controller.maxIsc;
+            const isIscOk = !controller || pArrayIscHot <= controller.maxIsc;
             const maxW =
                 array.maxPanelWeight !== '' && array.maxPanelWeight != null
                     ? Number(array.maxPanelWeight)
@@ -139,7 +140,7 @@ export default function ArraySelectorView({ arrayId }) {
         if (!panel) return true;
         const isVoltageOk = coldVoc <= c.maxV;
         const isStartupOk = hotVmp >= c.startupV;
-        const isCurrentOk = panel.isc <= c.maxIsc;
+        const isCurrentOk = arrayIscHot <= c.maxIsc;
         return isVoltageOk && isStartupOk && isCurrentOk;
     });
 
@@ -259,7 +260,7 @@ export default function ArraySelectorView({ arrayId }) {
                                 </span>
                                 {controller ? (
                                     <span className="text-sm font-bold text-slate-800">
-                                        {controller.name}
+                                        {controller.manufacturer ? `${controller.manufacturer} ${controller.name}` : controller.name}
                                     </span>
                                 ) : (
                                     <span className="text-sm font-bold text-slate-400 italic">
@@ -341,57 +342,85 @@ export default function ArraySelectorView({ arrayId }) {
                         </div>
                     </div>
 
-                    {panel && controller && (
+                    {panel && (
                         <div className="grid grid-cols-3 gap-4">
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                            <div
+                                className="bg-white p-4 rounded-lg shadow-sm border border-slate-200"
+                                title="Open-circuit voltage of the string at −10°C. Uses panel tempCoefVoc when available, else string Voc (STC) × 1.084. Must stay below your MPPT's maximum PV input to avoid damage."
+                            >
                                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
                                     Cold Voc (-10°C)
                                 </p>
                                 <p
                                     className={`text-2xl font-light ${
-                                        coldVoc > controller.maxV ? 'text-red-600 font-bold' : 'text-slate-800'
+                                        controller && coldVoc > controller.maxV
+                                            ? 'text-red-600 font-bold'
+                                            : 'text-slate-800'
                                     }`}
                                 >
                                     {coldVoc.toFixed(1)} <span className="text-sm">V</span>
                                 </p>
-                                <p className="text-xs text-slate-400 mt-1">
-                                    Controller Limit: {controller.maxV}V
-                                </p>
+                                {controller ? (
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Controller Limit: {controller.maxV}V
+                                    </p>
+                                ) : (
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Select a controller to compare limits
+                                    </p>
+                                )}
                             </div>
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                            <div
+                                className="bg-white p-4 rounded-lg shadow-sm border border-slate-200"
+                                title="Maximum power point voltage of the string at 65°C. Uses panel tempCoefPmax when available to derive Vmp factor, else string Vmp (STC) × 0.9. Must stay above your MPPT's minimum startup voltage or it won't operate."
+                            >
                                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
                                     Hot Vmp (65°C)
                                 </p>
                                 <p
                                     className={`text-2xl font-light ${
-                                        hotVmp < controller.startupV
+                                        controller && hotVmp < controller.startupV
                                             ? 'text-red-600 font-bold'
                                             : 'text-slate-800'
                                     }`}
                                 >
                                     {hotVmp.toFixed(1)} <span className="text-sm">V</span>
                                 </p>
-                                <p className="text-xs text-slate-400 mt-1">
-                                    Required to Start: {controller.startupV}V
-                                </p>
+                                {controller ? (
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Required to Start: {controller.startupV}V
+                                    </p>
+                                ) : (
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Select a controller to compare limits
+                                    </p>
+                                )}
                             </div>
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                            <div
+                                className="bg-white p-4 rounded-lg shadow-sm border border-slate-200"
+                                title="Short-circuit current at 65°C (hot). Calculated as string Isc (STC) × (1 + 40 × tempCoefIsc/100). Must not exceed the MPPT's max Isc."
+                            >
                                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                                    Array Isc
+                                    Array Isc (Hot 65°C)
                                 </p>
                                 <p
                                     className={`text-2xl font-light ${
-                                        panel.isc * (array.parallelStrings || 1) > controller.maxIsc
+                                        controller && arrayIscHot > controller.maxIsc
                                             ? 'text-red-600 font-bold'
                                             : 'text-slate-800'
                                     }`}
                                 >
-                                    {(panel.isc * (array.parallelStrings || 1)).toFixed(2)}{' '}
-                                    <span className="text-sm">A</span>
+                                    {arrayIscHot.toFixed(2)} <span className="text-sm">A</span>
                                 </p>
-                                <p className="text-xs text-slate-400 mt-1">
-                                    Controller Limit: {controller.maxIsc}A
-                                </p>
+                                {controller ? (
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Controller Limit: {controller.maxIsc}A
+                                    </p>
+                                ) : (
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Select a controller to compare limits
+                                    </p>
+                                )}
                             </div>
                         </div>
                     )}
@@ -400,15 +429,59 @@ export default function ArraySelectorView({ arrayId }) {
 
             {panel && (
                 <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mt-6 mb-4">
-                    <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
+                    <h3 className="text-sm font-bold text-slate-800 mb-2 flex items-center">
                         <Info size={16} className="mr-2 text-blue-600" />
-                        Panel Notes: <span className="ml-2 font-normal">{panel.name}</span>
+                        Panel: <span className="ml-2 font-normal">{panel.name}</span>
                     </h3>
+                    <div className="flex flex-wrap items-center gap-2 mb-4">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{panel.power} W</span>
+                        <span className="text-sm font-medium text-slate-600">£{panel.price} per unit</span>
+                        {panel.datasheetUrl && (
+                            <a href={panel.datasheetUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200">
+                                <ExternalLink size={12} className="mr-1" /> Datasheet
+                            </a>
+                        )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-6 mb-6">
+                        <div className="bg-white p-3 rounded border border-slate-200">
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-100 pb-1">Physical specifications</h4>
+                            <dl className="space-y-2 text-sm">
+                                <div className="flex justify-between"><dt className="text-slate-500">Dimensions</dt><dd className="text-slate-800 font-medium">{panel.height || '—'} × {panel.width || '—'} mm</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Depth</dt><dd className="text-slate-800 font-medium">{panel.depth != null ? `${panel.depth} mm` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Weight</dt><dd className="text-slate-800 font-medium">{panel.weight ? `${panel.weight} kg` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Glass</dt><dd className="text-slate-800 font-medium">{panel.glass || '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Bifacial</dt><dd className="text-slate-800 font-medium">{panel.bifacial ? 'Yes' : 'No'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Cells</dt><dd className="text-slate-800 font-medium">{panel.cells || '—'}</dd></div>
+                            </dl>
+                        </div>
+                        <div className="bg-white p-3 rounded border border-slate-200">
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-100 pb-1">Electrical (STC)</h4>
+                            <dl className="space-y-2 text-sm">
+                                <div className="flex justify-between"><dt className="text-slate-500">Efficiency</dt><dd className="text-slate-800 font-medium text-blue-700">{panel.efficiency ? `${panel.efficiency}%` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Voc</dt><dd className="text-slate-800 font-medium">{panel.voc} V</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Vmp</dt><dd className="text-slate-800 font-medium">{panel.vmp} V</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Isc</dt><dd className="text-slate-800 font-medium">{panel.isc} A</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Imp</dt><dd className="text-slate-800 font-medium">{panel.imp != null ? `${panel.imp} A` : '—'}</dd></div>
+                            </dl>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-3 mb-2 border-b border-slate-100 pb-1">Temp. coeff. (%/°C)</h4>
+                            <dl className="space-y-2 text-sm">
+                                <div className="flex justify-between"><dt className="text-slate-500">Pmax</dt><dd className="text-slate-800 font-medium">{panel.tempCoefPmax != null ? `${panel.tempCoefPmax}%` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Voc</dt><dd className="text-slate-800 font-medium">{panel.tempCoefVoc != null ? `${panel.tempCoefVoc}%` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Isc</dt><dd className="text-slate-800 font-medium">{panel.tempCoefIsc != null ? `${panel.tempCoefIsc}%` : '—'}</dd></div>
+                            </dl>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-3 mb-2 border-b border-slate-100 pb-1">Safety / limits</h4>
+                            <dl className="space-y-2 text-sm">
+                                <div className="flex justify-between"><dt className="text-slate-500">Max series fuse</dt><dd className="text-slate-800 font-medium">{panel.maxSeriesFuse != null ? `${panel.maxSeriesFuse} A` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Max system V</dt><dd className="text-slate-800 font-medium">{panel.maxSystemVoltage != null ? `${panel.maxSystemVoltage} V` : '—'}</dd></div>
+                            </dl>
+                        </div>
+                    </div>
                     <div className="grid grid-cols-2 gap-8 items-stretch">
                         <div className="flex flex-col">
                             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                                 Engineering Notes
                             </p>
+                            <p className="text-xs text-slate-400 italic mb-2">AI generated, may not be accurate.</p>
                             <div className="text-sm text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">
                                 {panel.notes || 'No specific architectural notes for this module.'}
                             </div>
@@ -433,16 +506,55 @@ export default function ArraySelectorView({ arrayId }) {
 
             {controller && (
                 <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-4">
-                    <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
+                    <h3 className="text-sm font-bold text-slate-800 mb-2 flex items-center">
                         <Info size={16} className="mr-2 text-emerald-600" />
-                        Controller Notes:{' '}
-                        <span className="ml-2 font-normal">{controller.name}</span>
+                        Controller: <span className="ml-2 font-normal">{controller.manufacturer ? `${controller.manufacturer} ${controller.name}` : controller.name}</span>
                     </h3>
+                    <div className="flex flex-wrap items-center gap-2 mb-4">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${controller.type === 'hybrid_inverter' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
+                            {controller.type === 'hybrid_inverter' ? 'Hybrid Inverter' : 'MPPT Charger'}
+                        </span>
+                        <span className="text-sm font-medium text-slate-600">£{controller.price || 0} per unit</span>
+                        {controller.datasheetUrl && (
+                            <a href={controller.datasheetUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200">
+                                <ExternalLink size={12} className="mr-1" /> Datasheet
+                            </a>
+                        )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-6 mb-4">
+                        <div className="bg-white p-3 rounded border border-slate-200">
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-100 pb-1">Input specifications</h4>
+                            <dl className="space-y-2 text-sm">
+                                <div className="flex justify-between"><dt className="text-slate-500">Max PV Voltage</dt><dd className="text-red-700 font-bold">{controller.maxV} V</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Startup Voltage</dt><dd className="text-slate-800 font-medium">{controller.startupV} V</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Max Isc</dt><dd className="text-slate-800 font-medium">{controller.maxIsc ?? 'N/A'} A</dd></div>
+                            </dl>
+                        </div>
+                        <div className="bg-white p-3 rounded border border-slate-200">
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-100 pb-1">System compatibility</h4>
+                            <dl className="space-y-2 text-sm">
+                                <div className="flex justify-between"><dt className="text-slate-500">Battery voltages</dt><dd className="text-slate-800 font-medium">{(controller.systemVoltages || [48]).join('V, ')}V</dd></div>
+                            </dl>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-3 mb-2 border-b border-slate-100 pb-1">UK grid certifications</h4>
+                            <div className="flex flex-wrap gap-2">
+                                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${controller.g98_cert ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-slate-100 text-slate-400'}`}>
+                                    {controller.g98_cert ? <CheckCircle size={12} /> : <XIcon size={12} />} G98
+                                </span>
+                                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${controller.g99_cert ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-slate-100 text-slate-400'}`}>
+                                    {controller.g99_cert ? <CheckCircle size={12} /> : <XIcon size={12} />} G99
+                                </span>
+                                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${controller.g100_cert ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-slate-100 text-slate-400'}`}>
+                                    {controller.g100_cert ? <CheckCircle size={12} /> : <XIcon size={12} />} G100
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                     <div className="grid grid-cols-2 gap-8 items-stretch">
                         <div className="flex flex-col">
                             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                                 Engineering Notes
                             </p>
+                            <p className="text-xs text-slate-400 italic mb-2">AI generated, may not be accurate.</p>
                             <div className="text-sm text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">
                                 {controller.notes ||
                                     'No specific architectural notes for this controller.'}
@@ -762,7 +874,7 @@ export default function ArraySelectorView({ arrayId }) {
                                         if (panel) {
                                             const isVoltageOk = coldVoc <= model.maxV;
                                             const isStartupOk = hotVmp >= model.startupV;
-                                            const isCurrentOk = panel.isc <= model.maxIsc;
+                                            const isCurrentOk = arrayIscHot <= model.maxIsc;
                                             isElectricalValid =
                                                 isVoltageOk && isStartupOk && isCurrentOk;
                                         }

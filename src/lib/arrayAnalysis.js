@@ -1,3 +1,23 @@
+const COLD_TEMP_C = -10;
+const HOT_TEMP_C = 65;
+const STC_TEMP_C = 25;
+
+export function coldVocFactor(panel) {
+    if (panel.tempCoefVoc == null) return 1.084;
+    return 1 + ((COLD_TEMP_C - STC_TEMP_C) * panel.tempCoefVoc) / 100;
+}
+
+export function hotVmpFactor(panel) {
+    if (panel.tempCoefPmax == null) return 0.9;
+    const pRatio = 1 + ((HOT_TEMP_C - STC_TEMP_C) * panel.tempCoefPmax) / 100;
+    return pRatio > 0 ? Math.sqrt(pRatio) : 0.9;
+}
+
+export function hotIscFactor(panel) {
+    if (panel.tempCoefIsc == null) return 1;
+    return 1 + ((HOT_TEMP_C - STC_TEMP_C) * panel.tempCoefIsc) / 100;
+}
+
 export const isCompatibleFormat = (array, panel) => {
     const aMounting = array.mounting || "In-Roof (GSE)";
     if (aMounting === "On Roof") return true;
@@ -58,10 +78,13 @@ export const analyzeArray = (
             peakPower = panel.power * array.count;
             const pStrings = array.parallelStrings || 1;
             const panelsPerSeriesString = array.count / pStrings;
-            coldVoc = panel.voc * panelsPerSeriesString * 1.084;
-            hotVmp = panel.vmp * panelsPerSeriesString * 0.9;
+            coldVoc = panel.voc * panelsPerSeriesString * coldVocFactor(panel);
+            hotVmp = panel.vmp * panelsPerSeriesString * hotVmpFactor(panel);
             cost = panel.price * array.count;
         }
+        const arrayIscHot = panel
+            ? panel.isc * (array.parallelStrings || 1) * hotIscFactor(panel)
+            : 0;
 
         return {
             array,
@@ -78,6 +101,7 @@ export const analyzeArray = (
             costPerKWp: peakPower > 0 ? cost / (peakPower / 1000) : 0,
             coldVoc,
             hotVmp,
+            arrayIscHot,
         };
     }
 
@@ -86,17 +110,18 @@ export const analyzeArray = (
     const panelsPerSeriesString = array.count / pStrings;
 
     const stringVocSTC = panel.voc * panelsPerSeriesString;
-    const coldVoc = stringVocSTC * 1.084;
+    const coldVoc = stringVocSTC * coldVocFactor(panel);
 
     const stringVmpSTC = panel.vmp * panelsPerSeriesString;
-    const hotVmp = stringVmpSTC * 0.9;
+    const hotVmp = stringVmpSTC * hotVmpFactor(panel);
     const cost = panel.price * array.count;
+
+    const arrayIscHot = panel.isc * pStrings * hotIscFactor(panel);
 
     const isVocError = coldVoc > controller.maxV;
     const isVocWarn = coldVoc > controller.maxV * 0.94 && !isVocError;
     const isVmpError = hotVmp < controller.startupV;
-    const arrayIsc = panel.isc * pStrings;
-    const isIscError = arrayIsc > controller.maxIsc;
+    const isIscError = arrayIscHot > controller.maxIsc;
     const isFormatError = !isCompatibleFormat(array, panel);
 
     let status = "valid";
@@ -166,14 +191,15 @@ export const analyzeArray = (
     if (isIscError) {
         status = "error";
         messages.push(
-            `FATAL: Array Isc (${arrayIsc.toFixed(
+            `FATAL: Array Isc at 65°C (${arrayIscHot.toFixed(
                 2
             )}A) exceeds PV controller tracker limit (${controller.maxIsc}A).`
         );
     }
 
     if (messages.length === 0) {
-        messages.push("Configuration is safe.");
+        // messages.push("Configuration is safe.");
+        messages.push("");
     }
 
     return {
@@ -189,6 +215,7 @@ export const analyzeArray = (
         costPerKWp: peakPower > 0 ? cost / (peakPower / 1000) : 0,
         coldVoc,
         hotVmp,
+        arrayIscHot,
     };
 };
 

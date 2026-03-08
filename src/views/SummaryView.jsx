@@ -27,7 +27,7 @@ export default function SummaryView() {
     const bomPanels = {};
     const bomControllers = {};
 
-    const summaryRows = arraysData.map((array) => {
+    const panelSummaryRows = arraysData.map((array) => {
         const analysis = getArrayAnalysis(array.id);
         if (!analysis) return null;
 
@@ -61,18 +61,6 @@ export default function SummaryView() {
                     {analysis.peakPower.toLocaleString()} W
                 </td>
                 <td className="py-3 px-4">
-                    {analysis.controllerInstance ? (
-                        <span>
-                            {analysis.controllerInstance.name}{' '}
-                            <span className="text-xs text-slate-400">
-                                ({analysis.controller?.modelNumber ?? analysis.controller?.id}) MPPT {analysis.mpptIndex}
-                            </span>
-                        </span>
-                    ) : (
-                        <span className="text-slate-400 italic">No Controller</span>
-                    )}
-                </td>
-                <td className="py-3 px-4">
                     {analysis.status === 'error' ? (
                         <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold">FAILED</span>
                     ) : analysis.status === 'warning' ? (
@@ -82,8 +70,8 @@ export default function SummaryView() {
                     )}
                 </td>
                 <td className="py-3 px-4">£{analysis.costPerKWp.toFixed(2)}</td>
-                <td className="py-3 px-4 text-right text-slate-500 italic">
-                    £{analysis.cost.toLocaleString()} (Panels)
+                <td className="py-3 px-4 text-right font-medium text-slate-800">
+                    £{analysis.cost.toLocaleString()}
                 </td>
             </tr>
         );
@@ -93,6 +81,7 @@ export default function SummaryView() {
         arraysData.map((a) => getArrayAnalysis(a.id)?.controllerInstance?.id).filter(Boolean)
     );
 
+    const controllerSummaryRows = [];
     siteControllers.forEach((sc) => {
         if (activeInstanceIds.has(sc.id)) {
             const model = chargersData.find((c) => c.id === sc.modelId);
@@ -102,6 +91,16 @@ export default function SummaryView() {
                 }
                 bomControllers[model.id].qty += 1;
                 totalCost += model.price;
+                const arraysUsingThis = arraysData.filter(
+                    (a) => selections[a.id]?.controllerInstanceId === sc.id
+                );
+                controllerSummaryRows.push({
+                    key: sc.id,
+                    name: sc.name,
+                    modelRef: model.modelNumber ?? model.id,
+                    arrayNames: arraysUsingThis.map((a) => a.name).join(', ') || '—',
+                    cost: model.price,
+                });
                 const assignedArrayId = Object.entries(selections).find(
                     ([_, sel]) => sel.controllerInstanceId === sc.id
                 )?.[0];
@@ -207,39 +206,89 @@ export default function SummaryView() {
                 </div>
             )}
 
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 font-semibold text-slate-700">
-                    Array Configuration Breakdown
+            <div className="space-y-6">
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 font-semibold text-slate-700">
+                        Panel configuration
+                    </div>
+                    <div className="max-h-[400px] overflow-y-auto">
+                        <table className="w-full text-left border-collapse relative">
+                            <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
+                                <tr>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Array
+                                    </th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Panels
+                                    </th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Array Peak
+                                    </th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        £/kWp
+                                    </th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                        Panel cost
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>{panelSummaryRows}</tbody>
+                        </table>
+                    </div>
                 </div>
-                <div className="max-h-[400px] overflow-y-auto">
-                    <table className="w-full text-left border-collapse relative">
-                        <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
-                            <tr>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Array
-                                </th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Panels
-                                </th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Array Peak
-                                </th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    PV Controller
-                                </th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    £/kWp
-                                </th>
-                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
-                                    Cost
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>{summaryRows}</tbody>
-                    </table>
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 font-semibold text-slate-700">
+                        Controller configuration
+                    </div>
+                    <div className="max-h-[400px] overflow-y-auto">
+                        <table className="w-full text-left border-collapse relative">
+                            <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
+                                <tr>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Controller
+                                    </th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Model
+                                    </th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Arrays
+                                    </th>
+                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                        Cost
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {controllerSummaryRows.length > 0 ? (
+                                    controllerSummaryRows.map((row) => (
+                                        <tr
+                                            key={row.key}
+                                            className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                                        >
+                                            <td className="py-3 px-4 font-semibold">{row.name}</td>
+                                            <td className="py-3 px-4 text-slate-600">{row.modelRef}</td>
+                                            <td className="py-3 px-4 text-slate-600">{row.arrayNames}</td>
+                                            <td className="py-3 px-4 text-right font-medium text-slate-800">
+                                                £{row.cost.toLocaleString()}
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan="4"
+                                            className="py-8 px-4 text-center text-slate-500 italic"
+                                        >
+                                            No controllers assigned to arrays.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -296,7 +345,7 @@ export default function SummaryView() {
                     <tfoot>
                         <tr className="bg-slate-100 text-slate-800 border-t-2 border-slate-300">
                             <td colSpan="3" className="py-4 px-4 text-right font-bold text-lg">
-                                Total Hardware Cost:
+                                Panel and Controller Cost:
                             </td>
                             <td className="py-4 px-4 text-right font-bold text-2xl text-blue-700">
                                 £{totalCost.toLocaleString()}
@@ -304,13 +353,6 @@ export default function SummaryView() {
                         </tr>
                     </tfoot>
                 </table>
-                <div className="px-4 py-3 bg-slate-50 border-t border-slate-200">
-                    <p className="text-xs text-slate-500 italic">
-                        * Reminder: This hardware cost estimate includes ONLY the selected solar panels and PV
-                        controllers/inverters. It does not include mounting hardware, cabling, batteries, or
-                        installation labor.
-                    </p>
-                </div>
             </div>
         </div>
     );
