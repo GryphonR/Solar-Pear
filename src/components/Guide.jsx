@@ -28,7 +28,6 @@ const Guide = () => {
                     <Info size={20} />
                 </div>
                 <div>
-                    <h4 className="text-lg font-bold text-slate-900 mb-1">Prerequisite:</h4>
                     <p className="text-slate-600 leading-relaxed">
                         Before using this tool, you must know <span className="font-semibold">how many panels</span> can physically fit in each of your intended arrays. Solar Pear does not perform the initial spatial roof layout.
                     </p>
@@ -77,7 +76,56 @@ const Guide = () => {
                 </div>
             </div>
 
-
+            {/* Feature overview */}
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-slate-100 bg-slate-50">
+                    <h3 className="text-xl font-bold text-slate-800">Why use Solar Pear?</h3>
+                    <p className="text-slate-600 text-sm mt-1">What makes it useful compared to spreadsheets, manufacturer tools, or generic calculators.</p>
+                </div>
+                <div className="p-6 space-y-8">
+                    <section>
+                        <div className="flex items-center gap-2 mb-3">
+                            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <Layers size={20} />
+                            </div>
+                            <h4 className="text-lg font-bold text-slate-800">Arrays</h4>
+                        </div>
+                        <ul className="space-y-2 text-slate-600 text-sm list-disc list-inside ml-1">
+                            <li><strong>One place for your whole site</strong> — model multiple roof areas and arrays instead of juggling separate tools or sheets.</li>
+                            <li><strong>Electrical Checks</strong> — cold Voc and hot Vmp are calculated for your string layout so you don’t guess or oversize blindly.</li>
+                            <li><strong>Physical fit</strong> — filter by max panel size and weight so you only see options that actually fit your roof and mounting.</li>
+                            <li><strong>Compare fairly</strong> — see peak power and cost per kWp per array so you can choose the best panel for each spot.</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <div className="flex items-center gap-2 mb-3">
+                            <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <LayoutDashboard size={20} />
+                            </div>
+                            <h4 className="text-lg font-bold text-slate-800">Panels</h4>
+                        </div>
+                        <ul className="space-y-2 text-slate-600 text-sm list-disc list-inside ml-1">
+                            <li><strong>Roof-first, not panel-first</strong> — start from “I have N panels here” and find what works, instead of designing around one brand’s tool.</li>
+                            <li><strong>Mix and match</strong> — one database for many brands; enable or hide manufacturers to focus on what you can actually source.</li>
+                            <li><strong>In-roof (GSE) aware</strong> — only see panels that suit in-roof if that’s your mounting, so you avoid incompatible choices.</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <div className="flex items-center gap-2 mb-3">
+                            <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <Server size={20} />
+                            </div>
+                            <h4 className="text-lg font-bold text-slate-800">PV Controllers</h4>
+                        </div>
+                        <ul className="space-y-2 text-slate-600 text-sm list-disc list-inside ml-1">
+                            <li><strong>Panel and controller in one flow</strong> — pick panels then see which controllers match (or the other way round), without switching apps.</li>
+                            <li><strong>Proper compatibility checks</strong> — Voc, Vmp, and Isc are validated so you don’t pair a string that’s outside the controller’s range.</li>
+                            <li><strong>System type and voltage</strong> — filter by DC bus (12–96 V), grid vs off-grid, and EPS/backup so you only see relevant kit.</li>
+                            <li><strong>Multiple controllers per array</strong> — model splitting an array across units and keep everything electrically consistent.</li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
 
             <div className="bg-slate-900 rounded-2xl p-8 text-slate-300 border border-slate-800 shadow-xl">
                 <div className="flex items-center gap-3 mb-6">

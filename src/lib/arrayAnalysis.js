@@ -122,10 +122,19 @@ export const analyzeArray = (
     const isWidthOk =
         !array.maxPanelWidth ||
         (panel.width && panel.width <= array.maxPanelWidth);
+    const isWeightOk =
+        !array.maxPanelWeight ||
+        (panel.weight != null && panel.weight <= Number(array.maxPanelWeight));
     if (!isHeightOk || !isWidthOk) {
         status = "error";
         messages.push(
             `FATAL PHYSICAL: The selected panel (${panel.height}x${panel.width}mm) exceeds your specified maximum dimensions for this array.`
+        );
+    }
+    if (!isWeightOk && array.maxPanelWeight) {
+        status = "error";
+        messages.push(
+            `FATAL PHYSICAL: The selected panel (${panel.weight}kg) exceeds your specified maximum panel weight (${array.maxPanelWeight}kg) for this array.`
         );
     }
 

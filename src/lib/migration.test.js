@@ -40,6 +40,7 @@ describe("migrateArrays", () => {
         expect(result.mounting).toBe("In-Roof (GSE)");
         expect(result.maxPanelHeight).toBe("");
         expect(result.maxPanelWidth).toBe("");
+        expect(result.maxPanelWeight).toBe("");
         expect(result.area).toBe("Garage");
     });
 });

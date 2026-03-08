@@ -21,6 +21,7 @@ const initialArrays = [
         mounting: 'On Roof',
         maxPanelHeight: '',
         maxPanelWidth: '',
+        maxPanelWeight: '',
     },
 ];
 
@@ -293,6 +294,7 @@ export function AppStateProvider({ children }) {
                 mounting: 'On Roof',
                 maxPanelHeight: '',
                 maxPanelWidth: '',
+                maxPanelWeight: '',
             },
         });
     };

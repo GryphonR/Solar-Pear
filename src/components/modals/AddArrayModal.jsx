@@ -10,6 +10,7 @@ const defaultData = {
     mounting: 'On Roof',
     maxPanelHeight: '',
     maxPanelWidth: '',
+    maxPanelWeight: '',
 };
 
 export default function AddArrayModal({ open, data = defaultData, areas, onClose, onSave, onUpdateField }) {

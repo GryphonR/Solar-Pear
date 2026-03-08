@@ -71,7 +71,14 @@ export default function ArraySelectorView({ arrayId }) {
             const isVmpOk = !controller || pHotVmp >= controller.startupV;
             const arrayIsc = p.isc * pStrings;
             const isIscOk = !controller || arrayIsc <= controller.maxIsc;
-            const isWeightOk = !hideHeavyPanels || (p.weight && p.weight <= 25);
+            const maxW =
+                array.maxPanelWeight !== '' && array.maxPanelWeight != null
+                    ? Number(array.maxPanelWeight)
+                    : null;
+            const effectiveMaxWeight = maxW != null ? maxW : (hideHeavyPanels ? 25 : null);
+            const isWeightOk =
+                effectiveMaxWeight == null ||
+                (p.weight != null && p.weight <= effectiveMaxWeight);
             const isHeightOk = !array.maxPanelHeight || (p.height && p.height <= array.maxPanelHeight);
             const isWidthOk = !array.maxPanelWidth || (p.width && p.width <= array.maxPanelWidth);
             const isSizeOk = isHeightOk && isWidthOk;
@@ -524,7 +531,7 @@ export default function ArraySelectorView({ arrayId }) {
                             <div className="flex items-stretch space-x-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
                                 <div className="flex flex-col justify-center space-y-1 pr-4 border-r border-slate-200">
                                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                                        Max Allowed Dimensions
+                                        Max Allowed Dimensions & Weight
                                     </p>
                                     <div className="flex items-center space-x-2">
                                         <input
@@ -546,6 +553,22 @@ export default function ArraySelectorView({ arrayId }) {
                                             value={array.maxPanelWidth || ''}
                                             onChange={(e) =>
                                                 updateArray(array.id, 'maxPanelWidth', parseInt(e.target.value) || '')
+                                            }
+                                        />
+                                        <span className="text-slate-400 text-xs">|</span>
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            placeholder="Max weight (kg)"
+                                            title="Maximum Panel Weight (kg)"
+                                            className="w-24 p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-xs"
+                                            value={array.maxPanelWeight ?? ''}
+                                            onChange={(e) =>
+                                                updateArray(
+                                                    array.id,
+                                                    'maxPanelWeight',
+                                                    e.target.value === '' ? '' : parseFloat(e.target.value)
+                                                )
                                             }
                                         />
                                     </div>

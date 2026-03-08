@@ -18,6 +18,7 @@ export function migrateArrays(savedArraysJson, initialArrays) {
             mounting: a.mounting || "In-Roof (GSE)",
             maxPanelHeight: a.maxPanelHeight || "",
             maxPanelWidth: a.maxPanelWidth || "",
+            maxPanelWeight: a.maxPanelWeight || "",
             area:
                 a.area ||
                 (a.id?.toLowerCase().includes("garage") ? "Garage" : "House"),
