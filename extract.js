@@ -1,3 +1,14 @@
+/**
+ * DEPRECATED – One-off data generation script.
+ *
+ * The app uses src/data/panels.json and src/data/chargers.json as its source of truth.
+ * Those files use a different schema (e.g. panel "model", "gseCompatibility") than this
+ * script (which uses "id", "format" and writes to mppts.json).
+ *
+ * Do not run this script to regenerate app data unless you have updated it to output
+ * the same shape as the current panels.json and chargers.json. See BACKUP_SCHEMA.md
+ * and the app’s data files for the current schema.
+ */
 const fs = require('fs');
 const path = require('path');
 
