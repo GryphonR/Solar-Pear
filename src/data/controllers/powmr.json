@@ -1,0 +1,41 @@
+[
+    {
+        "id": "powmr_keeper_60",
+        "name": "PowMr Keeper 60A MPPT",
+        "manufacturer": "PowMr",
+        "modelNumber": "KEEPER-60A",
+        "type": "charger",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48
+        ],
+        "maxV": 100,
+        "maxIsc": 50,
+        "maxOperatingI": 50,
+        "mpptRangeMin": 15,
+        "mpptRangeMax": 95,
+        "vNominal": 24,
+        "startupV": 12,
+        "v_start_vbat_dependent": true,
+        "trackers": 1,
+        "price": 85,
+        "MaxACPower": 0,
+        "MaxDCPower": 2800,
+        "notes": "WARNING: Common Positive Grounding—risk of short circuit if mounted to a UK vehicle chassis.",
+        "datasheetUrl": "https://powmr.com/products/mppt-solar-charge-controller-60a",
+        "buyLinks": {},
+        "g98_cert": false,
+        "g99_cert": false,
+        "off_grid": true,
+        "g100_cert": false,
+        "pure_off_grid_native": true,
+        "eps": false,
+        "house_backup": false,
+        "three_phase": false,
+        "reviewed": false
+    }
+]

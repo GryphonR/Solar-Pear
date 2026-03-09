@@ -1,0 +1,41 @@
+[
+    {
+        "id": "renogy_rover_60",
+        "name": "Renogy Rover 60A MPPT",
+        "manufacturer": "Renogy",
+        "modelNumber": "RNG-CTRL-RVR60",
+        "type": "charger",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48
+        ],
+        "maxV": 150,
+        "maxIsc": 50,
+        "maxOperatingI": 60,
+        "mpptRangeMin": 15,
+        "mpptRangeMax": 145,
+        "vNominal": 48,
+        "startupV": 15,
+        "v_start_vbat_dependent": true,
+        "trackers": 1,
+        "price": 180,
+        "MaxACPower": 0,
+        "MaxDCPower": 3200,
+        "notes": "Market-dominant consumer brand. Common-Negative grounding. Includes Bluetooth/RS232 support.",
+        "datasheetUrl": "https://www.renogy.com/content/Manual/Rover%2060%20Manual.pdf",
+        "buyLinks": {},
+        "g98_cert": false,
+        "g99_cert": false,
+        "off_grid": true,
+        "g100_cert": false,
+        "pure_off_grid_native": true,
+        "eps": false,
+        "house_backup": false,
+        "three_phase": false,
+        "reviewed": false
+    }
+]

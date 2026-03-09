@@ -60,7 +60,7 @@ npm run preview
 | `src/views/`                      | Summary, array selector, panels/chargers/arrays DB views |
 | `src/components/`                 | Modals, guide, logo, icons                               |
 | `src/lib/`                        | Array analysis, compatibility, migration                 |
-| `src/data/`                       | Default panels and chargers (JSON)                       |
+| `src/data/`                       | Panels and controllers: one JSON file per manufacturer in `panels/` and `controllers/`; new files are picked up automatically (`loadData.js`). |
 
 
 ---

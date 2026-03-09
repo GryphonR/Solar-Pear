@@ -20,8 +20,8 @@ The app can export and import a JSON backup of all persisted configuration. This
 | `schemaVersion`      | number        | Backup schema version (e.g. `1`).                                                                   |
 | `areasData`          | string[]      | List of area names (e.g. `["House"]`).                                                              |
 | `arraysData`         | array         | Roof array configs. See [Arrays](#arrays).                                                          |
-| `panelsData`         | array         | Solar panels (same shape as `panels.json` plus user overrides).                                     |
-| `chargersData`       | array         | PV controllers (same shape as `chargers.json` plus user overrides).                                 |
+| `panelsData`         | array         | Solar panels (same shape as the app’s built-in panel objects in `src/data/panels/*.json`, plus user overrides). |
+| `chargersData`       | array         | PV controllers (same shape as the app’s built-in controller objects in `src/data/controllers/*.json`, plus user overrides). |
 | `selections`         | object        | Per-array selections. Key = array id, value = `{ panel?, controllerInstanceId?, controllerMppt? }`. |
 | `systemVoltage`      | number        | System voltage (e.g. 48).                                                                           |
 | `hiddenChargerMfr`   | string | null | Optional hidden charger manufacturer.                                                               |

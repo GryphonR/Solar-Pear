@@ -512,7 +512,7 @@ export default function ArraySelectorView({ arrayId }) {
                     </h3>
                     <div className="flex flex-wrap items-center gap-2 mb-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${controller.type === 'hybrid_inverter' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
-                            {controller.type === 'hybrid_inverter' ? 'Hybrid Inverter' : 'MPPT Charger'}
+                            {controller.type === 'hybrid_inverter' ? 'Hybrid Inverter' : 'Charger'}
                         </span>
                         <span className="text-sm font-medium text-slate-600">£{controller.price || 0} per unit</span>
                         {controller.datasheetUrl && (

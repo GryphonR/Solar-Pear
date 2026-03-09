@@ -1,0 +1,40 @@
+[
+    {
+        "id": "outback_fm100_afci",
+        "name": "OutBack FLEXmax 100 AFCI",
+        "manufacturer": "OutBack Power",
+        "modelNumber": "FM100-300VDC-AFCI",
+        "type": "charger",
+        "systemType": "off-grid",
+        "islanding": false,
+        "systemVoltages": [
+            24,
+            36,
+            48
+        ],
+        "maxV": 300,
+        "maxIsc": 64,
+        "maxOperatingI": 64,
+        "mpptRangeMin": 30,
+        "mpptRangeMax": 290,
+        "vNominal": 48,
+        "startupV": 30,
+        "v_start_vbat_dependent": false,
+        "trackers": 1,
+        "price": 1150,
+        "MaxACPower": 0,
+        "MaxDCPower": 6000,
+        "notes": "Premium industrial MPPT. 300V max input allows for longer strings. Integrated Arc Fault Circuit Interruption (AFCI).",
+        "datasheetUrl": "https://outbackpower.com/downloads/documents/flexmax_100/fm100_datasheet.pdf",
+        "buyLinks": {},
+        "g98_cert": false,
+        "g99_cert": false,
+        "off_grid": true,
+        "g100_cert": false,
+        "pure_off_grid_native": true,
+        "eps": false,
+        "house_backup": false,
+        "three_phase": false,
+        "reviewed": false
+    }
+]

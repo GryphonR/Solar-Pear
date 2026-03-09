@@ -1,0 +1,41 @@
+[
+    {
+        "id": "makeskyblue_v118_60",
+        "name": "MakeSkyBlue 60A MPPT V118",
+        "manufacturer": "MakeSkyBlue",
+        "modelNumber": "MSB-60A-V118",
+        "type": "charger",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24,
+            36,
+            48
+        ],
+        "maxV": 160,
+        "maxIsc": 50,
+        "maxOperatingI": 50,
+        "mpptRangeMin": 15,
+        "mpptRangeMax": 155,
+        "vNominal": 48,
+        "startupV": 12,
+        "v_start_vbat_dependent": true,
+        "trackers": 1,
+        "price": 95,
+        "MaxACPower": 0,
+        "MaxDCPower": 2800,
+        "notes": "Budget staple with V118 firmware. WARNING: High acoustic noise from cooling fans under load.",
+        "datasheetUrl": "https://makeskyblue.com/products/60a-mppt-solar-charge-controller",
+        "buyLinks": {},
+        "g98_cert": false,
+        "g99_cert": false,
+        "off_grid": true,
+        "g100_cert": false,
+        "pure_off_grid_native": true,
+        "eps": false,
+        "house_backup": false,
+        "three_phase": false,
+        "reviewed": false
+    }
+]

@@ -26,7 +26,7 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
     );
 
     return (
-        <Modal open={open} onClose={onClose} header={header} headerAlign="start">
+        <Modal open={open} onClose={onClose} header={header} headerAlign="start" closeOnBackdropClick>
             <div className="space-y-8">
                 <div className="grid grid-cols-2 gap-6">
                     <div>

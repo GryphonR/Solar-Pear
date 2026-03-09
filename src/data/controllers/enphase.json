@@ -1,0 +1,38 @@
+[
+    {
+        "id": "enphase_iq8mc",
+        "name": "Enphase IQ8MC Microinverter",
+        "manufacturer": "Enphase",
+        "modelNumber": "IQ8MC-72-M-INT",
+        "type": "microinverter",
+        "systemType": "grid-connected",
+        "islanding": true,
+        "systemVoltages": [
+            230
+        ],
+        "maxV": 48,
+        "maxIsc": 25,
+        "maxOperatingI": 14,
+        "mpptRangeMin": 25,
+        "mpptRangeMax": 45,
+        "vNominal": 35,
+        "startupV": 30,
+        "v_start_vbat_dependent": false,
+        "trackers": 1,
+        "price": 145,
+        "MaxACPower": 330,
+        "MaxDCPower": 480,
+        "notes": "Per-panel MPPT. Supports house backup via Enphase System Controller. 330VA peak.",
+        "datasheetUrl": "https://enphase.com/en-ie/download/iq8-series-microinverters-data-sheet",
+        "buyLinks": {},
+        "g98_cert": true,
+        "g99_cert": true,
+        "off_grid": true,
+        "g100_cert": true,
+        "pure_off_grid_native": false,
+        "eps": true,
+        "house_backup": true,
+        "three_phase": false,
+        "reviewed": false
+    }
+]

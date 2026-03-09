@@ -17,6 +17,7 @@ const FOCUSABLE_SELECTOR =
  * @param {boolean} [bodyScrollable=true] - Allow body to scroll when content is long
  * @param {number} [zIndex=50] - z-index for overlay (Confirm uses 100 to sit above others)
  * @param {'center'|'start'} [headerAlign='center'] - Header alignment (start for info modals with badges)
+ * @param {boolean} [closeOnBackdropClick=false] - If true, clicking the backdrop (outside the dialog) closes the modal. Use for info/notes-only modals; leave false when there is a commit button.
  */
 export default function Modal({
     open,
@@ -29,13 +30,24 @@ export default function Modal({
     bodyScrollable = true,
     zIndex = 50,
     headerAlign = 'center',
+    closeOnBackdropClick = false,
 }) {
     const dialogRef = useRef(null);
     const previousActiveElement = useRef(null);
+    const wasOpenRef = useRef(false);
 
-    // Focus trap and Escape key
+    // Focus trap and Escape key. Only focus first element when modal first opens, not on every re-render
+    // (parent often passes new onClose each render, which would otherwise steal focus from inputs)
     useEffect(() => {
-        if (!open) return;
+        const justOpened = open && !wasOpenRef.current;
+        wasOpenRef.current = open;
+
+        if (!open) {
+            if (previousActiveElement.current && typeof previousActiveElement.current.focus === 'function') {
+                previousActiveElement.current.focus();
+            }
+            return;
+        }
         previousActiveElement.current = document.activeElement;
         const dialog = dialogRef.current;
         if (!dialog) return;
@@ -43,7 +55,7 @@ export default function Modal({
         const focusables = dialog.querySelectorAll(FOCUSABLE_SELECTOR);
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
-        if (first && typeof first.focus === 'function') first.focus();
+        if (justOpened && first && typeof first.focus === 'function') first.focus();
 
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
@@ -67,12 +79,7 @@ export default function Modal({
         };
 
         dialog.addEventListener('keydown', handleKeyDown);
-        return () => {
-            dialog.removeEventListener('keydown', handleKeyDown);
-            if (previousActiveElement.current && typeof previousActiveElement.current.focus === 'function') {
-                previousActiveElement.current.focus();
-            }
-        };
+        return () => dialog.removeEventListener('keydown', handleKeyDown);
     }, [open, onClose]);
 
     if (!open) return null;
@@ -105,11 +112,17 @@ export default function Modal({
         </>
     ) : null;
 
+    const handleBackdropClick = (e) => {
+        if (!closeOnBackdropClick) return;
+        if (e.target === e.currentTarget) onClose();
+    };
+
     return (
         <div
             className="fixed inset-0 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
             style={{ zIndex }}
             role="presentation"
+            onClick={handleBackdropClick}
         >
             <div
                 ref={dialogRef}
@@ -117,6 +130,7 @@ export default function Modal({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={title ? 'modal-title' : undefined}
+                onClick={(e) => e.stopPropagation()}
             >
                 {headerContent && (
                     <div className={`flex justify-between ${headerAlign === 'start' ? 'items-start' : 'items-center'} p-6 border-b border-slate-100 bg-slate-50 rounded-t-xl`}>

@@ -1,0 +1,39 @@
+[
+    {
+        "id": "srne_mc2460",
+        "name": "SRNE 60A MC Series MPPT",
+        "manufacturer": "SRNE",
+        "modelNumber": "MC2460N15",
+        "type": "charger",
+        "systemType": "dc-charger",
+        "islanding": false,
+        "systemVoltages": [
+            12,
+            24
+        ],
+        "maxV": 150,
+        "maxIsc": 50,
+        "maxOperatingI": 50,
+        "mpptRangeMin": 15,
+        "mpptRangeMax": 145,
+        "vNominal": 24,
+        "startupV": 5,
+        "v_start_vbat_dependent": true,
+        "trackers": 1,
+        "price": 110,
+        "MaxACPower": 0,
+        "MaxDCPower": 1600,
+        "notes": "Common-Negative grounding (safe for UK vehicles). Reliable OEM hardware.",
+        "datasheetUrl": "https://www.srnesolar.com/userfiles/files/2023/07/18/Shiner_User%20Manual_V1.05.pdf",
+        "buyLinks": {},
+        "g98_cert": false,
+        "g99_cert": false,
+        "off_grid": true,
+        "g100_cert": false,
+        "pure_off_grid_native": true,
+        "eps": false,
+        "house_backup": false,
+        "three_phase": false,
+        "reviewed": false
+    }
+]

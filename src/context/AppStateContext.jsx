@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import initialPanels from '../data/panels.json';
-import initialChargers from '../data/chargers.json';
+import { initialPanels, initialChargers } from '../data/loadData.js';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { analyzeArray } from '../lib/arrayAnalysis';
 import {
@@ -223,7 +222,7 @@ export function AppStateProvider({ children }) {
                 id: '',
                 name: '',
                 manufacturer: '',
-                type: 'mppt',
+                type: 'charger',
                 systemVoltages: systemVoltage != null ? [systemVoltage] : [48],
                 maxV: 0,
                 maxIsc: 0,

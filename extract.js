@@ -1,7 +1,8 @@
 /**
  * DEPRECATED – One-off data generation script.
  *
- * The app uses src/data/panels.json and src/data/chargers.json as its source of truth.
+ * The app's source of truth is now per-manufacturer JSON files in src/data/panels/
+ * and src/data/controllers/ (one .json per manufacturer; loadData.js loads all).
  * Those files use a different schema (e.g. panel "model", "gseCompatibility") than this
  * script (which uses "id", "format" and writes to mppts.json).
  *

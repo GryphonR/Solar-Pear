@@ -325,7 +325,7 @@ export default function ChargersDbView() {
                                                                     : 'bg-blue-100 text-blue-700'
                                                             }`}
                                                         >
-                                                            {c.type === 'hybrid_inverter' ? 'Hybrid' : 'MPPT'}
+                                                            {c.type === 'hybrid_inverter' ? 'Hybrid' : 'Charger'}
                                                         </span>
                                                     </td>
                                                     <td className="p-1 px-4 text-xs text-slate-500">
