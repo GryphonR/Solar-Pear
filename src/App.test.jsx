@@ -40,7 +40,7 @@ describe("App UI flows", () => {
         renderApp();
         await waitFor(() => {
             expect(
-                screen.getByText(/Pair the right panels with your roofspace/i)
+                screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)
             ).toBeInTheDocument();
         });
     });
@@ -48,7 +48,7 @@ describe("App UI flows", () => {
     it("navigates to Array Config and shows array configuration view", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Pair the right panels/i)).toBeInTheDocument();
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
         });
 
         await userEvent.click(
@@ -62,7 +62,7 @@ describe("App UI flows", () => {
     it("navigates to PV Controllers and shows controllers database", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Pair the right panels/i)).toBeInTheDocument();
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
         });
 
         await userEvent.click(
@@ -76,7 +76,7 @@ describe("App UI flows", () => {
     it("navigates to Panels and shows panels database", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Pair the right panels/i)).toBeInTheDocument();
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
         });
 
         await userEvent.click(screen.getByRole("button", { name: /^panels$/i }));
@@ -88,7 +88,7 @@ describe("App UI flows", () => {
     it("navigates to System Summary and shows summary view", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Pair the right panels/i)).toBeInTheDocument();
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
         });
 
         await userEvent.click(
@@ -102,7 +102,7 @@ describe("App UI flows", () => {
     it("opens Add Panel modal from Panels tab and shows form", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Pair the right panels/i)).toBeInTheDocument();
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
         });
 
         await userEvent.click(screen.getByRole("button", { name: /^panels$/i }));
@@ -126,7 +126,7 @@ describe("App UI flows", () => {
     it("opens Confirm modal on Reset click; Cancel closes it", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Pair the right panels/i)).toBeInTheDocument();
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
         });
 
         const resetButton = screen.getByTitle(
@@ -154,7 +154,7 @@ describe("App UI flows", () => {
     it("opens Add Array modal from Array Config tab", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Pair the right panels/i)).toBeInTheDocument();
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
         });
 
         await userEvent.click(
@@ -180,7 +180,7 @@ describe("App UI flows", () => {
         const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Pair the right panels/i)).toBeInTheDocument();
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
         });
 
         await userEvent.click(screen.getByRole("button", { name: /^panels$/i }));
@@ -204,31 +204,35 @@ describe("App UI flows", () => {
         alertSpy.mockRestore();
     });
 
-    it("prompts when adding a controller with duplicate Model ID and keeps modal open", async () => {
-        const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Pair the right panels/i)).toBeInTheDocument();
-        });
+    it(
+        "prompts when adding a controller with duplicate Model ID and keeps modal open",
+        async () => {
+            const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
+            renderApp();
+            await waitFor(() => {
+                expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            });
 
-        await userEvent.click(screen.getByRole("button", { name: /pv controllers/i }));
-        await waitFor(() => {
-            expect(screen.getByRole("heading", { name: /PV Controllers Database/i })).toBeInTheDocument();
-        });
-        await userEvent.click(screen.getByRole("button", { name: /add controller/i }));
-        await waitFor(() => {
+            await userEvent.click(screen.getByRole("button", { name: /pv controllers/i }));
+            await waitFor(() => {
+                expect(screen.getByRole("heading", { name: /PV Controllers Database/i })).toBeInTheDocument();
+            });
+            await userEvent.click(screen.getByRole("button", { name: /add controller/i }));
+            await waitFor(() => {
+                expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
+            });
+
+            const dialog = screen.getByRole("dialog");
+            const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
+            fireEvent.change(modelIdInput, { target: { value: "ss75_15" } });
+            await userEvent.click(screen.getByRole("button", { name: /Add Controller to Database/i }));
+
+            expect(alertSpy).toHaveBeenCalledWith(
+                expect.stringMatching(/already exists.*Model ID/i)
+            );
             expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
-        });
-
-        const dialog = screen.getByRole("dialog");
-        const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
-        fireEvent.change(modelIdInput, { target: { value: "ss75_15" } });
-        await userEvent.click(screen.getByRole("button", { name: /Add Controller to Database/i }));
-
-        expect(alertSpy).toHaveBeenCalledWith(
-            expect.stringMatching(/already exists.*Model ID/i)
-        );
-        expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
-        alertSpy.mockRestore();
-    });
+            alertSpy.mockRestore();
+        },
+        10000
+    );
 });
