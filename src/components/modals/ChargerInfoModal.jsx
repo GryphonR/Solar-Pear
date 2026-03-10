@@ -1,11 +1,13 @@
 import React from 'react';
 import Modal from '../Modal';
 import { CheckCircle, ExternalLink, Info, XIcon } from '../Icons';
+import { getEffectiveStartupV } from '../../lib/arrayAnalysis';
 
-export default function ChargerInfoModal({ open, charger, userNote, onClose, onUpdateNote }) {
+export default function ChargerInfoModal({ open, charger, systemVoltage, userNote, onClose, onUpdateNote }) {
     if (!charger) return null;
 
     const c = charger;
+    const displayStartupV = getEffectiveStartupV(c, systemVoltage);
 
     const header = (
         <div>
@@ -32,7 +34,7 @@ export default function ChargerInfoModal({ open, charger, userNote, onClose, onU
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Input Specifications</h3>
                         <dl className="space-y-3 text-sm">
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Max PV Voltage</dt><dd className="text-red-700 font-bold">{c.maxV} V</dd></div>
-                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Startup Voltage</dt><dd className="text-slate-800 font-semibold">{c.startupV} V</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Startup Voltage</dt><dd className="text-slate-800 font-semibold">{displayStartupV} V{c.v_start_vbat_dependent && systemVoltage != null ? ` (Vbat + ${c.startupV} V)` : c.v_start_vbat_dependent ? ' (Vbat + ' + (c.startupV ?? 0) + ' V)' : ''}</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Max Short Circuit Current</dt><dd className="text-slate-800 font-semibold">{c.maxIsc || 'N/A'} A</dd></div>
                         </dl>
                     </div>

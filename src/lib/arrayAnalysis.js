@@ -18,6 +18,34 @@ export function hotIscFactor(panel) {
     return 1 + ((HOT_TEMP_C - STC_TEMP_C) * panel.tempCoefIsc) / 100;
 }
 
+/**
+ * Effective minimum PV voltage to start the MPPT.
+ * When v_start_vbat_dependent is true, startup is relative to battery: Vbat + controller.startupV.
+ * Uses user-selected systemVoltage when set; otherwise falls back to controller.vNominal or first systemVoltages entry.
+ * When v_start_vbat_dependent is missing (e.g. old saved data), treats as Vbat-dependent if controller has
+ * systemVoltages and a small startupV (typical for MPPT chargers).
+ * @param {object} controller - Charger/controller with startupV and optional v_start_vbat_dependent, vNominal, systemVoltages
+ * @param {number | null} systemVoltage - User-selected DC battery voltage (e.g. 12, 24, 48)
+ */
+export function getEffectiveStartupV(controller, systemVoltage) {
+    if (!controller) return 0;
+    const base = controller.startupV ?? 0;
+    const isVbatDependent =
+        controller.v_start_vbat_dependent === true ||
+        (controller.v_start_vbat_dependent !== false &&
+            Array.isArray(controller.systemVoltages) &&
+            controller.systemVoltages.length > 0 &&
+            base <= 20);
+    if (isVbatDependent) {
+        const vbat =
+            systemVoltage != null
+                ? systemVoltage
+                : (controller.vNominal ?? controller.systemVoltages?.[0] ?? null);
+        if (vbat != null) return vbat + base;
+    }
+    return base;
+}
+
 export const isCompatibleFormat = (array, panel) => {
     const aMounting = array.mounting || "In-Roof (GSE)";
     if (aMounting === "On Roof") return true;
@@ -31,7 +59,7 @@ export const isCompatibleFormat = (array, panel) => {
 
 export const analyzeArray = (
     arrayId,
-    { arraysData, panelsData, chargersData, siteControllers, selections }
+    { arraysData, panelsData, chargersData, siteControllers, selections, systemVoltage = null }
 ) => {
     const array = arraysData.find((a) => a.id === arrayId);
     if (!array) return null;
@@ -118,9 +146,10 @@ export const analyzeArray = (
 
     const arrayIscHot = panel.isc * pStrings * hotIscFactor(panel);
 
+    const effectiveStartupV = getEffectiveStartupV(controller, systemVoltage);
     const isVocError = coldVoc > controller.maxV;
     const isVocWarn = coldVoc > controller.maxV * 0.94 && !isVocError;
-    const isVmpError = hotVmp < controller.startupV;
+    const isVmpError = hotVmp < effectiveStartupV;
     const isIscError = arrayIscHot > controller.maxIsc;
     const isFormatError = !isCompatibleFormat(array, panel);
 
@@ -184,7 +213,7 @@ export const analyzeArray = (
         messages.push(
             `FATAL: Hot Vmp (${hotVmp.toFixed(
                 1
-            )}V) is below PV controller startup threshold (${controller.startupV}V). Will not start on hot days.`
+            )}V) is below PV controller startup threshold (${effectiveStartupV}V). Will not start on hot days.`
         );
     }
 
@@ -216,6 +245,7 @@ export const analyzeArray = (
         coldVoc,
         hotVmp,
         arrayIscHot,
+        effectiveStartupV,
     };
 };
 

@@ -360,6 +360,7 @@ export default function App() {
             <ChargerInfoModal
                 open={!!infoModalChargerId}
                 charger={chargersData.find((c) => c.id === infoModalChargerId)}
+                systemVoltage={systemVoltage}
                 userNote={infoModalChargerId ? userNotes[infoModalChargerId] || '' : ''}
                 onClose={() => setInfoModalChargerId(null)}
                 onUpdateNote={updateUserNote}

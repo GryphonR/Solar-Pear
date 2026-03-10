@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 56" fill="none">
+  <defs>
+    <clipPath id="rightPear">
+      <path d="M 26 12 C 33 12, 35 19, 37 25 C 39 31, 45 35, 43 42 C 41 49, 31 51, 26 51 Z" />
+    </clipPath>
+  </defs>
+  <!-- Left half (golden yellow) with dark outline for contrast on light backgrounds -->
+  <path d="M 26 12 C 19 12, 17 19, 15 25 C 13 31, 7 35, 9 42 C 11 49, 21 51, 26 51 Z" fill="#facc15" stroke="#713f12" stroke-width="1.25" stroke-linejoin="round" paint-order="stroke fill" />
+  <!-- Left highlight -->
+  <path d="M 24 15 C 20 15, 19 20, 18 25 C 17 29, 11 34, 13 39 C 14 44, 21 46, 24 46 Z" fill="#fef08a" opacity="0.6" />
+  <!-- Right half (darker gold) with dark outline -->
+  <path d="M 26 12 C 33 12, 35 19, 37 25 C 39 31, 45 35, 43 42 C 41 49, 31 51, 26 51 Z" fill="#ca8a04" stroke="#713f12" stroke-width="1.25" stroke-linejoin="round" paint-order="stroke fill" />
+  <!-- Solar grid inside right half -->
+  <g clip-path="url(#rightPear)">
+    <path d="M26 22 L50 22 M26 32 L50 32 M26 42 L50 42" stroke="#854d0e" stroke-width="1.5" />
+    <path d="M31 12 L31 51 M38 12 L38 51" stroke="#854d0e" stroke-width="1.5" />
+  </g>
+  <!-- Stem -->
+  <path d="M 26 12 Q 26 2, 33 4" stroke="#713f12" stroke-width="2.5" stroke-linecap="round" />
+</svg>

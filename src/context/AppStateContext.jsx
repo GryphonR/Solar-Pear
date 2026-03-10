@@ -323,6 +323,7 @@ export function AppStateProvider({ children }) {
             chargersData,
             siteControllers,
             selections,
+            systemVoltage,
         });
 
     const handleAddArraySave = (d) => {

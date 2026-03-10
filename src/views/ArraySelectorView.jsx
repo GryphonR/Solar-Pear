@@ -8,7 +8,7 @@ import {
     Trash2,
 } from '../components/Icons';
 import BuyButton from '../components/BuyButton';
-import { isCompatibleFormat, coldVocFactor, hotVmpFactor, hotIscFactor } from '../lib/arrayAnalysis';
+import { isCompatibleFormat, coldVocFactor, hotVmpFactor, hotIscFactor, getEffectiveStartupV } from '../lib/arrayAnalysis';
 import { useAppState } from '../context/AppStateContext';
 
 export default function ArraySelectorView({ arrayId }) {
@@ -38,6 +38,7 @@ export default function ArraySelectorView({ arrayId }) {
         availableChargers,
         deleteControllerInstance,
         createControllerInstance,
+        systemVoltage,
     } = useAppState();
     const analysis = getArrayAnalysis(arrayId);
     if (!analysis) return null;
@@ -56,6 +57,9 @@ export default function ArraySelectorView({ arrayId }) {
         costPerKWp,
     } = analysis;
 
+    // Effective startup voltage for the selected controller (Vbat + offset when v_start_vbat_dependent)
+    const effectiveStartupV = controller ? getEffectiveStartupV(controller, systemVoltage) : null;
+
     const validPanels = panelsData
         .map((p) => {
             const pPeakPower = p.power * array.count;
@@ -70,7 +74,7 @@ export default function ArraySelectorView({ arrayId }) {
             const pCostPerKWp = pPeakPower > 0 ? pCost / (pPeakPower / 1000) : 0;
             const isPhysicallyOk = isCompatibleFormat(array, p);
             const isVocOk = !controller || pColdVoc <= controller.maxV;
-            const isVmpOk = !controller || pHotVmp >= controller.startupV;
+            const isVmpOk = !controller || pHotVmp >= getEffectiveStartupV(controller, systemVoltage);
             const isIscOk = !controller || pArrayIscHot <= controller.maxIsc;
             const maxW =
                 array.maxPanelWeight !== '' && array.maxPanelWeight != null
@@ -139,7 +143,7 @@ export default function ArraySelectorView({ arrayId }) {
     const validControllersList = availableChargers.filter((c) => {
         if (!panel) return true;
         const isVoltageOk = coldVoc <= c.maxV;
-        const isStartupOk = hotVmp >= c.startupV;
+        const isStartupOk = hotVmp >= getEffectiveStartupV(c, systemVoltage);
         const isCurrentOk = arrayIscHot <= c.maxIsc;
         return isVoltageOk && isStartupOk && isCurrentOk;
     });
@@ -245,11 +249,11 @@ export default function ArraySelectorView({ arrayId }) {
                         {panelsData.some(
                             (p) => p.active !== false && !isCompatibleFormat(array, p)
                         ) && (
-                            <p className="text-xs text-slate-400 mt-2 italic">
-                                Some panels in the database are hidden as they physically conflict with this
-                                array's GSE requirements.
-                            </p>
-                        )}
+                                <p className="text-xs text-slate-400 mt-2 italic">
+                                    Some panels in the database are hidden as they physically conflict with this
+                                    array's GSE requirements.
+                                </p>
+                            )}
                     </div>
 
                     <div>
@@ -290,13 +294,12 @@ export default function ArraySelectorView({ arrayId }) {
 
                 <div className="space-y-4">
                     <div
-                        className={`p-4 rounded-lg border-l-4 ${
-                            status === 'error'
+                        className={`p-4 rounded-lg border-l-4 ${status === 'error'
                                 ? 'bg-red-50 border-red-500'
                                 : status === 'warning'
-                                  ? 'bg-orange-50 border-orange-500'
-                                  : 'bg-green-50 border-green-500'
-                        }`}
+                                    ? 'bg-orange-50 border-orange-500'
+                                    : 'bg-green-50 border-green-500'
+                            }`}
                     >
                         <div className="flex items-start">
                             {status === 'error' ? (
@@ -308,31 +311,29 @@ export default function ArraySelectorView({ arrayId }) {
                             )}
                             <div>
                                 <h4
-                                    className={`font-bold ${
-                                        status === 'error'
+                                    className={`font-bold ${status === 'error'
                                             ? 'text-red-800'
                                             : status === 'warning'
-                                              ? 'text-orange-800'
-                                              : 'text-green-800'
-                                    }`}
+                                                ? 'text-orange-800'
+                                                : 'text-green-800'
+                                        }`}
                                 >
                                     {status === 'error'
                                         ? 'System Failure Detected'
                                         : status === 'warning'
-                                          ? 'Warning'
-                                          : 'System Compatible '}
+                                            ? 'Warning'
+                                            : 'System Compatible '}
                                 </h4>
                                 <ul className="mt-1 space-y-1">
                                     {messages.map((msg, i) => (
                                         <li
                                             key={i}
-                                            className={`text-sm ${
-                                                status === 'error'
+                                            className={`text-sm ${status === 'error'
                                                     ? 'text-red-700'
                                                     : status === 'warning'
-                                                      ? 'text-orange-700'
-                                                      : 'text-green-700'
-                                            }`}
+                                                        ? 'text-orange-700'
+                                                        : 'text-green-700'
+                                                }`}
                                         >
                                             {msg}
                                         </li>
@@ -352,11 +353,10 @@ export default function ArraySelectorView({ arrayId }) {
                                     Cold Voc (-10°C)
                                 </p>
                                 <p
-                                    className={`text-2xl font-light ${
-                                        controller && coldVoc > controller.maxV
+                                    className={`text-2xl font-light ${controller && coldVoc > controller.maxV
                                             ? 'text-red-600 font-bold'
                                             : 'text-slate-800'
-                                    }`}
+                                        }`}
                                 >
                                     {coldVoc.toFixed(1)} <span className="text-sm">V</span>
                                 </p>
@@ -378,17 +378,16 @@ export default function ArraySelectorView({ arrayId }) {
                                     Hot Vmp (65°C)
                                 </p>
                                 <p
-                                    className={`text-2xl font-light ${
-                                        controller && hotVmp < controller.startupV
+                                    className={`text-2xl font-light ${controller && effectiveStartupV != null && hotVmp < effectiveStartupV
                                             ? 'text-red-600 font-bold'
                                             : 'text-slate-800'
-                                    }`}
+                                        }`}
                                 >
                                     {hotVmp.toFixed(1)} <span className="text-sm">V</span>
                                 </p>
-                                {controller ? (
+                                {controller && effectiveStartupV != null ? (
                                     <p className="text-xs text-slate-400 mt-1">
-                                        Required to Start: {controller.startupV}V
+                                        Required to Start: {effectiveStartupV}V
                                     </p>
                                 ) : (
                                     <p className="text-xs text-slate-400 mt-1">
@@ -404,11 +403,10 @@ export default function ArraySelectorView({ arrayId }) {
                                     Array Isc (Hot 65°C)
                                 </p>
                                 <p
-                                    className={`text-2xl font-light ${
-                                        controller && arrayIscHot > controller.maxIsc
+                                    className={`text-2xl font-light ${controller && arrayIscHot > controller.maxIsc
                                             ? 'text-red-600 font-bold'
                                             : 'text-slate-800'
-                                    }`}
+                                        }`}
                                 >
                                     {arrayIscHot.toFixed(2)} <span className="text-sm">A</span>
                                 </p>
@@ -526,7 +524,7 @@ export default function ArraySelectorView({ arrayId }) {
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-100 pb-1">Input specifications</h4>
                             <dl className="space-y-2 text-sm">
                                 <div className="flex justify-between"><dt className="text-slate-500">Max PV Voltage</dt><dd className="text-red-700 font-bold">{controller.maxV} V</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Startup Voltage</dt><dd className="text-slate-800 font-medium">{controller.startupV} V</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Startup Voltage</dt><dd className="text-slate-800 font-medium">{effectiveStartupV != null ? `${effectiveStartupV} V` : '—'}</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Max Isc</dt><dd className="text-slate-800 font-medium">{controller.maxIsc ?? 'N/A'} A</dd></div>
                             </dl>
                         </div>
@@ -605,11 +603,10 @@ export default function ArraySelectorView({ arrayId }) {
                         onClick={() =>
                             setActiveSelectorTabs((prev) => ({ ...prev, [arrayId]: 'panels' }))
                         }
-                        className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${
-                            showPanelsSubTab
+                        className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${showPanelsSubTab
                                 ? 'border-blue-600 text-blue-700 bg-blue-50/50'
                                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-                        }`}
+                            }`}
                     >
                         Panel Selector
                     </button>
@@ -617,11 +614,10 @@ export default function ArraySelectorView({ arrayId }) {
                         onClick={() =>
                             setActiveSelectorTabs((prev) => ({ ...prev, [arrayId]: 'controllers' }))
                         }
-                        className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${
-                            activeSelectorTabs[arrayId] === 'controllers'
+                        className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${activeSelectorTabs[arrayId] === 'controllers'
                                 ? 'border-blue-600 text-blue-700 bg-blue-50/50'
                                 : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-                        }`}
+                            }`}
                     >
                         Controller Selector
                     </button>
@@ -758,9 +754,8 @@ export default function ArraySelectorView({ arrayId }) {
                                                 return (
                                                     <tr
                                                         key={p.model}
-                                                        className={`border-b border-slate-100 transition-colors ${
-                                                            isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'
-                                                        }`}
+                                                        className={`border-b border-slate-100 transition-colors ${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'
+                                                            }`}
                                                     >
                                                         <td className="py-3 px-4">
                                                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -873,7 +868,7 @@ export default function ArraySelectorView({ arrayId }) {
                                         let isElectricalValid = true;
                                         if (panel) {
                                             const isVoltageOk = coldVoc <= model.maxV;
-                                            const isStartupOk = hotVmp >= model.startupV;
+                                            const isStartupOk = hotVmp >= getEffectiveStartupV(model, systemVoltage);
                                             const isCurrentOk = arrayIscHot <= model.maxIsc;
                                             isElectricalValid =
                                                 isVoltageOk && isStartupOk && isCurrentOk;
@@ -889,11 +884,10 @@ export default function ArraySelectorView({ arrayId }) {
                                         return (
                                             <div
                                                 key={sc.id}
-                                                className={`p-4 rounded-lg border ${
-                                                    isElectricalValid
+                                                className={`p-4 rounded-lg border ${isElectricalValid
                                                         ? 'bg-white border-slate-200'
                                                         : 'bg-slate-50 border-slate-200 opacity-60'
-                                                }`}
+                                                    }`}
                                             >
                                                 <div className="flex justify-between items-start mb-1">
                                                     <div className="font-bold text-slate-800">
@@ -969,11 +963,10 @@ export default function ArraySelectorView({ arrayId }) {
                                                                                     mpptIdx
                                                                                 )
                                                                             }
-                                                                            className={`px-3 py-1 text-xs font-bold rounded transition-colors ${
-                                                                                isElectricalValid
+                                                                            className={`px-3 py-1 text-xs font-bold rounded transition-colors ${isElectricalValid
                                                                                     ? 'bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600'
                                                                                     : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-                                                                            }`}
+                                                                                }`}
                                                                         >
                                                                             Assign
                                                                         </button>
@@ -1022,7 +1015,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     onClick={() => toggleControllerSort('maxV')}
                                                     className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none"
                                                 >
-                                                    Max DC{' '}
+                                                    PV Vmax{' '}
                                                     {controllerSort.key === 'maxV' &&
                                                         (controllerSort.dir === 'asc' ? '↑' : '↓')}
                                                 </th>
@@ -1059,11 +1052,10 @@ export default function ArraySelectorView({ arrayId }) {
                                                     return (
                                                         <tr
                                                             key={c.id}
-                                                            className={`border-b border-slate-100 transition-colors ${
-                                                                isSelected
+                                                            className={`border-b border-slate-100 transition-colors ${isSelected
                                                                     ? 'bg-blue-50/50'
                                                                     : 'hover:bg-slate-50'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             <td className="py-3 px-4">
                                                                 <div className="flex items-center gap-1.5 flex-wrap">

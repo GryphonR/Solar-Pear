@@ -21,9 +21,9 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `name` | string | Display name (e.g. "SmartSolar MPPT 75/10"). |
 | `manufacturer` | string | Manufacturer name (e.g. "Victron Energy"). Used for grouping in the UI. |
 | `modelNumber` | string | Official model/order code. Shown in Summary BoM as model reference. |
-| `type` | string | One of: `charger`, `mppt`, `inverter_charger`, `hybrid_inverter`, `dc-dc-charger`, `ac_coupled_inverter`, `microinverter`, `string_inverter`. |
+| `type` | string | One of: `charger`, `hybrid_inverter`, `ac_coupled_inverter`, `microinverter`, `string_inverter`. |
 | `systemType` | string | e.g. `dc-charger`, `grid-connected`, `off-grid`, `grid-interactive`. |
-| `systemVoltages` | number[] | Supported battery/system voltages (e.g. `[12, 24, 48]`). Used for system voltage compatibility. |
+| `systemVoltages` | number[] | Supported battery voltages (e.g. `[12, 24, 48]`). Used for battery voltage compatibility. |
 | `maxV` | number | Max PV input voltage (V). String cold Voc must not exceed this. Use `0` if N/A (e.g. AC-coupled). |
 | `maxIsc` | number | Max short-circuit current per input (A). Panel Isc is checked against this. |
 | `maxOperatingI` | number | Max operating current (A). Used for compatibility with panel current. |
