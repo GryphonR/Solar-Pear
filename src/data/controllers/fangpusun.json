@@ -15,7 +15,7 @@
             60
         ],
         "maxV": 150,
-        "maxIsc": 64,
+        "maxIsc": 48,
         "maxOperatingI": 80,
         "mpptRangeMin": 15,
         "mpptRangeMax": 145,

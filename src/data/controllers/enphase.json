@@ -10,7 +10,7 @@
         "systemVoltages": [
             230
         ],
-        "maxV": 48,
+        "maxV": 60,
         "maxIsc": 25,
         "maxOperatingI": 14,
         "mpptRangeMin": 25,

@@ -11,7 +11,7 @@
             360
         ],
         "maxV": 600,
-        "maxIsc": 20,
+        "maxIsc": 16,
         "maxOperatingI": 16,
         "mpptRangeMin": 70,
         "mpptRangeMax": 550,
@@ -20,8 +20,8 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 880,
-        "MaxACPower": 3700,
-        "MaxDCPower": 5550,
+        "MaxACPower": 3680,
+        "MaxDCPower": 5500,
         "notes": "G98 Hybrid. Very low 90V startup.",
         "datasheetUrl": "https://www.solaxpower.com/uploads/file/solax-x1-hybrid-g4-datasheet-en.pdf",
         "buyLinks": {},
@@ -47,7 +47,7 @@
             48
         ],
         "maxV": 600,
-        "maxIsc": 20,
+        "maxIsc": 16,
         "maxOperatingI": 16,
         "mpptRangeMin": 70,
         "mpptRangeMax": 550,
@@ -83,7 +83,7 @@
             360
         ],
         "maxV": 600,
-        "maxIsc": 20,
+        "maxIsc": 16,
         "maxOperatingI": 16,
         "mpptRangeMin": 70,
         "mpptRangeMax": 550,
