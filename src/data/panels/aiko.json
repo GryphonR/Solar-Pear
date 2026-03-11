@@ -259,5 +259,36 @@
         "gseCompatibility": "Portrait Only",
         "buyLinks": {},
         "manufacturer": "AIKO"
+    },
+    {
+        "name": "AIKO Neostar 3S 475W All Black",
+        "model": "200566",
+        "manufacturer": "AIKO",
+        "power": 475,
+        "voc": 40.8,
+        "vmp": 34.4,
+        "isc": 14.76,
+        "imp": 13.81,
+        "price": 109.42,
+        "active": true,
+        "height": 1762,
+        "width": 1134,
+        "depth": 30,
+        "weight": 0,
+        "efficiency": 0,
+        "glass": "",
+        "bifacial": false,
+        "cells": "Neostar 3S",
+        "tempCoefPmax": 0,
+        "tempCoefVoc": 0,
+        "tempCoefIsc": 0,
+        "maxSeriesFuse": 0,
+        "maxSystemVoltage": 0,
+        "gseCompatibility": "Both",
+        "notes": "",
+        "datasheetUrl": "https://www.cityplumbing.co.uk/p/aiko-neostar-3s-475w-all-black-solar-panel/p/200566",
+        "buyLinks": {
+            "City Plumbing": "https://www.cityplumbing.co.uk/p/aiko-neostar-3s-475w-all-black-solar-panel/p/200566"
+        }
     }
 ]

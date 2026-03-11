@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Victron Solar Panel 12V 185W Mono series 4a",
+        "power": 185,
+        "voc": 24.11,
+        "vmp": 19.68,
+        "isc": 9.91,
+        "imp": 9.41,
+        "price": 109,
+        "active": true,
+        "height": 1485,
+        "width": 668,
+        "depth": 30,
+        "weight": 11,
+        "efficiency": 18.65,
+        "glass": "High-transmission tempered glass",
+        "bifacial": false,
+        "cells": "36-Cell Monocrystalline",
+        "tempCoefPmax": -0.45,
+        "tempCoefVoc": -0.35,
+        "tempCoefIsc": 0.04,
+        "maxSeriesFuse": 15,
+        "maxSystemVoltage": 1000,
+        "notes": "Exceptional low-light performance and high sensitivity to light. 25-year limited warranty.",
+        "datasheetUrl": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-monocrystalline-series-4a-spm041851200",
+        "model": "SPM041851200",
+        "gseCompatibility": "Both",
+        "buyLinks": {
+            "Voltacon Solar": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-monocrystalline-series-4a-spm041851200"
+        },
+        "manufacturer": "Victron Energy"
+    }
+]

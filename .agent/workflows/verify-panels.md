@@ -54,7 +54,8 @@ For each JSON file (e.g., `aiko.json`, `jinko.json`, etc.):
     -   **Detailed Check**: Cross-reference these fields against the actual text/tables on the live page (or readable PDF): `power`, `voc`, `vmp`, `isc`, `imp`, `tempCoefPmax`, `tempCoefVoc`, `tempCoefIsc`, `efficiency`, `height`, `width`, `depth`, `weight`, `cells`, `glass`, `bifacial`, `maxSeriesFuse`, `maxSystemVoltage`. If a value is not found on the source, leave the existing value unchanged and log: "Field X: not found on source; kept existing value."
 
 6.  **Correction & Safety Guards**:
-    -   **Model Alignment**: The `model` field must match the **exact string** on the manufacturer’s datasheet (e.g. full part number). Do not shorten or guess.
+    -   **Model = manufacturer's model:** The `model` field must be the **manufacturer's model number** (e.g. full part number from the manufacturer's datasheet), not a supplier's product code, SKU, or reseller reference. Check that the value matches what the manufacturer uses; if the source is a supplier page, confirm the manufacturer model and use that.
+    -   **Model Alignment**: The `model` field must match the **exact string** on the manufacturer's datasheet (e.g. full part number). Do not shorten or guess.
     -   **Datasheet URL**: Set or update `datasheetUrl` only after a successful fetch that confirms the page contains this specific model’s data. If every link you find returns 404, set `datasheetUrl` to `""` and log the attempt; never leave a 404 URL in the file.
     -   **Notes**: Update `notes` only with user-helpful information (strengths/weaknesses, sentiment, application advice). If you keep a panel but have doubts (e.g. only one weak source), append to notes: "Unverified: [brief reason]." so it can be manually reviewed later.
 
@@ -80,6 +81,7 @@ For each JSON file (e.g., `aiko.json`, `jinko.json`, etc.):
 -   Mention if a new `.log` file was created or updated.
 
 ## Critical Rules
+-   **Manufacturer's model only:** The `model` field must be the manufacturer's model number (from the manufacturer's datasheet or official spec), not a supplier's product code or SKU.
 -   **Exact Model Matching**: Verification is against the **exact** `model` string (e.g. AIKO-A460-MAH54Mb), not the series or display name. The `model` in the JSON must match the manufacturer’s datasheet exactly.
 -   **No 404 Links**: No URL may appear in `datasheetUrl` or `buyLinks` unless you have successfully fetched it (non-404). Visit every link before adding; visit every existing link and remove or clear any that return 404.
 -   **No Hallucinations**: If the exact model cannot be found on the live web (official or tier-one reseller) after exhaustive search, **delete** the panel entry and log the deletion. Do not guess or leave unverifiable entries.

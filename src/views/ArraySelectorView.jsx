@@ -8,6 +8,7 @@ import {
     Trash2,
 } from '../components/Icons';
 import BuyButton from '../components/BuyButton';
+import ArrayOverviewGraphs from '../components/ArrayOverviewGraphs';
 import { isCompatibleFormat, coldVocFactor, hotVmpFactor, hotIscFactor, getEffectiveStartupV } from '../lib/arrayAnalysis';
 import { useAppState } from '../context/AppStateContext';
 
@@ -384,12 +385,6 @@ export default function ArraySelectorView({ arrayId }) {
                                 </button>
                             )}
                         </div>
-                        {controller && controller.type === 'hybrid_inverter' && (
-                            <p className="text-xs text-slate-500 mt-2 italic">
-                                ⚡ Hybrid inverter with built-in MPPT selected. PV string connects directly to
-                                this unit.
-                            </p>
-                        )}
                     </div>
                 </div>
 
@@ -697,6 +692,15 @@ export default function ArraySelectorView({ arrayId }) {
                     />
                 </div>
             </div>
+
+            {panel && (
+                <ArrayOverviewGraphs
+                    panel={panel}
+                    array={array}
+                    controller={controller}
+                    effectiveStartupV={effectiveStartupV}
+                />
+            )}
             </>
             )}
 

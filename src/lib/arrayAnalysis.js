@@ -96,6 +96,19 @@ export const analyzeArray = (
         controller = chargersData.find((c) => c.id === sel.controller);
     }
 
+    // Controller cost share: when one controller instance serves multiple arrays, split its cost equally
+    const getControllerCostShare = () => {
+        if (!controller) return 0;
+        const price = controller.price || 0;
+        if (controllerInstance) {
+            const arraysUsingThisController = arraysData.filter(
+                (a) => (selections[a.id] || {}).controllerInstanceId === controllerInstance.id
+            ).length;
+            return arraysUsingThisController > 0 ? price / arraysUsingThisController : 0;
+        }
+        return price; // legacy single-array assignment
+    };
+
     if (!panel || !controller) {
         let coldVoc = 0;
         let hotVmp = 0;
@@ -110,6 +123,7 @@ export const analyzeArray = (
             hotVmp = panel.vmp * panelsPerSeriesString * hotVmpFactor(panel);
             cost = panel.price * array.count;
         }
+        cost += getControllerCostShare();
         const arrayIscHot = panel
             ? panel.isc * (array.parallelStrings || 1) * hotIscFactor(panel)
             : 0;
@@ -142,7 +156,8 @@ export const analyzeArray = (
 
     const stringVmpSTC = panel.vmp * panelsPerSeriesString;
     const hotVmp = stringVmpSTC * hotVmpFactor(panel);
-    const cost = panel.price * array.count;
+    const panelCost = panel.price * array.count;
+    const cost = panelCost + getControllerCostShare();
 
     const arrayIscHot = panel.isc * pStrings * hotIscFactor(panel);
 
@@ -240,7 +255,7 @@ export const analyzeArray = (
         status,
         messages,
         peakPower,
-        cost, // Note: controller cost is no longer folded into this array-level figure
+        cost,
         costPerKWp: peakPower > 0 ? cost / (peakPower / 1000) : 0,
         coldVoc,
         hotVmp,

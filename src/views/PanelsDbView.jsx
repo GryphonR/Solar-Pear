@@ -26,7 +26,7 @@ export default function PanelsDbView() {
                 <div>
                     <h2 className="text-2xl font-bold text-slate-800">Solar Panels Database</h2>
                     <p className="text-slate-500">
-                        Edit panel specifications. Set the GSE Compatibility to auto-filter arrays.
+                        View panel specifications. Only the price field is editable; use Select All / Deselect All to filter arrays.
                     </p>
                 </div>
                 <button
@@ -114,25 +114,12 @@ export default function PanelsDbView() {
                                                 }`}
                                             >
                                                 <td className="p-1 text-center">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
-                                                        checked={p.active !== false}
-                                                        onChange={(e) =>
-                                                            updatePanel(p.model, 'active', e.target.checked)
-                                                        }
-                                                        title="Include in array dropdown menus"
-                                                    />
+                                                    <span className="text-sm text-slate-600" title="Include in array dropdown menus">
+                                                        {p.active !== false ? 'Yes' : 'No'}
+                                                    </span>
                                                 </td>
-                                                <td className="p-1">
-                                                    <input
-                                                        className="min-w-[220px] w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                        type="text"
-                                                        value={p.name}
-                                                        onChange={(e) =>
-                                                            updatePanel(p.model, 'name', e.target.value)
-                                                        }
-                                                    />
+                                                <td className="p-1 px-2">
+                                                    <span className="text-sm text-slate-800">{p.name}</span>
                                                 </td>
                                                 <td className="p-1 px-2">
                                                     <span className="text-xs text-slate-400 font-mono whitespace-nowrap">
@@ -163,62 +150,20 @@ export default function PanelsDbView() {
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="p-1">
-                                                    <select
-                                                        className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                        value={p.gseCompatibility || 'Both'}
-                                                        onChange={(e) =>
-                                                            updatePanel(p.model, 'gseCompatibility', e.target.value)
-                                                        }
-                                                    >
-                                                        <option value="Both">Both GSE</option>
-                                                        <option value="Portrait Only">Portrait Only</option>
-                                                        <option value="Landscape Only">Landscape Only</option>
-                                                    </select>
+                                                <td className="p-1 px-2">
+                                                    <span className="text-sm text-slate-600">{p.gseCompatibility || 'Both'}</span>
                                                 </td>
-                                                <td className="p-1">
-                                                    <input
-                                                        className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                        type="number"
-                                                        step="1"
-                                                        value={p.power}
-                                                        onChange={(e) =>
-                                                            updatePanel(p.model, 'power', parseFloat(e.target.value) || 0)
-                                                        }
-                                                    />
+                                                <td className="p-1 px-2">
+                                                    <span className="text-sm text-slate-800">{p.power}</span>
                                                 </td>
-                                                <td className="p-1">
-                                                    <input
-                                                        className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                        type="number"
-                                                        step="0.01"
-                                                        value={p.voc}
-                                                        onChange={(e) =>
-                                                            updatePanel(p.model, 'voc', parseFloat(e.target.value) || 0)
-                                                        }
-                                                    />
+                                                <td className="p-1 px-2">
+                                                    <span className="text-sm text-slate-800">{p.voc}</span>
                                                 </td>
-                                                <td className="p-1">
-                                                    <input
-                                                        className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                        type="number"
-                                                        step="0.01"
-                                                        value={p.vmp}
-                                                        onChange={(e) =>
-                                                            updatePanel(p.model, 'vmp', parseFloat(e.target.value) || 0)
-                                                        }
-                                                    />
+                                                <td className="p-1 px-2">
+                                                    <span className="text-sm text-slate-800">{p.vmp}</span>
                                                 </td>
-                                                <td className="p-1">
-                                                    <input
-                                                        className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                        type="number"
-                                                        step="0.01"
-                                                        value={p.isc}
-                                                        onChange={(e) =>
-                                                            updatePanel(p.model, 'isc', parseFloat(e.target.value) || 0)
-                                                        }
-                                                    />
+                                                <td className="p-1 px-2">
+                                                    <span className="text-sm text-slate-800">{p.isc}</span>
                                                 </td>
                                                 <td className="p-1">
                                                     <input

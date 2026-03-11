@@ -332,5 +332,37 @@ describe("analyzeArray", () => {
             )
         ).toBe(true);
     });
+
+    it("includes controller cost in total array cost and splits when shared", () => {
+        const chargersWithPrice = [
+            { id: "CHG_SAFE", name: "Safe Controller", maxV: 200, maxIsc: 20, startupV: 80, price: 600 },
+        ];
+        const twoArrays = [
+            { ...arraysData[0], id: "A1" },
+            { ...arraysData[0], id: "A2", name: "Test Array 2" },
+        ];
+        const oneArrayUsesController = { A1: { panel: "PANEL_OK", controllerInstanceId: "INST_SAFE", controllerMppt: 1 } };
+        const result1 = analyzeArray("A1", {
+            arraysData: twoArrays,
+            panelsData,
+            chargersData: chargersWithPrice,
+            siteControllers,
+            selections: oneArrayUsesController,
+        });
+        expect(result1.cost).toBe(100 * 4 + 600);
+
+        const bothArraysShareController = {
+            A1: { panel: "PANEL_OK", controllerInstanceId: "INST_SAFE", controllerMppt: 1 },
+            A2: { panel: "PANEL_OK", controllerInstanceId: "INST_SAFE", controllerMppt: 2 },
+        };
+        const result2 = analyzeArray("A1", {
+            arraysData: twoArrays,
+            panelsData,
+            chargersData: chargersWithPrice,
+            siteControllers,
+            selections: bothArraysShareController,
+        });
+        expect(result2.cost).toBe(100 * 4 + 300);
+    });
 });
 

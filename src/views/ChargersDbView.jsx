@@ -269,24 +269,12 @@ export default function ChargersDbView() {
                                                     className="border-b border-slate-100 hover:bg-slate-50 focus-within:bg-blue-50"
                                                 >
                                                     <td className="p-1 px-2 text-center">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="w-4 h-4 text-blue-600 rounded cursor-pointer"
-                                                            checked={c.active !== false}
-                                                            onChange={(e) =>
-                                                                updateCharger(c.id, 'active', e.target.checked)
-                                                            }
-                                                        />
+                                                        <span className="text-sm text-slate-600">
+                                                            {c.active !== false ? 'Yes' : 'No'}
+                                                        </span>
                                                     </td>
-                                                    <td className="p-1">
-                                                        <input
-                                                            className="min-w-[220px] w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                            type="text"
-                                                            value={c.name}
-                                                            onChange={(e) =>
-                                                                updateCharger(c.id, 'name', e.target.value)
-                                                            }
-                                                        />
+                                                    <td className="p-1 px-4">
+                                                        <span className="text-sm text-slate-800">{c.name}</span>
                                                     </td>
                                                     <td className="p-1 px-4">
                                                         <span className="text-xs text-slate-400 font-mono whitespace-nowrap">
@@ -331,38 +319,14 @@ export default function ChargersDbView() {
                                                     <td className="p-1 px-4 text-xs text-slate-500">
                                                         {(c.systemVoltages || [48]).join('V / ')}V
                                                     </td>
-                                                    <td className="p-1">
-                                                        <input
-                                                            className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                            type="number"
-                                                            step="1"
-                                                            value={c.maxV}
-                                                            onChange={(e) =>
-                                                                updateCharger(c.id, 'maxV', parseFloat(e.target.value) || 0)
-                                                            }
-                                                        />
+                                                    <td className="p-1 px-4">
+                                                        <span className="text-sm text-slate-800">{c.maxV}</span>
                                                     </td>
-                                                    <td className="p-1">
-                                                        <input
-                                                            className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                            type="number"
-                                                            step="1"
-                                                            value={c.maxIsc}
-                                                            onChange={(e) =>
-                                                                updateCharger(c.id, 'maxIsc', parseFloat(e.target.value) || 0)
-                                                            }
-                                                        />
+                                                    <td className="p-1 px-4">
+                                                        <span className="text-sm text-slate-800">{c.maxIsc}</span>
                                                     </td>
-                                                    <td className="p-1">
-                                                        <input
-                                                            className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
-                                                            type="number"
-                                                            step="1"
-                                                            value={c.startupV}
-                                                            onChange={(e) =>
-                                                                updateCharger(c.id, 'startupV', parseFloat(e.target.value) || 0)
-                                                            }
-                                                        />
+                                                    <td className="p-1 px-4">
+                                                        <span className="text-sm text-slate-800">{c.startupV}</span>
                                                     </td>
                                                     <td className="p-1">
                                                         <input

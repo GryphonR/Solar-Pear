@@ -42,6 +42,7 @@ export const APP_STORAGE_KEYS = [
     'solar_filter_house_backup',
     'solar_areas',
     'user_notes',
+    'solar_active_array_content_tab',
 ];
 
 const AppStateContext = createContext(null);
@@ -79,7 +80,10 @@ export function AppStateProvider({ children }) {
     const [panelSort, setPanelSort] = useState({ key: 'peakPower', dir: 'desc' });
     const [controllerSort, setControllerSort] = useState({ key: 'price', dir: 'asc' });
     const [activeSelectorTabs, setActiveSelectorTabs] = useState({});
-    const [activeArrayContentTab, setActiveArrayContentTab] = useState({});
+    const [activeArrayContentTab, setActiveArrayContentTab] = useLocalStorage(
+        'solar_active_array_content_tab',
+        {}
+    );
     const [infoModalPanelId, setInfoModalPanelId] = useState(null);
     const [infoModalChargerId, setInfoModalChargerId] = useState(null);
     const [addPanelModal, setAddPanelModal] = useState({ open: false, data: {} });
@@ -153,8 +157,8 @@ export function AppStateProvider({ children }) {
         setHideMarginalPanels(false);
         setHideIncompatiblePanels(true);
         setHideIncompatibleControllers(true);
-        setSystemVoltage(48);
-        setSystemType('grid-connected');
+        setSystemVoltage(null);
+        setSystemType('any');
         setFilterEps(false);
         setFilterHouseBackup(false);
         setUserNotes({});
@@ -344,7 +348,7 @@ export function AppStateProvider({ children }) {
         setArraysData([...arraysData, { id: newId, ...d }]);
         setSelections((prev) => ({
             ...prev,
-            [newId]: { panel: panelsData[0].model, controller: chargersData[0].id },
+            [newId]: {},
         }));
     };
 

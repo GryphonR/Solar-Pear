@@ -1,0 +1,33 @@
+[
+    {
+        "name": "UKSOL All Black 440W",
+        "model": "159868",
+        "manufacturer": "UKSOL",
+        "power": 440,
+        "voc": 39.5,
+        "vmp": 32.9,
+        "isc": 14.19,
+        "imp": 13.38,
+        "price": 71.33,
+        "active": true,
+        "height": 1724,
+        "width": 1134,
+        "depth": 30,
+        "weight": 0,
+        "efficiency": 0,
+        "glass": "",
+        "bifacial": false,
+        "cells": "UKS-S108/M10N-440",
+        "tempCoefPmax": 0,
+        "tempCoefVoc": 0,
+        "tempCoefIsc": 0,
+        "maxSeriesFuse": 0,
+        "maxSystemVoltage": 0,
+        "gseCompatibility": "Both",
+        "notes": "",
+        "datasheetUrl": "https://www.cityplumbing.co.uk/p/uksol-440w-all-black-monofacial-solar-panel/p/159868",
+        "buyLinks": {
+            "City Plumbing": "https://www.cityplumbing.co.uk/p/uksol-440w-all-black-monofacial-solar-panel/p/159868"
+        }
+    }
+]

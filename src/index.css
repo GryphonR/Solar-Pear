@@ -26,3 +26,8 @@ body {
   width: 100%;
   height: 100vh;
 }
+
+/* Reserve space for uPlot legend so live values don't push content when wrapping to two lines */
+.uplot-chart .u-legend {
+  min-height: 2.6em;
+}
