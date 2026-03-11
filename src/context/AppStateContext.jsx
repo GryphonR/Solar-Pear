@@ -34,6 +34,8 @@ export const APP_STORAGE_KEYS = [
     'solar_selections',
     'solar_hide_heavy_panels',
     'solar_hide_marginal_panels',
+    'solar_hide_incompatible_panels',
+    'solar_hide_incompatible_controllers',
     'solar_system_voltage',
     'solar_system_type',
     'solar_filter_eps',
@@ -57,6 +59,14 @@ export function AppStateProvider({ children }) {
         'solar_hide_marginal_panels',
         false
     );
+    const [hideIncompatiblePanels, setHideIncompatiblePanels] = useLocalStorage(
+        'solar_hide_incompatible_panels',
+        true
+    );
+    const [hideIncompatibleControllers, setHideIncompatibleControllers] = useLocalStorage(
+        'solar_hide_incompatible_controllers',
+        true
+    );
     const [systemVoltage, setSystemVoltage] = useLocalStorage('solar_system_voltage', null);
     const [systemType, setSystemType] = useLocalStorage('solar_system_type', 'any');
     const [filterEps, setFilterEps] = useLocalStorage('solar_filter_eps', false);
@@ -69,6 +79,7 @@ export function AppStateProvider({ children }) {
     const [panelSort, setPanelSort] = useState({ key: 'peakPower', dir: 'desc' });
     const [controllerSort, setControllerSort] = useState({ key: 'price', dir: 'asc' });
     const [activeSelectorTabs, setActiveSelectorTabs] = useState({});
+    const [activeArrayContentTab, setActiveArrayContentTab] = useState({});
     const [infoModalPanelId, setInfoModalPanelId] = useState(null);
     const [infoModalChargerId, setInfoModalChargerId] = useState(null);
     const [addPanelModal, setAddPanelModal] = useState({ open: false, data: {} });
@@ -140,6 +151,8 @@ export function AppStateProvider({ children }) {
         setAreasData(['House']);
         setHideHeavyPanels(false);
         setHideMarginalPanels(false);
+        setHideIncompatiblePanels(true);
+        setHideIncompatibleControllers(true);
         setSystemVoltage(48);
         setSystemType('grid-connected');
         setFilterEps(false);
@@ -348,6 +361,8 @@ export function AppStateProvider({ children }) {
             userNotes,
             hideHeavyPanels,
             hideMarginalPanels,
+            hideIncompatiblePanels,
+            hideIncompatibleControllers,
             systemVoltage,
             systemType,
             filterEps,
@@ -355,6 +370,7 @@ export function AppStateProvider({ children }) {
             panelSort,
             controllerSort,
             activeSelectorTabs,
+            activeArrayContentTab,
             infoModalPanelId,
             infoModalChargerId,
             addPanelModal,
@@ -377,6 +393,8 @@ export function AppStateProvider({ children }) {
             setUserNotes,
             setHideHeavyPanels,
             setHideMarginalPanels,
+            setHideIncompatiblePanels,
+            setHideIncompatibleControllers,
             setSystemVoltage,
             setSystemType,
             setFilterEps,
@@ -384,6 +402,7 @@ export function AppStateProvider({ children }) {
             setPanelSort,
             setControllerSort,
             setActiveSelectorTabs,
+            setActiveArrayContentTab,
             setInfoModalPanelId,
             setInfoModalChargerId,
             setAddPanelModal,
@@ -421,6 +440,8 @@ export function AppStateProvider({ children }) {
             userNotes,
             hideHeavyPanels,
             hideMarginalPanels,
+            hideIncompatiblePanels,
+            hideIncompatibleControllers,
             systemVoltage,
             systemType,
             filterEps,
@@ -428,6 +449,7 @@ export function AppStateProvider({ children }) {
             panelSort,
             controllerSort,
             activeSelectorTabs,
+            activeArrayContentTab,
             infoModalPanelId,
             infoModalChargerId,
             addPanelModal,

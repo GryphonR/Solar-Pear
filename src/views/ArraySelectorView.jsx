@@ -23,12 +23,16 @@ export default function ArraySelectorView({ arrayId }) {
         setHideHeavyPanels,
         hideMarginalPanels,
         setHideMarginalPanels,
+        hideIncompatiblePanels,
+        setHideIncompatiblePanels,
+        hideIncompatibleControllers,
+        setHideIncompatibleControllers,
         panelSort,
         setPanelSort,
         controllerSort,
         setControllerSort,
-        activeSelectorTabs,
-        setActiveSelectorTabs,
+        activeArrayContentTab,
+        setActiveArrayContentTab,
         userNotes,
         updateUserNote,
         updateArray,
@@ -104,13 +108,25 @@ export default function ArraySelectorView({ arrayId }) {
                 peakPower: pPeakPower,
                 panelCost: pCost,
                 costPerKWp: pCostPerKWp,
+                coldVoc: pColdVoc,
+                hotVmp: pHotVmp,
+                arrayIscHot: pArrayIscHot,
                 isFullyCompatible,
                 isVocWarn,
+                isVocOk,
+                isVmpOk,
+                isIscOk,
+                isWeightOk,
+                isHeightOk,
+                isWidthOk,
             };
         })
-        .filter((p) =>
-            !controller ? p.active !== false && p.isFullyCompatible : p.isFullyCompatible
-        );
+        .filter((p) => {
+            if (hideIncompatiblePanels) {
+                return !controller ? p.active !== false && p.isFullyCompatible : p.isFullyCompatible;
+            }
+            return p.active !== false && isCompatibleFormat(array, p);
+        });
 
     validPanels.sort((a, b) => {
         const valA = a[panelSort.key];
@@ -132,7 +148,7 @@ export default function ArraySelectorView({ arrayId }) {
         if (array.count % i === 0) divisors.push(i);
     }
 
-    const showPanelsSubTab = (activeSelectorTabs[arrayId] || 'panels') === 'panels';
+    const contentTab = activeArrayContentTab[arrayId] || 'overview';
 
     const toggleControllerSort = (key) =>
         setControllerSort((prev) => ({
@@ -140,15 +156,19 @@ export default function ArraySelectorView({ arrayId }) {
             dir: prev.key === key && prev.dir === 'desc' ? 'asc' : 'desc',
         }));
 
-    const validControllersList = availableChargers.filter((c) => {
-        if (!panel) return true;
-        const isVoltageOk = coldVoc <= c.maxV;
-        const isStartupOk = hotVmp >= getEffectiveStartupV(c, systemVoltage);
-        const isCurrentOk = arrayIscHot <= c.maxIsc;
-        return isVoltageOk && isStartupOk && isCurrentOk;
+    const controllersWithFlags = availableChargers.map((c) => {
+        const isVoltageOk = !panel || coldVoc <= c.maxV;
+        const isStartupOk = !panel || hotVmp >= getEffectiveStartupV(c, systemVoltage);
+        const isCurrentOk = !panel || arrayIscHot <= c.maxIsc;
+        const isFullyCompatible = isVoltageOk && isStartupOk && isCurrentOk;
+        return { ...c, isVoltageOk, isStartupOk, isCurrentOk, isFullyCompatible };
     });
 
-    const sortedControllersList = [...validControllersList].sort((a, b) => {
+    const controllersForTable = hideIncompatibleControllers
+        ? controllersWithFlags.filter((c) => c.isFullyCompatible)
+        : controllersWithFlags;
+
+    const sortedControllersList = [...controllersForTable].sort((a, b) => {
         const vA = a[controllerSort.key] || 0;
         const vB = b[controllerSort.key] || 0;
         if (vA < vB) return controllerSort.dir === 'asc' ? -1 : 1;
@@ -164,7 +184,33 @@ export default function ArraySelectorView({ arrayId }) {
         <div className="space-y-6 pb-12">
             <div className="flex justify-between items-end pb-4 border-b border-slate-200">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800">{array.name}</h2>
+                    <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                        {array.name}
+                        {status === 'error' && (
+                            <AlertTriangle
+                                size={24}
+                                className="text-red-500 shrink-0"
+                                title="System failure detected"
+                                aria-label="Array status: failure"
+                            />
+                        )}
+                        {status === 'warning' && (
+                            <AlertTriangle
+                                size={24}
+                                className="text-orange-500 shrink-0"
+                                title="Warning"
+                                aria-label="Array status: warning"
+                            />
+                        )}
+                        {status !== 'error' && status !== 'warning' && (
+                            <CheckCircle
+                                size={24}
+                                className="text-green-600 shrink-0"
+                                title="System compatible"
+                                aria-label="Array status: good"
+                            />
+                        )}
+                    </h2>
                     <p className="text-slate-500 mb-2">
                         {array.orientation} Roof Direction • {array.count} Panels •{' '}
                         {array.mounting === 'In-Roof (GSE)'
@@ -217,21 +263,69 @@ export default function ArraySelectorView({ arrayId }) {
                 </div>
             </div>
 
+            <div className="flex border-b border-slate-300 mb-6">
+                <button
+                    onClick={() =>
+                        setActiveArrayContentTab((prev) => ({ ...prev, [arrayId]: 'overview' }))
+                    }
+                    className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${
+                        contentTab === 'overview'
+                            ? 'border-blue-600 text-blue-700 bg-blue-50/50'
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                    }`}
+                >
+                    Array Overview
+                </button>
+                <button
+                    onClick={() =>
+                        setActiveArrayContentTab((prev) => ({ ...prev, [arrayId]: 'panels' }))
+                    }
+                    className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${
+                        contentTab === 'panels'
+                            ? 'border-blue-600 text-blue-700 bg-blue-50/50'
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                    }`}
+                >
+                    Panel Selector
+                </button>
+                <button
+                    onClick={() =>
+                        setActiveArrayContentTab((prev) => ({ ...prev, [arrayId]: 'controllers' }))
+                    }
+                    className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${
+                        contentTab === 'controllers'
+                            ? 'border-blue-600 text-blue-700 bg-blue-50/50'
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                    }`}
+                >
+                    Controller Selector
+                </button>
+            </div>
+
+            {contentTab === 'overview' && (
+            <>
             <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-6">
                     <div>
-                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex justify-between items-center">
+                        <div
+                            className={`bg-white p-4 rounded-lg border shadow-sm flex justify-between items-center ${!panel ? 'border-blue-200 cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-colors' : 'border-slate-200'}`}
+                            onClick={!panel ? () => setActiveArrayContentTab((prev) => ({ ...prev, [arrayId]: 'panels' })) : undefined}
+                            onKeyDown={!panel ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveArrayContentTab((prev) => ({ ...prev, [arrayId]: 'panels' })); } } : undefined}
+                            role={!panel ? 'button' : undefined}
+                            tabIndex={!panel ? 0 : undefined}
+                            title={!panel ? 'Go to Panel Selector' : undefined}
+                        >
                             <div>
                                 <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                                    Currently Selected Panel
+                                    Panel
                                 </span>
                                 {panel ? (
                                     <span className="text-sm font-bold text-slate-800">
                                         {panel.name} ({panel.power}W)
                                     </span>
                                 ) : (
-                                    <span className="text-sm font-bold text-slate-400 italic">
-                                        No Panel Selected
+                                    <span className="text-sm font-bold text-blue-600">
+                                        Select Panel
                                     </span>
                                 )}
                             </div>
@@ -257,18 +351,25 @@ export default function ArraySelectorView({ arrayId }) {
                     </div>
 
                     <div>
-                        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex justify-between items-center">
+                        <div
+                            className={`bg-white p-4 rounded-lg border shadow-sm flex justify-between items-center ${!controller ? 'border-blue-200 cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-colors' : 'border-slate-200'}`}
+                            onClick={!controller ? () => setActiveArrayContentTab((prev) => ({ ...prev, [arrayId]: 'controllers' })) : undefined}
+                            onKeyDown={!controller ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveArrayContentTab((prev) => ({ ...prev, [arrayId]: 'controllers' })); } } : undefined}
+                            role={!controller ? 'button' : undefined}
+                            tabIndex={!controller ? 0 : undefined}
+                            title={!controller ? 'Go to Controller Selector' : undefined}
+                        >
                             <div>
                                 <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                                    Currently Selected Controller
+                                    Controller
                                 </span>
                                 {controller ? (
                                     <span className="text-sm font-bold text-slate-800">
                                         {controller.manufacturer ? `${controller.manufacturer} ${controller.name}` : controller.name}
                                     </span>
                                 ) : (
-                                    <span className="text-sm font-bold text-slate-400 italic">
-                                        No Controller Selected
+                                    <span className="text-sm font-bold text-blue-600">
+                                        Select Controller
                                     </span>
                                 )}
                             </div>
@@ -596,34 +697,40 @@ export default function ArraySelectorView({ arrayId }) {
                     />
                 </div>
             </div>
+            </>
+            )}
 
-            <div className="pt-8 border-t border-slate-200">
-                <div className="flex border-b border-slate-300 mb-6">
-                    <button
-                        onClick={() =>
-                            setActiveSelectorTabs((prev) => ({ ...prev, [arrayId]: 'panels' }))
-                        }
-                        className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${showPanelsSubTab
-                                ? 'border-blue-600 text-blue-700 bg-blue-50/50'
-                                : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-                            }`}
-                    >
-                        Panel Selector
-                    </button>
-                    <button
-                        onClick={() =>
-                            setActiveSelectorTabs((prev) => ({ ...prev, [arrayId]: 'controllers' }))
-                        }
-                        className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${activeSelectorTabs[arrayId] === 'controllers'
-                                ? 'border-blue-600 text-blue-700 bg-blue-50/50'
-                                : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-                            }`}
-                    >
-                        Controller Selector
-                    </button>
-                </div>
-
-                {showPanelsSubTab ? (
+            {contentTab === 'panels' && (() => {
+                        const peakPowerVals = validPanels.map((p) => p.peakPower);
+                        const coldVocVals = validPanels.map((p) => p.coldVoc);
+                        const hotVmpVals = validPanels.map((p) => p.hotVmp);
+                        const arrayIscHotVals = validPanels.map((p) => p.arrayIscHot);
+                        const costPerKWpVals = validPanels.map((p) => p.costPerKWp);
+                        const panelCostVals = validPanels.map((p) => p.panelCost);
+                        const widthVals = validPanels.map((p) => p.width).filter((v) => v != null);
+                        const heightVals = validPanels.map((p) => p.height).filter((v) => v != null);
+                        const weightVals = validPanels.map((p) => p.weight).filter((v) => v != null);
+                        const min = (arr) => (arr.length ? Math.min(...arr) : 0);
+                        const max = (arr) => (arr.length ? Math.max(...arr) : 0);
+                        const col = {
+                            peakPower: [min(peakPowerVals), max(peakPowerVals)],
+                            coldVoc: [min(coldVocVals), max(coldVocVals)],
+                            hotVmp: [min(hotVmpVals), max(hotVmpVals)],
+                            arrayIscHot: [min(arrayIscHotVals), max(arrayIscHotVals)],
+                            costPerKWp: [min(costPerKWpVals), max(costPerKWpVals)],
+                            panelCost: [min(panelCostVals), max(panelCostVals)],
+                            width: [min(widthVals), max(widthVals)],
+                            height: [min(heightVals), max(heightVals)],
+                            weight: [min(weightVals), max(weightVals)],
+                        };
+                        const ratio = (val, [mn, mx]) =>
+                            val == null || mn === mx ? (mn === mx && val != null ? 1 : 0) : (Number(val) - mn) / (mx - mn);
+                        const barStyle = (r, incompatible) => {
+                            const cellBg = incompatible ? '#fee2e2' : '#ffffff';
+                            const barPct = Math.min(100, Math.max(0, r * 100));
+                            return { cellBg, barPct };
+                        };
+                        return (
                     <div>
                         <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
                             <div>
@@ -700,18 +807,27 @@ export default function ArraySelectorView({ arrayId }) {
                                         />
                                         <span>Hide marginal voltage risks</span>
                                     </label>
+                                    <label className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer hover:text-blue-600 transition-colors">
+                                        <input
+                                            type="checkbox"
+                                            className="w-3.5 h-3.5 text-blue-600 rounded cursor-pointer"
+                                            checked={hideIncompatiblePanels}
+                                            onChange={(e) => setHideIncompatiblePanels(e.target.checked)}
+                                        />
+                                        <span>Hide incompatible options</span>
+                                    </label>
                                 </div>
                             </div>
                         </div>
 
                         <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                             <div className="max-h-[600px] overflow-y-auto">
-                                <table className="w-full text-left border-collapse relative">
-                                    <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
+                                <table className="w-full text-left border-collapse relative text-xs">
+                                    <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-sm">
                                         <tr>
                                             <th
                                                 onClick={() => togglePanelSort('name')}
-                                                className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none"
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                             >
                                                 Panel Name{' '}
                                                 {panelSort.key === 'name' &&
@@ -719,29 +835,83 @@ export default function ArraySelectorView({ arrayId }) {
                                             </th>
                                             <th
                                                 onClick={() => togglePanelSort('peakPower')}
-                                                className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none"
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                             >
-                                                Total Array Power{' '}
+                                                kWp{' '}
                                                 {panelSort.key === 'peakPower' &&
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
-                                                onClick={() => togglePanelSort('costPerKWp')}
-                                                className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none"
+                                                onClick={() => togglePanelSort('coldVoc')}
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
+                                                title="Open-circuit voltage of the string at −10°C"
                                             >
-                                                Cost per kWp{' '}
+                                                Voc Cold{' '}
+                                                {panelSort.key === 'coldVoc' &&
+                                                    (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                            </th>
+                                            <th
+                                                onClick={() => togglePanelSort('hotVmp')}
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
+                                                title="Maximum power point voltage of the string at 65°C"
+                                            >
+                                                Hot Vmp{' '}
+                                                {panelSort.key === 'hotVmp' &&
+                                                    (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                            </th>
+                                            <th
+                                                onClick={() => togglePanelSort('arrayIscHot')}
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
+                                                title="Short-circuit current at 65°C (hot)"
+                                            >
+                                                Isc Hot{' '}
+                                                {panelSort.key === 'arrayIscHot' &&
+                                                    (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                            </th>
+                                            <th
+                                                onClick={() => togglePanelSort('width')}
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
+                                                title="Panel width (mm)"
+                                            >
+                                                Width{' '}
+                                                {panelSort.key === 'width' &&
+                                                    (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                            </th>
+                                            <th
+                                                onClick={() => togglePanelSort('height')}
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
+                                                title="Panel height (mm)"
+                                            >
+                                                Height{' '}
+                                                {panelSort.key === 'height' &&
+                                                    (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                            </th>
+                                            <th
+                                                onClick={() => togglePanelSort('weight')}
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
+                                                title="Panel weight (kg)"
+                                            >
+                                                Weight{' '}
+                                                {panelSort.key === 'weight' &&
+                                                    (panelSort.dir === 'asc' ? '↑' : '↓')}
+                                            </th>
+                                            <th
+                                                onClick={() => togglePanelSort('costPerKWp')}
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
+                                            >
+                                                £/kWp{' '}
                                                 {panelSort.key === 'costPerKWp' &&
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
                                                 onClick={() => togglePanelSort('panelCost')}
-                                                className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none"
+                                                className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                             >
-                                                Total Panels Cost{' '}
+                                                £ Total{' '}
                                                 {panelSort.key === 'panelCost' &&
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                            <th className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
                                                 Action
                                             </th>
                                         </tr>
@@ -751,13 +921,16 @@ export default function ArraySelectorView({ arrayId }) {
                                             validPanels.map((p) => {
                                                 const isSelected =
                                                     (selections[arrayId]?.panel) === p.model;
+                                                const incompatibleBg = !p.isFullyCompatible ? 'bg-red-100' : '';
+                                                const inc = !!incompatibleBg;
                                                 return (
                                                     <tr
                                                         key={p.model}
-                                                        className={`border-b border-slate-100 transition-colors ${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'
-                                                            }`}
+                                                        className={`border-b border-slate-100 transition-colors ${
+                                                            isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'
+                                                        }`}
                                                     >
-                                                        <td className="py-3 px-4">
+                                                        <td className={`py-2 px-3 border-r border-slate-200/70 ${incompatibleBg}`}>
                                                             <div className="flex items-center gap-1.5 flex-wrap">
                                                                 <span>{p.name}</span>
                                                                 <button
@@ -792,16 +965,61 @@ export default function ArraySelectorView({ arrayId }) {
                                                                 <BuyButton buyLinks={p.buyLinks} />
                                                             </div>
                                                         </td>
-                                                        <td className="py-3 px-4 font-medium text-blue-700">
-                                                            {p.peakPower.toLocaleString()} W
+                                                        <td className="py-2 px-3 font-medium text-blue-700 relative border-r border-slate-200/70" style={{ background: barStyle(ratio(p.peakPower, col.peakPower), inc).cellBg }}>
+                                                            {barStyle(ratio(p.peakPower, col.peakPower), inc).barPct > 0 && (
+                                                                <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(p.peakPower, col.peakPower), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                            )}
+                                                            <span className="relative z-10">{p.peakPower.toLocaleString()} W</span>
                                                         </td>
-                                                        <td className="py-3 px-4">
-                                                            £{p.costPerKWp.toFixed(2)}
+                                                        <td className={`py-2 px-3 relative border-r border-slate-200/70 ${!p.isVocOk ? 'font-bold text-red-600' : 'text-slate-700'}`} style={{ background: barStyle(ratio(p.coldVoc, col.coldVoc), inc).cellBg }}>
+                                                            {barStyle(ratio(p.coldVoc, col.coldVoc), inc).barPct > 0 && (
+                                                                <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(p.coldVoc, col.coldVoc), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                            )}
+                                                            <span className="relative z-10">{p.coldVoc.toFixed(1)} V</span>
                                                         </td>
-                                                        <td className="py-3 px-4">
-                                                            £{p.panelCost.toLocaleString()}
+                                                        <td className={`py-2 px-3 relative border-r border-slate-200/70 ${!p.isVmpOk ? 'font-bold text-red-600' : 'text-slate-700'}`} style={{ background: barStyle(ratio(p.hotVmp, col.hotVmp), inc).cellBg }}>
+                                                            {barStyle(ratio(p.hotVmp, col.hotVmp), inc).barPct > 0 && (
+                                                                <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(p.hotVmp, col.hotVmp), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                            )}
+                                                            <span className="relative z-10">{p.hotVmp.toFixed(1)} V</span>
                                                         </td>
-                                                        <td className="py-3 px-4 text-right">
+                                                        <td className={`py-2 px-3 relative border-r border-slate-200/70 ${!p.isIscOk ? 'font-bold text-red-600' : 'text-slate-700'}`} style={{ background: barStyle(ratio(p.arrayIscHot, col.arrayIscHot), inc).cellBg }}>
+                                                            {barStyle(ratio(p.arrayIscHot, col.arrayIscHot), inc).barPct > 0 && (
+                                                                <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(p.arrayIscHot, col.arrayIscHot), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                            )}
+                                                            <span className="relative z-10">{p.arrayIscHot.toFixed(2)} A</span>
+                                                        </td>
+                                                        <td className={`py-2 px-3 relative border-r border-slate-200/70 ${!p.isWidthOk ? 'font-bold text-red-600' : 'text-slate-700'}`} style={{ background: barStyle(ratio(p.width, col.width), inc).cellBg }}>
+                                                            {barStyle(ratio(p.width, col.width), inc).barPct > 0 && (
+                                                                <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(p.width, col.width), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                            )}
+                                                            <span className="relative z-10">{p.width != null ? `${p.width} mm` : '—'}</span>
+                                                        </td>
+                                                        <td className={`py-2 px-3 relative border-r border-slate-200/70 ${!p.isHeightOk ? 'font-bold text-red-600' : 'text-slate-700'}`} style={{ background: barStyle(ratio(p.height, col.height), inc).cellBg }}>
+                                                            {barStyle(ratio(p.height, col.height), inc).barPct > 0 && (
+                                                                <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(p.height, col.height), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                            )}
+                                                            <span className="relative z-10">{p.height != null ? `${p.height} mm` : '—'}</span>
+                                                        </td>
+                                                        <td className={`py-2 px-3 relative border-r border-slate-200/70 ${!p.isWeightOk ? 'font-bold text-red-600' : 'text-slate-700'}`} style={{ background: barStyle(ratio(p.weight, col.weight), inc).cellBg }}>
+                                                            {barStyle(ratio(p.weight, col.weight), inc).barPct > 0 && (
+                                                                <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(p.weight, col.weight), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                            )}
+                                                            <span className="relative z-10">{p.weight != null ? `${p.weight} kg` : '—'}</span>
+                                                        </td>
+                                                        <td className="py-2 px-3 relative border-r border-slate-200/70" style={{ background: barStyle(ratio(p.costPerKWp, col.costPerKWp), inc).cellBg }}>
+                                                            {barStyle(ratio(p.costPerKWp, col.costPerKWp), inc).barPct > 0 && (
+                                                                <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(p.costPerKWp, col.costPerKWp), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                            )}
+                                                            <span className="relative z-10">£{p.costPerKWp.toFixed(2)}</span>
+                                                        </td>
+                                                        <td className="py-2 px-3 relative border-r border-slate-200/70" style={{ background: barStyle(ratio(p.panelCost, col.panelCost), inc).cellBg }}>
+                                                            {barStyle(ratio(p.panelCost, col.panelCost), inc).barPct > 0 && (
+                                                                <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(p.panelCost, col.panelCost), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                            )}
+                                                            <span className="relative z-10">£{p.panelCost.toLocaleString()}</span>
+                                                        </td>
+                                                        <td className={`py-2 px-3 text-right ${incompatibleBg}`}>
                                                             {isSelected ? (
                                                                 <span className="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded">
                                                                     <CheckCircle
@@ -819,7 +1037,11 @@ export default function ArraySelectorView({ arrayId }) {
                                                                             p.model
                                                                         )
                                                                     }
-                                                                    className="px-3 py-1.5 bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-xs font-bold rounded transition-colors"
+                                                                    className={`px-3 py-1.5 text-xs font-bold rounded transition-colors ${
+                                                                        p.isFullyCompatible
+                                                                            ? 'bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600'
+                                                                            : 'bg-red-50 border border-red-400 text-red-700 hover:bg-red-100 hover:border-red-600'
+                                                                    }`}
                                                                 >
                                                                     Select Panel
                                                                 </button>
@@ -831,7 +1053,7 @@ export default function ArraySelectorView({ arrayId }) {
                                         ) : (
                                             <tr>
                                                 <td
-                                                    colSpan="5"
+                                                    colSpan="11"
                                                     className="py-8 px-4 text-center text-slate-500 italic"
                                                 >
                                                     <AlertTriangle
@@ -848,7 +1070,11 @@ export default function ArraySelectorView({ arrayId }) {
                             </div>
                         </div>
                     </div>
-                ) : (
+                );
+            })()}
+
+
+            {contentTab === 'controllers' && (
                     <div className="space-y-8">
                         {areaControllers.length > 0 && (
                             <div>
@@ -997,15 +1223,44 @@ export default function ArraySelectorView({ arrayId }) {
                                         )}
                                     </p>
                                 </div>
+                                <label className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer hover:text-blue-600 transition-colors">
+                                    <input
+                                        type="checkbox"
+                                        className="w-3.5 h-3.5 text-blue-600 rounded cursor-pointer"
+                                        checked={hideIncompatibleControllers}
+                                        onChange={(e) => setHideIncompatibleControllers(e.target.checked)}
+                                    />
+                                    <span>Hide incompatible options</span>
+                                </label>
                             </div>
+                            {(() => {
+                                const list = sortedControllersList;
+                                const maxVVals = list.map((c) => c.maxV);
+                                const maxIscVals = list.map((c) => c.maxIsc);
+                                const priceVals = list.map((c) => c.price ?? 0);
+                                const min = (arr) => (arr.length ? Math.min(...arr) : 0);
+                                const max = (arr) => (arr.length ? Math.max(...arr) : 0);
+                                const col = {
+                                    maxV: [min(maxVVals), max(maxVVals)],
+                                    maxIsc: [min(maxIscVals), max(maxIscVals)],
+                                    price: [min(priceVals), max(priceVals)],
+                                };
+                                const ratio = (val, [mn, mx]) =>
+                                    val == null || mn === mx ? (mn === mx && val != null ? 1 : 0) : (Number(val) - mn) / (mx - mn);
+                                const barStyle = (r, incompatible) => {
+                                    const cellBg = incompatible ? '#fee2e2' : '#ffffff';
+                                    const barPct = Math.min(100, Math.max(0, r * 100));
+                                    return { cellBg, barPct };
+                                };
+                                return (
                             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                                 <div className="max-h-[600px] overflow-y-auto">
-                                    <table className="w-full text-left border-collapse relative">
-                                        <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
+                                    <table className="w-full text-left border-collapse relative text-xs">
+                                        <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-sm">
                                             <tr>
                                                 <th
                                                     onClick={() => toggleControllerSort('name')}
-                                                    className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none"
+                                                    className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 >
                                                     Controller Model{' '}
                                                     {controllerSort.key === 'name' &&
@@ -1013,7 +1268,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                 </th>
                                                 <th
                                                     onClick={() => toggleControllerSort('maxV')}
-                                                    className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none"
+                                                    className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 >
                                                     PV Vmax{' '}
                                                     {controllerSort.key === 'maxV' &&
@@ -1021,7 +1276,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                 </th>
                                                 <th
                                                     onClick={() => toggleControllerSort('maxIsc')}
-                                                    className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none"
+                                                    className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 >
                                                     Max Isc{' '}
                                                     {controllerSort.key === 'maxIsc' &&
@@ -1029,26 +1284,28 @@ export default function ArraySelectorView({ arrayId }) {
                                                 </th>
                                                 <th
                                                     onClick={() => toggleControllerSort('price')}
-                                                    className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none"
+                                                    className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 >
                                                     Price{' '}
                                                     {controllerSort.key === 'price' &&
                                                         (controllerSort.dir === 'asc' ? '↑' : '↓')}
                                                 </th>
-                                                <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                                <th className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
                                                     Action
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {sortedControllersList.length > 0 ? (
-                                                sortedControllersList.map((c) => {
+                                            {list.length > 0 ? (
+                                                list.map((c) => {
                                                     const isSelected =
                                                         selections[arrayId]?.controller &&
                                                         chargersData.find(
                                                             (x) => x.id === selections[arrayId].controller
                                                         )?.id === c.id &&
                                                         !selections[arrayId].controllerInstanceId;
+                                                    const incompatibleBg = !c.isFullyCompatible ? 'bg-red-100' : '';
+                                                    const inc = !!incompatibleBg;
                                                     return (
                                                         <tr
                                                             key={c.id}
@@ -1057,7 +1314,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                                     : 'hover:bg-slate-50'
                                                                 }`}
                                                         >
-                                                            <td className="py-3 px-4">
+                                                            <td className={`py-2 px-3 border-r border-slate-200/70 ${incompatibleBg}`}>
                                                                 <div className="flex items-center gap-1.5 flex-wrap">
                                                                     <span className="font-medium text-slate-800">
                                                                         {c.name}
@@ -1089,16 +1346,25 @@ export default function ArraySelectorView({ arrayId }) {
                                                                     )}
                                                                 </div>
                                                             </td>
-                                                            <td className="py-3 px-4 text-slate-700">
-                                                                {c.maxV} V
+                                                            <td className={`py-2 px-3 relative border-r border-slate-200/70 ${!c.isVoltageOk ? 'font-bold text-red-600' : 'text-slate-700'}`} style={{ background: barStyle(ratio(c.maxV, col.maxV), inc).cellBg }}>
+                                                                {barStyle(ratio(c.maxV, col.maxV), inc).barPct > 0 && (
+                                                                    <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(c.maxV, col.maxV), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                                )}
+                                                                <span className="relative z-10">{c.maxV} V</span>
                                                             </td>
-                                                            <td className="py-3 px-4 text-slate-700">
-                                                                {c.maxIsc} A
+                                                            <td className={`py-2 px-3 relative border-r border-slate-200/70 ${!c.isCurrentOk ? 'font-bold text-red-600' : 'text-slate-700'}`} style={{ background: barStyle(ratio(c.maxIsc, col.maxIsc), inc).cellBg }}>
+                                                                {barStyle(ratio(c.maxIsc, col.maxIsc), inc).barPct > 0 && (
+                                                                    <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(c.maxIsc, col.maxIsc), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                                )}
+                                                                <span className="relative z-10">{c.maxIsc} A</span>
                                                             </td>
-                                                            <td className="py-3 px-4 font-medium text-blue-700">
-                                                                £{c.price}
+                                                            <td className="py-2 px-3 font-medium text-blue-700 relative border-r border-slate-200/70" style={{ background: barStyle(ratio(c.price, col.price), inc).cellBg }}>
+                                                                {barStyle(ratio(c.price, col.price), inc).barPct > 0 && (
+                                                                    <span className="absolute inset-y-0 left-0 rounded-[4px] pointer-events-none" style={{ width: `${barStyle(ratio(c.price, col.price), inc).barPct}%`, background: 'rgba(0,0,0,0.08)' }} />
+                                                                )}
+                                                                <span className="relative z-10">£{c.price}</span>
                                                             </td>
-                                                            <td className="py-3 px-4 text-right">
+                                                            <td className={`py-2 px-3 text-right ${incompatibleBg}`}>
                                                                 <button
                                                                     onClick={() => {
                                                                         const newInstId =
@@ -1113,7 +1379,11 @@ export default function ArraySelectorView({ arrayId }) {
                                                                             1
                                                                         );
                                                                     }}
-                                                                    className="px-3 py-1.5 bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-xs font-bold rounded transition-colors"
+                                                                    className={`px-3 py-1.5 text-xs font-bold rounded transition-colors ${
+                                                                        c.isFullyCompatible
+                                                                            ? 'bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600'
+                                                                            : 'bg-red-50 border border-red-400 text-red-700 hover:bg-red-100 hover:border-red-600'
+                                                                    }`}
                                                                 >
                                                                     Add New Instance
                                                                 </button>
@@ -1140,10 +1410,11 @@ export default function ArraySelectorView({ arrayId }) {
                                     </table>
                                 </div>
                             </div>
+                                );
+                            })()}
                         </div>
                     </div>
-                )}
-            </div>
+            )}
         </div>
     );
 }

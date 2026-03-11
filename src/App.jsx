@@ -3,6 +3,7 @@ import SolarPearLogo from './components/SolarPearLogo';
 import Guide from './components/Guide';
 import {
     AlertTriangle,
+    CheckCircle,
     LayoutDashboard,
     Database,
     Server,
@@ -209,13 +210,31 @@ export default function App() {
                                                 onClick={() => setActiveTab(array.id)}
                                                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-colors ${activeTab === array.id ? 'bg-blue-600 text-white font-medium' : 'hover:bg-slate-800 hover:text-white'}`}
                                             >
-                                                <span className="text-sm truncate mr-2">
+                                                <span className="text-sm truncate mr-2 min-w-0">
                                                     {array.name}
                                                 </span>
                                                 {analysis.status === 'error' && (
                                                     <AlertTriangle
                                                         size={16}
                                                         className={`flex-shrink-0 ${activeTab === array.id ? 'text-red-200' : 'text-red-500'}`}
+                                                        title="System failure"
+                                                        aria-hidden
+                                                    />
+                                                )}
+                                                {analysis.status === 'warning' && (
+                                                    <AlertTriangle
+                                                        size={16}
+                                                        className={`flex-shrink-0 ${activeTab === array.id ? 'text-orange-200' : 'text-orange-500'}`}
+                                                        title="Warning"
+                                                        aria-hidden
+                                                    />
+                                                )}
+                                                {analysis.status !== 'error' && analysis.status !== 'warning' && (
+                                                    <CheckCircle
+                                                        size={16}
+                                                        className={`flex-shrink-0 ${activeTab === array.id ? 'text-green-200' : 'text-green-500'}`}
+                                                        title="System compatible"
+                                                        aria-hidden
                                                     />
                                                 )}
                                             </button>
