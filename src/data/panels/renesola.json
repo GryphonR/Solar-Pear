@@ -1,64 +1,78 @@
 [
     {
         "name": "Renesola 425W All Black",
+        "model": "RS41-425NX-E3",
+        "manufacturer": "Renesola",
+        "panel-series": "",
+        "height": 1722,
+        "width": 1134,
+        "depth": 30,
+        "weight": 22,
+        "glass": "Single (3.2mm AR Coated)",
+        "bifacial": false,
         "power": 425,
         "voc": 38.41,
         "vmp": 32.27,
         "isc": 13.98,
         "imp": 13.17,
         "price": 93.45,
-        "active": true,
-        "height": 1722,
-        "width": 1134,
-        "depth": 30,
-        "weight": 22,
         "efficiency": 21.76,
-        "glass": "Single (3.2mm AR Coated)",
-        "bifacial": false,
-        "cells": "108 Half-Cell (N-TOPCon)",
         "tempCoefPmax": -0.31,
         "tempCoefVoc": -0.26,
         "tempCoefIsc": 0.046,
         "maxSeriesFuse": 25,
         "maxSystemVoltage": 1500,
-        "notes": "Saturn Series Monofacial All-Black. N-TOPCon technology for high efficiency and reliability.",
-        "datasheetUrl": "https://voltaconsolar.com/products/renesola-solar-panel-425w-half-cut-108-cells-n-topcon-mono-facial-all-black",
-        "model": "RS41-425NX-E3",
+        "cells": "108 Half-Cell (N-TOPCon)",
         "gseCompatibility": "Both",
-        "buyLinks": {
-            "Voltacon Solar": "https://voltaconsolar.com/products/renesola-solar-panel-425w-half-cut-108-cells-n-topcon-mono-facial-all-black"
-        },
-        "manufacturer": "Renesola"
+        "datasheetUrl": "https://voltaconsolar.com/products/renesola-solar-panel-425w-half-cut-108-cells-n-topcon-mono-facial-all-black",
+        "notes": "Saturn Series Monofacial All-Black. N-TOPCon technology for high efficiency and reliability.",
+        "buyLinks": [
+            {
+                "Supplier": "Voltacon Solar",
+                "URL": "https://voltaconsolar.com/products/renesola-solar-panel-425w-half-cut-108-cells-n-topcon-mono-facial-all-black",
+                "isAffiliate": false
+            }
+        ],
+        "active": true,
+        "reviewed": false,
+        "availableUK": true
     },
     {
         "name": "Renesola 425W Bifacial",
+        "model": "RS41-425NXG-E3",
+        "manufacturer": "Renesola",
+        "panel-series": "",
+        "height": 1728,
+        "width": 1134,
+        "depth": 30,
+        "weight": 24.5,
+        "glass": "Dual Glass (2.0mm + 2.0mm)",
+        "bifacial": true,
         "power": 425,
         "voc": 38.5,
         "vmp": 32.5,
         "isc": 14.02,
         "imp": 13.08,
         "price": 93.45,
-        "active": true,
-        "height": 1728,
-        "width": 1134,
-        "depth": 30,
-        "weight": 24.5,
         "efficiency": 21.77,
-        "glass": "Dual Glass (2.0mm + 2.0mm)",
-        "bifacial": true,
-        "cells": "108 Half-Cell (N-Type)",
         "tempCoefPmax": -0.31,
         "tempCoefVoc": -0.26,
         "tempCoefIsc": 0.046,
         "maxSeriesFuse": 30,
         "maxSystemVoltage": 1500,
-        "notes": "Saturn Bi-Facial panel with double glass. Catches sun rays from both directions for up to 90W additional back-side energy.",
-        "datasheetUrl": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425w-front-90w-back-half-cut-monocrystalline",
-        "model": "RS41-425NXG-E3",
+        "cells": "108 Half-Cell (N-Type)",
         "gseCompatibility": "Portrait Only",
-        "buyLinks": {
-            "Voltacon Solar": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425w-front-90w-back-half-cut-monocrystalline"
-        },
-        "manufacturer": "Renesola"
+        "datasheetUrl": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425w-front-90w-back-half-cut-monocrystalline",
+        "notes": "Saturn Bi-Facial panel with double glass. Catches sun rays from both directions for up to 90W additional back-side energy.",
+        "buyLinks": [
+            {
+                "Supplier": "Voltacon Solar",
+                "URL": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425w-front-90w-back-half-cut-monocrystalline",
+                "isAffiliate": false
+            }
+        ],
+        "active": true,
+        "reviewed": false,
+        "availableUK": true
     }
 ]
