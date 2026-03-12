@@ -114,9 +114,15 @@ export default function PanelsDbView() {
                                                 }`}
                                             >
                                                 <td className="p-1 text-center">
-                                                    <span className="text-sm text-slate-600" title="Include in array dropdown menus">
-                                                        {p.active !== false ? 'Yes' : 'No'}
-                                                    </span>
+                                                    <label className="flex justify-center items-center cursor-pointer" title="Include in array dropdown menus">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                                            checked={p.active !== false}
+                                                            onChange={() => updatePanel(p.model, 'active', p.active === false)}
+                                                            aria-label="Active"
+                                                        />
+                                                    </label>
                                                 </td>
                                                 <td className="p-1 px-2">
                                                     <span className="text-sm text-slate-800">{p.name}</span>

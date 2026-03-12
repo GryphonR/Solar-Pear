@@ -269,9 +269,15 @@ export default function ChargersDbView() {
                                                     className="border-b border-slate-100 hover:bg-slate-50 focus-within:bg-blue-50"
                                                 >
                                                     <td className="p-1 px-2 text-center">
-                                                        <span className="text-sm text-slate-600">
-                                                            {c.active !== false ? 'Yes' : 'No'}
-                                                        </span>
+                                                        <label className="flex justify-center items-center cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                                                checked={c.active !== false}
+                                                                onChange={() => updateCharger(c.id, 'active', c.active === false)}
+                                                                aria-label="Active"
+                                                            />
+                                                        </label>
                                                     </td>
                                                     <td className="p-1 px-4">
                                                         <span className="text-sm text-slate-800">{c.name}</span>

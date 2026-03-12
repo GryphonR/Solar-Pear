@@ -5,7 +5,9 @@ import { ShoppingCart, ChevronDown } from './Icons';
 export default function BuyButton({ buyLinks = {} }) {
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
-    const entries = Object.entries(buyLinks).filter(([, url]) => url && url.trim());
+    const entries = Object.entries(buyLinks).filter(
+        ([, url]) => typeof url === 'string' && url.trim()
+    );
 
     useEffect(() => {
         if (!open) return;
