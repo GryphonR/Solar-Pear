@@ -112,24 +112,26 @@
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
         "model": "DM465M10RT-B54HBT-L",
         "gseCompatibility": "Both",
-        "buyLinks": {},
+         "buyLinks": {
+            "City Plumbing": "https://www.cityplumbing.co.uk/p/dmegc-465w-g12-all-black-solar-panel/p/231059"
+        },
         "manufacturer": "DMEGC"
     },
     {
         "name": "DMEGC G12 Infinity RT 515W",
         "power": 515,
-        "voc": 38.89,
-        "vmp": 32.55,
-        "isc": 16.65,
-        "imp": 15.82,
+        "voc": 40.75,
+        "vmp": 34.61,
+        "isc": 15.83,
+        "imp": 14.88,
         "price": 83,
         "active": true,
-        "height": 1961,
+        "height": 1977,
         "width": 1134,
         "depth": 30,
-        "weight": 27.5,
-        "efficiency": 22.7,
-        "glass": "Dual (1.6mm + 1.6mm)",
+        "weight": 27.1,
+        "efficiency": 22.9,
+        "glass": "Dual (2.0mm + 2.0mm)",
         "bifacial": true,
         "cells": "108 Half-Cell (G12 RT)",
         "tempCoefPmax": -0.29,
@@ -141,7 +143,9 @@
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
         "model": "DM515G12RT-B54HBT",
         "gseCompatibility": "Portrait Only",
-        "buyLinks": {},
+        "buyLinks": {
+            "City Plumbing": "https://www.cityplumbing.co.uk/p/dmegc-515w-all-black-solar-panel/p/223866"
+        },
         "manufacturer": "DMEGC"
     },
     {
@@ -173,37 +177,6 @@
         "datasheetUrl": "https://www.cityplumbing.co.uk/p/dmegc-465w-g12-all-black-solar-panel/p/231059",
         "buyLinks": {
             "City Plumbing": "https://www.cityplumbing.co.uk/p/dmegc-465w-g12-all-black-solar-panel/p/231059"
-        }
-    },
-    {
-        "name": "DMEGC All Black 515W",
-        "model": "223866",
-        "manufacturer": "DMEGC",
-        "power": 515,
-        "voc": 40.75,
-        "vmp": 34.61,
-        "isc": 15.83,
-        "imp": 14.88,
-        "price": 91.87,
-        "active": true,
-        "height": 1977,
-        "width": 1134,
-        "depth": 30,
-        "weight": 0,
-        "efficiency": 0,
-        "glass": "",
-        "bifacial": false,
-        "cells": "DM515G12RT-B54HBB",
-        "tempCoefPmax": 0,
-        "tempCoefVoc": 0,
-        "tempCoefIsc": 0,
-        "maxSeriesFuse": 0,
-        "maxSystemVoltage": 0,
-        "gseCompatibility": "Both",
-        "notes": "",
-        "datasheetUrl": "https://www.cityplumbing.co.uk/p/dmegc-515w-all-black-solar-panel/p/223866",
-        "buyLinks": {
-            "City Plumbing": "https://www.cityplumbing.co.uk/p/dmegc-515w-all-black-solar-panel/p/223866"
         }
     }
 ]
