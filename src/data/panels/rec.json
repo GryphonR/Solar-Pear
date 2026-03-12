@@ -3,7 +3,7 @@
         "name": "REC Alpha Pure-R 400W",
         "model": "REC400AA Pure-R",
         "manufacturer": "REC",
-        "panel-series": "",
+        "panel-series": "Alpha Pure-R",
         "height": 1730,
         "width": 1118,
         "depth": 30,
@@ -35,7 +35,7 @@
         "name": "REC Alpha Pure-R 410W",
         "model": "REC410AA Pure-R",
         "manufacturer": "REC",
-        "panel-series": "",
+        "panel-series": "Alpha Pure-R",
         "height": 1730,
         "width": 1118,
         "depth": 30,
@@ -67,7 +67,7 @@
         "name": "REC Alpha Pure-R 420W",
         "model": "REC420AA Pure-R",
         "manufacturer": "REC",
-        "panel-series": "",
+        "panel-series": "Alpha Pure-R",
         "height": 1730,
         "width": 1118,
         "depth": 30,
@@ -90,7 +90,14 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.recgroup.com/sites/default/files/2025-01/Web_DS_REC_Alpha_Pure-R_EN.pdf",
         "notes": "High performance bin for the Pure-R series. Maximizes wattage from a compact footprint.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "segen.co.uk",
+                "URL": "https://www.segen.co.uk/product/rec-alpha-pure-r-series-420w-all-black/",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -99,7 +106,7 @@
         "name": "REC Alpha Pure-R 430W",
         "model": "REC430AA Pure-R",
         "manufacturer": "REC",
-        "panel-series": "",
+        "panel-series": "Alpha Pure-R",
         "height": 1730,
         "width": 1118,
         "depth": 30,

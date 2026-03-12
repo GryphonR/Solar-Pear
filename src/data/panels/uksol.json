@@ -1,6 +1,6 @@
 [
     {
-        "name": "UKSOL All Black 440W",
+        "name": "UKSOL UKS-S108 440W",
         "model": "UKS-S108/M10N-440",
         "manufacturer": "UKSOL",
         "panel-series": "UKS-S108",
@@ -30,7 +30,14 @@
             {
                 "Supplier": "City Plumbing",
                 "URL": "https://www.cityplumbing.co.uk/p/uksol-440w-all-black-monofacial-solar-panel/p/159868",
-                "isAffiliate": false
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "cityplumbing.co.uk",
+                "URL": "https://www.cityplumbing.co.uk/p/uksol-440w-full-black-topcon-monofacial-pv-module-uks-s108m10n-440/p/159868?srsltid=AfmBOoqO5wFBYpk6RncI9jpsXqhLtPpuCyVINFz8JvlVIcFznr450rL1",
+                "isAffiliate": false,
+                "Checked": false
             }
         ],
         "active": true,

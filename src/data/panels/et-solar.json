@@ -30,7 +30,8 @@
             {
                 "Supplier": "Voltacon Solar",
                 "URL": "https://voltaconsolar.com/products/elite-430watt-solar-panel-bifacial-full-black",
-                "isAffiliate": false
+                "isAffiliate": false,
+                "Checked": false
             }
         ],
         "active": true,
@@ -68,7 +69,8 @@
             {
                 "Supplier": "Voltacon Solar",
                 "URL": "https://voltaconsolar.com/products/elite-solar-panel-440w-full-black",
-                "isAffiliate": false
+                "isAffiliate": false,
+                "Checked": false
             }
         ],
         "active": true,

@@ -36,12 +36,19 @@ const ALLOWED_EMPTY_STRINGS = [
 // --- UTILITY FUNCTIONS ---
 
 function normalizeBuyLinks(buyLinks) {
-    if (Array.isArray(buyLinks)) return buyLinks;
+    if (Array.isArray(buyLinks)) {
+        return buyLinks.map(link => ({
+            ...link,
+            isAffiliate: link.isAffiliate || false,
+            Checked: link.hasOwnProperty('Checked') ? link.Checked : false
+        }));
+    }
     if (typeof buyLinks === 'object' && buyLinks !== null) {
         return Object.entries(buyLinks).map(([supplier, url]) => ({
             Supplier: supplier,
             URL: url,
-            isAffiliate: false
+            isAffiliate: false,
+            Checked: false
         }));
     }
     return [];

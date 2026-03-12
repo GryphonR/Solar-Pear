@@ -1,9 +1,9 @@
 [
     {
-        "name": "DMEGC Infinity 450W",
+        "name": "DMEGC Infinity RT 450W",
         "model": "DM450M10RT-B54HBT-L",
         "manufacturer": "DMEGC",
-        "panel-series": "",
+        "panel-series": "Infinity RT",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -26,16 +26,23 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
         "notes": "A very strong middle-ground option. Offers the durability of double-glass and bifacial cell tech with excellent voltage profiles.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "DMEGC Infinity 455W",
+        "name": "DMEGC Infinity RT 455W",
         "model": "DM455M10RT-B54HBT-L",
         "manufacturer": "DMEGC",
-        "panel-series": "",
+        "panel-series": "Infinity RT",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -58,16 +65,23 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
         "notes": "Solid N-Type bifacial panel. High quality build with premium efficiency ratings.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "DMEGC Infinity 460W",
+        "name": "DMEGC Infinity RT 460W",
         "model": "DM460M10RT-B54HBT-L",
         "manufacturer": "DMEGC",
-        "panel-series": "",
+        "panel-series": "Infinity RT",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -90,16 +104,23 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
         "notes": "Higher power variant of the Infinity series. Top-tier efficiency for standard-sized modules.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "DMEGC Infinity 465W",
+        "name": "DMEGC Infinity RT 465W",
         "model": "DM465M10RT-B54HBT-L",
         "manufacturer": "DMEGC",
-        "panel-series": "",
+        "panel-series": "Infinity RT",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -125,44 +146,6 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
-        "availableUK": true
-    },
-    {
-        "name": "DMEGC G12 Infinity RT 515W",
-        "model": "DM515G12RT-B54HBT",
-        "manufacturer": "DMEGC",
-        "panel-series": "",
-        "height": 1977,
-        "width": 1134,
-        "depth": 30,
-        "weight": 27.1,
-        "glass": "Dual (2.0mm + 2.0mm)",
-        "bifacial": true,
-        "power": 515,
-        "voc": 40.75,
-        "vmp": 34.61,
-        "isc": 15.83,
-        "imp": 14.88,
-        "price": 92,
-        "efficiency": 22.9,
-        "tempCoefPmax": -0.29,
-        "tempCoefVoc": -0.25,
-        "tempCoefIsc": 0.048,
-        "maxSeriesFuse": 30,
-        "maxSystemVoltage": 1500,
-        "cells": "108 Half-Cell (G12 RT)",
-        "gseCompatibility": "Portrait Only",
-        "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
-        "notes": "ENGINEERING WARNING: Uses larger G12-RT rectangular wafers. Massive 16A current pushes many MPPTs to their limit. Verify safety margins for cloud-edge effects.",
-        "buyLinks": [
-            {
-                "Supplier": "City Plumbing",
-                "URL": "https://www.cityplumbing.co.uk/p/dmegc-515w-all-black-solar-panel/p/223866",
-                "isAffiliate": false
-            }
-        ],
-        "active": true,
-        "reviewed": true,
         "availableUK": true
     },
     {
@@ -196,11 +179,57 @@
             {
                 "Supplier": "City Plumbing",
                 "URL": "https://www.cityplumbing.co.uk/p/dmegc-465w-g12-all-black-solar-panel/p/231059",
-                "isAffiliate": false
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "cclcomponents.com",
+                "URL": "https://www.cclcomponents.com/dmegc-solar-465w-infinity-rt-96-cut-dual-glass-n-type-mono-solar-module-full-black-16035",
+                "isAffiliate": false,
+                "Checked": false
             }
         ],
         "active": true,
         "reviewed": false,
+        "availableUK": true
+    },
+    {
+        "name": "DMEGC Infinity RT 515W",
+        "model": "DM515G12RT-B54HBT",
+        "manufacturer": "DMEGC",
+        "panel-series": "Infinity RT",
+        "height": 1977,
+        "width": 1134,
+        "depth": 30,
+        "weight": 27.1,
+        "glass": "Dual (2.0mm + 2.0mm)",
+        "bifacial": true,
+        "power": 515,
+        "voc": 40.75,
+        "vmp": 34.61,
+        "isc": 15.83,
+        "imp": 14.88,
+        "price": 92,
+        "efficiency": 22.9,
+        "tempCoefPmax": -0.29,
+        "tempCoefVoc": -0.25,
+        "tempCoefIsc": 0.048,
+        "maxSeriesFuse": 30,
+        "maxSystemVoltage": 1500,
+        "cells": "108 Half-Cell (G12 RT)",
+        "gseCompatibility": "Portrait Only",
+        "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
+        "notes": "ENGINEERING WARNING: Uses larger G12-RT rectangular wafers. Massive 16A current pushes many MPPTs to their limit. Verify safety margins for cloud-edge effects.",
+        "buyLinks": [
+            {
+                "Supplier": "City Plumbing",
+                "URL": "https://www.cityplumbing.co.uk/p/dmegc-515w-all-black-solar-panel/p/223866",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
+        "active": true,
+        "reviewed": true,
         "availableUK": true
     }
 ]

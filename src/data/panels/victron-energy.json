@@ -1,9 +1,9 @@
 [
     {
-        "name": "Victron Solar Panel 12V 185W Mono series 4a",
+        "name": "Victron Energy Bluesolar Mono 185W",
         "model": "SPM041851200",
         "manufacturer": "Victron Energy",
-        "panel-series": "",
+        "panel-series": "Bluesolar Mono",
         "height": 1485,
         "width": 668,
         "depth": 30,
@@ -23,14 +23,21 @@
         "maxSeriesFuse": 15,
         "maxSystemVoltage": 1000,
         "cells": "36-Cell Monocrystalline",
-        "gseCompatibility": "Both",
-        "datasheetUrl": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-monocrystalline-series-4a-spm041851200",
+        "gseCompatibility": "None",
+        "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-BlueSolar-Monocrystalline-Panels-EN.pdf",
         "notes": "Exceptional low-light performance and high sensitivity to light. 25-year limited warranty.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
                 "URL": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-monocrystalline-series-4a-spm041851200",
-                "isAffiliate": false
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-mono-series-4a-spm041851200",
+                "isAffiliate": false,
+                "Checked": false
             }
         ],
         "active": true,

@@ -3,7 +3,7 @@
         "name": "Jinko Tiger Neo 430W",
         "model": "JKM430N-54HL4-V",
         "manufacturer": "Jinko",
-        "panel-series": "",
+        "panel-series": "Tiger Neo",
         "height": 1722,
         "width": 1134,
         "depth": 30,
@@ -24,7 +24,7 @@
         "maxSystemVoltage": 1500,
         "cells": "108 Half-Cell (N-Type)",
         "gseCompatibility": "Both",
-        "datasheetUrl": "https://www.jinkosolar.com/uploads/JKM420-440N-54HL4-V-A3-EN.pdf",
+        "datasheetUrl": "https://jinkosolarcdn.shwebspace.com/uploads/639a8f70/JKM410-430N-54HL4-(V)-F3-EN.pdf",
         "notes": "Cost-effective industry workhorse. Known for excellent low-light performance. The lower Voc makes it excellent for long strings, but verify minimum panel counts for MPPT startup.",
         "buyLinks": [],
         "active": true,
@@ -35,7 +35,7 @@
         "name": "Jinko Tiger Neo 440W",
         "model": "JKM440N-54HL4-V",
         "manufacturer": "Jinko",
-        "panel-series": "",
+        "panel-series": "Tiger Neo",
         "height": 1722,
         "width": 1134,
         "depth": 30,
@@ -56,7 +56,7 @@
         "maxSystemVoltage": 1500,
         "cells": "108 Half-Cell (N-Type)",
         "gseCompatibility": "Both",
-        "datasheetUrl": "https://www.jinkosolar.com/uploads/JKM420-440N-54HL4-V-A3-EN.pdf",
+        "datasheetUrl": "https://jinkosolar.com.au/wp-content/uploads/2023/10/Datasheet-JKMxxxN-54HL4R-V-440111.pdf",
         "notes": "Higher wattage Tiger Neo. Standard 108-cell format with improved cell efficiency.",
         "buyLinks": [],
         "active": true,
@@ -64,10 +64,10 @@
         "availableUK": true
     },
     {
-        "name": "Jinko Tiger Neo 475W (Medium)",
+        "name": "Jinko Tiger Neo 475W",
         "model": "JKM475N-60HL4-V",
         "manufacturer": "Jinko",
-        "panel-series": "",
+        "panel-series": "Tiger Neo",
         "height": 1903,
         "width": 1134,
         "depth": 30,
@@ -90,7 +90,14 @@
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.jinkosolar.com/uploads/JKM460-480N-60HL4-(V)-F1-EN.pdf",
         "notes": "120-cell layout provides a healthier voltage profile, making it versatile for string design.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "segen.co.uk",
+                "URL": "https://www.segen.co.uk/product/tiger-neo-475wp-topcon-n-type-mono-black-frame/",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -99,7 +106,7 @@
         "name": "Jinko Tiger Neo 510W",
         "model": "JKM510N-60HL4-V",
         "manufacturer": "Jinko",
-        "panel-series": "",
+        "panel-series": "Tiger Neo",
         "height": 1903,
         "width": 1134,
         "depth": 30,
@@ -120,7 +127,7 @@
         "maxSystemVoltage": 1500,
         "cells": "120 Half-Cell",
         "gseCompatibility": "Portrait Only",
-        "datasheetUrl": "https://www.jinkosolar.com/uploads/JKM460-480N-60HL4-(V)-F1-EN.pdf",
+        "datasheetUrl": "https://jinkosolar.com.au/wp-content/uploads/2024/11/Datasheet-JKM490-510N-60HL4-V-Z1C1-OC.pdf",
         "notes": "High efficiency 60-cell (120 HC) variant for commercial and premium residential applications.",
         "buyLinks": [],
         "active": true,
@@ -128,10 +135,10 @@
         "availableUK": true
     },
     {
-        "name": "Jinko Tiger Neo 580W (Large)",
+        "name": "Jinko Tiger Neo 580W",
         "model": "JKM580N-72HL4-V",
         "manufacturer": "Jinko",
-        "panel-series": "",
+        "panel-series": "Tiger Neo",
         "height": 2278,
         "width": 1134,
         "depth": 30,
@@ -160,10 +167,10 @@
         "availableUK": true
     },
     {
-        "name": "Jinko Tiger Neo 630W (Extra Large)",
+        "name": "Jinko Tiger Neo 630W",
         "model": "JKM630N-66HL4-V",
         "manufacturer": "Jinko",
-        "panel-series": "",
+        "panel-series": "Tiger Neo",
         "height": 2382,
         "width": 1134,
         "depth": 30,

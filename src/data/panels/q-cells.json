@@ -1,9 +1,9 @@
 [
     {
-        "name": "Q.PEAK DUO M-G11S+ 400W",
+        "name": "Q Cells Q.PEAK DUO M-G11S+ 400W",
         "model": "Q.PEAK DUO M-G11S+ 400",
-        "manufacturer": "Hanwha Q Cells",
-        "panel-series": "",
+        "manufacturer": "Q Cells",
+        "panel-series": "Q.PEAK DUO M-G11S+",
         "height": 1722,
         "width": 1134,
         "depth": 30,
@@ -26,16 +26,23 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Solid mid-range choice. German/Korean engineering with high build quality. Zero-gap cell layout provides a clean look.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "Q.PEAK DUO M-G11S+ 405W",
+        "name": "Q Cells Q.PEAK DUO M-G11S+ 405W",
         "model": "Q.PEAK DUO M-G11S+ 405",
-        "manufacturer": "Hanwha Q Cells",
-        "panel-series": "",
+        "manufacturer": "Q Cells",
+        "panel-series": "Q.PEAK DUO M-G11S+",
         "height": 1722,
         "width": 1134,
         "depth": 30,
@@ -58,16 +65,23 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Reliable Q.ANTUM technology cell. Popular for both residential and commercial deployments where quality is key.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "Q.PEAK DUO M-G11S+ 410W",
+        "name": "Q Cells Q.PEAK DUO M-G11S+ 410W",
         "model": "Q.PEAK DUO M-G11S+ 410",
-        "manufacturer": "Hanwha Q Cells",
-        "panel-series": "",
+        "manufacturer": "Q Cells",
+        "panel-series": "Q.PEAK DUO M-G11S+",
         "height": 1722,
         "width": 1134,
         "depth": 30,
@@ -90,16 +104,23 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Premium mid-range Choice. Outstanding mechanical design with superior wind and snow load ratings.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "Q.PEAK DUO M-G11S+ 415W",
+        "name": "Q Cells Q.PEAK DUO M-G11S+ 415W",
         "model": "Q.PEAK DUO M-G11S+ 415",
-        "manufacturer": "Hanwha Q Cells",
-        "panel-series": "",
+        "manufacturer": "Q Cells",
+        "panel-series": "Q.PEAK DUO M-G11S+",
         "height": 1722,
         "width": 1134,
         "depth": 30,
@@ -122,16 +143,23 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Higher power bin. Excellent performance in diffused light conditions.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "Q.PEAK DUO M-G11S+ 420W",
+        "name": "Q Cells Q.PEAK DUO M-G11S+ 420W",
         "model": "Q.PEAK DUO M-G11S+ 420",
-        "manufacturer": "Hanwha Q Cells",
-        "panel-series": "",
+        "manufacturer": "Q Cells",
+        "panel-series": "Q.PEAK DUO M-G11S+",
         "height": 1722,
         "width": 1134,
         "depth": 30,
@@ -154,7 +182,14 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Top-bin residential variant for the M-G11S+ series. Robust and reliable.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true

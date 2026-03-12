@@ -1,9 +1,9 @@
 [
     {
-        "name": "Maxeon 6 425W All Black",
+        "name": "Maxeon SPR MAX6 425W",
         "model": "SPR-MAX6-425-BLK",
         "manufacturer": "Maxeon",
-        "panel-series": "",
+        "panel-series": "SPR MAX6",
         "height": 1872,
         "width": 1032,
         "depth": 40,
@@ -26,16 +26,23 @@
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://maxeon-production.squarespace.com/s/Maxeon-6-DC-425-440-W.pdf",
         "notes": "Premium all-black aesthetic. Uses identical IBC cell technology as the white version but with slightly lower current output due to the black backsheet heat profile.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/docs/MCS%20PV0280%20Issue%2015%20P7%20COM-S.pdf?srsltid=AfmBOoobFzFFcfwPzazOW-8rXHzDmuXQyXmR_hogMro6-DwwJl5AU_qs",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "Maxeon 6 440W",
+        "name": "Maxeon SPR MAX6 440W",
         "model": "SPR-MAX6-440",
         "manufacturer": "Maxeon",
-        "panel-series": "",
+        "panel-series": "SPR MAX6",
         "height": 1872,
         "width": 1032,
         "depth": 40,
@@ -58,7 +65,14 @@
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://maxeon-production.squarespace.com/s/Maxeon-6-DC-425-440-W.pdf",
         "notes": "Undisputed performance leader. White backsheet version with higher current. IBC design eliminates front grid lines and micro-cracks. 40-year warranty (if registered).",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/docs/MCS%20PV0280%20Issue%2015%20P7%20COM-S.pdf?srsltid=AfmBOoq899JCLZYGXCqDG06oOAUZw0fEDKuOeAKIBFcxO7hRcBKuh1Gs",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true

@@ -43,7 +43,7 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `gseCompatibility` | string | In-roof (GSE) format: `"Both"`, `"None"`, `"Portrait Only"`, or `"Landscape Only"`. |
 | `datasheetUrl` | string | URL to datasheet. |
 | `notes` | string | Engineering or selection notes. |
-| `buyLinks` | object | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"` |
+| `buyLinks` | object | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
 | `active` | boolean | If `true`, panel appears in selectors. |
 | `availableUK` | boolean | True if panel is readily available in the UK|
 | `reviewed` | bool | Confirmation of human review of the data|

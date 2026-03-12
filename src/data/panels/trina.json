@@ -3,7 +3,7 @@
         "name": "Trina Vertex S+ 430W",
         "model": "TSM-430NEG9R.28",
         "manufacturer": "Trina",
-        "panel-series": "",
+        "panel-series": "Vertex S+",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -35,7 +35,7 @@
         "name": "Trina Vertex S+ 435W",
         "model": "TSM-435NEG9R.28",
         "manufacturer": "Trina",
-        "panel-series": "",
+        "panel-series": "Vertex S+",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -67,7 +67,7 @@
         "name": "Trina Vertex S+ 440W",
         "model": "TSM-440NEG9R.28",
         "manufacturer": "Trina",
-        "panel-series": "",
+        "panel-series": "Vertex S+",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -99,7 +99,7 @@
         "name": "Trina Vertex S+ 445W",
         "model": "TSM-445NEG9R.28",
         "manufacturer": "Trina",
-        "panel-series": "",
+        "panel-series": "Vertex S+",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -131,7 +131,7 @@
         "name": "Trina Vertex S+ 450W",
         "model": "TSM-450NEG9R.28",
         "manufacturer": "Trina",
-        "panel-series": "",
+        "panel-series": "Vertex S+",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -154,7 +154,14 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2024/09/240831_Datasheet_Vertex-S_NEG9R.28_EN_2024_C_web.pdf",
         "notes": "Extreme efficiency 144-cell variant. Verified top-tier performance for residential rooftops.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "cclcomponents.com",
+                "URL": "https://www.cclcomponents.com/trina-solar-450w-vertex-s-dual-glass-n-type-i-topcon-solar-module-black-frame-white-backsheet-154",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -163,7 +170,7 @@
         "name": "Trina Vertex S+ 455W",
         "model": "TSM-455NEG9R.28",
         "manufacturer": "Trina",
-        "panel-series": "",
+        "panel-series": "Vertex S+",
         "height": 1762,
         "width": 1134,
         "depth": 30,
@@ -186,16 +193,23 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2024/09/240831_Datasheet_Vertex-S_NEG9R.28_EN_2024_C_web.pdf",
         "notes": "Current top-bin model for the NEG9R.28 series. Maximum energy density.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "cclcomponents.com",
+                "URL": "https://www.cclcomponents.com/trina-solar-455w-vertex-s-dual-glass-n-type-i-topcon-solar-15626",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "Trina Vertex S+ 500W (Large)",
+        "name": "Trina Vertex S+ 500W",
         "model": "TSM-500NEG18R.28",
         "manufacturer": "Trina",
-        "panel-series": "",
+        "panel-series": "Vertex S+",
         "height": 1961,
         "width": 1134,
         "depth": 30,
@@ -218,16 +232,23 @@
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2025/01/Datasheet_Vertex-S_NEG18R.28_EN_2024_C_web.pdf",
         "notes": "Large format 108-cell module. Physically too long for some standard trays. Highly efficient and reliable.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "cclcomponents.com",
+                "URL": "https://www.cclcomponents.com/trina-solar-500w-vertex-n-mc4-black-frame-white-backsheet",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "Trina Vertex S+ 505W (Large)",
+        "name": "Trina Vertex S+ 505W",
         "model": "TSM-505NEG18R.28",
         "manufacturer": "Trina",
-        "panel-series": "",
+        "panel-series": "Vertex S+",
         "height": 1961,
         "width": 1134,
         "depth": 30,
@@ -250,16 +271,23 @@
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2025/01/Datasheet_Vertex-S_NEG18R.28_EN_2024_C_web.pdf",
         "notes": "Commercial format panel. Pack 500W+ into arrays while maintaining a healthy voltage profile and manageable current.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "dev.cclcomponents.com",
+                "URL": "https://dev.cclcomponents.com/new/solar-pv-modules",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true
     },
     {
-        "name": "Trina Vertex S+ 510W (Large)",
+        "name": "Trina Vertex S+ 510W",
         "model": "TSM-510NEG18R.28",
         "manufacturer": "Trina",
-        "panel-series": "",
+        "panel-series": "Vertex S+",
         "height": 1961,
         "width": 1134,
         "depth": 30,
@@ -282,7 +310,14 @@
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2025/01/Datasheet_Vertex-S_NEG18R.28_EN_2024_C_web.pdf",
         "notes": "Top-bin 108-cell Vertex S+ variant. Verified specs for high-density generation.",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "cclcomponents.com",
+                "URL": "https://www.cclcomponents.com/trinasolar-510w-vertex-s-dual-glass-n-type-itopcon-solar-module-black-frame/white-backsheet-15837",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "active": true,
         "reviewed": false,
         "availableUK": true

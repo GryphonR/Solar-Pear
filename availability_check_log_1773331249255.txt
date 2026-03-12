@@ -1,0 +1,185 @@
+=== UK AVAILABILITY CHECK LOG ===
+
+[FOUND] AIKO AIKO-A600-MAH72Mw
+  -> URL: https://portal.segen.co.uk/reseller/docs/AIKO-A-MAH72Mw-600-620W-1400mm-PL-EN-V5.3.pdf
+
+[FOUND] AIKO AIKO-A610-MAH72Mw
+  -> URL: https://portal.segen.co.uk/reseller/docs/AIKO-A-MAH72Mw-600-620W-1400mm-PL-EN-V5.3.pdf
+
+[FOUND] AIKO AIKO-A620-MAH72Mw
+  -> URL: https://portal.segen.co.uk/reseller/docs/AIKO-A-MAH72Mw-600-620W-1400mm-PL-EN-V5.3.pdf
+
+[FOUND] AIKO AIKO-A445-MAH54Mb
+  -> URL: https://midsummerwholesale.co.uk/pdfs/neostar-2s-188-aiko-a-mah54mb-440-470w-1757x1134x30mm-ds-en-2407-v1.3.pdf
+
+[FOUND] AIKO AIKO-A450-MAH54Mb
+  -> URL: https://midsummerwholesale.co.uk/pdfs/neostar-2s-188-aiko-a-mah54mb-440-470w-1757x1134x30mm-ds-en-2407-v1.3.pdf
+
+[FOUND] AIKO AIKO-A455-MAH54Mb
+  -> URL: https://midsummerwholesale.co.uk/pdfs/neostar-2s-188-aiko-a-mah54mb-440-470w-1757x1134x30mm-ds-en-2407-v1.3.pdf
+
+[FOUND] AIKO AIKO-A460-MAH54Mb
+  -> URL: https://www.tradesparky.com/solarsparky/solar-panels/aiko/aiko-460w-solar-panel-all-black-neostar-2s-aiko-a460-mah54mb
+
+[FOUND] AIKO AIKO-A465-MAH54Mb
+  -> URL: https://www.tradesparky.com/solarsparky/solar-panels/aiko/aiko-465w-solar-panel-all-black-neostar-2s-aiko-a465-mah54mb
+
+[FOUND] AIKO AIKO-A470-MAH54Mb
+  -> URL: https://midsummerwholesale.co.uk/pdfs/neostar-2s-188-aiko-a-mah54mb-440-470w-1757x1134x30mm-ds-en-2407-v1.3.pdf
+
+[FOUND] AIKO AIKO-A470-MCE54Mb
+  -> URL: https://www.segen.co.uk/product/aiko-neostar-3s-470w-n-type-abc-54-cell-mono-glass-all-black-gen-3/
+
+[MISSING] Canadian Solar CS6R-450T - No UK supplier found.
+[MISSING] Canadian Solar CS6R-430T - No UK supplier found.
+[FOUND] Canadian Solar CS6R-440T
+  -> URL: https://portal.segen.co.uk/reseller/docs/TopBiHiKu6%20CS6R.pdf
+
+[MISSING] Canadian Solar CS6.1-54TM-460 - No UK supplier found.
+[MISSING] Canadian Solar CS6.1-54TM-465 - No UK supplier found.
+[MISSING] Canadian Solar CS6.1-54TM-470 - No UK supplier found.
+[FOUND] DMEGC DM450M10RT-B54HBT-L
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[FOUND] DMEGC DM455M10RT-B54HBT-L
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[FOUND] DMEGC DM460M10RT-B54HBT-L
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[MISSING] DMEGC DM465M10RT-B54HBT-L - No UK supplier found.
+[FOUND] DMEGC DM465G12RT-G48HBB
+  -> URL: https://www.cclcomponents.com/dmegc-solar-465w-infinity-rt-96-cut-dual-glass-n-type-mono-solar-module-full-black-16035
+
+[MISSING] ET Solar ET-N754TBH430GB - No UK supplier found.
+[MISSING] ET Solar ET-NR48TBH440GB - No UK supplier found.
+[MISSING] ET Solar ET-NR48TBH460GB - No UK supplier found.
+[FOUND] JA Solar JAM66S30-510/MR
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[MISSING] JA Solar JAM54S31-420/MR - No UK supplier found.
+[MISSING] JA Solar JAM66S30-500/MR - No UK supplier found.
+[MISSING] JA Solar JAM66S30-505/MR - No UK supplier found.
+[MISSING] JA Solar JAM54S31-430/LR - No UK supplier found.
+[MISSING] JA Solar JAM54S31-435/LR - No UK supplier found.
+[MISSING] JA Solar JAM54D40-435/MB - No UK supplier found.
+[MISSING] JA Solar JAM54D40-440/MB - No UK supplier found.
+[MISSING] JA Solar JAM54D40-445/MB - No UK supplier found.
+[FOUND] JA Solar JAM54D41-450/LB
+  -> URL: https://www.tradesparky.com/solarsparky/solar-panels/ja-solar/mono-panels/ja-solar-jam54d41-450lb-450w-solar-panel-all-black
+
+[FOUND] JA Solar JAM54D40-460/LB
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[FOUND] JA Solar JAM54D40-465/LB
+  -> URL: https://www.cityplumbing.co.uk/p/ja-solar-465w-black-frame-solar-panel/p/215134?srsltid=AfmBOoqT3df5_pwN4VrUeN4J-46ggII_-fpmOcYZqO61io19ZufbI1Mc
+
+[FOUND] JA Solar JAM72D40-600/MB
+  -> URL: https://voltaconsolar.com/products/jasolar-600watt-jam72d40-bifacial-solar-panel-pv
+
+[MISSING] Jinko JKM430N-54HL4-V - No UK supplier found.
+[MISSING] Jinko JKM440N-54HL4-V - No UK supplier found.
+[FOUND] Jinko JKM475N-60HL4-V
+  -> URL: https://www.segen.co.uk/product/tiger-neo-475wp-topcon-n-type-mono-black-frame/
+
+[MISSING] Jinko JKM510N-60HL4-V - No UK supplier found.
+[MISSING] Jinko JKM580N-72HL4-V - No UK supplier found.
+[MISSING] Jinko JKM630N-66HL4-V - No UK supplier found.
+[MISSING] Longi LR5-66HPH-500M - No UK supplier found.
+[MISSING] Longi LR5-66HPH-505M - No UK supplier found.
+[MISSING] Longi LR5-66HPH-510M - No UK supplier found.
+[FOUND] Longi LR5-54HPB-410M
+  -> URL: https://www.cityplumbing.co.uk/p/longi-solar-hi-mo-5m-410wp-full-black-pv-module-lr5-54hpb-410m/p/787545?srsltid=AfmBOooTN721nD-y-5T8msQt0canX5P3p7RyJq2N-RiNF8FaiiC3xHGd
+
+[FOUND] Longi LR5-54HTB-430M
+  -> URL: https://midsummerwholesale.co.uk/pdfs/lr5-54htb-410-430m--30-30-15frame-explorer--v18-black.pdf
+
+[FOUND] Longi LR5-54HTB-440M
+  -> URL: https://midsummerwholesale.co.uk/buy/longi-solar/longi-htb-440-all-black
+
+[MISSING] Longi LR5-54HTB-445M - No UK supplier found.
+[MISSING] Longi LR5-54HTB-450M - No UK supplier found.
+[FOUND] Longi LR7-60HTB-505M
+  -> URL: https://dam.cityplumbing.co.uk/private/xp81p4g/GPID_1500080454_TECH_00.pdf
+
+[FOUND] Maxeon SPR-MAX6-425-BLK
+  -> URL: https://www.bimblesolar.com/docs/MCS%20PV0280%20Issue%2015%20P7%20COM-S.pdf?srsltid=AfmBOoobFzFFcfwPzazOW-8rXHzDmuXQyXmR_hogMro6-DwwJl5AU_qs
+
+[FOUND] Maxeon SPR-MAX6-440
+  -> URL: https://www.bimblesolar.com/docs/MCS%20PV0280%20Issue%2015%20P7%20COM-S.pdf?srsltid=AfmBOoq899JCLZYGXCqDG06oOAUZw0fEDKuOeAKIBFcxO7hRcBKuh1Gs
+
+[FOUND] Q Cells Q.PEAK DUO M-G11S+ 400
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[FOUND] Q Cells Q.PEAK DUO M-G11S+ 405
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[FOUND] Q Cells Q.PEAK DUO M-G11S+ 410
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[FOUND] Q Cells Q.PEAK DUO M-G11S+ 415
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[FOUND] Q Cells Q.PEAK DUO M-G11S+ 420
+  -> URL: https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf
+
+[MISSING] REC REC400AA Pure-R - No UK supplier found.
+[MISSING] REC REC410AA Pure-R - No UK supplier found.
+[FOUND] REC REC420AA Pure-R
+  -> URL: https://www.segen.co.uk/product/rec-alpha-pure-r-series-420w-all-black/
+
+[MISSING] REC REC430AA Pure-R - No UK supplier found.
+[FOUND] Renesola RS41-425NX-E3
+  -> URL: https://voltaconsolar.com/products/425watt-solar-panel-renesola-monofacial-all-black
+
+[FOUND] Renesola RS41-425NXG-E3
+  -> URL: https://voltaconsolar.com/products/renesola-bifacial-double-sided-425watt-solar-panel
+
+[MISSING] Trina TSM-430NEG9R.28 - No UK supplier found.
+[MISSING] Trina TSM-435NEG9R.28 - No UK supplier found.
+[MISSING] Trina TSM-440NEG9R.28 - No UK supplier found.
+[MISSING] Trina TSM-445NEG9R.28 - No UK supplier found.
+[FOUND] Trina TSM-450NEG9R.28
+  -> URL: https://www.cclcomponents.com/trina-solar-450w-vertex-s-dual-glass-n-type-i-topcon-solar-module-black-frame-white-backsheet-154
+
+[FOUND] Trina TSM-455NEG9R.28
+  -> URL: https://www.cclcomponents.com/trina-solar-455w-vertex-s-dual-glass-n-type-i-topcon-solar-15626
+
+[FOUND] Trina TSM-500NEG18R.28
+  -> URL: https://www.cclcomponents.com/trina-solar-500w-vertex-n-mc4-black-frame-white-backsheet
+
+[FOUND] Trina TSM-505NEG18R.28
+  -> URL: https://dev.cclcomponents.com/new/solar-pv-modules
+
+[FOUND] Trina TSM-510NEG18R.28
+  -> URL: https://www.cclcomponents.com/trinasolar-510w-vertex-s-dual-glass-n-type-itopcon-solar-module-black-frame/white-backsheet-15837
+
+[FOUND] UKSOL UKS-S108/M10N-440
+  -> URL: https://www.cityplumbing.co.uk/p/uksol-440w-full-black-topcon-monofacial-pv-module-uks-s108m10n-440/p/159868?srsltid=AfmBOoqO5wFBYpk6RncI9jpsXqhLtPpuCyVINFz8JvlVIcFznr450rL1
+
+[FOUND] Victron Energy SPM041851200
+  -> URL: https://voltaconsolar.com/products/victron-solar-panel-12v-185w-mono-series-4a-spm041851200
+
+[FOUND] Viridian PV16-445AG-M10
+  -> URL: https://www.alternergy.co.uk/mpattachments/file/viewonline/id/5246/product_id/5784/
+
+[FOUND] Viridian PV16-335-G1
+  -> URL: https://www.tradesparky.com/solarsparky/solar-panels/viridian/mono/viridian-pv16-335-g1-wp-mono-pv-panel-black
+
+[FOUND] Viridian PV16-340-G1
+  -> URL: https://www.tradesparky.com/solarsparky/solar-panels/viridian/mono/viridian-pv16-340-g1-wp-blk-frm-whi-bshe
+
+[MISSING] Viridian PV16-405-MP10 - No UK supplier found.
+[FOUND] Voltacon SPV-450W-B-HC
+  -> URL: https://voltaconsolar.com/products/420w-solar-panel-black-frame-half-cut-cell
+
+[FOUND] Voltacon VS-FL-200-M36-E
+  -> URL: https://voltaconsolar.com/products/flexible-solar-panel-195w
+
+[FOUND] Voltacon SGM2-180W
+  -> URL: https://voltaconsolar.com/products/voltacon-off-grid-solar-panel-180watt
+
+
+--- SUMMARY ---
+Panels Checked: 83
+New UK Links Found: 48

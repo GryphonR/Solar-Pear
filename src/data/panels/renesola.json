@@ -1,9 +1,9 @@
 [
     {
-        "name": "Renesola 425W All Black",
+        "name": "Renesola RS-41 425W",
         "model": "RS41-425NX-E3",
         "manufacturer": "Renesola",
-        "panel-series": "",
+        "panel-series": "RS-41",
         "height": 1722,
         "width": 1134,
         "depth": 30,
@@ -24,13 +24,20 @@
         "maxSystemVoltage": 1500,
         "cells": "108 Half-Cell (N-TOPCon)",
         "gseCompatibility": "Both",
-        "datasheetUrl": "https://voltaconsolar.com/products/renesola-solar-panel-425w-half-cut-108-cells-n-topcon-mono-facial-all-black",
+        "datasheetUrl": "hhttps://cdn.enfsolar.com/z/pp/2023/8/3493buiwej311/RS41-400-425NX-E3-1722-1134-30-full-black.pdf",
         "notes": "Saturn Series Monofacial All-Black. N-TOPCon technology for high efficiency and reliability.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
                 "URL": "https://voltaconsolar.com/products/renesola-solar-panel-425w-half-cut-108-cells-n-topcon-mono-facial-all-black",
-                "isAffiliate": false
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/425watt-solar-panel-renesola-monofacial-all-black",
+                "isAffiliate": false,
+                "Checked": false
             }
         ],
         "active": true,
@@ -38,10 +45,10 @@
         "availableUK": true
     },
     {
-        "name": "Renesola 425W Bifacial",
+        "name": "Renesola Rene 2n 425W",
         "model": "RS41-425NXG-E3",
         "manufacturer": "Renesola",
-        "panel-series": "",
+        "panel-series": "Rene 2n",
         "height": 1728,
         "width": 1134,
         "depth": 30,
@@ -62,13 +69,20 @@
         "maxSystemVoltage": 1500,
         "cells": "108 Half-Cell (N-Type)",
         "gseCompatibility": "Portrait Only",
-        "datasheetUrl": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425w-front-90w-back-half-cut-monocrystalline",
+        "datasheetUrl": "https://cdn.enfsolar.com/z/pp/2024/11/0qr40juk7u3cwt6/rs41-430-450nxg-e3-1722-1134-30.pdf",
         "notes": "Saturn Bi-Facial panel with double glass. Catches sun rays from both directions for up to 90W additional back-side energy.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
                 "URL": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425w-front-90w-back-half-cut-monocrystalline",
-                "isAffiliate": false
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425watt-solar-panel",
+                "isAffiliate": false,
+                "Checked": false
             }
         ],
         "active": true,
