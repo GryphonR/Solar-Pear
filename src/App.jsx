@@ -35,6 +35,7 @@ export default function App() {
         areasData,
         panelsData,
         chargersData,
+        siteControllers,
         userNotes,
         selections,
         systemVoltage,
@@ -48,6 +49,7 @@ export default function App() {
         setArraysData,
         setPanelsData,
         setChargersData,
+        setSiteControllers,
         setSelections,
         setSystemVoltage,
         setHiddenChargerMfr,
@@ -73,7 +75,7 @@ export default function App() {
     } = useAppState();
 
     /** Backup file schema version; see BACKUP_SCHEMA.md */
-    const BACKUP_SCHEMA_VERSION = 1;
+    const BACKUP_SCHEMA_VERSION = 2;
 
     const handleDownload = () => {
         const exportData = {
@@ -82,6 +84,7 @@ export default function App() {
             arraysData,
             panelsData,
             chargersData,
+            siteControllers,
             selections,
             systemVoltage,
             hiddenChargerMfr,
@@ -112,7 +115,10 @@ export default function App() {
                     try {
                         const imported = JSON.parse(event.target.result);
                         const version = imported.schemaVersion;
-                        if (version !== undefined && version > 1) {
+                        if (
+                            typeof version === 'number' &&
+                            version > BACKUP_SCHEMA_VERSION
+                        ) {
                             alert(
                                 `This backup was created with a newer schema (version ${version}). Some data may not load correctly. Consider updating the app.`
                             );
@@ -121,6 +127,8 @@ export default function App() {
                         if (imported.arraysData) setArraysData(imported.arraysData);
                         if (imported.panelsData) setPanelsData(imported.panelsData);
                         if (imported.chargersData) setChargersData(imported.chargersData);
+                        if (imported.siteControllers)
+                            setSiteControllers(imported.siteControllers);
                         if (imported.selections) setSelections(imported.selections);
                         if (imported.systemVoltage) setSystemVoltage(imported.systemVoltage);
                         if (imported.hiddenChargerMfr) setHiddenChargerMfr(imported.hiddenChargerMfr);

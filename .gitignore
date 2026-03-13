@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 panel_processing*
+availability_check*
 
 node_modules
 dist

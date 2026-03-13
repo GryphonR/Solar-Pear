@@ -1,23 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, Info, ExternalLink } from '../components/Icons';
 import { useAppState } from '../context/AppStateContext';
 
 export default function PanelsDbView() {
-    const {
-        panelsData,
-        setPanelsData,
-        updatePanel,
-        addPanel,
-        setInfoModalPanelId,
-    } = useAppState();
+    const { panelsData, setPanelsData, updatePanel, addPanel, setInfoModalPanelId } = useAppState();
     const manufacturers = [...new Set(panelsData.map((p) => p.manufacturer || 'Unknown'))].sort((a, b) =>
         a.localeCompare(b)
     );
+
+    const [ukFilterEnabled, setUkFilterEnabled] = useState(false);
 
     const toggleAllPanelMfr = (mfr, active) => {
         setPanelsData((prev) =>
             prev.map((p) => ((p.manufacturer || 'Unknown') === mfr ? { ...p, active } : p))
         );
+    };
+
+    const toggleUkFilter = () => {
+        setUkFilterEnabled((prev) => {
+            const next = !prev;
+            setPanelsData((old) =>
+                old.map((p) => {
+                    if (next) {
+                        // Enable only UK-available panels
+                        return { ...p, active: p.availableUK !== false };
+                    }
+                    // When turning filter off, reactivate all panels
+                    return { ...p, active: true };
+                })
+            );
+            return next;
+        });
     };
 
     return (
@@ -26,8 +39,20 @@ export default function PanelsDbView() {
                 <div>
                     <h2 className="text-2xl font-bold text-slate-800">Solar Panels Database</h2>
                     <p className="text-slate-500">
-                        View panel specifications. Only the price field is editable; use Select All / Deselect All to filter arrays.
+                        View panel specifications. Only the price field is editable; use Select All / Deselect All to
+                        filter arrays.
                     </p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <label className="inline-flex items-center gap-2 text-sm text-slate-600">
+                        <input
+                            type="checkbox"
+                            className="w-4 h-4 text-emerald-600 rounded cursor-pointer"
+                            checked={ukFilterEnabled}
+                            onChange={toggleUkFilter}
+                        />
+                        <span>Limit active panels to those available in the UK</span>
+                    </label>
                 </div>
                 <button
                     onClick={addPanel}
@@ -119,7 +144,9 @@ export default function PanelsDbView() {
                                                             type="checkbox"
                                                             className="w-4 h-4 text-blue-600 rounded cursor-pointer"
                                                             checked={p.active !== false}
-                                                            onChange={() => updatePanel(p.model, 'active', p.active === false)}
+                                                            onChange={() =>
+                                                                updatePanel(p.model, 'active', p.active === false)
+                                                            }
                                                             aria-label="Active"
                                                         />
                                                     </label>
