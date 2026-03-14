@@ -215,22 +215,22 @@ export default function SummaryView() {
                         <table className="w-full text-left border-collapse relative">
                             <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                                 <tr>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Array
                                     </th>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Panels
                                     </th>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Array Peak
                                     </th>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         £/kWp
                                     </th>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
                                         Panel cost
                                     </th>
                                 </tr>
@@ -247,16 +247,16 @@ export default function SummaryView() {
                         <table className="w-full text-left border-collapse relative">
                             <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                                 <tr>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Controller
                                     </th>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Model
                                     </th>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Arrays
                                     </th>
-                                    <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                    <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
                                         Cost
                                     </th>
                                 </tr>
@@ -302,16 +302,16 @@ export default function SummaryView() {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-slate-50 border-b border-slate-200">
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Qty
                             </th>
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Component
                             </th>
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
                                 Unit Price
                             </th>
-                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
                                 Line Total
                             </th>
                         </tr>

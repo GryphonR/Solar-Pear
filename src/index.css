@@ -16,6 +16,28 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Heading hierarchy: components often use font-bold; ensure headings have strong weight when not overridden */
+h1, h2, h3 {
+  font-weight: 600;
+}
+
+/* Keyboard focus: visible ring for focus-visible only (not mouse click) */
+button:focus,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-secondary, #0044cc);
+  outline-offset: 2px;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -31,3 +53,6 @@ body {
 .uplot-chart .u-legend {
   min-height: 2.6em;
 }
+
+/* Brand colour usage: primary CTA accent (e.g. Add Panel) can use var(--color-brand) */
+/* Used in PanelsDbView "Add Panel" button via Tailwind bg-[var(--color-brand)] */

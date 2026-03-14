@@ -35,16 +35,25 @@ export default function PanelsDbView() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center pb-4 border-b border-slate-200">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-800">Solar Panels Database</h2>
-                    <p className="text-slate-500">
-                        View panel specifications. Only the price field is editable; use Select All / Deselect All to
-                        filter arrays.
-                    </p>
+            <div className="pb-4 border-b border-slate-200">
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h2 className="text-2xl font-bold text-slate-800">Solar Panels Database</h2>
+                        <p className="text-slate-500">
+                            View panel specifications. Only the price field is editable; use Select All / Deselect All to
+                            filter arrays.
+                        </p>
+                    </div>
+                    <button
+                        onClick={addPanel}
+                        className="flex items-center px-4 py-2 bg-[var(--color-brand)] text-slate-900 rounded hover:opacity-90 shadow-sm transition-opacity flex-shrink-0 font-semibold"
+                    >
+                        <Plus size={16} className="mr-2" /> Add Panel
+                    </button>
                 </div>
-                <div className="flex items-center gap-3">
-                    <label className="inline-flex items-center gap-2 text-sm text-slate-600">
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Filters</span>
+                    <label className="inline-flex items-center gap-2 text-sm text-slate-600 mt-2 cursor-pointer">
                         <input
                             type="checkbox"
                             className="w-4 h-4 text-emerald-600 rounded cursor-pointer"
@@ -54,12 +63,6 @@ export default function PanelsDbView() {
                         <span>Limit active panels to those available in the UK</span>
                     </label>
                 </div>
-                <button
-                    onClick={addPanel}
-                    className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                    <Plus size={16} className="mr-2" /> Add Panel
-                </button>
             </div>
             {manufacturers.map((mfr) => {
                 const mfrPanels = panelsData.filter((p) => (p.manufacturer || 'Unknown') === mfr);
@@ -96,34 +99,34 @@ export default function PanelsDbView() {
                                 <table className="w-full text-left border-collapse relative">
                                     <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                                         <tr className="bg-slate-50 border-b border-slate-200">
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">
                                                 Active
                                             </th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
                                                 Panel Name
                                             </th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
                                                 Model ID
                                             </th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">
                                                 Info
                                             </th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell" title="GSE in-roof compatibility (Portrait/Landscape/Both)">
                                                 GSE Compat.
                                             </th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase" title="Peak power at standard test conditions">
                                                 Power (W)
                                             </th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell" title="Open-circuit voltage at STC">
                                                 Voc (V)
                                             </th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell" title="Voltage at max power (STC)">
                                                 Vmp (V)
                                             </th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell" title="Short-circuit current (STC)">
                                                 Isc (A)
                                             </th>
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
                                                 Price (£)
                                             </th>
                                         </tr>
@@ -147,7 +150,7 @@ export default function PanelsDbView() {
                                                             onChange={() =>
                                                                 updatePanel(p.model, 'active', p.active === false)
                                                             }
-                                                            aria-label="Active"
+                                                            aria-label={`Include ${p.name || p.model} in array selection`}
                                                         />
                                                     </label>
                                                 </td>
@@ -165,7 +168,7 @@ export default function PanelsDbView() {
                                                             onClick={() => setInfoModalPanelId(p.model)}
                                                             className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
                                                             title="View Technical Specs"
-                                                            aria-label="View technical specs"
+                                                            aria-label={`View technical specs for ${p.name || p.model}`}
                                                         >
                                                             <Info size={18} />
                                                         </button>
@@ -183,19 +186,19 @@ export default function PanelsDbView() {
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="p-1 px-2">
+                                                <td className="p-1 px-2 hidden md:table-cell">
                                                     <span className="text-sm text-slate-600">{p.gseCompatibility || 'Both'}</span>
                                                 </td>
                                                 <td className="p-1 px-2">
                                                     <span className="text-sm text-slate-800">{p.power}</span>
                                                 </td>
-                                                <td className="p-1 px-2">
+                                                <td className="p-1 px-2 hidden md:table-cell">
                                                     <span className="text-sm text-slate-800">{p.voc}</span>
                                                 </td>
-                                                <td className="p-1 px-2">
+                                                <td className="p-1 px-2 hidden md:table-cell">
                                                     <span className="text-sm text-slate-800">{p.vmp}</span>
                                                 </td>
-                                                <td className="p-1 px-2">
+                                                <td className="p-1 px-2 hidden md:table-cell">
                                                     <span className="text-sm text-slate-800">{p.isc}</span>
                                                 </td>
                                                 <td className="p-1">

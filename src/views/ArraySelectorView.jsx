@@ -830,6 +830,7 @@ export default function ArraySelectorView({ arrayId }) {
                                     <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-sm">
                                         <tr>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('name')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                             >
@@ -838,6 +839,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('peakPower')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                             >
@@ -846,6 +848,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('coldVoc')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 title="Open-circuit voltage of the string at −10°C"
@@ -855,6 +858,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('hotVmp')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 title="Maximum power point voltage of the string at 65°C"
@@ -864,6 +868,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('arrayIscHot')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 title="Short-circuit current at 65°C (hot)"
@@ -873,6 +878,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('width')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 title="Panel width (mm)"
@@ -882,6 +888,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('height')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 title="Panel height (mm)"
@@ -891,6 +898,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('weight')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 title="Panel weight (kg)"
@@ -900,6 +908,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('costPerKWp')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                             >
@@ -908,6 +917,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
                                             <th
+                                                scope="col"
                                                 onClick={() => togglePanelSort('panelCost')}
                                                 className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                             >
@@ -915,7 +925,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                 {panelSort.key === 'panelCost' &&
                                                     (panelSort.dir === 'asc' ? '↑' : '↓')}
                                             </th>
-                                            <th className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                            <th scope="col" className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
                                                 Action
                                             </th>
                                         </tr>
@@ -1263,6 +1273,7 @@ export default function ArraySelectorView({ arrayId }) {
                                         <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-sm">
                                             <tr>
                                                 <th
+                                                    scope="col"
                                                     onClick={() => toggleControllerSort('name')}
                                                     className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 >
@@ -1271,6 +1282,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                         (controllerSort.dir === 'asc' ? '↑' : '↓')}
                                                 </th>
                                                 <th
+                                                    scope="col"
                                                     onClick={() => toggleControllerSort('maxV')}
                                                     className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 >
@@ -1279,6 +1291,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                         (controllerSort.dir === 'asc' ? '↑' : '↓')}
                                                 </th>
                                                 <th
+                                                    scope="col"
                                                     onClick={() => toggleControllerSort('maxIsc')}
                                                     className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 >
@@ -1287,6 +1300,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                         (controllerSort.dir === 'asc' ? '↑' : '↓')}
                                                 </th>
                                                 <th
+                                                    scope="col"
                                                     onClick={() => toggleControllerSort('price')}
                                                     className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
                                                 >
@@ -1294,7 +1308,7 @@ export default function ArraySelectorView({ arrayId }) {
                                                     {controllerSort.key === 'price' &&
                                                         (controllerSort.dir === 'asc' ? '↑' : '↓')}
                                                 </th>
-                                                <th className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                                <th scope="col" className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
                                                     Action
                                                 </th>
                                             </tr>

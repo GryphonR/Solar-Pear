@@ -1,16 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
 
 export default function AddAreaModal({ open, value, areas, onClose, onSave, onChange }) {
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (open) setError(null);
+    }, [open]);
+
+    const trimmed = (value || '').trim();
+    const isDuplicate = trimmed && areas.some((a) => a.toLowerCase() === trimmed.toLowerCase());
+    const isInvalid = !trimmed || isDuplicate;
+
     const handleSave = () => {
-        const trimmed = (value || '').trim();
-        if (!trimmed) return;
+        if (!trimmed) {
+            setError('Please enter an area name.');
+            return;
+        }
         if (areas.some((a) => a.toLowerCase() === trimmed.toLowerCase())) {
-            alert(`An Area named "${trimmed}" already exists.`);
+            setError(`An Area named "${trimmed}" already exists.`);
             return;
         }
         onSave(trimmed);
         onClose();
+    };
+
+    const handleChange = (newValue) => {
+        setError(null);
+        onChange(newValue);
     };
 
     return (
@@ -22,6 +39,11 @@ export default function AddAreaModal({ open, value, areas, onClose, onSave, onCh
             bodyScrollable={false}
             footer={
                 <>
+                    {error && (
+                        <p className="text-red-600 text-sm mr-auto" role="alert">
+                            {error}
+                        </p>
+                    )}
                     <button
                         type="button"
                         onClick={onClose}
@@ -32,7 +54,8 @@ export default function AddAreaModal({ open, value, areas, onClose, onSave, onCh
                     <button
                         type="button"
                         onClick={handleSave}
-                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm"
+                        disabled={isInvalid}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Save Area
                     </button>
@@ -47,7 +70,7 @@ export default function AddAreaModal({ open, value, areas, onClose, onSave, onCh
                     placeholder="e.g. Outbuilding, Cabin"
                     className="w-full p-3 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-slate-700"
                     value={value}
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e) => handleChange(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                 />
             </div>

@@ -126,7 +126,7 @@ export default function Modal({
         >
             <div
                 ref={dialogRef}
-                className={`bg-white rounded-xl shadow-2xl w-full flex flex-col ${maxWidth} ${bodyScrollable ? 'max-h-[90vh]' : ''}`}
+                className={`bg-white rounded-xl shadow-2xl w-full flex flex-col animate-in zoom-in-95 duration-200 ${maxWidth} ${bodyScrollable ? 'max-h-[90vh]' : ''}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={title ? 'modal-title' : undefined}
@@ -143,7 +143,7 @@ export default function Modal({
                     {children}
                 </div>
                 {footer != null && (
-                    <div className="p-6 border-t border-slate-100 bg-slate-50 rounded-b-xl flex justify-end gap-3">
+                    <div className="p-6 border-t border-slate-100 bg-slate-50 rounded-b-xl flex justify-end gap-3 flex-wrap">
                         {footer}
                     </div>
                 )}

@@ -77,19 +77,22 @@ export default function ChargersDbView() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center pb-3 border-b border-slate-200">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-800">PV Controllers Database</h2>
-                    <p className="text-slate-500">Standalone MPPT chargers and hybrid inverters.</p>
+            <div className="pb-4 border-b border-slate-200">
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h2 className="text-2xl font-bold text-slate-800">PV Controllers Database</h2>
+                        <p className="text-slate-500">Standalone MPPT chargers and hybrid inverters.</p>
+                    </div>
+                    <button
+                        onClick={addCharger}
+                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow-sm transition-colors flex-shrink-0"
+                    >
+                        <Plus size={16} className="mr-2" /> Add Controller
+                    </button>
                 </div>
-                <button
-                    onClick={addCharger}
-                    className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                    <Plus size={16} className="mr-2" /> Add Controller
-                </button>
             </div>
             <div className="space-y-4 pb-4 border-b border-slate-200">
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Filters</span>
                 <div className="flex items-center gap-3">
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                         DC Bus Voltage
@@ -225,37 +228,37 @@ export default function ChargersDbView() {
                                 <table className="w-full text-left border-collapse relative">
                                     <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                                         <tr className="bg-slate-50 border-b border-slate-200">
-                                            <th className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">
+                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase text-center">
                                                 Active
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                                 Name
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                                 Model ID
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase text-center">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase text-center">
                                                 Info
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                                 Type
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                                 Voltages
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell" title="Maximum PV input voltage">
                                                 Max DC (V)
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell" title="Maximum short-circuit current per tracker">
                                                 Max Isc (A)
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell" title="Minimum PV voltage for MPPT startup">
                                                 Startup (V)
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                                 Price (£)
                                             </th>
-                                            <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                            <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                                 Buy
                                             </th>
                                         </tr>
@@ -275,7 +278,7 @@ export default function ChargersDbView() {
                                                                 className="w-4 h-4 text-blue-600 rounded cursor-pointer"
                                                                 checked={c.active !== false}
                                                                 onChange={() => updateCharger(c.id, 'active', c.active === false)}
-                                                                aria-label="Active"
+                                                                aria-label={`Include ${c.name || c.id} in controller selection`}
                                                             />
                                                         </label>
                                                     </td>
@@ -293,7 +296,7 @@ export default function ChargersDbView() {
                                                                 onClick={() => setInfoModalChargerId(c.id)}
                                                                 className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
                                                                 title="View Technical Specs"
-                                                                aria-label="View technical specs"
+                                                                aria-label={`View technical specs for ${c.name || c.id}`}
                                                             >
                                                                 <Info size={18} />
                                                             </button>
@@ -325,13 +328,13 @@ export default function ChargersDbView() {
                                                     <td className="p-1 px-4 text-xs text-slate-500">
                                                         {(c.systemVoltages || [48]).join('V / ')}V
                                                     </td>
-                                                    <td className="p-1 px-4">
+                                                    <td className="p-1 px-4 hidden md:table-cell">
                                                         <span className="text-sm text-slate-800">{c.maxV}</span>
                                                     </td>
-                                                    <td className="p-1 px-4">
+                                                    <td className="p-1 px-4 hidden md:table-cell">
                                                         <span className="text-sm text-slate-800">{c.maxIsc}</span>
                                                     </td>
-                                                    <td className="p-1 px-4">
+                                                    <td className="p-1 px-4 hidden md:table-cell">
                                                         <span className="text-sm text-slate-800">{c.startupV}</span>
                                                     </td>
                                                     <td className="p-1">

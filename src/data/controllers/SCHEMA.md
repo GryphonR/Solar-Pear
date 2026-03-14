@@ -39,7 +39,8 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `islanding` | boolean | Whether unit supports islanding / backup. |
 | `notes` | string | Engineering or selection notes. |
 | `datasheetUrl` | string | URL to datasheet. |
-| `buyLinks` | object | Key-value map of retailer labels to URLs. Can be `{}`. |
+| `buyLinks` | object | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
+| `availableUK` | boolean | True if controlleris readily available in the UK|
 | `g98_cert` | boolean | UK G98 certified. |
 | `g99_cert` | boolean | UK G99 certified. |
 | `g100_cert` | boolean | UK G100 certified. |

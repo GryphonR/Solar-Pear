@@ -1,22 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
 
 export default function AddChargerModal({ open, data = {}, existingIds = [], onClose, onSave, onUpdateField }) {
     const d = data;
-    const update = (field, value) => onUpdateField?.(field, value);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (open) setError(null);
+    }, [open]);
+
+    const update = (field, value) => {
+        setError(null);
+        onUpdateField?.(field, value);
+    };
+
     const toggleVoltage = (v) => {
         const current = d.systemVoltages || [];
         update('systemVoltages', current.includes(v) ? current.filter((x) => x !== v) : [...current, v].sort((a, b) => a - b));
     };
 
+    const chargerId = (d.id || '').trim();
+    const isInvalid = !chargerId || existingIds.includes(chargerId);
+
     const handleSave = () => {
-        const chargerId = (d.id || '').trim();
         if (!chargerId) {
-            alert('Please enter a Model ID. It must be unique in the controller database.');
+            setError('Please enter a Model ID. It must be unique in the controller database.');
             return;
         }
         if (existingIds.includes(chargerId)) {
-            alert(`A controller with Model ID "${chargerId}" already exists. Please choose a different Model ID.`);
+            setError(`A controller with Model ID "${chargerId}" already exists. Please choose a different Model ID.`);
             return;
         }
         onSave(d);
@@ -30,8 +42,13 @@ export default function AddChargerModal({ open, data = {}, existingIds = [], onC
             title="Add Custom PV Controller"
             footer={
                 <>
+                    {error && (
+                        <p className="text-red-600 text-sm mr-auto" role="alert">
+                            {error}
+                        </p>
+                    )}
                     <button type="button" onClick={onClose} className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-50 font-medium transition-colors">Cancel</button>
-                    <button type="button" onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm">Add Controller to Database</button>
+                    <button type="button" onClick={handleSave} disabled={isInvalid} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Add Controller to Database</button>
                 </>
             }
         >

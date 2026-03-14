@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
 
 const defaultData = {
@@ -15,13 +15,30 @@ const defaultData = {
 
 export default function AddArrayModal({ open, data = defaultData, areas, onClose, onSave, onUpdateField }) {
     const d = { ...defaultData, ...data };
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (open) setError(null);
+    }, [open]);
+
+    const update = (field, value) => onUpdateField?.(field, value);
+
+    const nameTrimmed = (d.name || '').trim();
+    const countValid = typeof d.count === 'number' && d.count >= 1;
+    const isInvalid = !nameTrimmed || !countValid;
 
     const handleSave = () => {
+        if (!nameTrimmed) {
+            setError('Please enter an array name.');
+            return;
+        }
+        if (!countValid) {
+            setError('Panel count must be at least 1.');
+            return;
+        }
         onSave(d);
         onClose();
     };
-
-    const update = (field, value) => onUpdateField?.(field, value);
 
     return (
         <Modal
@@ -30,6 +47,11 @@ export default function AddArrayModal({ open, data = defaultData, areas, onClose
             title="Add Physical Array"
             footer={
                 <>
+                    {error && (
+                        <p className="text-red-600 text-sm mr-auto" role="alert">
+                            {error}
+                        </p>
+                    )}
                     <button
                         type="button"
                         onClick={onClose}
@@ -40,7 +62,8 @@ export default function AddArrayModal({ open, data = defaultData, areas, onClose
                     <button
                         type="button"
                         onClick={handleSave}
-                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm"
+                        disabled={isInvalid}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Save Array
                     </button>

@@ -99,6 +99,19 @@ export function AppStateProvider({ children }) {
     const [userNotes, setUserNotes] = useLocalStorage('user_notes', {});
     const [hiddenChargerMfr, setHiddenChargerMfr] = useState(null);
     const [loadStatus, setLoadStatus] = useState('loading'); // 'loading' | 'ok' | 'error'
+    const [notification, setNotificationState] = useState(null); // { message, variant: 'success'|'error'|'warning'|'info' }
+    const notificationTimeoutRef = React.useRef(null);
+
+    const clearNotification = () => {
+        if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
+        setNotificationState(null);
+    };
+
+    const setNotification = (message, variant = 'info') => {
+        if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
+        setNotificationState({ message, variant });
+        notificationTimeoutRef.current = setTimeout(clearNotification, 5000);
+    };
 
     useEffect(() => {
         try {
@@ -317,7 +330,7 @@ export function AppStateProvider({ children }) {
 
     const deleteArea = (areaName) => {
         if (areasData.length <= 1) {
-            alert('You must have at least one Area remaining.');
+            setNotification('You must have at least one Area remaining.', 'warning');
             return;
         }
         openConfirm(
@@ -383,6 +396,7 @@ export function AppStateProvider({ children }) {
             addArrayModal,
             confirmModal,
             hiddenChargerMfr,
+            notification,
             // Derived
             availableChargers,
             getArrayAnalysis,
@@ -432,6 +446,8 @@ export function AppStateProvider({ children }) {
             performReset,
             loadStatus,
             startFresh,
+            setNotification,
+            clearNotification,
         }),
         [
             activeTab,
@@ -462,6 +478,7 @@ export function AppStateProvider({ children }) {
             addArrayModal,
             confirmModal,
             hiddenChargerMfr,
+            notification,
             availableChargers,
             loadStatus,
         ]

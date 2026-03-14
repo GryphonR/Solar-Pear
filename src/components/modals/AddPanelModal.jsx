@@ -1,18 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
 
 export default function AddPanelModal({ open, data = {}, existingModelIds = [], onClose, onSave, onUpdateField }) {
     const d = data;
-    const update = (field, value) => onUpdateField?.(field, value);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (open) setError(null);
+    }, [open]);
+
+    const update = (field, value) => {
+        setError(null);
+        onUpdateField?.(field, value);
+    };
+
+    const modelId = (d.model || '').trim();
+    const isInvalid = !modelId || existingModelIds.includes(modelId);
 
     const handleSave = () => {
-        const modelId = (d.model || '').trim();
         if (!modelId) {
-            alert('Please enter a Model ID. It must be unique in the panel database.');
+            setError('Please enter a Model ID. It must be unique in the panel database.');
             return;
         }
         if (existingModelIds.includes(modelId)) {
-            alert(`A panel with Model ID "${modelId}" already exists. Please choose a different Model ID.`);
+            setError(`A panel with Model ID "${modelId}" already exists. Please choose a different Model ID.`);
             return;
         }
         onSave(d);
@@ -26,8 +37,13 @@ export default function AddPanelModal({ open, data = {}, existingModelIds = [], 
             title="Add Custom Solar Panel"
             footer={
                 <>
+                    {error && (
+                        <p className="text-red-600 text-sm mr-auto" role="alert">
+                            {error}
+                        </p>
+                    )}
                     <button type="button" onClick={onClose} className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded hover:bg-slate-50 font-medium transition-colors">Cancel</button>
-                    <button type="button" onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm">Add Panel to Database</button>
+                    <button type="button" onClick={handleSave} disabled={isInvalid} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Add Panel to Database</button>
                 </>
             }
         >

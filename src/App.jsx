@@ -25,6 +25,7 @@ import ArraysDbView from './views/ArraysDbView';
 import PanelsDbView from './views/PanelsDbView';
 import ChargersDbView from './views/ChargersDbView';
 import ArraySelectorView from './views/ArraySelectorView';
+import Toast from './components/Toast';
 import { useAppState } from './context/AppStateContext';
 
 export default function App() {
@@ -72,6 +73,9 @@ export default function App() {
         setConfirmModal,
         handleAddArraySave,
         updateUserNote,
+        notification,
+        setNotification,
+        clearNotification,
     } = useAppState();
 
     /** Backup file schema version; see BACKUP_SCHEMA.md */
@@ -119,8 +123,9 @@ export default function App() {
                             typeof version === 'number' &&
                             version > BACKUP_SCHEMA_VERSION
                         ) {
-                            alert(
-                                `This backup was created with a newer schema (version ${version}). Some data may not load correctly. Consider updating the app.`
+                            setNotification(
+                                `This backup was created with a newer schema (version ${version}). Some data may not load correctly. Consider updating the app.`,
+                                'warning'
                             );
                         }
                         if (imported.areasData) setAreasData(imported.areasData);
@@ -130,18 +135,19 @@ export default function App() {
                         if (imported.siteControllers)
                             setSiteControllers(imported.siteControllers);
                         if (imported.selections) setSelections(imported.selections);
-                        if (imported.systemVoltage) setSystemVoltage(imported.systemVoltage);
-                        if (imported.hiddenChargerMfr) setHiddenChargerMfr(imported.hiddenChargerMfr);
+                        if (imported.systemVoltage !== undefined) setSystemVoltage(imported.systemVoltage);
+                        if (imported.hiddenChargerMfr !== undefined) setHiddenChargerMfr(imported.hiddenChargerMfr);
                         if (imported.hideHeavyPanels !== undefined)
                             setHideHeavyPanels(imported.hideHeavyPanels);
                         if (imported.hideMarginalPanels !== undefined)
                             setHideMarginalPanels(imported.hideMarginalPanels);
                         if (imported.userNotes) setUserNotes(imported.userNotes);
-                        alert(
-                            'Backup loaded successfully! You may need to refresh the page to see all changes.'
+                        setNotification(
+                            'Backup loaded successfully! You may need to refresh the page to see all changes.',
+                            'success'
                         );
                     } catch (err) {
-                        alert('Failed to parse the backup JSON file.');
+                        setNotification('Failed to parse the backup JSON file.', 'error');
                     }
                 };
                 reader.readAsText(file);
@@ -165,6 +171,7 @@ export default function App() {
                     <SolarPearLogo className="w-48 h-auto text-slate-100" />
                 </div>
 
+                {/* Sidebar nav: Config tabs (Guide, Array Config, PV Controllers, Panels) use bg-slate-700 when active; per-array tabs use bg-blue-600; System Summary uses bg-green-600. */}
                 <div className="flex-1 overflow-y-auto">
                     <nav className="px-2 pt-4 space-y-1">
                         <button
@@ -299,20 +306,31 @@ export default function App() {
 
             <div className="flex-1 overflow-y-auto">
                 <div className="max-w-7xl mx-auto p-8 relative min-h-full flex flex-col">
-                    <div className="flex-1">
-                        {activeTab === 'GUIDE' ? (
-                            <Guide />
-                        ) : activeTab === 'SUMMARY' ? (
-                            <SummaryView />
-                        ) : activeTab === 'DB_ARRAYS' ? (
-                            <ArraysDbView />
-                        ) : activeTab === 'DB_PANELS' ? (
-                            <PanelsDbView />
-                        ) : activeTab === 'DB_CHARGERS' ? (
-                            <ChargersDbView />
-                        ) : (
-                            <ArraySelectorView arrayId={activeTab} />
-                        )}
+                    {notification && (
+                        <div className="mb-4">
+                            <Toast
+                                message={notification.message}
+                                variant={notification.variant}
+                                onClose={clearNotification}
+                            />
+                        </div>
+                    )}
+                    <div className="flex-1 min-h-0">
+                        <div key={activeTab} className="animate-in fade-in duration-150">
+                            {activeTab === 'GUIDE' ? (
+                                <Guide />
+                            ) : activeTab === 'SUMMARY' ? (
+                                <SummaryView />
+                            ) : activeTab === 'DB_ARRAYS' ? (
+                                <ArraysDbView />
+                            ) : activeTab === 'DB_PANELS' ? (
+                                <PanelsDbView />
+                            ) : activeTab === 'DB_CHARGERS' ? (
+                                <ChargersDbView />
+                            ) : (
+                                <ArraySelectorView arrayId={activeTab} />
+                            )}
+                        </div>
                     </div>
 
                     <footer className="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400 text-[10px] uppercase tracking-widest pb-4">
@@ -329,7 +347,10 @@ export default function App() {
                 value={addAreaModal.data}
                 areas={areasData}
                 onClose={() => setAddAreaModal({ open: false, data: '' })}
-                onSave={(name) => setAreasData([...areasData, name])}
+                onSave={(name) => {
+                    setAreasData([...areasData, name]);
+                    setNotification('Area added.', 'success');
+                }}
                 onChange={(val) => setAddAreaModal((prev) => ({ ...prev, data: val }))}
             />
             <AddArrayModal
@@ -337,7 +358,10 @@ export default function App() {
                 data={addArrayModal.data}
                 areas={areasData}
                 onClose={() => setAddArrayModal({ open: false, data: {} })}
-                onSave={handleAddArraySave}
+                onSave={(d) => {
+                    handleAddArraySave(d);
+                    setNotification('Array added.', 'success');
+                }}
                 onUpdateField={(field, value) =>
                     setAddArrayModal((prev) => ({
                         ...prev,
@@ -353,6 +377,7 @@ export default function App() {
                 onSave={(d) => {
                     setPanelsData([...panelsData, d]);
                     setAddPanelModal({ open: false, data: {} });
+                    setNotification('Panel added.', 'success');
                 }}
                 onUpdateField={(field, value) =>
                     setAddPanelModal((prev) => ({
@@ -369,6 +394,7 @@ export default function App() {
                 onSave={(d) => {
                     setChargersData([...chargersData, d]);
                     setAddChargerModal({ open: false, data: {} });
+                    setNotification('Controller added.', 'success');
                 }}
                 onUpdateField={(field, value) =>
                     setAddChargerModal((prev) => ({

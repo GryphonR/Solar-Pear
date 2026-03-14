@@ -38,6 +38,29 @@ export default function ArraysDbView() {
                 </div>
             </div>
 
+            {arraysData.length === 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                    <p className="text-slate-700 font-medium mb-2">You don&apos;t have any arrays yet.</p>
+                    <p className="text-slate-600 text-sm mb-4">Add an area and an array to get started.</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                        {areasData.length <= 1 && (
+                            <button
+                                onClick={() => setAddAreaModal({ open: true, data: '' })}
+                                className="flex items-center px-4 py-2 bg-slate-100 text-slate-700 border border-slate-300 rounded hover:bg-slate-200 transition-colors"
+                            >
+                                <Plus size={16} className="mr-2" /> Add Area
+                            </button>
+                        )}
+                        <button
+                            onClick={openAddArrayModal}
+                            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 shadow-sm transition-colors"
+                        >
+                            <Plus size={16} className="mr-2" /> Add Array
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {areasData.map((areaName) => {
                 const areaArrays = arraysData.filter((a) => a.area === areaName);
                 return (
@@ -61,25 +84,25 @@ export default function ArraysDbView() {
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="bg-slate-50 border-b border-slate-200">
-                                        <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                        <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                             Array Name
                                         </th>
-                                        <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                        <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                             Physical Area
                                         </th>
-                                        <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                        <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                             Roof Direction
                                         </th>
-                                        <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                        <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                             Panel Count
                                         </th>
-                                        <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                        <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell">
                                             Panel Orientation
                                         </th>
-                                        <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                        <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase hidden md:table-cell">
                                             Mounting System
                                         </th>
-                                        <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase text-center">
+                                        <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase text-center">
                                             Actions
                                         </th>
                                     </tr>
@@ -139,7 +162,7 @@ export default function ArraysDbView() {
                                                         }
                                                     />
                                                 </td>
-                                                <td className="p-1">
+                                                <td className="p-1 hidden md:table-cell">
                                                     {(a.mounting || 'In-Roof (GSE)') === 'In-Roof (GSE)' ? (
                                                         <select
                                                             className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
@@ -157,7 +180,7 @@ export default function ArraysDbView() {
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td className="p-1">
+                                                <td className="p-1 hidden md:table-cell">
                                                     <select
                                                         className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
                                                         value={a.mounting || 'In-Roof (GSE)'}

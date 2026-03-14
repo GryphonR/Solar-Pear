@@ -65,6 +65,12 @@ npm run preview
 
 ---
 
+## Frontend patterns
+
+- **Loading and error for async views:** If a view later loads data asynchronously (e.g. from an API), it should (a) show a loading state (spinner or skeleton) while fetching, and (b) show an error state with a retry action on failure. Reuse the same patterns as the app load screen in `src/context/AppStateContext.jsx` (loading spinner with "Loading saved data…", error screen with "Start fresh" / retry). This keeps behaviour and accessibility (e.g. `aria-live`, `role="alert"`) consistent.
+
+---
+
 ## Data and limitations
 
 - **Storage:** All configuration is stored in your browser (localStorage). Clearing site data or switching devices means starting fresh—unless you’ve exported a backup. We recommend downloading a backup if the setup matters.
