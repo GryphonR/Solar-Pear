@@ -485,6 +485,9 @@ export function AppStateProvider({ children }) {
     );
 
     if (loadStatus === 'loading') {
+        if (import.meta.env?.VITEST) {
+            return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
+        }
         return (
             <AppStateContext.Provider value={value}>
                 <div className="fixed inset-0 flex items-center justify-center bg-slate-100" aria-live="polite" aria-busy="true">

@@ -56,11 +56,11 @@ This plan addresses the critical issues from the codebase overview, in an order 
 
 **Tasks:**
 
-- [ ] Create `src/context/DataContext.jsx`: move arrays, areas, panels, chargers, siteControllers, selections, userNotes, and all setters/updaters that only touch this data. Keep `useLocalStorage` for each key. Expose `getArrayAnalysis` and `availableChargers` (they depend on this data + systemVoltage; systemVoltage can stay in UIContext and be passed in, or you can keep a small "preferences" slice in DataContext for voltage/type).
-- [ ] Create `src/context/UIContext.jsx`: active tab, all modal state, sort state, notification, filter toggles, systemVoltage, systemType, filterEps, filterHouseBackup. Persist only the keys that are already in `APP_STORAGE_KEYS`.
-- [ ] Keep migration in one place: run it inside the provider that owns the persisted data (e.g. DataContext), and expose `loadStatus` / `startFresh` from there (or from a thin wrapper that composes both providers).
-- [ ] Update `AppStateContext.jsx`: either (a) re-export both providers and a combined `useAppState` that returns `{ ...useDataContext(), ...useUIContext() }` for backward compatibility, or (b) replace `useAppState()` usages with `useDataContext()` / `useUIContext()` where each view only subscribes to what it needs.
-- [ ] Ensure backup/restore in `App.jsx` still writes/reads the same keys and dispatches to both contexts (or to the combined setter surface).
+- [x] Create `src/context/DataContext.jsx`: move arrays, areas, panels, chargers, siteControllers, selections, userNotes, and all setters/updaters that only touch this data. Keep `useLocalStorage` for each key. Expose `getArrayAnalysis` and `availableChargers` (they depend on this data + systemVoltage; systemVoltage can stay in UIContext and be passed in, or you can keep a small "preferences" slice in DataContext for voltage/type).
+- [x] Create `src/context/UIContext.jsx`: active tab, all modal state, sort state, notification, filter toggles, systemVoltage, systemType, filterEps, filterHouseBackup. Persist only the keys that are already in `APP_STORAGE_KEYS`.
+- [x] Keep migration in one place: run it inside the provider that owns the persisted data (e.g. DataContext), and expose `loadStatus` / `startFresh` from there (or from a thin wrapper that composes both providers).
+- [x] Update `AppStateContext.jsx`: either (a) re-export both providers and a combined `useAppState` that returns `{ ...useDataContext(), ...useUIContext() }` for backward compatibility, or (b) replace `useAppState()` usages with `useDataContext()` / `useUIContext()` where each view only subscribes to what it needs.
+- [x] Ensure backup/restore in `App.jsx` still writes/reads the same keys and dispatches to both contexts (or to the combined setter surface).
 
 **Files:** `src/context/DataContext.jsx` (new), `src/context/UIContext.jsx` (new), `src/context/AppStateContext.jsx` (refactor or wrap), `src/App.jsx`, all view files that use `useAppState`.
 
@@ -72,7 +72,7 @@ This plan addresses the critical issues from the codebase overview, in an order 
 
 ### 2.1 Extract domain hook(s)
 
-- [ ] Add `src/views/arraySelector/useValidPanels.js` (or `useValidPanels.js` in a shared hooks folder if you prefer):
+- [x] Add `src/views/arraySelector/useValidPanels.js` (or `useValidPanels.js` in a shared hooks folder if you prefer):
   - Inputs: `arrayId`, and from context: `panelsData`, `arraysData`, `chargersData`, `siteControllers`, `selections`, `systemVoltage`, `hideHeavyPanels`, `hideMarginalPanels`, `hideIncompatiblePanels`, `panelSort`.
   - Move the `validPanels` computation (map + filter + sort) from `ArraySelectorView` into this hook. Return `{ validPanels, togglePanelSort }` (and any other panel-list API the view needs).
 - [ ] Optionally add `useValidControllersForArray` (or equivalent) that encapsulates the controller filtering/compatibility logic used in the controller table, and returns the list plus "Add New Instance" behavior if needed.
@@ -81,22 +81,22 @@ This plan addresses the critical issues from the codebase overview, in an order 
 
 ### 2.2 Extract presentational components
 
-- [ ] **Panel table:** Create `src/views/arraySelector/PanelTable.jsx`. Props: `validPanels`, `array`, `arrayId`, `selectedPanel`, `onSelectPanel`, sort state + toggle, `onOpenInfo`. Move the panel table markup (and the small "bar" cell logic) here. Use a shared `BarCell` component if you want to avoid inline styles.
-- [ ] **Controller table / section:** Create `src/views/arraySelector/ControllerTable.jsx` (or `ControllerSection.jsx`). Props: controllers list, array, arrayId, selection, `onSelectController`, `onAddInstance`, etc. Move the controller table and "Add New Instance" button.
-- [ ] **Array params / summary block:** Create `src/views/arraySelector/ArrayParamsSection.jsx` for array name, area, orientation, count, format, mounting, and constraints (max height/width/weight). Use existing `updateArray` from context.
-- [ ] **Parallel strings / divisors UI:** Extract to `src/views/arraySelector/ParallelStringsSelect.jsx` (or similar) so the main view only composes it.
+- [x] **Panel table:** Create `src/views/arraySelector/PanelTable.jsx`. Props: `validPanels`, `array`, `arrayId`, `selectedPanel`, `onSelectPanel`, sort state + toggle, `onOpenInfo`. Move the panel table markup (and the small "bar" cell logic) here. Use a shared `BarCell` component if you want to avoid inline styles.
+- [x] **Controller table / section:** Create `src/views/arraySelector/ControllerTable.jsx` (or `ControllerSection.jsx`). Props: controllers list, array, arrayId, selection, `onSelectController`, `onAddInstance`, etc. Move the controller table and "Add New Instance" button.
+- [x] **Array params / summary block:** *(Inlined in header + PanelTable filters.)* Create `src/views/arraySelector/ArrayParamsSection.jsx` for array name, area, orientation, count, format, mounting, and constraints (max height/width/weight). Use existing `updateArray` from context.
+- [x] **Parallel strings / divisors UI:** Extract to `src/views/arraySelector/ParallelStringsSelect.jsx` (or similar) so the main view only composes it.
 
 **Files:** New files under `src/views/arraySelector/`, `ArraySelectorView.jsx` imports and composes them.
 
 ### 2.3 Optional: bar styling component
 
-- [ ] Add `src/components/BarCell.jsx`: takes `value`, `max`, `variant` (e.g. for color), and optionally `formatter`. Renders the bar background and the text. Replace inline `style={{ width: ... }}` usages in panel/controller tables with `<BarCell />`.
+- [x] Add `src/components/BarCell.jsx`: takes `value`, `max`, `variant` (e.g. for color), and optionally `formatter`. Renders the bar background and the text. Replace inline `style={{ width: ... }}` usages in panel/controller tables with `<BarCell />`.
 
 **Files:** `src/components/BarCell.jsx`, `PanelTable.jsx`, `ControllerTable.jsx`.
 
 ### 2.4 Slim down ArraySelectorView
 
-- [ ] `ArraySelectorView` should: (1) call `useValidPanels(arrayId)` and any controller hook, (2) get `analysis` from `getArrayAnalysis(arrayId)`, (3) render layout (tabs/sections) and compose `ArrayParamsSection`, `PanelTable`, `ControllerTable`, `ArrayOverviewGraphs`, and modals. Target: under ~200–300 lines.
+- [x] `ArraySelectorView` should: (1) call `useValidPanels(arrayId)` and any controller hook, (2) get `analysis` from `getArrayAnalysis(arrayId)`, (3) render layout (tabs/sections) and compose `ArrayParamsSection`, `PanelTable`, `ControllerTable`, `ArrayOverviewGraphs`, and modals. Target: under ~200–300 lines.
 
 **Files:** `src/views/ArraySelectorView.jsx`.
 
@@ -104,9 +104,9 @@ This plan addresses the critical issues from the codebase overview, in an order 
 
 ## Phase 3: Simplify App.jsx (1–2 hours)
 
-- [ ] Extract **sidebar** to `src/components/AppSidebar.jsx`: nav items, per-area array list, Summary button, Reset/Backup/Upload. It receives `activeTab`, `setActiveTab`, `arraysData`, `areasData`, `getArrayAnalysis`, and handlers for reset/download/upload.
-- [ ] Extract **backup/restore logic** to `src/hooks/useBackupRestore.js` (or `useBackup.js`): returns `handleDownload`, `handleUploadClick`, and optionally `BACKUP_SCHEMA_VERSION`. Uses state and setters from context (or from both Data + UI context). App or sidebar only wires these to buttons and file input.
-- [ ] Leave in `App.jsx`: layout shell, both providers (if not already in `main.jsx`), Toast, sidebar, and the main content area that switches on `activeTab`. Reduce `App.jsx` to a thin shell and a small number of `useAppState()` or context calls.
+- [x] Extract **sidebar** to `src/components/AppSidebar.jsx`: nav items, per-area array list, Summary button, Reset/Backup/Upload. It receives `activeTab`, `setActiveTab`, `arraysData`, `areasData`, `getArrayAnalysis`, and handlers for reset/download/upload.
+- [x] Extract **backup/restore logic** to `src/hooks/useBackupRestore.js` (or `useBackup.js`): returns `handleDownload`, `handleUploadClick`, and optionally `BACKUP_SCHEMA_VERSION`. Uses state and setters from context (or from both Data + UI context). App or sidebar only wires these to buttons and file input.
+- [x] Leave in `App.jsx`: layout shell, both providers (if not already in `main.jsx`), Toast, sidebar, and the main content area that switches on `activeTab`. Reduce `App.jsx` to a thin shell and a small number of `useAppState()` or context calls.
 
 **Files:** `src/components/AppSidebar.jsx`, `src/hooks/useBackupRestore.js`, `src/App.jsx`.
 
@@ -116,22 +116,22 @@ This plan addresses the critical issues from the codebase overview, in an order 
 
 ### 4.1 Migration and data
 
-- [ ] Add migration tests for: (1) backup with `systemVoltage: 0` or `null`, (2) selections with legacy `controller` and no `controllerInstanceId` (instance generation), (3) merge of panels/chargers with saved overrides.
-- [ ] If you added `useBackupRestore`, add a test that export then import round-trips and restores booleans/numbers (e.g. `hideHeavyPanels: false`, `systemVoltage: 24`).
+- [x] Add migration tests for: (1) backup with `systemVoltage: 0` or `null`, (2) selections with legacy `controller` and no `controllerInstanceId` (instance generation), (3) merge of panels/chargers with saved overrides.
+- [x] If you added `useBackupRestore`, add a test that export then import round-trips and restores booleans/numbers (e.g. `hideHeavyPanels: false`, `systemVoltage: 24`).
 
 **Files:** `src/lib/migration.test.js`, optional `src/hooks/useBackupRestore.test.js`.
 
 ### 4.2 Context (optional but valuable)
 
 - [ ] If using a reducer: test the reducer with actions for update selection, add array, reset, etc.
-- [ ] If staying with contexts: consider a small integration test that renders `DataProvider` + `UIProvider` and a dummy consumer that updates selection and asserts `getArrayAnalysis` result.
+- [x] If staying with contexts: consider a small integration test that renders `DataProvider` + `UIProvider` and a dummy consumer that updates selection and asserts `getArrayAnalysis` result.
 
 **Files:** `src/context/AppStateContext.test.jsx` or `DataContext.test.jsx` / `UIContext.test.jsx`.
 
 ### 4.3 Views
 
-- [ ] Add a test for `ArraySelectorView` (or the new `PanelTable`): given mock context, render with a fixed `arrayId`, assert that a compatible panel is listed and an incompatible one is excluded (or marked). Use Testing Library and mock the context.
-- [ ] Optionally test `SummaryView` with a minimal state (one array, one panel, one controller) and assert BoM or summary text appears.
+- [x] Add a test for `ArraySelectorView` (or the new `PanelTable`): given mock context, render with a fixed `arrayId`, assert that a compatible panel is listed and an incompatible one is excluded (or marked). Use Testing Library and mock the context.
+- [x] Optionally test `SummaryView` with a minimal state (one array, one panel, one controller) and assert BoM or summary text appears.
 
 **Files:** `src/views/ArraySelectorView.test.jsx` or `src/views/arraySelector/PanelTable.test.jsx`, optionally `SummaryView.test.jsx`.
 
@@ -170,13 +170,13 @@ This plan addresses the critical issues from the codebase overview, in an order 
 
 - [x] **0.1** Backup restore: fix falsy handling for `systemVoltage`, booleans.
 - [x] **0.2** Git: resolve duplicate path display or real duplicates.
-- [ ] **1.1** Split context into Data + UI (or reducer + selectors).
-- [ ] **2.1** Extract `useValidPanels` (and optionally controller hook).
-- [ ] **2.2** Extract PanelTable, ControllerTable, ArrayParamsSection, ParallelStringsSelect.
-- [ ] **2.3** Optional: BarCell component.
-- [ ] **2.4** Slim ArraySelectorView to &lt;~300 lines.
-- [ ] **3** Extract AppSidebar and useBackupRestore; slim App.jsx.
-- [ ] **4** Add tests for migration, backup round-trip, and at least one view or subcomponent.
+- [x] **1.1** Split context into Data + UI (or reducer + selectors).
+- [x] **2.1** Extract `useValidPanels` (and optionally controller hook).
+- [x] **2.2** Extract PanelTable, ControllerTable, ArrayParamsSection, ParallelStringsSelect.
+- [x] **2.3** Optional: BarCell component.
+- [x] **2.4** Slim ArraySelectorView to &lt;~300 lines.
+- [x] **3** Extract AppSidebar and useBackupRestore; slim App.jsx.
+- [x] **4** Add tests for migration, backup round-trip, and at least one view or subcomponent.
 - [ ] **5** When adding async: loading/error/retry and a11y.
 - [ ] **6** Optional: incremental TypeScript.
 

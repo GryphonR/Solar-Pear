@@ -96,6 +96,32 @@ describe("migrateSelectionsAndSiteControllers", () => {
         expect(siteControllers[0].modelId).toBe("LEGACY_CONTROLLER");
         expect(siteControllers[0].area).toBe("House");
     });
+
+    it("creates one shared instance when two arrays use the same legacy controller", () => {
+        const twoArrays = [
+            { id: "A1", area: "House" },
+            { id: "A2", area: "House" },
+        ];
+        const savedSelections = JSON.stringify({
+            A1: { panel: "P1", controller: "LEGACY_CONTROLLER" },
+            A2: { panel: "P2", controller: "LEGACY_CONTROLLER" },
+        });
+        const { selections, siteControllers } = migrateSelectionsAndSiteControllers({
+            savedSelectionsJson: savedSelections,
+            savedSiteControllersJson: null,
+            savedArraysJson: JSON.stringify(twoArrays),
+            initialArrays: twoArrays,
+            initialSelections: {},
+            initialChargers: [
+                { id: "LEGACY_CONTROLLER", name: "Legacy", manufacturer: "X" },
+            ],
+        });
+
+        expect(siteControllers).toHaveLength(1);
+        expect(selections.A1.controllerInstanceId).toBe(selections.A2.controllerInstanceId);
+        expect(selections.A1.controllerMppt).toBe(1);
+        expect(selections.A2.controllerMppt).toBe(2);
+    });
 });
 
 describe("mergeChargers", () => {

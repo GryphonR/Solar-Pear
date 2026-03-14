@@ -160,10 +160,19 @@ async function run() {
                         if (key === 'price' && controller.availableUK === false) {
                             continue;
                         }
+                        // Skip logging MaxACPower when type is charger, as 0 is the expected value
+                        if (key === 'MaxACPower' && controller.type === 'charger') {
+                            continue;
+                        }
                         zeroValuesLog.push(`${controller.manufacturer || 'Unknown'} - ${controller.modelNumber || controller.name || 'Unknown'}: Field '${key}' is 0`);
                     } else if (value === "" && !ALLOWED_EMPTY_STRINGS.includes(key)) {
                         emptyStringsLog.push(`${controller.manufacturer || 'Unknown'} - ${controller.modelNumber || controller.name || 'Unknown'}: Field '${key}' is empty ("")`);
                     }
+                }
+
+                // Charger validation: MaxACPower MUST be 0
+                if (controller.type === 'charger' && controller.MaxACPower !== 0) {
+                    zeroValuesLog.push(`[ERROR] ${controller.manufacturer || 'Unknown'} - ${controller.modelNumber || controller.name || 'Unknown'}: type is 'charger' but MaxACPower is ${controller.MaxACPower} (must be 0)`);
                 }
 
                 // 4. Datasheet PDF check (ignoring query parameters)

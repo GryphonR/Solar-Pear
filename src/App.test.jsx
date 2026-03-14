@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, waitFor, within, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AppStateProvider } from "./context/AppStateContext";
@@ -176,8 +176,7 @@ describe("App UI flows", () => {
         ).toBeInTheDocument();
     });
 
-    it("prompts when adding a panel with duplicate Model ID and keeps modal open", async () => {
-        const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
+    it("prevents submit when adding a panel with duplicate Model ID and keeps modal open", async () => {
         renderApp();
         await waitFor(() => {
             expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
@@ -195,19 +194,15 @@ describe("App UI flows", () => {
         const dialog = screen.getByRole("dialog");
         const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
         fireEvent.change(modelIdInput, { target: { value: "TSM-430NEG9R.28" } });
-        await userEvent.click(screen.getByRole("button", { name: /Add Panel to Database/i }));
 
-        expect(alertSpy).toHaveBeenCalledWith(
-            expect.stringMatching(/already exists.*Model ID/i)
-        );
+        const addButton = screen.getByRole("button", { name: /Add Panel to Database/i });
+        expect(addButton).toBeDisabled();
         expect(screen.getByRole("heading", { name: /Add Custom Solar Panel/i })).toBeInTheDocument();
-        alertSpy.mockRestore();
     });
 
     it(
-        "prompts when adding a controller with duplicate Model ID and keeps modal open",
+        "prevents submit when adding a controller with duplicate Model ID and keeps modal open",
         async () => {
-            const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
             renderApp();
             await waitFor(() => {
                 expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
@@ -225,13 +220,10 @@ describe("App UI flows", () => {
             const dialog = screen.getByRole("dialog");
             const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
             fireEvent.change(modelIdInput, { target: { value: "ss75_15" } });
-            await userEvent.click(screen.getByRole("button", { name: /Add Controller to Database/i }));
 
-            expect(alertSpy).toHaveBeenCalledWith(
-                expect.stringMatching(/already exists.*Model ID/i)
-            );
+            const addButton = screen.getByRole("button", { name: /Add Controller to Database/i });
+            expect(addButton).toBeDisabled();
             expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
-            alertSpy.mockRestore();
         },
         10000
     );
