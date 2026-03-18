@@ -11,6 +11,7 @@ export default function ArraysDbView() {
         deleteArea,
         setAddAreaModal,
         openAddArrayModal,
+        openPlannerForArray,
     } = useAppState();
     return (
         <div className="space-y-6">
@@ -193,14 +194,25 @@ export default function ArraysDbView() {
                                                     </select>
                                                 </td>
                                                 <td className="p-1 text-center">
-                                                    <button
-                                                        onClick={() => deleteArray(a.id)}
-                                                        className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                                                        title="Delete Array"
-                                                        aria-label="Delete array"
-                                                    >
-                                                        <Trash2 size={18} />
-                                                    </button>
+                                                    <div className="flex items-center justify-center gap-1">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openPlannerForArray(a.id)}
+                                                            className="px-3 py-1.5 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors shadow-sm"
+                                                            title="Open Planner"
+                                                        >
+                                                            Planner
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => deleteArray(a.id)}
+                                                            className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                                                            title="Delete Array"
+                                                            aria-label="Delete array"
+                                                        >
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))

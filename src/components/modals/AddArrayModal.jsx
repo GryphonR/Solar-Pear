@@ -13,7 +13,15 @@ const defaultData = {
     maxPanelWeight: '',
 };
 
-export default function AddArrayModal({ open, data = defaultData, areas, onClose, onSave, onUpdateField }) {
+export default function AddArrayModal({
+    open,
+    data = defaultData,
+    areas,
+    onClose,
+    onSave,
+    onUpdateField,
+    onOpenPlanner,
+}) {
     const d = { ...defaultData, ...data };
     const [error, setError] = useState(null);
 
@@ -52,6 +60,16 @@ export default function AddArrayModal({ open, data = defaultData, areas, onClose
                             {error}
                         </p>
                     )}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            onClose();
+                            onOpenPlanner?.(d);
+                        }}
+                        className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 font-medium transition-colors shadow-sm"
+                    >
+                        Planner
+                    </button>
                     <button
                         type="button"
                         onClick={onClose}

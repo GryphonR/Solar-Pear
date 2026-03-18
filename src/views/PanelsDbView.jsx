@@ -51,9 +51,9 @@ export default function PanelsDbView() {
                         <Plus size={16} className="mr-2" /> Add Panel
                     </button>
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-100">
+                <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col gap-1">
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Filters</span>
-                    <label className="inline-flex items-center gap-2 text-sm text-slate-600 mt-2 cursor-pointer">
+                    <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
                         <input
                             type="checkbox"
                             className="w-4 h-4 text-emerald-600 rounded cursor-pointer"

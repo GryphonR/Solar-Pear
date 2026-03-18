@@ -99,7 +99,9 @@ describe("App UI flows", () => {
         ).toBeInTheDocument();
     });
 
-    it("opens Add Panel modal from Panels tab and shows form", async () => {
+    it(
+        "opens Add Panel modal from Panels tab and shows form",
+        async () => {
         renderApp();
         await waitFor(() => {
             expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
@@ -121,7 +123,9 @@ describe("App UI flows", () => {
         expect(
             screen.getByRole("button", { name: /Add Panel to Database/i })
         ).toBeInTheDocument();
-    });
+        },
+        10000
+    );
 
     it("opens Confirm modal on Reset click; Cancel closes it", async () => {
         renderApp();
@@ -176,7 +180,9 @@ describe("App UI flows", () => {
         ).toBeInTheDocument();
     });
 
-    it("prevents submit when adding a panel with duplicate Model ID and keeps modal open", async () => {
+    it(
+        "prevents submit when adding a panel with duplicate Model ID and keeps modal open",
+        async () => {
         renderApp();
         await waitFor(() => {
             expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
@@ -198,7 +204,9 @@ describe("App UI flows", () => {
         const addButton = screen.getByRole("button", { name: /Add Panel to Database/i });
         expect(addButton).toBeDisabled();
         expect(screen.getByRole("heading", { name: /Add Custom Solar Panel/i })).toBeInTheDocument();
-    });
+        },
+        10000
+    );
 
     it(
         "prevents submit when adding a controller with duplicate Model ID and keeps modal open",

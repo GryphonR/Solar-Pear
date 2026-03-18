@@ -22,6 +22,24 @@ export function migrateArrays(savedArraysJson, initialArrays) {
             area:
                 a.area ||
                 (a.id?.toLowerCase().includes("garage") ? "Garage" : "House"),
+            planner:
+                a.planner && typeof a.planner === "object"
+                    ? a.planner
+                    : {
+                          roofInput: {
+                              mode: "actual",
+                              x_m: 6,
+                              y_m: 4,
+                              projectedX_m: 6,
+                              projectedY_m: 4,
+                              tilt_deg: 30,
+                          },
+                          roofPolygon: null,
+                          exclusions: [],
+                          spacing: { edge_mm: 400, gap_mm: 25 },
+                          options: { orientation: "both" },
+                          lastResult: null,
+                      },
         }));
     } catch {
         return initialArrays;

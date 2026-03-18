@@ -8,6 +8,7 @@ import AddPanelModal from './components/modals/AddPanelModal';
 import AddChargerModal from './components/modals/AddChargerModal';
 import PanelInfoModal from './components/modals/PanelInfoModal';
 import ChargerInfoModal from './components/modals/ChargerInfoModal';
+import ArrayPlannerModal from './components/modals/ArrayPlannerModal';
 import SummaryView from './views/SummaryView';
 import ArraysDbView from './views/ArraysDbView';
 import PanelsDbView from './views/PanelsDbView';
@@ -42,10 +43,15 @@ export default function App() {
         addArrayModal,
         addPanelModal,
         addChargerModal,
+        plannerModal,
         infoModalPanelId,
         infoModalChargerId,
         confirmModal,
         handleAddArraySave,
+        openPlannerForNewArray,
+        closePlanner,
+        savePlannerToArray,
+        savePlannerToDraftArray,
         updateUserNote,
         notification,
         clearNotification,
@@ -132,6 +138,7 @@ export default function App() {
                         data: { ...prev.data, [field]: value },
                     }))
                 }
+                onOpenPlanner={(draft) => openPlannerForNewArray(draft)}
             />
             <AddPanelModal
                 open={addPanelModal.open}
@@ -190,6 +197,22 @@ export default function App() {
                 onCancel={() =>
                     setConfirmModal({ open: false, title: '', message: '', action: null })
                 }
+            />
+            <ArrayPlannerModal
+                open={plannerModal.open}
+                arrayId={plannerModal.arrayId}
+                draftArrayData={plannerModal.draftArrayData}
+                arraysData={arraysData}
+                panelsData={panelsData}
+                onClose={closePlanner}
+                onSavePlanner={(targetArrayId, plannerData) => {
+                    if (targetArrayId) {
+                        savePlannerToArray(targetArrayId, plannerData);
+                    } else {
+                        savePlannerToDraftArray(plannerData);
+                    }
+                    setNotification('Planner saved.', 'success');
+                }}
             />
         </div>
     );

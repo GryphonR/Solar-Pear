@@ -90,6 +90,12 @@ export function AppStateProvider({ children }) {
     const [addChargerModal, setAddChargerModal] = useState({ open: false, data: {} });
     const [addAreaModal, setAddAreaModal] = useState({ open: false, data: '' });
     const [addArrayModal, setAddArrayModal] = useState({ open: false, data: {} });
+    const [plannerModal, setPlannerModal] = useState({
+        open: false,
+        arrayId: null,
+        draftArrayData: null,
+        returnTo: null, // 'addArray' | null
+    });
     const [confirmModal, setConfirmModal] = useState({
         open: false,
         title: '',
@@ -176,6 +182,7 @@ export function AppStateProvider({ children }) {
         setFilterHouseBackup(false);
         setUserNotes({});
         setHiddenChargerMfr(null);
+        setPlannerModal({ open: false, arrayId: null, draftArrayData: null, returnTo: null });
         setActiveTab('SUMMARY');
     };
 
@@ -328,6 +335,47 @@ export function AppStateProvider({ children }) {
         });
     };
 
+    const openPlannerForArray = (arrayId) => {
+        setPlannerModal({ open: true, arrayId, draftArrayData: null, returnTo: null });
+    };
+
+    const openPlannerForNewArray = (draftArrayData) => {
+        setAddArrayModal({ open: false, data: draftArrayData || {} });
+        setPlannerModal({
+            open: true,
+            arrayId: null,
+            draftArrayData: draftArrayData || {},
+            returnTo: 'addArray',
+        });
+    };
+
+    const closePlanner = () => {
+        setPlannerModal((prev) => {
+            if (prev.returnTo === 'addArray') {
+                setAddArrayModal({ open: true, data: prev.draftArrayData || {} });
+            }
+            return { open: false, arrayId: null, draftArrayData: null, returnTo: null };
+        });
+    };
+
+    const savePlannerToArray = (arrayId, plannerData) => {
+        if (!arrayId) return;
+        setArraysData((prev) =>
+            prev.map((a) => (a.id === arrayId ? { ...a, planner: plannerData } : a))
+        );
+    };
+
+    const savePlannerToDraftArray = (plannerData) => {
+        setPlannerModal((prev) => ({
+            ...prev,
+            draftArrayData: { ...(prev.draftArrayData || {}), planner: plannerData },
+        }));
+        setAddArrayModal((prev) => ({
+            ...prev,
+            data: { ...(prev.data || {}), planner: plannerData },
+        }));
+    };
+
     const deleteArea = (areaName) => {
         if (areasData.length <= 1) {
             setNotification('You must have at least one Area remaining.', 'warning');
@@ -394,6 +442,7 @@ export function AppStateProvider({ children }) {
             addChargerModal,
             addAreaModal,
             addArrayModal,
+            plannerModal,
             confirmModal,
             hiddenChargerMfr,
             notification,
@@ -427,6 +476,7 @@ export function AppStateProvider({ children }) {
             setAddChargerModal,
             setAddAreaModal,
             setAddArrayModal,
+            setPlannerModal,
             setConfirmModal,
             setHiddenChargerMfr,
             updateArray,
@@ -443,6 +493,11 @@ export function AppStateProvider({ children }) {
             addCharger,
             openAddArrayModal,
             handleAddArraySave,
+            openPlannerForArray,
+            openPlannerForNewArray,
+            closePlanner,
+            savePlannerToArray,
+            savePlannerToDraftArray,
             performReset,
             loadStatus,
             startFresh,
@@ -476,6 +531,7 @@ export function AppStateProvider({ children }) {
             addChargerModal,
             addAreaModal,
             addArrayModal,
+            plannerModal,
             confirmModal,
             hiddenChargerMfr,
             notification,
