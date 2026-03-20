@@ -19,6 +19,15 @@ export function migrateArrays(savedArraysJson, initialArrays) {
             maxPanelHeight: a.maxPanelHeight || "",
             maxPanelWidth: a.maxPanelWidth || "",
             maxPanelWeight: a.maxPanelWeight || "",
+            // Selection fields live on the array entry (no separate `solar_selections` persistence).
+            // Keep legacy-safe defaults if older backups/localStorage entries didn't have them.
+            panel: a.panel ?? "",
+            controllerInstanceId: a.controllerInstanceId ?? "",
+            controllerMppt:
+                a.controllerMppt !== undefined && Number.isFinite(Number(a.controllerMppt))
+                    ? Number(a.controllerMppt)
+                    : 1,
+            controller: a.controller ?? "",
             area:
                 a.area ||
                 (a.id?.toLowerCase().includes("garage") ? "Garage" : "House"),
@@ -98,6 +107,8 @@ export function migrateSelectionsAndSiteControllers({
 
                 migratedSelections[arrId] = {
                     panel: sel.panel,
+                    // Legacy-safe: preserve the original controller model id assignment.
+                    controller: sel.controller,
                     controllerInstanceId: instancesByModel[modelId].instance.id,
                     controllerMppt: instancesByModel[modelId].mpptCount,
                 };

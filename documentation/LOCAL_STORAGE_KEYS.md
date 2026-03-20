@@ -1,13 +1,13 @@
 # LocalStorage keys – what gets stored and how
 
-Persistence is **hooks-only**: every key is read and written by `useLocalStorage`. A **one-time migration effect** runs on mount and overwrites state for keys that need migration/merge (arrays, selections, siteControllers, chargers, panels). No save effect; no legacy keys.
+Persistence is **hooks-only**: every key is read and written by `useLocalStorage`. A **one-time migration effect** runs on mount and overwrites state for keys that need migration/merge (arrays, selections, siteControllers, chargers, panels). No save effect; legacy keys may still be read once for migration.
 
 ---
 
 ## Keys (all use useLocalStorage)
 
 ### `solar_arrays`
-- **Stored:** Array of roof array configs. Each item: `{ id, name, area, orientation, count, format, mounting, maxPanelHeight, maxPanelWidth }`.
+- **Stored:** Array of roof array configs. Each item: `{ id, name, area, orientation, count, format, mounting, maxPanelHeight, maxPanelWidth, panel, controllerInstanceId, controllerMppt, controller }`.
 - **Read/written by:** `useLocalStorage('solar_arrays', initialArrays)`. One-time effect overwrites with `migrateArrays(savedArrays, initialArrays)`.
 
 ### `solar_panels`
@@ -22,9 +22,10 @@ Persistence is **hooks-only**: every key is read and written by `useLocalStorage
 - **Stored:** Array of controller instances: `{ id, modelId, area, name }`.
 - **Read/written by:** `useLocalStorage('solar_site_controllers', [])`. One-time effect overwrites with migrated result from `migrateSelectionsAndSiteControllers`.
 
-### `solar_selections`
-- **Stored:** Object keyed by array id. Value: `{ panel, controllerInstanceId?, controllerMppt? }` or legacy `{ panel, controller }`. Example: `{ "A1": { panel: "TSM-430NEG9R.28", controllerInstanceId: "inst_...", controllerMppt: 1 } }`.
-- **Read/written by:** `useLocalStorage('solar_selections', initialSelections)`. One-time effect overwrites with migrated selections.
+### `solar_selections` (Legacy migration only)
+- **Stored (legacy):** Object keyed by array id. Value: `{ panel, controllerInstanceId?, controllerMppt? }` or legacy `{ panel, controller }`.
+- **Read by:** `AppStateContext` one-time mount migration (imports into `arraysData` selection fields).
+- **Not persisted:** the app no longer writes this key after migration.
 
 ### `user_notes`
 - **Stored:** Object keyed by entity id: `panel.model`, `charger.id`, `array_${array.id}` → note string.
@@ -56,7 +57,7 @@ Persistence is **hooks-only**: every key is read and written by `useLocalStorage
 | solar_panels              | Full panel list     | Yes             | Yes (mergePanels)              |
 | solar_chargers            | Full charger list   | Yes             | Yes (mergeChargers)            |
 | solar_site_controllers    | Instance list       | Yes             | Yes (migrateSelections...)     |
-| solar_selections          | Per-array selections| Yes             | Yes (migrateSelections...)     |
+| solar_selections          | Legacy migration key| No (legacy read only) | Yes (migrateSelections...)     |
 | user_notes                | { [id]: string }    | Yes             | No                             |
 | solar_hide_heavy_panels   | boolean             | Yes             | No                             |
 | solar_hide_marginal_panels| boolean             | Yes             | No                             |

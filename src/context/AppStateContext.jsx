@@ -21,6 +21,11 @@ const initialArrays = [
         maxPanelHeight: '',
         maxPanelWidth: '',
         maxPanelWeight: '',
+        // Selection fields (persisted on the array itself).
+        panel: '',
+        controllerInstanceId: '',
+        controllerMppt: 1,
+        controller: '',
     },
 ];
 
@@ -31,7 +36,6 @@ export const APP_STORAGE_KEYS = [
     'solar_panels',
     'solar_chargers',
     'solar_site_controllers',
-    'solar_selections',
     'solar_hide_heavy_panels',
     'solar_hide_marginal_panels',
     'solar_hide_incompatible_panels',
@@ -54,7 +58,6 @@ export function AppStateProvider({ children }) {
     const [panelsData, setPanelsData] = useLocalStorage('solar_panels', initialPanels);
     const [chargersData, setChargersData] = useLocalStorage('solar_chargers', initialChargers);
     const [siteControllers, setSiteControllers] = useLocalStorage('solar_site_controllers', []);
-    const [selections, setSelections] = useLocalStorage('solar_selections', initialSelections);
     const [hideHeavyPanels, setHideHeavyPanels] = useLocalStorage('solar_hide_heavy_panels', false);
     const [hideMarginalPanels, setHideMarginalPanels] = useLocalStorage(
         'solar_hide_marginal_panels',
@@ -76,6 +79,24 @@ export function AppStateProvider({ children }) {
         false
     );
     const [areasData, setAreasData] = useLocalStorage('solar_areas', ['House']);
+
+    // Derived shape preserved for existing UI/analysis code.
+    // Selection values are stored directly on each array entry in `arraysData`.
+    const selections = useMemo(() => {
+        return arraysData.reduce((acc, a) => {
+            const controllerMppt =
+                a.controllerMppt !== undefined && Number.isFinite(Number(a.controllerMppt))
+                    ? Number(a.controllerMppt)
+                    : 1;
+            acc[a.id] = {
+                panel: a.panel ?? '',
+                controllerInstanceId: a.controllerInstanceId ?? '',
+                controllerMppt,
+                controller: a.controller ?? '',
+            };
+            return acc;
+        }, {});
+    }, [arraysData]);
 
     const [panelSort, setPanelSort] = useState({ key: 'peakPower', dir: 'desc' });
     const [controllerSort, setControllerSort] = useState({ key: 'price', dir: 'asc' });
@@ -123,7 +144,6 @@ export function AppStateProvider({ children }) {
         try {
             const savedArrays = localStorage.getItem('solar_arrays');
             const migratedArrays = migrateArrays(savedArrays, initialArrays);
-            setArraysData(migratedArrays);
 
             const savedSiteControllers = localStorage.getItem('solar_site_controllers');
             const savedSelections = localStorage.getItem('solar_selections');
@@ -136,7 +156,11 @@ export function AppStateProvider({ children }) {
                     initialSelections,
                     initialChargers,
                 });
-            setSelections(migratedSelections);
+            const arraysWithSelections = migratedArrays.map((a) => ({
+                ...a,
+                ...(migratedSelections?.[a.id] || {}),
+            }));
+            setArraysData(arraysWithSelections);
             setSiteControllers(migratedSiteControllers);
 
             const savedChargers = localStorage.getItem('solar_chargers');
@@ -166,11 +190,12 @@ export function AppStateProvider({ children }) {
 
     const performReset = () => {
         APP_STORAGE_KEYS.forEach((k) => localStorage.removeItem(k));
+        // Legacy migration key: no longer persisted by the app, but still should be cleared on reset.
+        localStorage.removeItem('solar_selections');
         setArraysData(initialArrays);
         setPanelsData(initialPanels);
         setChargersData(initialChargers);
         setSiteControllers([]);
-        setSelections(initialSelections);
         setAreasData(['House']);
         setHideHeavyPanels(false);
         setHideMarginalPanels(false);
@@ -204,36 +229,30 @@ export function AppStateProvider({ children }) {
 
     const deleteControllerInstance = (instanceId) => {
         setSiteControllers((prev) => prev.filter((sc) => sc.id !== instanceId));
-        setSelections((prev) => {
-            const next = { ...prev };
-            Object.entries(next).forEach(([arrId, sel]) => {
-                if (sel.controllerInstanceId === instanceId) {
-                    next[arrId] = { ...sel, controllerInstanceId: '', controllerMppt: 1, controller: '' };
-                }
-            });
-            return next;
-        });
+        // Clear controller assignment from any arrays bound to the deleted instance.
+        setArraysData((prev) =>
+            prev.map((a) =>
+                a.controllerInstanceId === instanceId
+                    ? { ...a, controllerInstanceId: '', controllerMppt: 1, controller: '' }
+                    : a
+            )
+        );
     };
 
     const updateSelection = (arrayId, unitType, valueId, mpptIndex = 1) => {
-        setSelections((prev) => {
-            if (unitType === 'controllerInstance') {
-                return {
-                    ...prev,
-                    [arrayId]: { ...prev[arrayId], controllerInstanceId: valueId, controllerMppt: mpptIndex },
-                };
-            }
-            if (unitType === 'clearController') {
-                return {
-                    ...prev,
-                    [arrayId]: { ...prev[arrayId], controllerInstanceId: '', controllerMppt: 1, controller: '' },
-                };
-            }
-            return {
-                ...prev,
-                [arrayId]: { ...prev[arrayId], [unitType]: valueId },
-            };
-        });
+        setArraysData((prev) =>
+            prev.map((a) => {
+                if (a.id !== arrayId) return a;
+                if (unitType === 'controllerInstance') {
+                    return { ...a, controllerInstanceId: valueId, controllerMppt: mpptIndex };
+                }
+                if (unitType === 'clearController') {
+                    return { ...a, controllerInstanceId: '', controllerMppt: 1, controller: '' };
+                }
+                // e.g. unitType === 'panel' or 'controller' (legacy).
+                return { ...a, [unitType]: valueId };
+            })
+        );
     };
 
     const updateArray = (id, field, value) => {
@@ -376,6 +395,18 @@ export function AppStateProvider({ children }) {
         }));
     };
 
+    const applyPlannerCandidateToDraftArray = (fields) => {
+        if (!fields || typeof fields !== 'object') return;
+        setPlannerModal((prev) => ({
+            ...prev,
+            draftArrayData: { ...(prev.draftArrayData || {}), ...fields },
+        }));
+        setAddArrayModal((prev) => ({
+            ...prev,
+            data: { ...(prev.data || {}), ...fields },
+        }));
+    };
+
     const deleteArea = (areaName) => {
         if (areasData.length <= 1) {
             setNotification('You must have at least one Area remaining.', 'warning');
@@ -406,11 +437,17 @@ export function AppStateProvider({ children }) {
 
     const handleAddArraySave = (d) => {
         const newId = `array_${Date.now()}`;
-        setArraysData([...arraysData, { id: newId, ...d }]);
-        setSelections((prev) => ({
-            ...prev,
-            [newId]: {},
-        }));
+        setArraysData([
+            ...arraysData,
+            {
+                id: newId,
+                ...d,
+                panel: d.panel ?? '',
+                controllerInstanceId: d.controllerInstanceId ?? '',
+                controllerMppt: d.controllerMppt !== undefined ? d.controllerMppt : 1,
+                controller: d.controller ?? '',
+            },
+        ]);
     };
 
     const value = useMemo(
@@ -455,7 +492,6 @@ export function AppStateProvider({ children }) {
             setPanelsData,
             setChargersData,
             setSiteControllers,
-            setSelections,
             setAreasData,
             setUserNotes,
             setHideHeavyPanels,
@@ -498,6 +534,7 @@ export function AppStateProvider({ children }) {
             closePlanner,
             savePlannerToArray,
             savePlannerToDraftArray,
+            applyPlannerCandidateToDraftArray,
             performReset,
             loadStatus,
             startFresh,

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isCompatibleFormat, analyzeArray } from "./arrayAnalysis";
+import { isCompatibleFormat, analyzeArray, panelPassesControllerLimits } from "./arrayAnalysis";
 
 describe("isCompatibleFormat", () => {
     const baseArray = { mounting: "In-Roof (GSE)", format: "Portrait" };
@@ -40,6 +40,27 @@ describe("isCompatibleFormat", () => {
     it("defaults missing props to safe values", () => {
         // defaults: mounting -> In-Roof (GSE), format -> Portrait, gseCompatibility -> Both
         expect(isCompatibleFormat({}, {})).toBe(true);
+    });
+});
+
+describe("panelPassesControllerLimits", () => {
+    const array = { count: 2, parallelStrings: 1 };
+    const panel = {
+        voc: 40,
+        vmp: 32,
+        isc: 10,
+        tempCoefVoc: -0.3,
+        tempCoefPmax: -0.4,
+        tempCoefIsc: 0.05,
+    };
+    const controller = { maxV: 200, maxIsc: 30, startupV: 5, v_start_vbat_dependent: false };
+
+    it("returns true when controller is null", () => {
+        expect(panelPassesControllerLimits(array, panel, null, 48)).toBe(true);
+    });
+
+    it("returns true when panel is within limits for a small string", () => {
+        expect(panelPassesControllerLimits(array, panel, controller, 48)).toBe(true);
     });
 });
 

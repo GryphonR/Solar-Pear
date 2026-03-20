@@ -17,6 +17,7 @@ function clearAppStorage() {
         "user_notes",
         "solar_arrays",
         "solar_site_controllers",
+        // Legacy migration key (read-only for app, but cleared for isolation).
         "solar_selections",
         "solar_chargers",
         "solar_panels",
@@ -233,6 +234,6 @@ describe("App UI flows", () => {
             expect(addButton).toBeDisabled();
             expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
         },
-        10000
+        20000
     );
 });

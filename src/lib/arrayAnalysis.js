@@ -46,6 +46,24 @@ export function getEffectiveStartupV(controller, systemVoltage) {
     return base;
 }
 
+/**
+ * Whether the array wiring (series strings × panel electricals) stays within controller Voc/Vmp/Isc limits.
+ */
+export function panelPassesControllerLimits(array, panel, controller, systemVoltage) {
+    if (!controller || !array || !panel) return true;
+    const pStrings = array.parallelStrings || 1;
+    const panelsPerSeriesString = array.count / pStrings;
+    const pStringVocSTC = panel.voc * panelsPerSeriesString;
+    const pColdVoc = pStringVocSTC * coldVocFactor(panel);
+    const pStringVmpSTC = panel.vmp * panelsPerSeriesString;
+    const pHotVmp = pStringVmpSTC * hotVmpFactor(panel);
+    const pArrayIscHot = panel.isc * pStrings * hotIscFactor(panel);
+    const isVocOk = pColdVoc <= controller.maxV;
+    const isVmpOk = pHotVmp >= getEffectiveStartupV(controller, systemVoltage);
+    const isIscOk = pArrayIscHot <= controller.maxIsc;
+    return isVocOk && isVmpOk && isIscOk;
+}
+
 export const isCompatibleFormat = (array, panel) => {
     const aMounting = array.mounting || "In-Roof (GSE)";
     if (aMounting === "On Roof") return true;

@@ -13,7 +13,6 @@ describe('buildBackupPayload', () => {
             panelsData: [],
             chargersData: [],
             siteControllers: [],
-            selections: {},
             systemVoltage: null,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -22,6 +21,7 @@ describe('buildBackupPayload', () => {
         };
         const payload = buildBackupPayload(state);
         expect(payload.schemaVersion).toBe(BACKUP_SCHEMA_VERSION);
+        expect(payload).not.toHaveProperty('selections');
     });
 
     it('includes falsy values so they round-trip on restore', () => {
@@ -31,7 +31,6 @@ describe('buildBackupPayload', () => {
             panelsData: [],
             chargersData: [],
             siteControllers: [],
-            selections: {},
             systemVoltage: 24,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -51,7 +50,6 @@ describe('buildBackupPayload', () => {
             panelsData: [],
             chargersData: [],
             siteControllers: [],
-            selections: {},
             systemVoltage: 0,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -71,7 +69,6 @@ describe('applyBackupData', () => {
             setPanelsData: () => {},
             setChargersData: () => {},
             setSiteControllers: () => {},
-            setSelections: () => {},
             setSystemVoltage: (v) => captured.systemVoltage = v,
             setHiddenChargerMfr: (v) => captured.hiddenChargerMfr = v,
             setHideHeavyPanels: (v) => captured.hideHeavyPanels = v,
@@ -85,7 +82,6 @@ describe('applyBackupData', () => {
             panelsData: [],
             chargersData: [],
             siteControllers: [],
-            selections: {},
             systemVoltage: 24,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -106,7 +102,6 @@ describe('applyBackupData', () => {
             setPanelsData: () => {},
             setChargersData: () => {},
             setSiteControllers: () => {},
-            setSelections: () => {},
             setSystemVoltage: (v) => captured.systemVoltage = v,
             setHiddenChargerMfr: () => {},
             setHideHeavyPanels: () => {},
@@ -125,7 +120,6 @@ describe('applyBackupData', () => {
             setPanelsData: () => {},
             setChargersData: () => {},
             setSiteControllers: () => {},
-            setSelections: () => {},
             setSystemVoltage: (v) => captured.systemVoltage = v,
             setHiddenChargerMfr: () => {},
             setHideHeavyPanels: () => {},
@@ -144,7 +138,6 @@ describe('applyBackupData', () => {
             setPanelsData: () => {},
             setChargersData: () => {},
             setSiteControllers: () => {},
-            setSelections: () => {},
             setSystemVoltage: () => { called = true; },
             setHiddenChargerMfr: () => {},
             setHideHeavyPanels: () => {},
@@ -153,5 +146,49 @@ describe('applyBackupData', () => {
         };
         applyBackupData({}, setters);
         expect(called).toBe(false);
+    });
+
+    it('merges legacy imported.selections into arraysData', () => {
+        let capturedArrays = null;
+        const setters = {
+            setAreasData: () => {},
+            setArraysData: (v) => {
+                capturedArrays = v;
+            },
+            setPanelsData: () => {},
+            setChargersData: () => {},
+            setSiteControllers: () => {},
+            setSystemVoltage: () => {},
+            setHiddenChargerMfr: () => {},
+            setHideHeavyPanels: () => {},
+            setHideMarginalPanels: () => {},
+            setUserNotes: () => {},
+        };
+
+        applyBackupData(
+            {
+                arraysData: [{ id: 'A1', name: 'Array 1' }],
+                selections: {
+                    A1: {
+                        panel: 'PANEL_X',
+                        controllerInstanceId: 'inst_123',
+                        controllerMppt: 2,
+                        controller: 'CTRL_MODEL',
+                    },
+                },
+            },
+            setters
+        );
+
+        expect(capturedArrays).toEqual([
+            {
+                id: 'A1',
+                name: 'Array 1',
+                panel: 'PANEL_X',
+                controllerInstanceId: 'inst_123',
+                controllerMppt: 2,
+                controller: 'CTRL_MODEL',
+            },
+        ]);
     });
 });

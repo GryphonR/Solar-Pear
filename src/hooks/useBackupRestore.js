@@ -1,7 +1,7 @@
 import { useAppState } from '../context/AppStateContext';
 
 /** Backup file schema version for export/import. */
-export const BACKUP_SCHEMA_VERSION = 2;
+export const BACKUP_SCHEMA_VERSION = 3;
 
 /**
  * Builds the backup payload object (for export). Pure function for testability.
@@ -15,7 +15,6 @@ export function buildBackupPayload(state) {
         panelsData: state.panelsData,
         chargersData: state.chargersData,
         siteControllers: state.siteControllers,
-        selections: state.selections,
         systemVoltage: state.systemVoltage,
         hiddenChargerMfr: state.hiddenChargerMfr,
         hideHeavyPanels: state.hideHeavyPanels,
@@ -37,7 +36,6 @@ export function applyBackupData(imported, setters) {
         setPanelsData,
         setChargersData,
         setSiteControllers,
-        setSelections,
         setSystemVoltage,
         setHiddenChargerMfr,
         setHideHeavyPanels,
@@ -45,11 +43,34 @@ export function applyBackupData(imported, setters) {
         setUserNotes,
     } = setters;
     if (imported.areasData) setAreasData(imported.areasData);
-    if (imported.arraysData) setArraysData(imported.arraysData);
+    if (imported.arraysData) {
+        const legacySelections = imported.selections;
+        const arraysMerged =
+            legacySelections && typeof legacySelections === 'object'
+                ? imported.arraysData.map((a) => {
+                      const legacySel = legacySelections?.[a.id] || {};
+                      return {
+                          ...a,
+                          ...legacySel,
+                          // Ensure new selection fields always exist after merge.
+                          panel: legacySel.panel ?? a.panel ?? '',
+                          controllerInstanceId:
+                              legacySel.controllerInstanceId ?? a.controllerInstanceId ?? '',
+                          controllerMppt:
+                              legacySel.controllerMppt !== undefined && Number.isFinite(Number(legacySel.controllerMppt))
+                                  ? Number(legacySel.controllerMppt)
+                                  : a.controllerMppt !== undefined && Number.isFinite(Number(a.controllerMppt))
+                                    ? Number(a.controllerMppt)
+                                    : 1,
+                          controller: legacySel.controller ?? a.controller ?? '',
+                      };
+                  })
+                : imported.arraysData;
+        setArraysData(arraysMerged);
+    }
     if (imported.panelsData) setPanelsData(imported.panelsData);
     if (imported.chargersData) setChargersData(imported.chargersData);
     if (imported.siteControllers) setSiteControllers(imported.siteControllers);
-    if (imported.selections) setSelections(imported.selections);
     if (imported.systemVoltage !== undefined) setSystemVoltage(imported.systemVoltage);
     if (imported.hiddenChargerMfr !== undefined) setHiddenChargerMfr(imported.hiddenChargerMfr);
     if (imported.hideHeavyPanels !== undefined) setHideHeavyPanels(imported.hideHeavyPanels);
@@ -68,7 +89,6 @@ export function useBackupRestore() {
         panelsData,
         chargersData,
         siteControllers,
-        selections,
         systemVoltage,
         hiddenChargerMfr,
         hideHeavyPanels,
@@ -79,7 +99,6 @@ export function useBackupRestore() {
         setPanelsData,
         setChargersData,
         setSiteControllers,
-        setSelections,
         setSystemVoltage,
         setHiddenChargerMfr,
         setHideHeavyPanels,
@@ -97,7 +116,6 @@ export function useBackupRestore() {
             panelsData,
             chargersData,
             siteControllers,
-            selections,
             systemVoltage,
             hiddenChargerMfr,
             hideHeavyPanels,
@@ -136,17 +154,12 @@ export function useBackupRestore() {
                                 'warning'
                             );
                         }
-                        if (imported.areasData) setAreasData(imported.areasData);
-                        if (imported.arraysData) setArraysData(imported.arraysData);
-                        if (imported.panelsData) setPanelsData(imported.panelsData);
-                        if (imported.chargersData) setChargersData(imported.chargersData);
                         applyBackupData(imported, {
                             setAreasData,
                             setArraysData,
                             setPanelsData,
                             setChargersData,
                             setSiteControllers,
-                            setSelections,
                             setSystemVoltage,
                             setHiddenChargerMfr,
                             setHideHeavyPanels,

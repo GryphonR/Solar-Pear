@@ -57,6 +57,7 @@ export default function App() {
         clearNotification,
         setNotification,
         systemVoltage,
+        applyPlannerCandidateToDraftArray,
     } = useAppState();
 
     const { handleDownload, handleUploadClick, handleResetClick } = useBackupRestore();
@@ -213,6 +214,7 @@ export default function App() {
                     }
                     setNotification('Planner saved.', 'success');
                 }}
+                onApplyCandidateToDraft={applyPlannerCandidateToDraftArray}
             />
         </div>
     );

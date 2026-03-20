@@ -8,6 +8,7 @@ function clearAppStorage() {
         'user_notes',
         'solar_arrays',
         'solar_site_controllers',
+        // Legacy migration key (read-only for app, but cleared for isolation).
         'solar_selections',
         'solar_chargers',
         'solar_panels',
