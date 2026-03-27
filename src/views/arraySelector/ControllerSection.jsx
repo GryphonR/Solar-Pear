@@ -15,6 +15,8 @@ export default function ControllerSection({
     hotVmp,
     arrayIscHot,
     systemVoltage,
+    areaSettings,
+    updateAreaSettings,
     sortedControllersList,
     controllerSort,
     toggleControllerSort,
@@ -25,6 +27,21 @@ export default function ControllerSection({
     deleteControllerInstance,
     setInfoModalChargerId,
 }) {
+    const setAreaSystemVoltage = (value) =>
+        updateAreaSettings?.(array.area, { systemVoltage: value });
+    const setAreaSystemType = (value) =>
+        updateAreaSettings?.(array.area, {
+            systemType: value,
+            filterEps: value === 'grid-connected' ? areaSettings.filterEps : false,
+            filterHouseBackup: value === 'grid-connected' ? areaSettings.filterHouseBackup : false,
+        });
+    const toggleAreaEps = () =>
+        updateAreaSettings?.(array.area, { filterEps: !areaSettings.filterEps });
+    const toggleAreaHouseBackup = () =>
+        updateAreaSettings?.(array.area, {
+            filterHouseBackup: !areaSettings.filterHouseBackup,
+        });
+
     const col = useMemo(() => {
         const list = sortedControllersList;
         const maxVVals = list.map((c) => c.maxV);
@@ -179,6 +196,109 @@ export default function ControllerSection({
                         <span>Hide incompatible options</span>
                     </label>
                 </div>
+                <div className="space-y-4 pb-4 mb-4 border-b border-slate-200">
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            DC Bus Voltage
+                        </span>
+                        <div className="flex gap-1">
+                            <button
+                                onClick={() => setAreaSystemVoltage(null)}
+                                className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${
+                                    areaSettings.systemVoltage === null
+                                        ? 'bg-slate-600 text-white'
+                                        : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                }`}
+                            >
+                                Any
+                            </button>
+                            {[12, 24, 36, 48, 96].map((v) => (
+                                <button
+                                    key={v}
+                                    onClick={() => setAreaSystemVoltage(v)}
+                                    className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${
+                                        areaSettings.systemVoltage === v
+                                            ? 'bg-blue-600 text-white'
+                                            : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                    }`}
+                                >
+                                    {v}V
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-6">
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                Controller Type
+                            </span>
+                            <div className="flex rounded-lg overflow-hidden border border-slate-300 shadow-sm text-sm font-medium">
+                                <button
+                                    onClick={() => setAreaSystemType('any')}
+                                    className={`px-3 py-1.5 transition-colors ${
+                                        areaSettings.systemType === 'any'
+                                            ? 'bg-slate-600 text-white'
+                                            : 'bg-white text-slate-600 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    Any
+                                </button>
+                                <button
+                                    onClick={() => setAreaSystemType('dc-charger')}
+                                    className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
+                                        areaSettings.systemType === 'dc-charger'
+                                            ? 'bg-amber-500 text-white'
+                                            : 'bg-white text-slate-600 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    DC Charger
+                                </button>
+                                <button
+                                    onClick={() => setAreaSystemType('grid-connected')}
+                                    className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
+                                        areaSettings.systemType === 'grid-connected'
+                                            ? 'bg-blue-600 text-white'
+                                            : 'bg-white text-slate-600 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    Grid-Connected AC
+                                </button>
+                                <button
+                                    onClick={() => setAreaSystemType('off-grid-ac')}
+                                    className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
+                                        areaSettings.systemType === 'off-grid-ac'
+                                            ? 'bg-emerald-600 text-white'
+                                            : 'bg-white text-slate-600 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    Off-Grid AC
+                                </button>
+                            </div>
+                        </div>
+                        {areaSettings.systemType === 'grid-connected' && (
+                            <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
+                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
+                                    <input
+                                        type="checkbox"
+                                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                        checked={areaSettings.filterEps}
+                                        onChange={toggleAreaEps}
+                                    />
+                                    Emergency Power (EPS)
+                                </label>
+                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
+                                    <input
+                                        type="checkbox"
+                                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                        checked={areaSettings.filterHouseBackup}
+                                        onChange={toggleAreaHouseBackup}
+                                    />
+                                    House Blackout protection
+                                </label>
+                            </div>
+                        )}
+                    </div>
+                </div>
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                     <div className="max-h-[600px] overflow-y-auto">
                         <table className="w-full text-left border-collapse relative text-xs">
@@ -209,6 +329,15 @@ export default function ControllerSection({
                                     >
                                         Max Isc{' '}
                                         {controllerSort.key === 'maxIsc' &&
+                                            (controllerSort.dir === 'asc' ? '↑' : '↓')}
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        onClick={() => toggleControllerSort('trackers')}
+                                        className="py-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-800 select-none border-r border-slate-200/70"
+                                    >
+                                        #MPPTs{' '}
+                                        {controllerSort.key === 'trackers' &&
                                             (controllerSort.dir === 'asc' ? '↑' : '↓')}
                                     </th>
                                     <th
@@ -290,6 +419,13 @@ export default function ControllerSection({
                                                     formatter={(v) => `${v} A`}
                                                     className={!c.isCurrentOk ? 'font-bold text-red-600' : 'text-slate-700'}
                                                 />
+                                                <td
+                                                    className={`py-2 px-3 text-slate-700 border-r border-slate-200/70 ${
+                                                        inc ? 'bg-red-100' : ''
+                                                    }`}
+                                                >
+                                                    {c.trackers ?? '-'}
+                                                </td>
                                                 <BarCell
                                                     value={c.price}
                                                     range={col.price}
@@ -326,7 +462,7 @@ export default function ControllerSection({
                                 ) : (
                                     <tr>
                                         <td
-                                            colSpan="5"
+                                            colSpan="6"
                                             className="py-8 px-4 text-center text-slate-500 italic"
                                         >
                                             <AlertTriangle

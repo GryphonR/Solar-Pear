@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
+import { GSE_COMPATIBILITY_OPTIONS } from '../../lib/gseCompatibility';
 
 export default function AddPanelModal({ open, data = {}, existingModelIds = [], onClose, onSave, onUpdateField }) {
     const d = data;
@@ -82,9 +83,11 @@ export default function AddPanelModal({ open, data = {}, existingModelIds = [], 
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">GSE Compatibility</label>
                         <select className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.gseCompatibility} onChange={(e) => update('gseCompatibility', e.target.value)}>
-                            <option value="Both">Both</option>
-                            <option value="Portrait Only">Portrait Only</option>
-                            <option value="Landscape Only">Landscape Only</option>
+                            {GSE_COMPATIBILITY_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
                         </select>
                     </div>
                     <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Price (£)</label><input type="number" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.price} onChange={(e) => update('price', parseFloat(e.target.value) || 0)} /></div>

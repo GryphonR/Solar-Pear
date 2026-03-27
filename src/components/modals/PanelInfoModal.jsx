@@ -1,11 +1,13 @@
 import React from 'react';
 import Modal from '../Modal';
 import { ExternalLink, Info } from '../Icons';
+import { GSE_COMPATIBILITY, getPanelGseCompatibility } from '../../lib/gseCompatibility';
 
 export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdateNote }) {
     if (!panel) return null;
 
     const p = panel;
+    const gseCompatibility = getPanelGseCompatibility(p);
 
     const header = (
         <div>
@@ -13,9 +15,10 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
             <div className="flex items-center flex-wrap gap-2 mt-2">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{p.power} Watts</span>
                 <span className="text-sm font-medium text-slate-600">£{p.price} per unit</span>
-                {p.gseCompatibility === 'Both' && <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">Portrait & Landscape</span>}
-                {p.gseCompatibility === 'Portrait Only' && <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Portrait GSE Only</span>}
-                {p.gseCompatibility === 'Landscape Only' && <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold">Landscape GSE Only</span>}
+                {gseCompatibility === GSE_COMPATIBILITY.BOTH && <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">Portrait & Landscape</span>}
+                {gseCompatibility === GSE_COMPATIBILITY.NONE && <span className="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-bold">Not GSE Compatible</span>}
+                {gseCompatibility === GSE_COMPATIBILITY.PORTRAIT_ONLY && <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Portrait GSE Only</span>}
+                {gseCompatibility === GSE_COMPATIBILITY.LANDSCAPE_ONLY && <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold">Landscape GSE Only</span>}
                 {p.datasheetUrl && (
                     <a href={p.datasheetUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors">
                         <ExternalLink size={12} className="mr-1" /> Datasheet

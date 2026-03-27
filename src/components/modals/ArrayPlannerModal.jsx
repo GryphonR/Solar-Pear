@@ -11,6 +11,7 @@ export default function ArrayPlannerModal({
     onClose,
     onSavePlanner,
     onApplyCandidateToDraft,
+    onApplyLayoutRejected,
 }) {
     const plannerRef = useRef(null);
     const [header, setHeader] = useState(null);
@@ -35,12 +36,18 @@ export default function ArrayPlannerModal({
                     <button
                         type='button'
                         onClick={() => {
-                            const planner = plannerRef.current?.getPlanner?.();
+                            const api = plannerRef.current;
+                            const applied = api?.applyActiveLayout?.();
+                            if (!applied?.ok) {
+                                onApplyLayoutRejected?.();
+                                return;
+                            }
+                            const planner = api?.getPlanner?.();
                             onSavePlanner?.(arrayId, planner);
                         }}
                         className='px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 font-medium transition-colors shadow-sm'
                     >
-                        Save Planner
+                        Apply Array
                     </button>
                 </>
             }

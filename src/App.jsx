@@ -10,7 +10,6 @@ import PanelInfoModal from './components/modals/PanelInfoModal';
 import ChargerInfoModal from './components/modals/ChargerInfoModal';
 import ArrayPlannerModal from './components/modals/ArrayPlannerModal';
 import SummaryView from './views/SummaryView';
-import ArraysDbView from './views/ArraysDbView';
 import PanelsDbView from './views/PanelsDbView';
 import ChargersDbView from './views/ChargersDbView';
 import ArraySelectorView from './views/ArraySelectorView';
@@ -28,8 +27,6 @@ export default function App() {
         chargersData,
         userNotes,
         getArrayAnalysis,
-        setAreasData,
-        setArraysData,
         setPanelsData,
         setChargersData,
         setAddAreaModal,
@@ -48,7 +45,6 @@ export default function App() {
         infoModalChargerId,
         confirmModal,
         handleAddArraySave,
-        openPlannerForNewArray,
         closePlanner,
         savePlannerToArray,
         savePlannerToDraftArray,
@@ -57,10 +53,22 @@ export default function App() {
         clearNotification,
         setNotification,
         systemVoltage,
+        getAreaSettings,
         applyPlannerCandidateToDraftArray,
+        openAddAreaModal,
+        openAddArrayModal,
+        openEditAreaModal,
+        openEditArrayModal,
+        handleAreaModalSave,
+        deleteArea,
+        deleteArray,
     } = useAppState();
 
     const { handleDownload, handleUploadClick, handleResetClick } = useBackupRestore();
+    const activeArray = arraysData.find((a) => a.id === activeTab);
+    const modalSystemVoltage = activeArray
+        ? getAreaSettings(activeArray.area).systemVoltage
+        : systemVoltage;
 
     return (
         <div className="flex h-screen bg-slate-100 font-sans">
@@ -73,27 +81,20 @@ export default function App() {
                 onDownload={handleDownload}
                 onUpload={handleUploadClick}
                 onReset={handleResetClick}
+                onAddArea={() => openAddAreaModal('')}
+                onAddArray={(areaName) => openAddArrayModal({ area: areaName })}
+                onEditArea={openEditAreaModal}
+                onEditArray={openEditArrayModal}
             />
 
             <div className="flex-1 overflow-y-auto">
                 <div className="max-w-7xl mx-auto p-8 relative min-h-full flex flex-col">
-                    {notification && (
-                        <div className="mb-4">
-                            <Toast
-                                message={notification.message}
-                                variant={notification.variant}
-                                onClose={clearNotification}
-                            />
-                        </div>
-                    )}
                     <div className="flex-1 min-h-0">
                         <div key={activeTab} className="animate-in fade-in duration-150">
                             {activeTab === 'GUIDE' ? (
                                 <Guide />
                             ) : activeTab === 'SUMMARY' ? (
                                 <SummaryView />
-                            ) : activeTab === 'DB_ARRAYS' ? (
-                                <ArraysDbView />
                             ) : activeTab === 'DB_PANELS' ? (
                                 <PanelsDbView />
                             ) : activeTab === 'DB_CHARGERS' ? (
@@ -113,25 +114,47 @@ export default function App() {
                 </div>
             </div>
 
+            {notification && (
+                <Toast
+                    key={`${notification.variant}:${notification.message}`}
+                    message={notification.message}
+                    variant={notification.variant}
+                    onClose={clearNotification}
+                />
+            )}
+
             <AddAreaModal
                 open={addAreaModal.open}
+                mode={addAreaModal.mode}
                 value={addAreaModal.data}
+                originalName={addAreaModal.originalName}
                 areas={areasData}
-                onClose={() => setAddAreaModal({ open: false, data: '' })}
+                onClose={() =>
+                    setAddAreaModal({ open: false, mode: 'add', data: '', originalName: null })
+                }
                 onSave={(name) => {
-                    setAreasData([...areasData, name]);
-                    setNotification('Area added.', 'success');
+                    handleAreaModalSave(name);
+                    setNotification(addAreaModal.mode === 'edit' ? 'Area updated.' : 'Area added.', 'success');
                 }}
                 onChange={(val) => setAddAreaModal((prev) => ({ ...prev, data: val }))}
+                onDelete={() => {
+                    const targetAreaName = addAreaModal.originalName;
+                    setAddAreaModal({ open: false, mode: 'add', data: '', originalName: null });
+                    if (!targetAreaName) return;
+                    deleteArea(targetAreaName);
+                }}
             />
             <AddArrayModal
                 open={addArrayModal.open}
+                mode={addArrayModal.mode}
                 data={addArrayModal.data}
                 areas={areasData}
-                onClose={() => setAddArrayModal({ open: false, data: {} })}
+                onClose={() =>
+                    setAddArrayModal({ open: false, mode: 'add', targetArrayId: null, data: {} })
+                }
                 onSave={(d) => {
                     handleAddArraySave(d);
-                    setNotification('Array added.', 'success');
+                    setNotification(addArrayModal.mode === 'edit' ? 'Array updated.' : 'Array added.', 'success');
                 }}
                 onUpdateField={(field, value) =>
                     setAddArrayModal((prev) => ({
@@ -139,7 +162,13 @@ export default function App() {
                         data: { ...prev.data, [field]: value },
                     }))
                 }
-                onOpenPlanner={(draft) => openPlannerForNewArray(draft)}
+                onDelete={() => {
+                    const targetArrayId = addArrayModal.targetArrayId;
+                    setAddArrayModal({ open: false, mode: 'add', targetArrayId: null, data: {} });
+                    if (!targetArrayId) return;
+                    deleteArray(targetArrayId);
+                    setNotification('Array deleted.', 'success');
+                }}
             />
             <AddPanelModal
                 open={addPanelModal.open}
@@ -185,7 +214,7 @@ export default function App() {
             <ChargerInfoModal
                 open={!!infoModalChargerId}
                 charger={chargersData.find((c) => c.id === infoModalChargerId)}
-                systemVoltage={systemVoltage}
+                systemVoltage={modalSystemVoltage}
                 userNote={infoModalChargerId ? userNotes[infoModalChargerId] || '' : ''}
                 onClose={() => setInfoModalChargerId(null)}
                 onUpdateNote={updateUserNote}
@@ -194,9 +223,16 @@ export default function App() {
                 open={confirmModal.open}
                 title={confirmModal.title}
                 message={confirmModal.message}
+                checkbox={confirmModal.checkbox}
                 onConfirm={confirmModal.action}
                 onCancel={() =>
-                    setConfirmModal({ open: false, title: '', message: '', action: null })
+                    setConfirmModal({
+                        open: false,
+                        title: '',
+                        message: '',
+                        action: null,
+                        checkbox: null,
+                    })
                 }
             />
             <ArrayPlannerModal
@@ -206,13 +242,19 @@ export default function App() {
                 arraysData={arraysData}
                 panelsData={panelsData}
                 onClose={closePlanner}
+                onApplyLayoutRejected={() =>
+                    setNotification(
+                        'No layout to apply. Wait for results or adjust the roof and filters.',
+                        'warning'
+                    )
+                }
                 onSavePlanner={(targetArrayId, plannerData) => {
                     if (targetArrayId) {
                         savePlannerToArray(targetArrayId, plannerData);
                     } else {
                         savePlannerToDraftArray(plannerData);
                     }
-                    setNotification('Planner saved.', 'success');
+                    setNotification('Array updated from the previewed layout. Planner settings saved.', 'success');
                 }}
                 onApplyCandidateToDraft={applyPlannerCandidateToDraftArray}
             />

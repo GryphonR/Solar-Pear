@@ -5,6 +5,8 @@ import {
     hotVmpFactor,
     hotIscFactor,
     getEffectiveStartupV,
+    getEffectiveMaxPanelWeightKg,
+    panelMeetsWeightCap,
 } from '../../lib/arrayAnalysis';
 
 /**
@@ -67,14 +69,8 @@ export function useValidPanels(arrayId, options) {
                 const isVmpOk =
                     !controller || pHotVmp >= getEffectiveStartupV(controller, systemVoltage);
                 const isIscOk = !controller || pArrayIscHot <= controller.maxIsc;
-                const maxW =
-                    array.maxPanelWeight !== '' && array.maxPanelWeight != null
-                        ? Number(array.maxPanelWeight)
-                        : null;
-                const effectiveMaxWeight = maxW != null ? maxW : (hideHeavyPanels ? 25 : null);
-                const isWeightOk =
-                    effectiveMaxWeight == null ||
-                    (p.weight != null && p.weight <= effectiveMaxWeight);
+                const effectiveMaxWeight = getEffectiveMaxPanelWeightKg(array, hideHeavyPanels);
+                const isWeightOk = panelMeetsWeightCap(p, effectiveMaxWeight);
                 const isHeightOk =
                     !array.maxPanelHeight || (p.height && p.height <= array.maxPanelHeight);
                 const isWidthOk = !array.maxPanelWidth || (p.width && p.width <= array.maxPanelWidth);

@@ -15,12 +15,13 @@ const defaultData = {
 
 export default function AddArrayModal({
     open,
+    mode = 'add',
     data = defaultData,
     areas,
     onClose,
     onSave,
     onUpdateField,
-    onOpenPlanner,
+    onDelete,
 }) {
     const d = { ...defaultData, ...data };
     const [error, setError] = useState(null);
@@ -32,16 +33,16 @@ export default function AddArrayModal({
     const update = (field, value) => onUpdateField?.(field, value);
 
     const nameTrimmed = (d.name || '').trim();
-    const countValid = typeof d.count === 'number' && d.count >= 1;
-    const isInvalid = !nameTrimmed || !countValid;
+    const areaValid = !!(d.area && areas.includes(d.area));
+    const isInvalid = !nameTrimmed || !areaValid;
 
     const handleSave = () => {
         if (!nameTrimmed) {
             setError('Please enter an array name.');
             return;
         }
-        if (!countValid) {
-            setError('Panel count must be at least 1.');
+        if (!areaValid) {
+            setError('Please select a valid area.');
             return;
         }
         onSave(d);
@@ -52,7 +53,7 @@ export default function AddArrayModal({
         <Modal
             open={open}
             onClose={onClose}
-            title="Add Physical Array"
+            title={mode === 'edit' ? 'Edit Physical Array' : 'Add Physical Array'}
             footer={
                 <>
                     {error && (
@@ -60,16 +61,15 @@ export default function AddArrayModal({
                             {error}
                         </p>
                     )}
-                    <button
-                        type="button"
-                        onClick={() => {
-                            onClose();
-                            onOpenPlanner?.(d);
-                        }}
-                        className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 font-medium transition-colors shadow-sm"
-                    >
-                        Planner
-                    </button>
+                    {mode === 'edit' && (
+                        <button
+                            type="button"
+                            onClick={onDelete}
+                            className="px-4 py-2 bg-red-50 border border-red-200 text-red-700 rounded hover:bg-red-100 font-medium transition-colors"
+                        >
+                            Delete Array
+                        </button>
+                    )}
                     <button
                         type="button"
                         onClick={onClose}
@@ -83,7 +83,7 @@ export default function AddArrayModal({
                         disabled={isInvalid}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Save Array
+                        {mode === 'edit' ? 'Save Changes' : 'Save Array'}
                     </button>
                 </>
             }
@@ -99,28 +99,6 @@ export default function AddArrayModal({
                         {areas.map((ar) => (
                             <option key={ar} value={ar}>{ar}</option>
                         ))}
-                    </select>
-                </div>
-                <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Roof Direction</label>
-                    <input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. South, SW" value={d.orientation} onChange={(e) => update('orientation', e.target.value)} />
-                </div>
-                <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Panel Count</label>
-                    <input type="number" step="1" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.count} onChange={(e) => update('count', parseInt(e.target.value) || 0)} />
-                </div>
-                <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mounting System</label>
-                    <select className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.mounting} onChange={(e) => update('mounting', e.target.value)}>
-                        <option value="In-Roof (GSE)">In-Roof (GSE)</option>
-                        <option value="On Roof">On Roof</option>
-                    </select>
-                </div>
-                <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Panel Orientation</label>
-                    <select disabled={d.mounting !== 'In-Roof (GSE)'} className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-50" value={d.format} onChange={(e) => update('format', e.target.value)}>
-                        <option value="Portrait">Portrait</option>
-                        <option value="Landscape">Landscape</option>
                     </select>
                 </div>
             </div>

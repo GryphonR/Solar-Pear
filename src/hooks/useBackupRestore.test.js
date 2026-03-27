@@ -13,6 +13,7 @@ describe('buildBackupPayload', () => {
             panelsData: [],
             chargersData: [],
             siteControllers: [],
+            areaSettingsByArea: { House: { systemVoltage: 48, systemType: 'any', filterEps: false, filterHouseBackup: false } },
             systemVoltage: null,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -31,6 +32,7 @@ describe('buildBackupPayload', () => {
             panelsData: [],
             chargersData: [],
             siteControllers: [],
+            areaSettingsByArea: { House: { systemVoltage: 24, systemType: 'dc-charger', filterEps: false, filterHouseBackup: false } },
             systemVoltage: 24,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -50,6 +52,7 @@ describe('buildBackupPayload', () => {
             panelsData: [],
             chargersData: [],
             siteControllers: [],
+            areaSettingsByArea: { House: { systemVoltage: 0, systemType: 'any', filterEps: false, filterHouseBackup: false } },
             systemVoltage: 0,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -69,6 +72,7 @@ describe('applyBackupData', () => {
             setPanelsData: () => {},
             setChargersData: () => {},
             setSiteControllers: () => {},
+            setAreaSettingsByArea: (v) => captured.areaSettingsByArea = v,
             setSystemVoltage: (v) => captured.systemVoltage = v,
             setHiddenChargerMfr: (v) => captured.hiddenChargerMfr = v,
             setHideHeavyPanels: (v) => captured.hideHeavyPanels = v,
@@ -82,6 +86,9 @@ describe('applyBackupData', () => {
             panelsData: [],
             chargersData: [],
             siteControllers: [],
+            areaSettingsByArea: {
+                House: { systemVoltage: 24, systemType: 'grid-connected', filterEps: true, filterHouseBackup: false },
+            },
             systemVoltage: 24,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -90,6 +97,14 @@ describe('applyBackupData', () => {
         };
         applyBackupData(imported, setters);
         expect(captured.systemVoltage).toBe(24);
+        expect(captured.areaSettingsByArea).toEqual({
+            House: {
+                systemVoltage: 24,
+                systemType: 'grid-connected',
+                filterEps: true,
+                filterHouseBackup: false,
+            },
+        });
         expect(captured.hideHeavyPanels).toBe(false);
         expect(captured.hideMarginalPanels).toBe(true);
     });
@@ -102,6 +117,7 @@ describe('applyBackupData', () => {
             setPanelsData: () => {},
             setChargersData: () => {},
             setSiteControllers: () => {},
+            setAreaSettingsByArea: () => {},
             setSystemVoltage: (v) => captured.systemVoltage = v,
             setHiddenChargerMfr: () => {},
             setHideHeavyPanels: () => {},
@@ -120,6 +136,7 @@ describe('applyBackupData', () => {
             setPanelsData: () => {},
             setChargersData: () => {},
             setSiteControllers: () => {},
+            setAreaSettingsByArea: () => {},
             setSystemVoltage: (v) => captured.systemVoltage = v,
             setHiddenChargerMfr: () => {},
             setHideHeavyPanels: () => {},
@@ -138,6 +155,7 @@ describe('applyBackupData', () => {
             setPanelsData: () => {},
             setChargersData: () => {},
             setSiteControllers: () => {},
+            setAreaSettingsByArea: () => {},
             setSystemVoltage: () => { called = true; },
             setHiddenChargerMfr: () => {},
             setHideHeavyPanels: () => {},
@@ -158,6 +176,7 @@ describe('applyBackupData', () => {
             setPanelsData: () => {},
             setChargersData: () => {},
             setSiteControllers: () => {},
+            setAreaSettingsByArea: () => {},
             setSystemVoltage: () => {},
             setHiddenChargerMfr: () => {},
             setHideHeavyPanels: () => {},
@@ -190,5 +209,48 @@ describe('applyBackupData', () => {
                 controller: 'CTRL_MODEL',
             },
         ]);
+    });
+
+    it('derives per-area settings from legacy global filter fields when areaSettingsByArea is absent', () => {
+        const captured = {};
+        const setters = {
+            setAreasData: () => {},
+            setArraysData: () => {},
+            setPanelsData: () => {},
+            setChargersData: () => {},
+            setSiteControllers: () => {},
+            setAreaSettingsByArea: (v) => {
+                captured.areaSettingsByArea = v;
+            },
+            setSystemVoltage: () => {},
+            setHiddenChargerMfr: () => {},
+            setHideHeavyPanels: () => {},
+            setHideMarginalPanels: () => {},
+            setUserNotes: () => {},
+        };
+        applyBackupData(
+            {
+                areasData: ['House', 'Garage'],
+                systemVoltage: 48,
+                systemType: 'grid-connected',
+                filterEps: true,
+                filterHouseBackup: true,
+            },
+            setters
+        );
+        expect(captured.areaSettingsByArea).toEqual({
+            House: {
+                systemVoltage: 48,
+                systemType: 'grid-connected',
+                filterEps: true,
+                filterHouseBackup: true,
+            },
+            Garage: {
+                systemVoltage: 48,
+                systemType: 'grid-connected',
+                filterEps: true,
+                filterHouseBackup: true,
+            },
+        });
     });
 });

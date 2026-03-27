@@ -1,10 +1,38 @@
 import { describe, it, expect } from "vitest";
-import { computePlannerLayouts, projectedToTrueY_m } from "./plannerEngine";
+import { computePlannerLayouts, dropSmallestPanelsByFootprint, projectedToTrueY_m } from "./plannerEngine";
 
 describe("projectedToTrueY_m", () => {
     it("converts projected Y using tilt (trueY = projectedY / cos(tilt))", () => {
         const trueY = projectedToTrueY_m(4, 30);
         expect(trueY).toBeCloseTo(4 / Math.cos((30 * Math.PI) / 180), 6);
+    });
+});
+
+describe("dropSmallestPanelsByFootprint", () => {
+    const p = (model, w, h, power = 100) => ({ model, name: model, width: w, height: h, power, active: true });
+
+    it("returns input unchanged when count is 0", () => {
+        const panels = [p("A", 1000, 1000), p("B", 500, 500)];
+        expect(dropSmallestPanelsByFootprint(panels, 0)).toEqual(panels);
+    });
+
+    it("returns input unchanged when at most n panels", () => {
+        const panels = [p("A", 100, 100), p("B", 200, 200), p("C", 300, 300)];
+        expect(dropSmallestPanelsByFootprint(panels, 3)).toEqual(panels);
+    });
+
+    it("drops the 3 smallest footprints by mm²", () => {
+        const panels = [
+            p("tiny", 100, 100),
+            p("s1", 200, 200),
+            p("s2", 200, 200, 50),
+            p("m", 1000, 500),
+            p("l", 1000, 1800),
+            p("xl", 1300, 2000),
+        ];
+        const out = dropSmallestPanelsByFootprint(panels, 3);
+        expect(out).toHaveLength(3);
+        expect(out.map((x) => x.model)).toEqual(["m", "l", "xl"]);
     });
 });
 
@@ -45,6 +73,69 @@ describe("computePlannerLayouts", () => {
             options: { orientation: "portrait", topN: 5, includeInactivePanels: false },
         });
         expect(resWithGap.ranked[0].count).toBe(1);
+    });
+
+    it("either orientation evaluates portrait and landscape (not portrait-only)", () => {
+        const panelsData = [
+            {
+                model: "P1",
+                name: "Panel 1",
+                power: 400,
+                width: 600,
+                height: 1200,
+                active: true,
+            },
+        ];
+        const roof = roofRect(3, 2);
+        const portraitOnly = computePlannerLayouts({
+            roofPolygon_m: roof,
+            exclusions_m: [],
+            spacing: { edge_mm: 0, gap_mm: 0 },
+            panelsData,
+            options: { orientation: "portrait", topN: 5, includeInactivePanels: false },
+        });
+        const either = computePlannerLayouts({
+            roofPolygon_m: roof,
+            exclusions_m: [],
+            spacing: { edge_mm: 0, gap_mm: 0 },
+            panelsData,
+            options: { orientation: "either", topN: 5, includeInactivePanels: false },
+        });
+        const orientations = new Set(either.ranked.map((r) => r.orientation));
+        expect(orientations.has("portrait")).toBe(true);
+        expect(orientations.has("landscape")).toBe(true);
+        expect(either.ranked.length).toBeGreaterThanOrEqual(portraitOnly.ranked.length);
+    });
+
+    it("mixed orientation option matches either (same ranked ids)", () => {
+        const panelsData = [
+            {
+                model: "P1",
+                name: "Panel 1",
+                power: 400,
+                width: 600,
+                height: 1200,
+                active: true,
+            },
+        ];
+        const roof = roofRect(3, 2);
+        const either = computePlannerLayouts({
+            roofPolygon_m: roof,
+            exclusions_m: [],
+            spacing: { edge_mm: 0, gap_mm: 0 },
+            panelsData,
+            options: { orientation: "either", topN: 5, includeInactivePanels: false },
+        });
+        const mixed = computePlannerLayouts({
+            roofPolygon_m: roof,
+            exclusions_m: [],
+            spacing: { edge_mm: 0, gap_mm: 0 },
+            panelsData,
+            options: { orientation: "mixed", topN: 5, includeInactivePanels: false },
+        });
+        const idsEither = either.ranked.map((r) => r.id).join(",");
+        const idsMixed = mixed.ranked.map((r) => r.id).join(",");
+        expect(idsMixed).toBe(idsEither);
     });
 
     it("blocks placement inside exclusion rectangles", () => {
@@ -119,6 +210,32 @@ describe("computePlannerLayouts", () => {
         const best = res.ranked[0];
         expect(best.orientation).toBe("landscape");
         expect(best.count).toBe(1);
+    });
+
+    it("orientation 'either' tries portrait and landscape (same as 'both' for the fitter)", () => {
+        const panelsData = [
+            {
+                model: "P1",
+                name: "Panel 1",
+                power: 450,
+                width: 1100,
+                height: 1700,
+                active: true,
+            },
+        ];
+
+        const res = computePlannerLayouts({
+            roofPolygon_m: roofRect(2, 1.2),
+            exclusions_m: [],
+            spacing: { edge_mm: 0, gap_mm: 0 },
+            panelsData,
+            options: { orientation: "either", topN: 5, includeInactivePanels: false },
+        });
+
+        expect(res.ranked.length).toBeGreaterThan(0);
+        const orientations = new Set(res.ranked.map((r) => r.orientation));
+        expect(orientations.has("portrait")).toBe(true);
+        expect(orientations.has("landscape")).toBe(true);
     });
 
     it("enforces edge setback against angled edges (distance-to-edge)", () => {

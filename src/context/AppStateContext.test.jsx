@@ -18,6 +18,7 @@ function clearAppStorage() {
         'solar_system_type',
         'solar_filter_eps',
         'solar_filter_house_backup',
+        'solar_area_settings',
         'solar_areas',
         'solar_hide_incompatible_panels',
         'solar_hide_incompatible_controllers',
@@ -53,6 +54,27 @@ function ContextIntegrationConsumer() {
     );
 }
 
+function AreaSettingsConsumer() {
+    const { getAreaSettings, updateAreaSettings, areasData } = useAppState();
+    const hasUpdated = useRef(false);
+
+    useEffect(() => {
+        if (hasUpdated.current || !areasData?.length) return;
+        hasUpdated.current = true;
+        updateAreaSettings(areasData[0], { systemVoltage: 24, systemType: 'dc-charger' });
+    }, [areasData, updateAreaSettings]);
+
+    const firstArea = areasData?.[0] || 'House';
+    const settings = getAreaSettings(firstArea);
+
+    return (
+        <div data-testid="area-settings">
+            <span data-testid="area-settings-voltage">{String(settings.systemVoltage)}</span>
+            <span data-testid="area-settings-type">{settings.systemType}</span>
+        </div>
+    );
+}
+
 describe('AppStateContext integration', () => {
     beforeEach(() => {
         clearAppStorage();
@@ -79,4 +101,17 @@ describe('AppStateContext integration', () => {
         const arrayId = screen.getByTestId('array-id').textContent;
         expect(arrayId).not.toBe('none');
     }, 5000);
+
+    it('stores and reads per-area controller filter settings', async () => {
+        render(
+            <AppStateProvider>
+                <AreaSettingsConsumer />
+            </AppStateProvider>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByTestId('area-settings-voltage').textContent).toBe('24');
+            expect(screen.getByTestId('area-settings-type').textContent).toBe('dc-charger');
+        });
+    });
 });

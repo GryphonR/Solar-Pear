@@ -153,4 +153,52 @@ describe('useValidPanels', () => {
         expect(screen.getByTestId('names').textContent).toContain('P1');
         expect(screen.getByTestId('names').textContent).toContain('P2');
     });
+
+    it('filters out None-compatible panels for in-roof GSE arrays', () => {
+        const gseArray = { ...baseArray, mounting: 'In-Roof (GSE)', format: 'Portrait' };
+        const panelOk = {
+            model: 'P_OK_GSE',
+            name: 'Panel OK GSE',
+            power: 400,
+            voc: 40,
+            vmp: 34,
+            isc: 12,
+            weight: 20,
+            height: 2000,
+            width: 1000,
+            active: true,
+            gseCompatibility: 'Both',
+            price: 100,
+        };
+        const panelNone = {
+            model: 'P_NONE',
+            name: 'Panel None',
+            power: 420,
+            voc: 40,
+            vmp: 34,
+            isc: 12,
+            weight: 20,
+            height: 2000,
+            width: 1000,
+            active: true,
+            gseCompatibility: 'None',
+            price: 110,
+        };
+        const options = {
+            panelsData: [panelOk, panelNone],
+            arraysData: [gseArray],
+            chargersData: [],
+            siteControllers: [],
+            selections: { A1: {} },
+            systemVoltage: 24,
+            hideHeavyPanels: false,
+            hideMarginalPanels: false,
+            hideIncompatiblePanels: false,
+            panelSort: { key: 'peakPower', dir: 'desc' },
+            setPanelSort: () => {},
+        };
+        render(<TestHarness arrayId="A1" options={options} />);
+        expect(screen.getByTestId('names').textContent).toContain('P_OK_GSE');
+        expect(screen.getByTestId('names').textContent).not.toContain('P_NONE');
+    });
 });

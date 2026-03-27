@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
 
-export default function AddAreaModal({ open, value, areas, onClose, onSave, onChange }) {
+export default function AddAreaModal({
+    open,
+    mode = 'add',
+    value,
+    originalName = null,
+    areas,
+    onClose,
+    onSave,
+    onChange,
+    onDelete,
+}) {
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -9,7 +19,13 @@ export default function AddAreaModal({ open, value, areas, onClose, onSave, onCh
     }, [open]);
 
     const trimmed = (value || '').trim();
-    const isDuplicate = trimmed && areas.some((a) => a.toLowerCase() === trimmed.toLowerCase());
+    const isDuplicate =
+        trimmed &&
+        areas.some(
+            (a) =>
+                a.toLowerCase() === trimmed.toLowerCase() &&
+                (mode !== 'edit' || a.toLowerCase() !== (originalName || '').toLowerCase())
+        );
     const isInvalid = !trimmed || isDuplicate;
 
     const handleSave = () => {
@@ -17,7 +33,13 @@ export default function AddAreaModal({ open, value, areas, onClose, onSave, onCh
             setError('Please enter an area name.');
             return;
         }
-        if (areas.some((a) => a.toLowerCase() === trimmed.toLowerCase())) {
+        if (
+            areas.some(
+                (a) =>
+                    a.toLowerCase() === trimmed.toLowerCase() &&
+                    (mode !== 'edit' || a.toLowerCase() !== (originalName || '').toLowerCase())
+            )
+        ) {
             setError(`An Area named "${trimmed}" already exists.`);
             return;
         }
@@ -34,7 +56,7 @@ export default function AddAreaModal({ open, value, areas, onClose, onSave, onCh
         <Modal
             open={open}
             onClose={onClose}
-            title="Add New Area"
+            title={mode === 'edit' ? 'Edit Area' : 'Add New Area'}
             maxWidth="max-w-md"
             bodyScrollable={false}
             footer={
@@ -43,6 +65,15 @@ export default function AddAreaModal({ open, value, areas, onClose, onSave, onCh
                         <p className="text-red-600 text-sm mr-auto" role="alert">
                             {error}
                         </p>
+                    )}
+                    {mode === 'edit' && (
+                        <button
+                            type="button"
+                            onClick={onDelete}
+                            className="px-4 py-2 bg-red-50 border border-red-200 text-red-700 rounded hover:bg-red-100 font-medium transition-colors"
+                        >
+                            Delete Area
+                        </button>
                     )}
                     <button
                         type="button"
@@ -57,7 +88,7 @@ export default function AddAreaModal({ open, value, areas, onClose, onSave, onCh
                         disabled={isInvalid}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Save Area
+                        {mode === 'edit' ? 'Save Changes' : 'Save Area'}
                     </button>
                 </>
             }

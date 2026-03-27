@@ -1,5 +1,6 @@
 import {
     forwardRef,
+    useCallback,
     useEffect,
     useImperativeHandle,
     useMemo,
@@ -7,9 +8,15 @@ import {
     useState,
 } from 'react';
 import Modal from '../Modal';
-import { computePlannerLayouts } from '../../lib/plannerEngine';
+import { computePlannerLayouts, dropSmallestPanelsByFootprint } from '../../lib/plannerEngine';
 import { useAppState } from '../../context/AppStateContext';
-import { isCompatibleFormat, panelPassesControllerLimits } from '../../lib/arrayAnalysis';
+import {
+    bestParallelStringsForController,
+    formatWiringLabel,
+    getEffectiveMaxPanelWeightKg,
+    isCompatibleFormat,
+    panelMeetsWeightCap,
+} from '../../lib/arrayAnalysis';
 import { Info, RotateCcw } from '../Icons';
 
 const DEFAULT_PLANNER = {
@@ -25,12 +32,41 @@ const DEFAULT_PLANNER = {
     roofPolygonAuto: true,
     exclusions: [],
     spacing: { edge_mm: 400, gap_mm: 25 },
-    options: { orientation: 'either' }, // 'portrait'|'landscape'|'either'|'mixed'
+    options: { orientation: 'either' }, // 'portrait'|'landscape'|'either' (legacy saves may use 'mixed' → coerced to either)
+    layoutOverride: { enabled: false },
     lastResult: null,
 };
 
+const MIN_TILT_DEG = 0;
+const MAX_TILT_DEG = 70;
+
+function getAssignedControllerModel(array, arrayId, selections, siteControllers, chargersData) {
+    if (!array || !arrayId) return null;
+    const sel = selections[arrayId] || {};
+    if (sel.controllerInstanceId) {
+        const inst = siteControllers.find((sc) => sc.id === sel.controllerInstanceId);
+        if (inst) return chargersData.find((c) => c.id === inst.modelId) || null;
+    }
+    if (sel.controller) {
+        return chargersData.find((c) => c.id === sel.controller) || null;
+    }
+    return null;
+}
+
 function clamp(n, min, max) {
     return Math.max(min, Math.min(max, n));
+}
+
+/** £/kWp for a full layout (matches useValidPanels / analyzeArray: panelCost / (peakPower/1000)). */
+function panelLayoutCostPerKWp(panel, layoutCount) {
+    if (!panel) return null;
+    const n = Math.floor(Number(layoutCount)) || 0;
+    const powerW = Number(panel.power) || 0;
+    const peakPower = powerW * n;
+    if (peakPower <= 0) return null;
+    const cost = (Number(panel.price) || 0) * n;
+    const v = cost / (peakPower / 1000);
+    return Number.isFinite(v) ? v : null;
 }
 
 function metersToMm(m) {
@@ -45,12 +81,18 @@ function mmToMeters(mm) {
     return n / 1000;
 }
 
+function sanitizeTiltDeg(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return MIN_TILT_DEG;
+    return clamp(n, MIN_TILT_DEG, MAX_TILT_DEG);
+}
+
 function computeTrueDimsM(roofInput) {
     const mode = roofInput?.mode || 'actual';
     if (mode === 'projected') {
         const projectedX = Number(roofInput?.projectedX_m) || 0;
         const projectedY = Number(roofInput?.projectedY_m) || 0;
-        const tiltDeg = Number(roofInput?.tilt_deg) || 0;
+        const tiltDeg = sanitizeTiltDeg(roofInput?.tilt_deg);
         const trueY = projectedY / Math.cos(tiltDeg * (Math.PI / 180));
         return { trueX_m: projectedX, trueY_m: Number.isFinite(trueY) ? trueY : 0 };
     }
@@ -168,17 +210,45 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         panelsData,
         onHeaderChange,
         onApplyCandidateToDraft,
+        showApplyArrayInToolbar = false,
     },
     ref
 ) {
-    const { chargersData, siteControllers, selections, systemVoltage, setArraysData } = useAppState();
+    const {
+        chargersData,
+        siteControllers,
+        selections,
+        systemVoltage,
+        setArraysData,
+        updateArray,
+        hideHeavyPanels,
+        savePlannerToArray,
+        savePlannerToDraftArray,
+        setNotification,
+    } = useAppState();
 
     const array = useMemo(() => arraysData?.find((a) => a.id === arrayId) || null, [arraysData, arrayId]);
-    const basePlanner = array?.planner || draftArrayData?.planner || DEFAULT_PLANNER;
+    const basePlanner = useMemo(() => {
+        const raw = array?.planner || draftArrayData?.planner;
+        if (raw && typeof raw === 'object') {
+            const rawOpts = raw.options && typeof raw.options === 'object' ? raw.options : {};
+            let orientation = rawOpts.orientation || DEFAULT_PLANNER.options.orientation;
+            if (orientation === 'mixed') orientation = 'either';
+            return {
+                ...DEFAULT_PLANNER,
+                ...raw,
+                layoutOverride: {
+                    enabled: false,
+                    ...(raw.layoutOverride && typeof raw.layoutOverride === 'object' ? raw.layoutOverride : {}),
+                },
+                options: { ...DEFAULT_PLANNER.options, ...rawOpts, orientation },
+            };
+        }
+        return DEFAULT_PLANNER;
+    }, [array?.planner, draftArrayData?.planner]);
 
     const [planner, setPlanner] = useState(basePlanner);
     const [activeResultIndex, setActiveResultIndex] = useState(0);
-    const [resultsTab, setResultsTab] = useState('layout'); // 'layout' | 'panels'
     const [selectedExclusionId, setSelectedExclusionId] = useState(null);
     const [toolMode, setToolMode] = useState('select'); // 'select' | 'measure' | 'delete' | 'addCorner'
     const [measure, setMeasure] = useState({ a: null, b: null });
@@ -191,20 +261,17 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
     const modeHelpRef = useRef(null);
     const [showModeHelp, setShowModeHelp] = useState(false);
     const [filterPanelsByController, setFilterPanelsByController] = useState(false);
-
-    useImperativeHandle(
-        ref,
-        () => ({
-            getPlanner: () => planner,
-        }),
-        [planner]
+    const hadControllerRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragRecomputeTick, setDragRecomputeTick] = useState(0);
+    const plannerResetKey = useMemo(
+        () => JSON.stringify({ arrayId: arrayId || '', planner: basePlanner }),
+        [arrayId, basePlanner]
     );
 
     useEffect(() => {
-        if (!active) return;
         setPlanner(basePlanner);
         setActiveResultIndex(0);
-        setResultsTab('layout');
         setSelectedExclusionId(null);
         setToolMode('select');
         setMeasure({ a: null, b: null });
@@ -212,10 +279,19 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         setHoverEdge(null);
         setHoverDeleteTarget(null);
         setShowModeHelp(false);
-        setFilterPanelsByController(false);
+        setFilterPanelsByController(
+            !!getAssignedControllerModel(array, arrayId, selections, siteControllers, chargersData)
+        );
         setAddExclusionModal((prev) => ({ ...prev, open: false }));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [active, arrayId]);
+        hadControllerRef.current = getAssignedControllerModel(
+            array,
+            arrayId,
+            selections,
+            siteControllers,
+            chargersData
+        );
+        setIsDragging(false);
+    }, [plannerResetKey, basePlanner, array, arrayId, selections, siteControllers, chargersData]);
 
     useEffect(() => {
         if (!showModeHelp) return;
@@ -264,45 +340,52 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
     const isRoofAuto = planner.roofPolygonAuto !== false;
     const isDeleteMode = toolMode === 'delete';
 
-    const controllerForArray = useMemo(() => {
-        if (!array) return null;
-        const sel = selections[arrayId] || {};
-        let controllerInstance = null;
-        if (sel.controllerInstanceId) {
-            controllerInstance = siteControllers.find((sc) => sc.id === sel.controllerInstanceId);
-        }
-        if (controllerInstance) {
-            return chargersData.find((c) => c.id === controllerInstance.modelId) || null;
-        }
-        if (sel.controller) {
-            return chargersData.find((c) => c.id === sel.controller) || null;
-        }
-        return null;
-    }, [array, arrayId, selections, siteControllers, chargersData]);
+    const controllerForArray = useMemo(
+        () => getAssignedControllerModel(array, arrayId, selections, siteControllers, chargersData),
+        [array, arrayId, selections, siteControllers, chargersData]
+    );
+
+    useEffect(() => {
+        const has = !!controllerForArray;
+        const had = !!hadControllerRef.current;
+        hadControllerRef.current = controllerForArray;
+        if (!had && has) setFilterPanelsByController(true);
+        if (had && !has) setFilterPanelsByController(false);
+    }, [controllerForArray]);
+
+    const effectiveMaxWeightKg = useMemo(
+        () => (arrayId && array ? getEffectiveMaxPanelWeightKg(array, hideHeavyPanels) : null),
+        [arrayId, array, hideHeavyPanels]
+    );
 
     const filteredPanelsForEngine = useMemo(() => {
         const list = Array.isArray(panelsData) ? panelsData : [];
+        let compatible;
         if (!arrayId || !array) {
-            return list.filter((p) => p.active !== false);
+            compatible = list.filter((p) => p.active !== false);
+        } else {
+            compatible = list.filter((p) => {
+                if (p.active === false) return false;
+                if (!isCompatibleFormat(array, p)) return false;
+                if (!panelMeetsWeightCap(p, effectiveMaxWeightKg)) return false;
+                return true;
+            });
+            compatible = dropSmallestPanelsByFootprint(compatible, 3);
         }
-        return list.filter((p) => {
-            if (p.active === false) return false;
-            if (!isCompatibleFormat(array, p)) return false;
-            if (filterPanelsByController && !panelPassesControllerLimits(array, p, controllerForArray, systemVoltage)) {
-                return false;
-            }
-            return true;
-        });
-    }, [arrayId, array, panelsData, filterPanelsByController, controllerForArray, systemVoltage]);
+        return compatible;
+    }, [arrayId, array, panelsData, effectiveMaxWeightKg]);
 
     useEffect(() => {
         if (!active) return;
+        if (isDragging) return;
         const sigObj = {
             roofPolygon: roofPolygon,
             exclusions,
             spacing: planner.spacing || DEFAULT_PLANNER.spacing,
             options: planner.options || DEFAULT_PLANNER.options,
             panelsCount: Array.isArray(filteredPanelsForEngine) ? filteredPanelsForEngine.length : 0,
+            hideHeavyPanels,
+            effectiveMaxWeightKg,
         };
         const sig = JSON.stringify(sigObj);
         if (planner.lastResult?._sig === sig) return;
@@ -313,22 +396,84 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
             spacing: planner.spacing || DEFAULT_PLANNER.spacing,
             panelsData: filteredPanelsForEngine,
             options: {
-                orientation: planner.options?.orientation || 'either',
+                orientation:
+                    planner.options?.orientation === 'mixed'
+                        ? 'either'
+                        : planner.options?.orientation || 'either',
                 topN: 200,
                 includeInactivePanels: false,
             },
         });
         setPlanner((prev) => ({ ...prev, lastResult: { ...res, _sig: sig } }));
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [active, filteredPanelsForEngine, roofPolygon, exclusions, planner.spacing, planner.options]);
+    }, [
+        active,
+        isDragging,
+        dragRecomputeTick,
+        filteredPanelsForEngine,
+        roofPolygon,
+        exclusions,
+        planner.spacing,
+        planner.options,
+        hideHeavyPanels,
+        effectiveMaxWeightKg,
+    ]);
 
-    const results = planner.lastResult?.ranked || [];
-    const activeResult = results[activeResultIndex] || results[0] || null;
+    const rawRanked = useMemo(
+        () => (Array.isArray(planner.lastResult?.ranked) ? planner.lastResult.ranked : []),
+        [planner.lastResult?.ranked]
+    );
+
+    const panelByModel = useMemo(() => {
+        const map = new Map();
+        for (const p of Array.isArray(panelsData) ? panelsData : []) map.set(p.model, p);
+        return map;
+    }, [panelsData]);
+
+    const controllerFilterActive = Boolean(
+        arrayId && array && controllerForArray && filterPanelsByController
+    );
+
+    const visibleRanked = useMemo(() => {
+        if (!controllerFilterActive) return rawRanked;
+        const out = [];
+        for (const r of rawRanked) {
+            const panel = panelByModel.get(r.panelModel);
+            if (!panel) continue;
+            const bestPs = bestParallelStringsForController(
+                array,
+                panel,
+                r.count,
+                controllerForArray,
+                systemVoltage
+            );
+            if (bestPs == null) continue;
+            out.push({ ...r, controllerBestParallelStrings: bestPs });
+        }
+        return out;
+    }, [
+        rawRanked,
+        controllerFilterActive,
+        array,
+        panelByModel,
+        controllerForArray,
+        systemVoltage,
+    ]);
+
+    useEffect(() => {
+        setActiveResultIndex((i) => {
+            const n = visibleRanked.length;
+            if (n === 0) return 0;
+            return Math.min(i, n - 1);
+        });
+    }, [visibleRanked]);
+
+    const activeResult = visibleRanked[activeResultIndex] || visibleRanked[0] || null;
     const panelRects = activeResult?.rects_m || [];
 
-    const applyCandidateToArray = (candidate, resultIndex) => {
+    const persistLayoutCandidate = useCallback(
+        (candidate) => {
         if (!candidate) return;
-        if (typeof resultIndex === 'number') setActiveResultIndex(resultIndex);
 
         const rects = Array.isArray(candidate.rects_m) ? candidate.rects_m : [];
         const maxPanelWidth = rects.length ? Math.max(...rects.map((r) => metersToMm(r.w))) : 0;
@@ -345,6 +490,19 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         const nextMaxPanelWidth = isLandscapePlan ? maxPanelHeight : maxPanelWidth;
         const nextMaxPanelHeight = isLandscapePlan ? maxPanelWidth : maxPanelHeight;
 
+        const skipPhysical = planner.layoutOverride?.enabled === true;
+
+        const nextParallelStrings =
+            !skipPhysical && derivedCount > 0
+                ? controllerFilterActive && candidate.controllerBestParallelStrings != null
+                    ? candidate.controllerBestParallelStrings
+                    : (() => {
+                          const prevPs =
+                              (array?.parallelStrings ?? draftArrayData?.parallelStrings) || 1;
+                          return derivedCount % prevPs === 0 ? prevPs : 1;
+                      })()
+                : undefined;
+
         if (arrayId) {
             // Persist selection fields in a single write to avoid state/localStorage overwrites.
             setArraysData((prev) =>
@@ -352,11 +510,16 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
                     a.id === arrayId
                         ? {
                               ...a,
-                              count: derivedCount,
-                              // Only overwrite max dimensions when we actually have rects.
-                              // Otherwise we might accidentally clamp everything to 0.
-                              ...(hasRectDims
-                                  ? { maxPanelWidth: nextMaxPanelWidth, maxPanelHeight: nextMaxPanelHeight }
+                              ...(!skipPhysical
+                                  ? {
+                                        count: derivedCount,
+                                        ...(hasRectDims
+                                            ? { maxPanelWidth: nextMaxPanelWidth, maxPanelHeight: nextMaxPanelHeight }
+                                            : {}),
+                                        ...(nextParallelStrings != null
+                                            ? { parallelStrings: nextParallelStrings }
+                                            : {}),
+                                    }
                                   : {}),
                               panel: candidate.panelModel ?? a.panel ?? '',
                           }
@@ -365,27 +528,78 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
             );
         } else {
             const nextDraftFields = {
-                count: derivedCount,
                 panel: candidate.panelModel ?? draftArrayData?.panel ?? '',
             };
-            if (hasRectDims) {
-                nextDraftFields.maxPanelWidth = nextMaxPanelWidth;
-                nextDraftFields.maxPanelHeight = nextMaxPanelHeight;
+            if (!skipPhysical) {
+                nextDraftFields.count = derivedCount;
+                if (hasRectDims) {
+                    nextDraftFields.maxPanelWidth = nextMaxPanelWidth;
+                    nextDraftFields.maxPanelHeight = nextMaxPanelHeight;
+                }
+                if (nextParallelStrings != null) {
+                    nextDraftFields.parallelStrings = nextParallelStrings;
+                }
             }
             onApplyCandidateToDraft?.(nextDraftFields);
         }
-    };
+    },
+        [
+            arrayId,
+            array,
+            draftArrayData,
+            planner,
+            controllerFilterActive,
+            setArraysData,
+            onApplyCandidateToDraft,
+        ]
+    );
 
-    const panelByModel = useMemo(() => {
-        const map = new Map();
-        for (const p of Array.isArray(panelsData) ? panelsData : []) map.set(p.model, p);
-        return map;
-    }, [panelsData]);
+    const handleApplyArrayToolbar = useCallback(() => {
+        const candidate = visibleRanked[activeResultIndex] ?? visibleRanked[0] ?? null;
+        if (!candidate) {
+            setNotification(
+                'No layout to apply. Wait for results or adjust the roof and filters.',
+                'warning'
+            );
+            return;
+        }
+        persistLayoutCandidate(candidate);
+        if (arrayId) {
+            savePlannerToArray(arrayId, planner);
+        } else {
+            savePlannerToDraftArray(planner);
+        }
+        setNotification('Array updated from the previewed layout. Planner settings saved.', 'success');
+    }, [
+        visibleRanked,
+        activeResultIndex,
+        persistLayoutCandidate,
+        arrayId,
+        planner,
+        savePlannerToArray,
+        savePlannerToDraftArray,
+        setNotification,
+    ]);
+
+    useImperativeHandle(
+        ref,
+        () => ({
+            getPlanner: () => planner,
+            applyActiveLayout: () => {
+                const candidate =
+                    visibleRanked[activeResultIndex] ?? visibleRanked[0] ?? null;
+                if (!candidate) return { ok: false };
+                persistLayoutCandidate(candidate);
+                return { ok: true };
+            },
+        }),
+        [planner, visibleRanked, activeResultIndex, persistLayoutCandidate]
+    );
 
     const layoutGroups = useMemo(() => {
         const groups = new Map();
-        for (let idx = 0; idx < results.length; idx++) {
-            const r = results[idx];
+        for (let idx = 0; idx < visibleRanked.length; idx++) {
+            const r = visibleRanked[idx];
             const key = [r.orientation, r.count ?? 0, r.rows ?? '', r.cols ?? ''].join('|');
             if (!groups.has(key)) groups.set(key, []);
             groups.get(key).push({ r, idx });
@@ -400,6 +614,11 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
             const rects = best.rects_m || [];
             const maxWmm = rects.length ? Math.max(...rects.map((x) => metersToMm(x.w))) : 0;
             const maxHmm = rects.length ? Math.max(...rects.map((x) => metersToMm(x.h))) : 0;
+            const wiringLabel =
+                best.controllerBestParallelStrings != null
+                    ? formatWiringLabel(best.count, best.controllerBestParallelStrings)
+                    : null;
+            const bestPanelCostPerKWp = panelLayoutCostPerKWp(bestPanel, best.count);
             out.push({
                 key,
                 orientation: best.orientation,
@@ -410,12 +629,14 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
                 maxPanelHmm: maxHmm,
                 bestTotalW: best.totalW ?? 0,
                 bestPanelName: bestPanel?.name || best.panelName || best.panelModel,
+                bestPanelCostPerKWp,
                 bestResultIndex: bestIndex,
+                controllerWiringLabel: wiringLabel,
             });
         }
         out.sort((a, b) => b.bestTotalW - a.bestTotalW || b.count - a.count);
         return out;
-    }, [results, panelByModel]);
+    }, [visibleRanked, panelByModel]);
 
     const bounds = useMemo(() => {
         const polyB = polygonBounds(roofPolygon);
@@ -470,6 +691,13 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         );
     }, [array, draftArrayData?.name, trueX_m, trueY_m]);
 
+    const orientationSelectValue =
+        planner.options?.orientation === 'landscape' || planner.options?.orientation === 'portrait'
+            ? planner.options.orientation
+            : 'either';
+
+    const layoutOverrideEnabled = planner.layoutOverride?.enabled === true;
+
     useEffect(() => {
         onHeaderChange?.(header);
     }, [header, onHeaderChange]);
@@ -522,6 +750,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         ensurePolygonPersisted();
         const start = toSvgPoint(svgRef.current, e.clientX, e.clientY, bounds);
         dragRef.current = { type: 'vertex', index: idx, start, orig: roofPolygon[idx] };
+        setIsDragging(true);
         e.currentTarget.setPointerCapture?.(e.pointerId);
     };
 
@@ -531,6 +760,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         const start = toSvgPoint(svgRef.current, e.clientX, e.clientY, bounds);
         setSelectedExclusionId(exclusions[idx]?.id || null);
         dragRef.current = { type: 'exclusion-move', index: idx, start, orig: exclusions[idx] };
+        setIsDragging(true);
         e.currentTarget.setPointerCapture?.(e.pointerId);
     };
 
@@ -540,6 +770,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         const start = toSvgPoint(svgRef.current, e.clientX, e.clientY, bounds);
         setSelectedExclusionId(exclusions[idx]?.id || null);
         dragRef.current = { type: 'exclusion-resize', index: idx, corner, start, orig: exclusions[idx] };
+        setIsDragging(true);
         e.currentTarget.setPointerCapture?.(e.pointerId);
     };
 
@@ -724,7 +955,12 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
     };
 
     const onPointerUp = () => {
+        const hadDrag = !!dragRef.current;
         dragRef.current = null;
+        if (hadDrag) {
+            setIsDragging(false);
+            setDragRecomputeTick((n) => n + 1);
+        }
     };
 
     useEffect(() => {
@@ -868,10 +1104,12 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                         </label>
                                         <input
                                             type="number"
+                                            min={MIN_TILT_DEG}
+                                            max={MAX_TILT_DEG}
                                             step="1"
                                             className="plannerToolbarInput w-full border border-slate-300 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none disabled:opacity-50 disabled:bg-slate-100"
                                             value={roofInput.tilt_deg}
-                                            onChange={(e) => updateRoofInput({ tilt_deg: Number(e.target.value) })}
+                                            onChange={(e) => updateRoofInput({ tilt_deg: sanitizeTiltDeg(e.target.value) })}
                                             disabled={!isRoofAuto}
                                         />
                                     </div>
@@ -929,7 +1167,17 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                         </div>
                     </div>
 
-                    <div />
+                    {showApplyArrayInToolbar ? (
+                        <div className="flex w-full shrink-0 items-end justify-end lg:ml-auto lg:w-auto">
+                            <button
+                                type="button"
+                                onClick={handleApplyArrayToolbar}
+                                className="h-[2.125rem] px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 font-medium transition-colors shadow-sm text-sm whitespace-nowrap"
+                            >
+                                Apply Array
+                            </button>
+                        </div>
+                    ) : null}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 min-h-[60vh]">
@@ -1287,7 +1535,7 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
 
                     <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col min-h-[60vh]">
                         <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
-                            <div className="text-sm font-semibold text-slate-800">Options & results</div>
+                            <div className="text-sm font-semibold text-slate-800">Layout Selection</div>
                         </div>
 
                         <div className="p-4 space-y-4 flex-1 flex flex-col min-h-0">
@@ -1297,103 +1545,86 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                 </label>
                                 <select
                                     className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 outline-none text-sm"
-                                    value={planner.options?.orientation || 'either'}
+                                    value={orientationSelectValue}
                                     onChange={(e) =>
                                         updatePlanner({
                                             options: { ...(planner.options || DEFAULT_PLANNER.options), orientation: e.target.value },
                                         })
                                     }
                                 >
+                                    <option value="either">Either</option>
                                     <option value="landscape">Landscape</option>
                                     <option value="portrait">Portrait</option>
-                                    <option value="either">Either (best of one)</option>
-                                    <option value="mixed">Mixed</option>
                                 </select>
                             </div>
 
                             {arrayId ? (
-                                <label className="flex items-start gap-2 cursor-pointer select-none">
-                                    <input
-                                        type="checkbox"
-                                        className="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                                        checked={filterPanelsByController}
-                                        onChange={(e) => setFilterPanelsByController(e.target.checked)}
-                                    />
-                                    <span className="text-sm text-slate-700 leading-snug">
-                                        <span className="font-medium text-slate-800">Filter by controller compatibility</span>
-                                        <span className="block text-xs text-slate-500 mt-0.5">
-                                            Voc, Vmp, and Isc vs the selected controller for this array. The planner ignores array
-                                            max panel size and weight so layouts are not cleared when those limits are tight.
+                                <div
+                                    className={`rounded-lg border border-slate-100 bg-slate-50/50 px-3 py-2.5 space-y-1.5 ${!controllerForArray ? 'opacity-60' : ''}`}
+                                >
+                                    <label
+                                        className={`flex items-start gap-2 select-none ${controllerForArray ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            disabled={!controllerForArray}
+                                            className="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 disabled:opacity-50"
+                                            checked={Boolean(controllerForArray && filterPanelsByController)}
+                                            onChange={(e) => {
+                                                if (controllerForArray) setFilterPanelsByController(e.target.checked);
+                                            }}
+                                        />
+                                        <span className="text-sm text-slate-700 leading-snug">
+                                            <span className="font-medium text-slate-800">Filter by controller compatibility</span>
+                                            <span className="block text-xs text-slate-500 mt-0.5">
+                                                Voc, Vmp, and Isc for each layout: any valid wiring (divisors of panel count) is
+                                                tried; the suggested label is the option with the most panels in series per string
+                                                that still fits the controller.
+                                            </span>
                                         </span>
-                                    </span>
-                                </label>
+                                    </label>
+                                    {!controllerForArray ? (
+                                        <p className="text-xs text-slate-500 pl-6">
+                                            Select a controller for this array to enable this filter.
+                                        </p>
+                                    ) : null}
+                                </div>
                             ) : null}
 
                             <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Results</div>
-                                    <div className="text-xs text-slate-400">
-                                        {results.length ? `${results.length} candidates` : '—'}
+                                <div className="flex items-start justify-between gap-3 mb-2">
+                                    <div className="min-w-0">
+                                        <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                                            Ranked layouts
+                                        </div>
+                                        <p className="text-[11px] text-slate-400 mt-0.5 font-normal normal-case leading-snug">
+                                            Click to preview on the roof only — use Apply Array to update panel, count, and
+                                            wiring.
+                                        </p>
+                                    </div>
+                                    <div className="text-xs text-slate-400 shrink-0 text-right">
+                                        {layoutGroups.length
+                                            ? `${layoutGroups.length} layout${layoutGroups.length !== 1 ? 's' : ''} · ${visibleRanked.length} grid variants`
+                                            : '—'}
                                     </div>
                                 </div>
-                                <div className="flex items-end gap-4 border-b border-slate-200 pb-0 mb-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setResultsTab('layout')}
-                                        className={`text-sm font-medium pb-2 border-b-2 transition-colors ${
-                                            resultsTab === 'layout'
-                                                ? 'text-slate-900 border-slate-900'
-                                                : 'text-slate-500 border-transparent hover:text-slate-700'
-                                        }`}
-                                    >
-                                        Layout
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setResultsTab('panels')}
-                                        className={`text-sm font-medium pb-2 border-b-2 transition-colors ${
-                                            resultsTab === 'panels'
-                                                ? 'text-slate-900 border-slate-900'
-                                                : 'text-slate-500 border-transparent hover:text-slate-700'
-                                        }`}
-                                    >
-                                        Panels
-                                    </button>
-                                    <div className="ml-auto text-xs text-slate-500 pb-2">
+                                <div className="flex items-end justify-end border-b border-slate-200 pb-2 mb-3">
+                                    <div className="text-xs text-slate-500">
                                         {arrayId
-                                            ? `${filteredPanelsForEngine.length} eligible panels`
+                                            ? `${filteredPanelsForEngine.length} panels in layout search${
+                                                  effectiveMaxWeightKg != null ? ' (weight limit applied)' : ''
+                                              }`
                                             : `${filteredPanelsForEngine.length} active panels`}
                                     </div>
                                 </div>
 
                                 <div className="h-[40vh] min-h-[16rem] max-h-[32rem] overflow-y-auto pr-1">
-                                    {results.length === 0 ? (
+                                    {rawRanked.length === 0 ? (
                                         <div className="text-sm text-slate-500 italic">No computed results yet.</div>
-                                    ) : resultsTab === 'panels' ? (
-                                        <div className="space-y-2">
-                                            {results.slice(0, 10).map((r, idx) => (
-                                                <button
-                                                    key={r.id || idx}
-                                                    type="button"
-                                                    onClick={() => applyCandidateToArray(r, idx)}
-                                                    className={`w-full text-left p-3 rounded border transition-colors ${
-                                                        idx === activeResultIndex
-                                                            ? 'border-emerald-300 bg-emerald-50'
-                                                            : 'border-slate-200 hover:bg-slate-50'
-                                                    }`}
-                                                >
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="text-sm font-semibold text-slate-800 truncate">
-                                                            {r.panelName || r.panelModel || 'Panel'} · {r.orientation}
-                                                        </div>
-                                                        <div className="text-sm font-bold text-slate-900">{r.totalW ?? 0}W</div>
-                                                    </div>
-                                                    <div className="text-xs text-slate-500 mt-1">
-                                                        {r.count ?? 0} panels · {r.rows ?? 0}×{r.cols ?? 0} · Util{' '}
-                                                        {Math.round((r.utilization ?? 0) * 100)}%
-                                                    </div>
-                                                </button>
-                                            ))}
+                                    ) : visibleRanked.length === 0 ? (
+                                        <div className="text-sm text-slate-500 italic">
+                                            No layouts match the controller filter. Turn off the filter or choose a different
+                                            controller.
                                         </div>
                                     ) : (
                                         <div className="space-y-2">
@@ -1403,7 +1634,7 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                                     type="button"
                                                     onClick={() => {
                                                         const idx = g.bestResultIndex;
-                                                        if (typeof idx === 'number') applyCandidateToArray(results[idx], idx);
+                                                        if (typeof idx === 'number') setActiveResultIndex(idx);
                                                     }}
                                                     className={`w-full text-left p-3 rounded border transition-colors ${
                                                         typeof g.bestResultIndex === 'number' && g.bestResultIndex === activeResultIndex
@@ -1421,7 +1652,20 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                                         <div>
                                                             Max panel size: {g.maxPanelWmm}×{g.maxPanelHmm}mm
                                                         </div>
-                                                        <div>Best panel: {g.bestPanelName}</div>
+                                                        <div>
+                                                            Best panel: {g.bestPanelName}
+                                                            {g.bestPanelCostPerKWp != null ? (
+                                                                <span className="text-slate-500">
+                                                                    {' '}
+                                                                    (£{g.bestPanelCostPerKWp.toFixed(2)}/kWp)
+                                                                </span>
+                                                            ) : null}
+                                                        </div>
+                                                        {g.controllerWiringLabel ? (
+                                                            <div className="text-slate-500">
+                                                                Wiring: {g.controllerWiringLabel} (controller)
+                                                            </div>
+                                                        ) : null}
                                                     </div>
                                                 </button>
                                             ))}
@@ -1476,6 +1720,104 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                         </div>
                     </div>
                 </div>
+
+                {arrayId && array ? (
+                    <div className="rounded-xl border border-amber-200/80 bg-amber-50/50 p-4 shadow-sm">
+                        <h3 className="text-sm font-semibold text-slate-800">Override layout selection</h3>
+                        <p className="text-xs text-slate-600 mt-1 mb-3">
+                            When enabled, choosing a ranked layout updates only the <strong>panel model</strong>. Panel count and
+                            max dimensions stay as you set them here (max weight is never overwritten by the layout tool).
+                        </p>
+                        <label className="flex items-start gap-2 cursor-pointer select-none mb-4">
+                            <input
+                                type="checkbox"
+                                className="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                                checked={layoutOverrideEnabled}
+                                onChange={(e) =>
+                                    updatePlanner({
+                                        layoutOverride: {
+                                            ...(planner.layoutOverride || DEFAULT_PLANNER.layoutOverride),
+                                            enabled: e.target.checked,
+                                        },
+                                    })
+                                }
+                            />
+                            <span className="text-sm text-slate-800 font-medium">
+                                Manual override — do not apply count or max dimensions from layout
+                            </span>
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <div>
+                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                    Panel count
+                                </label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                                    value={array.count ?? ''}
+                                    onChange={(e) =>
+                                        updateArray(arrayId, 'count', parseInt(e.target.value, 10) || 0)
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                    Max length (mm)
+                                </label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    placeholder="Height in DB"
+                                    title="Maximum panel length — compared to panel height (portrait module)"
+                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                                    value={array.maxPanelHeight || ''}
+                                    onChange={(e) =>
+                                        updateArray(arrayId, 'maxPanelHeight', parseInt(e.target.value, 10) || '')
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                    Max width (mm)
+                                </label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    placeholder="Width in DB"
+                                    title="Maximum panel width — compared to panel width (portrait module)"
+                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                                    value={array.maxPanelWidth || ''}
+                                    onChange={(e) =>
+                                        updateArray(arrayId, 'maxPanelWidth', parseInt(e.target.value, 10) || '')
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                    Max weight (kg)
+                                </label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="0.1"
+                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                                    value={array.maxPanelWeight ?? ''}
+                                    onChange={(e) =>
+                                        updateArray(
+                                            arrayId,
+                                            'maxPanelWeight',
+                                            e.target.value === '' ? '' : parseFloat(e.target.value)
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
             </div>
 
             <Modal

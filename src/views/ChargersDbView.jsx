@@ -7,14 +7,6 @@ export default function ChargersDbView() {
     const {
         chargersData,
         setChargersData,
-        systemVoltage,
-        setSystemVoltage,
-        systemType,
-        setSystemType,
-        filterEps,
-        setFilterEps,
-        filterHouseBackup,
-        setFilterHouseBackup,
         updateCharger,
         addCharger,
         setInfoModalChargerId,
@@ -27,52 +19,6 @@ export default function ChargersDbView() {
         setChargersData((prev) =>
             prev.map((c) => ((c.manufacturer || 'Unknown') === mfr ? { ...c, active } : c))
         );
-    };
-
-    const updateChargerFilters = (newType, newVoltage, newEps, newHouseBackup) => {
-        setChargersData((prev) =>
-            prev.map((c) => {
-                const volts = c.systemVoltages || [48];
-                const matchesVoltage = newVoltage === null || volts.includes(newVoltage);
-                let matchesType = false;
-                if (newType === 'any') {
-                    matchesType = true;
-                } else if (newType === 'dc-charger') {
-                    matchesType = c.systemType === 'dc-charger';
-                } else if (newType === 'grid-connected') {
-                    matchesType = !!(c.g98_cert || c.g99_cert);
-                    if (matchesType) {
-                        if (newEps && !c.eps) matchesType = false;
-                        if (newHouseBackup && !c.house_backup) matchesType = false;
-                    }
-                } else if (newType === 'off-grid-ac') {
-                    matchesType = !!c.pure_off_grid_native;
-                }
-                return { ...c, active: matchesVoltage && matchesType };
-            })
-        );
-    };
-
-    const handleSetSystemVoltage = (v) => {
-        setSystemVoltage(v);
-        updateChargerFilters(systemType, v, filterEps, filterHouseBackup);
-    };
-
-    const handleSetSystemType = (t) => {
-        setSystemType(t);
-        updateChargerFilters(t, systemVoltage, filterEps, filterHouseBackup);
-    };
-
-    const handleToggleEps = () => {
-        const next = !filterEps;
-        setFilterEps(next);
-        updateChargerFilters(systemType, systemVoltage, next, filterHouseBackup);
-    };
-
-    const handleToggleHouseBackup = () => {
-        const next = !filterHouseBackup;
-        setFilterHouseBackup(next);
-        updateChargerFilters(systemType, systemVoltage, filterEps, next);
     };
 
     return (
@@ -89,108 +35,6 @@ export default function ChargersDbView() {
                     >
                         <Plus size={16} className="mr-2" /> Add Controller
                     </button>
-                </div>
-            </div>
-            <div className="space-y-4 pb-4 border-b border-slate-200">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Filters</span>
-                <div className="flex items-center gap-3">
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        DC Bus Voltage
-                    </span>
-                    <div className="flex gap-1">
-                        <button
-                            onClick={() => handleSetSystemVoltage(null)}
-                            className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${
-                                systemVoltage === null ? 'bg-slate-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                            }`}
-                        >
-                            Any
-                        </button>
-                        {[12, 24, 36, 48, 96].map((v) => (
-                            <button
-                                key={v}
-                                onClick={() => handleSetSystemVoltage(v)}
-                                className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${
-                                    systemVoltage === v
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                                }`}
-                            >
-                                {v}V
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-6">
-                    <div className="flex items-center gap-3">
-                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                            Controller Type
-                        </span>
-                        <div className="flex rounded-lg overflow-hidden border border-slate-300 shadow-sm text-sm font-medium">
-                            <button
-                                onClick={() => handleSetSystemType('any')}
-                                className={`px-3 py-1.5 transition-colors ${
-                                    systemType === 'any' ? 'bg-slate-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'
-                                }`}
-                            >
-                                Any
-                            </button>
-                            <button
-                                onClick={() => handleSetSystemType('dc-charger')}
-                                className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
-                                    systemType === 'dc-charger'
-                                        ? 'bg-amber-500 text-white'
-                                        : 'bg-white text-slate-600 hover:bg-slate-50'
-                                }`}
-                            >
-                                🔌 DC Charger
-                            </button>
-                            <button
-                                onClick={() => handleSetSystemType('grid-connected')}
-                                className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
-                                    systemType === 'grid-connected'
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-white text-slate-600 hover:bg-slate-50'
-                                }`}
-                            >
-                                ⚡ Grid-Connected AC
-                            </button>
-                            <button
-                                onClick={() => handleSetSystemType('off-grid-ac')}
-                                className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
-                                    systemType === 'off-grid-ac'
-                                        ? 'bg-emerald-600 text-white'
-                                        : 'bg-white text-slate-600 hover:bg-slate-50'
-                                }`}
-                            >
-                                🔋 Off-Grid AC
-                            </button>
-                        </div>
-                    </div>
-
-                    {systemType === 'grid-connected' && (
-                        <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
-                            <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
-                                <input
-                                    type="checkbox"
-                                    className="w-4 h-4 text-blue-600 rounded cursor-pointer"
-                                    checked={filterEps}
-                                    onChange={handleToggleEps}
-                                />
-                                Emergency Power (EPS)
-                            </label>
-                            <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
-                                <input
-                                    type="checkbox"
-                                    className="w-4 h-4 text-blue-600 rounded cursor-pointer"
-                                    checked={filterHouseBackup}
-                                    onChange={handleToggleHouseBackup}
-                                />
-                                House Blackout protection
-                            </label>
-                        </div>
-                    )}
                 </div>
             </div>
             {manufacturers.map((mfr) => {

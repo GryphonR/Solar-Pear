@@ -23,7 +23,7 @@ Think of it as **tiling a floor**: same tile repeated on a grid, but the “room
 | **Panel gap** | Space left between adjacent panels in the grid (same gap on X and Y). |
 | **Exclusions** | Axis-aligned “holes” (e.g. skylights). Any panel that overlaps an exclusion is rejected. |
 | **Panel list** | Active modules with width, height, and power. Very low-powered or invalid sizes are skipped. |
-| **Orientation** | Whether to try **portrait**, **landscape**, or **both** for that panel’s footprint (landscape = width and height swapped on the roof). |
+| **Orientation** | Whether to try **portrait**, **landscape**, or **both** / **either** for that panel’s footprint (landscape = width and height swapped on the roof). The app’s *Either* option uses the same dual-orientation search as *both*. |
 | **Top N** | Only the **highest-power** panel models (after sorting) are evaluated in depth, to keep runtime reasonable. |
 
 ---

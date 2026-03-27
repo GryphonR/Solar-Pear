@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { initialPanels, initialChargers } from '../data/loadData.js';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { analyzeArray } from '../lib/arrayAnalysis';
+import { GSE_COMPATIBILITY } from '../lib/gseCompatibility';
 import {
     migrateArrays,
     migrateSelectionsAndSiteControllers,
@@ -30,6 +31,12 @@ const initialArrays = [
 ];
 
 const initialSelections = {};
+const DEFAULT_AREA_SETTINGS = {
+    systemVoltage: null,
+    systemType: 'any',
+    filterEps: false,
+    filterHouseBackup: false,
+};
 
 export const APP_STORAGE_KEYS = [
     'solar_arrays',
@@ -44,6 +51,7 @@ export const APP_STORAGE_KEYS = [
     'solar_system_type',
     'solar_filter_eps',
     'solar_filter_house_backup',
+    'solar_area_settings',
     'solar_areas',
     'user_notes',
     'solar_active_array_content_tab',
@@ -79,6 +87,53 @@ export function AppStateProvider({ children }) {
         false
     );
     const [areasData, setAreasData] = useLocalStorage('solar_areas', ['House']);
+    const [areaSettingsByArea, setAreaSettingsByArea] = useLocalStorage('solar_area_settings', {
+        House: { ...DEFAULT_AREA_SETTINGS },
+    });
+
+    const sanitizeAreaSettings = (settings, fallback = DEFAULT_AREA_SETTINGS) => ({
+        systemVoltage:
+            settings?.systemVoltage === null || Number.isFinite(Number(settings?.systemVoltage))
+                ? settings?.systemVoltage ?? null
+                : fallback.systemVoltage ?? null,
+        systemType: settings?.systemType || fallback.systemType || 'any',
+        filterEps:
+            settings?.filterEps !== undefined
+                ? !!settings.filterEps
+                : !!fallback.filterEps,
+        filterHouseBackup:
+            settings?.filterHouseBackup !== undefined
+                ? !!settings.filterHouseBackup
+                : !!fallback.filterHouseBackup,
+    });
+
+    const getAreaSettings = (areaName) => {
+        const key = areaName || 'House';
+        const existing = areaSettingsByArea?.[key];
+        const legacyFallback = {
+            systemVoltage,
+            systemType,
+            filterEps,
+            filterHouseBackup,
+        };
+        return sanitizeAreaSettings(existing, legacyFallback);
+    };
+
+    const updateAreaSettings = (areaName, patch) => {
+        const key = areaName || 'House';
+        if (!patch || typeof patch !== 'object') return;
+        setAreaSettingsByArea((prev) => {
+            const next = { ...(prev || {}) };
+            const current = sanitizeAreaSettings(next[key], {
+                systemVoltage,
+                systemType,
+                filterEps,
+                filterHouseBackup,
+            });
+            next[key] = sanitizeAreaSettings({ ...current, ...patch }, current);
+            return next;
+        });
+    };
 
     // Derived shape preserved for existing UI/analysis code.
     // Selection values are stored directly on each array entry in `arraysData`.
@@ -109,8 +164,18 @@ export function AppStateProvider({ children }) {
     const [infoModalChargerId, setInfoModalChargerId] = useState(null);
     const [addPanelModal, setAddPanelModal] = useState({ open: false, data: {} });
     const [addChargerModal, setAddChargerModal] = useState({ open: false, data: {} });
-    const [addAreaModal, setAddAreaModal] = useState({ open: false, data: '' });
-    const [addArrayModal, setAddArrayModal] = useState({ open: false, data: {} });
+    const [addAreaModal, setAddAreaModal] = useState({
+        open: false,
+        mode: 'add',
+        data: '',
+        originalName: null,
+    });
+    const [addArrayModal, setAddArrayModal] = useState({
+        open: false,
+        mode: 'add',
+        targetArrayId: null,
+        data: {},
+    });
     const [plannerModal, setPlannerModal] = useState({
         open: false,
         arrayId: null,
@@ -122,22 +187,19 @@ export function AppStateProvider({ children }) {
         title: '',
         message: '',
         action: null,
+        checkbox: null,
     });
     const [userNotes, setUserNotes] = useLocalStorage('user_notes', {});
     const [hiddenChargerMfr, setHiddenChargerMfr] = useState(null);
     const [loadStatus, setLoadStatus] = useState('loading'); // 'loading' | 'ok' | 'error'
     const [notification, setNotificationState] = useState(null); // { message, variant: 'success'|'error'|'warning'|'info' }
-    const notificationTimeoutRef = React.useRef(null);
 
     const clearNotification = () => {
-        if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
         setNotificationState(null);
     };
 
     const setNotification = (message, variant = 'info') => {
-        if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
         setNotificationState({ message, variant });
-        notificationTimeoutRef.current = setTimeout(clearNotification, 5000);
     };
 
     useEffect(() => {
@@ -179,13 +241,51 @@ export function AppStateProvider({ children }) {
         }
     }, []);
 
+    useEffect(() => {
+        setAreaSettingsByArea((prev) => {
+            const source = prev && typeof prev === 'object' ? prev : {};
+            const next = {};
+            const legacyFallback = {
+                systemVoltage,
+                systemType,
+                filterEps,
+                filterHouseBackup,
+            };
+            areasData.forEach((area) => {
+                next[area] = sanitizeAreaSettings(source[area], legacyFallback);
+            });
+            const sourceKeys = Object.keys(source);
+            const nextKeys = Object.keys(next);
+            if (
+                sourceKeys.length === nextKeys.length &&
+                sourceKeys.every((k) => next[k] && JSON.stringify(source[k]) === JSON.stringify(next[k]))
+            ) {
+                return prev;
+            }
+            return next;
+        });
+    }, [
+        areasData,
+        systemVoltage,
+        systemType,
+        filterEps,
+        filterHouseBackup,
+        setAreaSettingsByArea,
+    ]);
+
     const startFresh = () => {
         performReset();
         setLoadStatus('ok');
     };
 
-    const openConfirm = (title, message, action) => {
-        setConfirmModal({ open: true, title, message, action });
+    const openConfirm = (title, message, action, options = {}) => {
+        const checkbox = options.checkbox
+            ? {
+                  label: options.checkbox.label || '',
+                  defaultChecked: !!options.checkbox.defaultChecked,
+              }
+            : null;
+        setConfirmModal({ open: true, title, message, action, checkbox });
     };
 
     const performReset = () => {
@@ -205,6 +305,7 @@ export function AppStateProvider({ children }) {
         setSystemType('any');
         setFilterEps(false);
         setFilterHouseBackup(false);
+        setAreaSettingsByArea({ House: { ...DEFAULT_AREA_SETTINGS } });
         setUserNotes({});
         setHiddenChargerMfr(null);
         setPlannerModal({ open: false, arrayId: null, draftArrayData: null, returnTo: null });
@@ -296,14 +397,9 @@ export function AppStateProvider({ children }) {
         () =>
             chargersData.filter((c) => {
                 if (c.active === false) return false;
-                if (
-                    systemVoltage !== null &&
-                    !(c.systemVoltages || [48]).includes(systemVoltage)
-                )
-                    return false;
                 return true;
             }),
-        [chargersData, systemVoltage]
+        [chargersData]
     );
 
     const deleteArray = (id) => {
@@ -324,7 +420,7 @@ export function AppStateProvider({ children }) {
                 isc: 0,
                 price: 0,
                 active: true,
-                gseCompatibility: 'Both',
+                gseCompatibility: GSE_COMPATIBILITY.BOTH,
                 height: 0,
                 width: 0,
                 weight: 0,
@@ -337,12 +433,72 @@ export function AppStateProvider({ children }) {
         });
     };
 
-    const openAddArrayModal = () => {
+    const openAddAreaModal = (initialName = '') => {
+        setAddAreaModal({
+            open: true,
+            mode: 'add',
+            data: initialName,
+            originalName: null,
+        });
+    };
+
+    const openEditAreaModal = (areaName) => {
+        setAddAreaModal({
+            open: true,
+            mode: 'edit',
+            data: areaName,
+            originalName: areaName,
+        });
+    };
+
+    const handleAreaModalSave = (name) => {
+        const mode = addAreaModal.mode || 'add';
+        if (mode === 'edit') {
+            const previousName = addAreaModal.originalName;
+            if (!previousName) return;
+            if (name === previousName) return;
+            setAreasData((prev) => prev.map((area) => (area === previousName ? name : area)));
+            setAreaSettingsByArea((prev) => {
+                const current = prev && typeof prev === 'object' ? prev : {};
+                const next = { ...current };
+                const previousSettings = sanitizeAreaSettings(
+                    current[previousName],
+                    getAreaSettings(previousName)
+                );
+                delete next[previousName];
+                next[name] = previousSettings;
+                return next;
+            });
+            setArraysData((prev) =>
+                prev.map((array) => (array.area === previousName ? { ...array, area: name } : array))
+            );
+            return;
+        }
+        setAreasData((prev) => [...prev, name]);
+        setAreaSettingsByArea((prev) => {
+            const current = prev && typeof prev === 'object' ? prev : {};
+            if (current[name]) return current;
+            return {
+                ...current,
+                [name]: sanitizeAreaSettings(null, {
+                    systemVoltage,
+                    systemType,
+                    filterEps,
+                    filterHouseBackup,
+                }),
+            };
+        });
+    };
+
+    const openAddArrayModal = (options = {}) => {
+        const area = options.area || areasData[0] || 'House';
         setAddArrayModal({
             open: true,
+            mode: 'add',
+            targetArrayId: null,
             data: {
-                name: 'New Array',
-                area: areasData[0] || 'House',
+                name: options.name || 'New Array',
+                area,
                 orientation: 'South',
                 count: 6,
                 format: 'Portrait',
@@ -354,12 +510,27 @@ export function AppStateProvider({ children }) {
         });
     };
 
-    const openPlannerForArray = (arrayId) => {
-        setPlannerModal({ open: true, arrayId, draftArrayData: null, returnTo: null });
+    const openEditArrayModal = (arrayId) => {
+        const target = arraysData.find((array) => array.id === arrayId);
+        if (!target) return;
+        setAddArrayModal({
+            open: true,
+            mode: 'edit',
+            targetArrayId: arrayId,
+            data: {
+                name: target.name || '',
+                area: target.area || areasData[0] || 'House',
+            },
+        });
     };
 
     const openPlannerForNewArray = (draftArrayData) => {
-        setAddArrayModal({ open: false, data: draftArrayData || {} });
+        setAddArrayModal({
+            open: false,
+            mode: 'add',
+            targetArrayId: null,
+            data: draftArrayData || {},
+        });
         setPlannerModal({
             open: true,
             arrayId: null,
@@ -371,7 +542,12 @@ export function AppStateProvider({ children }) {
     const closePlanner = () => {
         setPlannerModal((prev) => {
             if (prev.returnTo === 'addArray') {
-                setAddArrayModal({ open: true, data: prev.draftArrayData || {} });
+                setAddArrayModal({
+                    open: true,
+                    mode: 'add',
+                    targetArrayId: null,
+                    data: prev.draftArrayData || {},
+                });
             }
             return { open: false, arrayId: null, draftArrayData: null, returnTo: null };
         });
@@ -415,27 +591,57 @@ export function AppStateProvider({ children }) {
         openConfirm(
             'Delete Area',
             `Are you sure you want to delete the Area "${areaName}"? Any arrays assigned to it will be safely moved to the first available area.`,
-            () => {
+            (deleteArraysInArea = false) => {
                 const newAreas = areasData.filter((a) => a !== areaName);
                 setAreasData(newAreas);
-                setArraysData((prev) =>
-                    prev.map((a) => (a.area === areaName ? { ...a, area: newAreas[0] } : a))
-                );
+                setAreaSettingsByArea((prev) => {
+                    const current = prev && typeof prev === 'object' ? prev : {};
+                    const next = { ...current };
+                    delete next[areaName];
+                    return next;
+                });
+                if (deleteArraysInArea) {
+                    setArraysData((prev) => prev.filter((a) => a.area !== areaName));
+                } else {
+                    setArraysData((prev) =>
+                        prev.map((a) => (a.area === areaName ? { ...a, area: newAreas[0] } : a))
+                    );
+                }
+            },
+            {
+                checkbox: {
+                    label: 'Also delete all arrays in this area',
+                    defaultChecked: false,
+                },
             }
         );
     };
 
     const getArrayAnalysis = (arrayId) =>
-        analyzeArray(arrayId, {
-            arraysData,
-            panelsData,
-            chargersData,
-            siteControllers,
-            selections,
-            systemVoltage,
-        });
+        (() => {
+            const array = arraysData.find((a) => a.id === arrayId);
+            const areaSettings = getAreaSettings(array?.area || 'House');
+            return analyzeArray(arrayId, {
+                arraysData,
+                panelsData,
+                chargersData,
+                siteControllers,
+                selections,
+                systemVoltage: areaSettings.systemVoltage,
+            });
+        })();
 
     const handleAddArraySave = (d) => {
+        if ((addArrayModal.mode || 'add') === 'edit' && addArrayModal.targetArrayId) {
+            setArraysData((prev) =>
+                prev.map((array) =>
+                    array.id === addArrayModal.targetArrayId
+                        ? { ...array, name: d.name, area: d.area }
+                        : array
+                )
+            );
+            return;
+        }
         const newId = `array_${Date.now()}`;
         setArraysData([
             ...arraysData,
@@ -460,6 +666,7 @@ export function AppStateProvider({ children }) {
             siteControllers,
             selections,
             areasData,
+            areaSettingsByArea,
             userNotes,
             hideHeavyPanels,
             hideMarginalPanels,
@@ -493,6 +700,7 @@ export function AppStateProvider({ children }) {
             setChargersData,
             setSiteControllers,
             setAreasData,
+            setAreaSettingsByArea,
             setUserNotes,
             setHideHeavyPanels,
             setHideMarginalPanels,
@@ -502,6 +710,8 @@ export function AppStateProvider({ children }) {
             setSystemType,
             setFilterEps,
             setFilterHouseBackup,
+            getAreaSettings,
+            updateAreaSettings,
             setPanelSort,
             setControllerSort,
             setActiveSelectorTabs,
@@ -528,8 +738,11 @@ export function AppStateProvider({ children }) {
             addPanel,
             addCharger,
             openAddArrayModal,
+            openAddAreaModal,
+            openEditAreaModal,
+            openEditArrayModal,
+            handleAreaModalSave,
             handleAddArraySave,
-            openPlannerForArray,
             openPlannerForNewArray,
             closePlanner,
             savePlannerToArray,
@@ -549,6 +762,7 @@ export function AppStateProvider({ children }) {
             siteControllers,
             selections,
             areasData,
+            areaSettingsByArea,
             userNotes,
             hideHeavyPanels,
             hideMarginalPanels,

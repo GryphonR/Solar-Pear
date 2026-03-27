@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, useRef } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { GSE_COMPATIBILITY } from '../lib/gseCompatibility';
 
 export const UI_STORAGE_KEYS = [
     'solar_hide_heavy_panels',
@@ -111,7 +112,7 @@ export function UIProvider({ children }) {
                 isc: 0,
                 price: 0,
                 active: true,
-                gseCompatibility: 'Both',
+                gseCompatibility: GSE_COMPATIBILITY.BOTH,
                 height: 0,
                 width: 0,
                 weight: 0,

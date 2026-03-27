@@ -7,6 +7,7 @@ import ParallelStringsSelect from './arraySelector/ParallelStringsSelect';
 import PanelTable from './arraySelector/PanelTable';
 import ControllerSection from './arraySelector/ControllerSection';
 import ArrayOverviewTab from './arraySelector/ArrayOverviewTab';
+import ArrayPlanner from '../components/planner/ArrayPlanner';
 
 export default function ArraySelectorView({ arrayId }) {
     const {
@@ -39,7 +40,8 @@ export default function ArraySelectorView({ arrayId }) {
         availableChargers,
         deleteControllerInstance,
         createControllerInstance,
-        systemVoltage,
+        getAreaSettings,
+        updateAreaSettings,
     } = useAppState();
 
     const analysis = getArrayAnalysis(arrayId);
@@ -59,7 +61,12 @@ export default function ArraySelectorView({ arrayId }) {
         costPerKWp,
     } = analysis;
 
-    const effectiveStartupV = controller ? getEffectiveStartupV(controller, systemVoltage) : null;
+    const areaSettings = getAreaSettings(array.area);
+    const areaSystemVoltage = areaSettings.systemVoltage;
+
+    const effectiveStartupV = controller
+        ? getEffectiveStartupV(controller, areaSystemVoltage)
+        : null;
 
     const { validPanels, togglePanelSort } = useValidPanels(arrayId, {
         panelsData,
@@ -67,7 +74,7 @@ export default function ArraySelectorView({ arrayId }) {
         chargersData,
         siteControllers,
         selections,
-        systemVoltage,
+        systemVoltage: areaSystemVoltage,
         hideHeavyPanels,
         hideMarginalPanels,
         hideIncompatiblePanels,
@@ -87,17 +94,38 @@ export default function ArraySelectorView({ arrayId }) {
         () =>
             availableChargers.map((c) => {
                 const isVoltageOk = !panel || coldVoc <= c.maxV;
-                const isStartupOk = !panel || hotVmp >= getEffectiveStartupV(c, systemVoltage);
+                const isStartupOk = !panel || hotVmp >= getEffectiveStartupV(c, areaSystemVoltage);
                 const isCurrentOk = !panel || arrayIscHot <= c.maxIsc;
                 const isFullyCompatible = isVoltageOk && isStartupOk && isCurrentOk;
                 return { ...c, isVoltageOk, isStartupOk, isCurrentOk, isFullyCompatible };
             }),
-        [availableChargers, panel, coldVoc, hotVmp, arrayIscHot, systemVoltage]
+        [availableChargers, panel, coldVoc, hotVmp, arrayIscHot, areaSystemVoltage]
+    );
+
+    const controllersForAreaType = useMemo(
+        () =>
+            controllersWithFlags.filter((c) => {
+                const volts = c.systemVoltages || [48];
+                if (areaSettings.systemVoltage !== null && !volts.includes(areaSettings.systemVoltage)) {
+                    return false;
+                }
+                if (areaSettings.systemType === 'any') return true;
+                if (areaSettings.systemType === 'dc-charger') return c.systemType === 'dc-charger';
+                if (areaSettings.systemType === 'grid-connected') {
+                    if (!(c.g98_cert || c.g99_cert)) return false;
+                    if (areaSettings.filterEps && !c.eps) return false;
+                    if (areaSettings.filterHouseBackup && !c.house_backup) return false;
+                    return true;
+                }
+                if (areaSettings.systemType === 'off-grid-ac') return !!c.pure_off_grid_native;
+                return true;
+            }),
+        [controllersWithFlags, areaSettings]
     );
 
     const controllersForTable = hideIncompatibleControllers
-        ? controllersWithFlags.filter((c) => c.isFullyCompatible)
-        : controllersWithFlags;
+        ? controllersForAreaType.filter((c) => c.isFullyCompatible)
+        : controllersForAreaType;
 
     const sortedControllersList = useMemo(
         () =>
@@ -159,6 +187,12 @@ export default function ArraySelectorView({ arrayId }) {
                     className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${contentTab === 'overview' ? 'border-blue-600 text-blue-700 bg-blue-50/50' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
                 >
                     Array Overview
+                </button>
+                <button
+                    onClick={() => setActiveArrayContentTab((prev) => ({ ...prev, [arrayId]: 'layout' }))}
+                    className={`px-6 py-3 font-semibold text-sm transition-colors border-b-2 ${contentTab === 'layout' ? 'border-blue-600 text-blue-700 bg-blue-50/50' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+                >
+                    Layout
                 </button>
                 <button
                     onClick={() => setActiveArrayContentTab((prev) => ({ ...prev, [arrayId]: 'panels' }))}
@@ -227,7 +261,9 @@ export default function ArraySelectorView({ arrayId }) {
                     coldVoc={coldVoc}
                     hotVmp={hotVmp}
                     arrayIscHot={arrayIscHot}
-                    systemVoltage={systemVoltage}
+                    systemVoltage={areaSystemVoltage}
+                    areaSettings={areaSettings}
+                    updateAreaSettings={updateAreaSettings}
                     sortedControllersList={sortedControllersList}
                     controllerSort={controllerSort}
                     toggleControllerSort={toggleControllerSort}
@@ -239,6 +275,18 @@ export default function ArraySelectorView({ arrayId }) {
                     setInfoModalChargerId={setInfoModalChargerId}
                 />
             )}
+
+            <div className={contentTab !== 'layout' ? 'hidden' : ''} aria-hidden={contentTab !== 'layout'}>
+                <ArrayPlanner
+                    key={arrayId}
+                    active={contentTab === 'layout'}
+                    arrayId={arrayId}
+                    draftArrayData={null}
+                    arraysData={arraysData}
+                    panelsData={panelsData}
+                    showApplyArrayInToolbar
+                />
+            </div>
         </div>
     );
 }

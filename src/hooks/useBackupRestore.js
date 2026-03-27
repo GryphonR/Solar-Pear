@@ -1,7 +1,7 @@
 import { useAppState } from '../context/AppStateContext';
 
 /** Backup file schema version for export/import. */
-export const BACKUP_SCHEMA_VERSION = 3;
+export const BACKUP_SCHEMA_VERSION = 4;
 
 /**
  * Builds the backup payload object (for export). Pure function for testability.
@@ -15,6 +15,7 @@ export function buildBackupPayload(state) {
         panelsData: state.panelsData,
         chargersData: state.chargersData,
         siteControllers: state.siteControllers,
+        areaSettingsByArea: state.areaSettingsByArea,
         systemVoltage: state.systemVoltage,
         hiddenChargerMfr: state.hiddenChargerMfr,
         hideHeavyPanels: state.hideHeavyPanels,
@@ -36,6 +37,7 @@ export function applyBackupData(imported, setters) {
         setPanelsData,
         setChargersData,
         setSiteControllers,
+        setAreaSettingsByArea,
         setSystemVoltage,
         setHiddenChargerMfr,
         setHideHeavyPanels,
@@ -71,6 +73,21 @@ export function applyBackupData(imported, setters) {
     if (imported.panelsData) setPanelsData(imported.panelsData);
     if (imported.chargersData) setChargersData(imported.chargersData);
     if (imported.siteControllers) setSiteControllers(imported.siteControllers);
+    if (imported.areaSettingsByArea !== undefined) {
+        setAreaSettingsByArea(imported.areaSettingsByArea);
+    } else if (imported.areasData) {
+        const fallbackSettings = {
+            systemVoltage: imported.systemVoltage !== undefined ? imported.systemVoltage : null,
+            systemType: imported.systemType || 'any',
+            filterEps: !!imported.filterEps,
+            filterHouseBackup: !!imported.filterHouseBackup,
+        };
+        const generated = imported.areasData.reduce((acc, area) => {
+            acc[area] = { ...fallbackSettings };
+            return acc;
+        }, {});
+        setAreaSettingsByArea(generated);
+    }
     if (imported.systemVoltage !== undefined) setSystemVoltage(imported.systemVoltage);
     if (imported.hiddenChargerMfr !== undefined) setHiddenChargerMfr(imported.hiddenChargerMfr);
     if (imported.hideHeavyPanels !== undefined) setHideHeavyPanels(imported.hideHeavyPanels);
@@ -89,6 +106,7 @@ export function useBackupRestore() {
         panelsData,
         chargersData,
         siteControllers,
+        areaSettingsByArea,
         systemVoltage,
         hiddenChargerMfr,
         hideHeavyPanels,
@@ -99,6 +117,7 @@ export function useBackupRestore() {
         setPanelsData,
         setChargersData,
         setSiteControllers,
+        setAreaSettingsByArea,
         setSystemVoltage,
         setHiddenChargerMfr,
         setHideHeavyPanels,
@@ -116,6 +135,7 @@ export function useBackupRestore() {
             panelsData,
             chargersData,
             siteControllers,
+            areaSettingsByArea,
             systemVoltage,
             hiddenChargerMfr,
             hideHeavyPanels,
@@ -160,6 +180,7 @@ export function useBackupRestore() {
                             setPanelsData,
                             setChargersData,
                             setSiteControllers,
+                            setAreaSettingsByArea,
                             setSystemVoltage,
                             setHiddenChargerMfr,
                             setHideHeavyPanels,

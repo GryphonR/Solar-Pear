@@ -1,3 +1,5 @@
+import { GSE_COMPATIBILITY } from "./gseCompatibility";
+
 export function extractUserNotes(savedNotesJson) {
     if (!savedNotesJson) return {};
     try {
@@ -46,7 +48,8 @@ export function migrateArrays(savedArraysJson, initialArrays) {
                           roofPolygon: null,
                           exclusions: [],
                           spacing: { edge_mm: 400, gap_mm: 25 },
-                          options: { orientation: "both" },
+                          options: { orientation: "either" },
+                          layoutOverride: { enabled: false },
                           lastResult: null,
                       },
         }));
@@ -217,7 +220,7 @@ export function mergePanels(initialPanels, savedPanelsJson) {
                 price: savedP.price,
                 active: savedP.active,
                 gseCompatibility:
-                    savedP.gseCompatibility || initP.gseCompatibility || "Both",
+                    savedP.gseCompatibility || initP.gseCompatibility || GSE_COMPATIBILITY.BOTH,
             };
         }
         return savedP;

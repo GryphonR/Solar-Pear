@@ -1,3 +1,5 @@
+import { GSE_COMPATIBILITY, getPanelGseCompatibility } from './gseCompatibility';
+
 const COLD_TEMP_C = -10;
 const HOT_TEMP_C = 65;
 const STC_TEMP_C = 25;
@@ -64,14 +66,98 @@ export function panelPassesControllerLimits(array, panel, controller, systemVolt
     return isVocOk && isVmpOk && isIscOk;
 }
 
+/** Positive divisors of n (valid `parallelStrings` values for that panel count). */
+export function divisorsOf(n) {
+    const k = Math.floor(Number(n));
+    if (!Number.isFinite(k) || k <= 0) return [];
+    const out = [];
+    for (let d = 1; d <= k; d++) {
+        if (k % d === 0) out.push(d);
+    }
+    return out;
+}
+
+/** e.g. count=12, parallelStrings=2 → "6S2P" (matches ParallelStringsSelect wording). */
+export function formatWiringLabel(count, parallelStrings) {
+    const c = Math.floor(Number(count)) || 0;
+    const p = Math.floor(Number(parallelStrings)) || 1;
+    if (c <= 0 || p <= 0 || c % p !== 0) return "";
+    const s = c / p;
+    return `${s}S${p}P`;
+}
+
+/**
+ * Smallest parallelStrings (most panels in series per string) that passes controller limits, or null if none.
+ */
+export function bestParallelStringsForController(
+    arrayBase,
+    panel,
+    layoutCount,
+    controller,
+    systemVoltage
+) {
+    if (!controller || !arrayBase || !panel) return null;
+    const n = Number(layoutCount);
+    if (!Number.isFinite(n) || n <= 0) return null;
+    let best = null;
+    for (const d of divisorsOf(n)) {
+        const ok = panelPassesControllerLimits(
+            { ...arrayBase, count: n, parallelStrings: d },
+            panel,
+            controller,
+            systemVoltage
+        );
+        if (ok && (best === null || d < best)) best = d;
+    }
+    return best;
+}
+
+export function layoutCompatibleWiring(arrayBase, panel, layoutCount, controller, systemVoltage) {
+    return bestParallelStringsForController(arrayBase, panel, layoutCount, controller, systemVoltage) != null;
+}
+
+/**
+ * Controller check for a layout candidate: any divisor-based wiring may be used; uses same rules as the panel tab.
+ */
+export function panelPassesControllerLimitsForLayout(
+    array,
+    panel,
+    layoutCount,
+    controller,
+    systemVoltage
+) {
+    if (!array || !panel || layoutCount == null) return true;
+    const n = Number(layoutCount);
+    if (!Number.isFinite(n) || n <= 0) return false;
+    if (!controller) return true;
+    return layoutCompatibleWiring(array, panel, n, controller, systemVoltage);
+}
+
+/** Max panel weight (kg) from array.maxPanelWeight, else 25 when hideHeavyPanels, else no cap. */
+export function getEffectiveMaxPanelWeightKg(array, hideHeavyPanels) {
+    if (!array) return null;
+    const maxW =
+        array.maxPanelWeight !== '' && array.maxPanelWeight != null
+            ? Number(array.maxPanelWeight)
+            : null;
+    if (maxW != null) return Number.isFinite(maxW) ? maxW : null;
+    return hideHeavyPanels ? 25 : null;
+}
+
+export function panelMeetsWeightCap(panel, effectiveMaxKg) {
+    if (effectiveMaxKg == null) return true;
+    return panel.weight != null && panel.weight <= effectiveMaxKg;
+}
+
 export const isCompatibleFormat = (array, panel) => {
     const aMounting = array.mounting || "In-Roof (GSE)";
     if (aMounting === "On Roof") return true;
 
-    const pGseComp = panel.gseCompatibility || "Both";
+    const pGseComp = getPanelGseCompatibility(panel);
+    if (pGseComp === GSE_COMPATIBILITY.NONE) return false;
     const aFormat = array.format || "Portrait";
-    if (aFormat === "Landscape" && pGseComp === "Portrait Only") return false;
-    if (aFormat === "Portrait" && pGseComp === "Landscape Only") return false;
+    if (aFormat === "Landscape" && pGseComp === GSE_COMPATIBILITY.PORTRAIT_ONLY) return false;
+    if (aFormat === "Portrait" && pGseComp === GSE_COMPATIBILITY.LANDSCAPE_ONLY) return false;
     return true;
 };
 
@@ -192,7 +278,12 @@ export const analyzeArray = (
     if (isFormatError) {
         status = "error";
         const aFormat = array.format || "Portrait";
-        if (aFormat === "Landscape") {
+        const pGseComp = getPanelGseCompatibility(panel);
+        if (pGseComp === GSE_COMPATIBILITY.NONE) {
+            messages.push(
+                `FATAL PHYSICAL: The ${panel.name} is not compatible with any GSE integrated tray orientation.`
+            );
+        } else if (aFormat === "Landscape") {
             messages.push(
                 `FATAL PHYSICAL: The ${panel.name} is only compatible with Portrait GSE integrated trays.`
             );

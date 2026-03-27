@@ -46,20 +46,6 @@ describe("App UI flows", () => {
         });
     });
 
-    it("navigates to Array Config and shows array configuration view", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(
-            screen.getByRole("button", { name: /array config/i })
-        );
-        expect(
-            screen.getByRole("heading", { name: /Array Configuration & Areas/i })
-        ).toBeInTheDocument();
-    });
-
     it("navigates to PV Controllers and shows controllers database", async () => {
         renderApp();
         await waitFor(() => {
@@ -156,19 +142,10 @@ describe("App UI flows", () => {
         });
     });
 
-    it("opens Add Array modal from Array Config tab", async () => {
+    it("opens Add Array modal from sidebar area action", async () => {
         renderApp();
         await waitFor(() => {
             expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(
-            screen.getByRole("button", { name: /array config/i })
-        );
-        await waitFor(() => {
-            expect(
-                screen.getByRole("heading", { name: /Array Configuration & Areas/i })
-            ).toBeInTheDocument();
         });
 
         const addArrayButton = screen.getByRole("button", {
@@ -178,6 +155,36 @@ describe("App UI flows", () => {
 
         expect(
             screen.getByRole("heading", { name: /Add Physical Array/i })
+        ).toBeInTheDocument();
+    });
+
+    it("opens Edit Array modal from sidebar array edit action", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+        });
+
+        await userEvent.click(
+            screen.getByRole("button", { name: /edit array array 1/i })
+        );
+
+        expect(
+            screen.getByRole("heading", { name: /Edit Physical Array/i })
+        ).toBeInTheDocument();
+    });
+
+    it("opens Edit Area modal from sidebar area edit action", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+        });
+
+        await userEvent.click(
+            screen.getByRole("button", { name: /edit area house/i })
+        );
+
+        expect(
+            screen.getByRole("heading", { name: /Edit Area/i })
         ).toBeInTheDocument();
     });
 

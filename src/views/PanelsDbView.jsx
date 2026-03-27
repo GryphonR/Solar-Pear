@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Info, ExternalLink } from '../components/Icons';
 import { useAppState } from '../context/AppStateContext';
+import { getGseCompatibilityDbLabel } from '../lib/gseCompatibility';
 
 export default function PanelsDbView() {
     const { panelsData, setPanelsData, updatePanel, addPanel, setInfoModalPanelId } = useAppState();
@@ -187,7 +188,9 @@ export default function PanelsDbView() {
                                                     </div>
                                                 </td>
                                                 <td className="p-1 px-2 hidden md:table-cell">
-                                                    <span className="text-sm text-slate-600">{p.gseCompatibility || 'Both'}</span>
+                                                    <span className="text-sm text-slate-600">
+                                                        {getGseCompatibilityDbLabel(p.gseCompatibility)}
+                                                    </span>
                                                 </td>
                                                 <td className="p-1 px-2">
                                                     <span className="text-sm text-slate-800">{p.power}</span>

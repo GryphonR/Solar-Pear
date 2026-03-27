@@ -51,7 +51,7 @@ const Guide = () => {
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/80 space-y-3 hover:border-slate-300/80 transition-colors">
                         <h3 className="text-lg font-bold text-slate-800">1. Setup Your Arrays</h3>
                         <p className="text-slate-600 leading-relaxed text-sm">
-                            Start in the <span className="font-semibold text-slate-900">Array Config</span> tab. Define your panel installation areas (e.g., "Main Roof", "Garage") and the number of panels intended for each array.
+                            Start in the sidebar. Add your panel installation areas (e.g., "Main Roof", "Garage"), then add arrays within each area and edit them with the pen icon.
                         </p>
                     </div>
 

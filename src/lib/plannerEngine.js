@@ -131,6 +131,27 @@ export function minDistanceToPolygonEdgesMm(pt, polygonMm) {
     return min;
 }
 
+/** Panel footprint for sorting: width × height (mm², portrait module dimensions in DB). */
+function panelFootprintMm2(p) {
+    return (Number(p?.width) || 0) * (Number(p?.height) || 0);
+}
+
+/**
+ * Removes the `count` smallest modules by physical footprint so tiny panels do not dominate layout rankings.
+ * If there are at most `count` panels, returns the list unchanged (never returns empty from this step alone).
+ */
+export function dropSmallestPanelsByFootprint(panels, count = 3) {
+    const list = Array.isArray(panels) ? panels : [];
+    const n = Math.max(0, Math.floor(Number(count)) || 0);
+    if (n === 0 || list.length <= n) return list;
+    const sorted = [...list].sort((a, b) => {
+        const d = panelFootprintMm2(a) - panelFootprintMm2(b);
+        if (d !== 0) return d;
+        return (Number(a.power) || 0) - (Number(b.power) || 0);
+    });
+    return sorted.slice(n);
+}
+
 export function computePlannerLayouts({
     roofPolygon_m,
     exclusions_m = [],
@@ -173,8 +194,11 @@ export function computePlannerLayouts({
     const topN = clamp(Number(options?.topN) || 25, 1, 200);
     const candidates = [];
 
-    const wantPortrait = options?.orientation === 'portrait' || options?.orientation === 'both';
-    const wantLandscape = options?.orientation === 'landscape' || options?.orientation === 'both';
+    const o = options?.orientation;
+    // `mixed` is a legacy alias of `either` / `both` (uniform orientation per layout; try portrait and landscape).
+    const tryBoth = o === 'both' || o === 'either' || o === 'mixed';
+    const wantPortrait = o === 'portrait' || tryBoth;
+    const wantLandscape = o === 'landscape' || tryBoth;
 
     const orientations = [];
     if (wantPortrait) orientations.push('portrait');
