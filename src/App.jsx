@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Guide from './components/Guide';
 import AppSidebar from './components/AppSidebar';
 import ConfirmModal from './components/modals/ConfirmModal';
@@ -18,6 +18,24 @@ import { useAppState } from './context/AppStateContext';
 import { useBackupRestore } from './hooks/useBackupRestore';
 
 export default function App() {
+    const MIN_DESKTOP_WIDTH = 1024;
+    const [isSmallScreen, setIsSmallScreen] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        return window.innerWidth < MIN_DESKTOP_WIDTH;
+    });
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return undefined;
+
+        const handleResize = () => {
+            setIsSmallScreen(window.innerWidth < MIN_DESKTOP_WIDTH);
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const {
         activeTab,
         setActiveTab,
@@ -69,6 +87,22 @@ export default function App() {
     const modalSystemVoltage = activeArray
         ? getAreaSettings(activeArray.area).systemVoltage
         : systemVoltage;
+
+    if (isSmallScreen) {
+        return (
+            <div className="h-screen w-screen bg-slate-100 px-6 py-10">
+                <div className="mx-auto flex h-full w-full max-w-xl flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                    <h1 className="text-2xl font-semibold text-slate-900">Larger screen required</h1>
+                    <p className="mt-4 text-sm text-slate-600">
+                        Solar Selector currently works best on desktop or large tablet screens.
+                    </p>
+                    <p className="mt-2 text-sm text-slate-600">
+                        Please open this app on a bigger display to continue.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex h-screen bg-slate-100 font-sans">
