@@ -10,6 +10,7 @@ panel_processing*
 controller_processing*
 availability_check*
 
+
 node_modules
 dist
 dist-ssr
@@ -25,3 +26,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+*implementation-plan*
