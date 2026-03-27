@@ -160,7 +160,7 @@ export default function ArraySelectorView({ arrayId }) {
                         )}
                     </h2>
                     <p className="text-slate-500 mb-2">
-                        {array.orientation} Roof Direction • {array.count} Panels •{' '}
+                        {array.count} Panels •{' '}
                         {array.mounting === 'In-Roof (GSE)' ? `${array.format} Orientation (GSE)` : array.mounting}
                     </p>
                     <ParallelStringsSelect array={array} arrayId={arrayId} updateArray={updateArray} />
