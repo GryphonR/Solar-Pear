@@ -14,7 +14,6 @@ import {
 const Guide = () => {
     return (
         <div className="max-w-4xl mx-auto space-y-10 py-10 px-4">
-            {/* BETA notice */}
             <div className="flex items-center justify-center gap-2 rounded-xl bg-amber-50 border border-amber-200/80 py-2.5 px-4 text-amber-800 text-sm font-medium tracking-wide">
                 <span className="inline-flex items-center rounded-md bg-amber-200/60 px-2 py-0.5 font-semibold uppercase tracking-wider text-amber-900 text-xs">
                     Beta
@@ -24,13 +23,10 @@ const Guide = () => {
 
             {/* Hero */}
             <header className="text-center space-y-5 pt-2">
-                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Getting started</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Quick guide</p>
                 <SolarPearLogo className="w-56 h-auto text-slate-900 mx-auto" />
                 <p className="text-lg text-slate-600 max-w-xl mx-auto leading-relaxed">
-                    Intelligent Pairing for roofs, panels, and controllers.
-                </p>
-                <p className="text-[10px] text-slate-300 max-w-xl mx-auto text-center mt-1">
-                    Pairing... Pearing... no?? ... I'll get my coat
+                    Free roofspace, panel, and controller matching.
                 </p>
             </header>
 
@@ -40,50 +36,70 @@ const Guide = () => {
                 </div>
                 <div>
                     <p className="text-slate-600 leading-relaxed text-sm">
-                        Before using this tool, you must know <span className="font-semibold text-slate-800">how many panels</span> can physically fit in each of your intended arrays. Solar Pear does not perform the initial spatial roof layout.
+                        Solar Pear is free to use and includes a broad database of panels and PV controllers. Use it to find combinations that fit your roofspace and stay electrically compatible.
                     </p>
                 </div>
             </div>
 
-            <section aria-labelledby="guide-steps">
-                <h2 id="guide-steps" className="sr-only">Steps</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/80 space-y-3 hover:border-slate-300/80 transition-colors">
-                        <h3 className="text-lg font-bold text-slate-800">1. Setup Your Arrays</h3>
+            <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                <div className="p-5 border-b border-slate-100 bg-slate-50/80">
+                    <h2 className="text-lg font-bold text-slate-800">Area and Array</h2>
+                    <p className="text-slate-600 text-sm mt-1">Two core ideas used across the planner.</p>
+                </div>
+                <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white p-6 rounded-xl border border-slate-200/80 space-y-3">
+                        <h3 className="text-lg font-bold text-slate-800">Area</h3>
                         <p className="text-slate-600 leading-relaxed text-sm">
-                            Start in the sidebar. Add your panel installation areas (e.g., "Main Roof", "Garage"), then add arrays within each area and edit them with the pen icon.
+                            A named part of your site, like <span className="font-semibold text-slate-900">Main Roof</span> or <span className="font-semibold text-slate-900">Garage</span>.
+                            Area settings define system context such as voltage and system type.
                         </p>
                     </div>
-
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/80 space-y-3 hover:border-slate-300/80 transition-colors">
-                        <h3 className="text-lg font-bold text-slate-800">2. Set Parameters</h3>
+                    <div className="bg-white p-6 rounded-xl border border-slate-200/80 space-y-3">
+                        <h3 className="text-lg font-bold text-slate-800">Array</h3>
                         <p className="text-slate-600 leading-relaxed text-sm">
-                            Select the type of setup you want—on or off grid, or charger only—and ensure your preferred solar panels and inverters are active in the <span className="font-semibold text-slate-900">Panels</span> and <span className="font-semibold text-slate-900">PV Controllers</span> databases.
-                        </p>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/80 space-y-3 hover:border-slate-300/80 transition-colors">
-                        <h3 className="text-lg font-bold text-slate-800">3. Pick Components</h3>
-                        <p className="text-slate-600 leading-relaxed text-sm">
-                            Navigate to an individual <span className="font-semibold text-slate-900">Array Tab</span>. This is where the magic happens.
-                            Filter the database of panels and controllers to find the best pairing for your array, keeping everything electrically compatible.
-                        </p>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/80 space-y-3 hover:border-slate-300/80 transition-colors">
-                        <h3 className="text-lg font-bold text-slate-800">4. Summary & BOM</h3>
-                        <p className="text-slate-600 leading-relaxed text-sm">
-                            View an overview of your specified system and a bill of materials (panels and controllers only).
+                            A physical panel group inside an Area. This is where panel fit, stringing, and controller matching are checked.
                         </p>
                     </div>
                 </div>
             </section>
 
-            {/* Feature overview */}
+            <section aria-labelledby="guide-start-points">
+                <h2 id="guide-start-points" className="sr-only">Start points</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/80 space-y-3 hover:border-slate-300/80 transition-colors">
+                        <h3 className="text-lg font-bold text-slate-800">Start from roofspace</h3>
+                        <p className="text-slate-600 leading-relaxed text-sm">
+                            Set up your Areas and Arrays, then use layout constraints to find panels that physically fit first.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/80 space-y-3 hover:border-slate-300/80 transition-colors">
+                        <h3 className="text-lg font-bold text-slate-800">Start from a panel</h3>
+                        <p className="text-slate-600 leading-relaxed text-sm">
+                            Choose a preferred panel model, then narrow down compatible controllers for each Array.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/80 space-y-3 hover:border-slate-300/80 transition-colors">
+                        <h3 className="text-lg font-bold text-slate-800">Start from a controller</h3>
+                        <p className="text-slate-600 leading-relaxed text-sm">
+                            Pick a preferred PV controller first, then filter to panels and stringing options that work with it.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/80 space-y-3 hover:border-slate-300/80 transition-colors">
+                        <h3 className="text-lg font-bold text-slate-800">Match the rest of the system</h3>
+                        <p className="text-slate-600 leading-relaxed text-sm">
+                            Whatever you start with, the workflow helps you match the remaining panel and controller choices around it.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
             <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
                 <div className="p-5 border-b border-slate-100 bg-slate-50/80">
-                    <h2 className="text-lg font-bold text-slate-800">Why use Solar Pear?</h2>
-                    <p className="text-slate-600 text-sm mt-1">What makes it useful compared to spreadsheets, manufacturer tools, or generic calculators.</p>
+                    <h2 className="text-lg font-bold text-slate-800">Typical workflow</h2>
+                    <p className="text-slate-600 text-sm mt-1">A quick path through the app tabs.</p>
                 </div>
                 <div className="p-5 space-y-6">
                     <section>
@@ -91,13 +107,12 @@ const Guide = () => {
                             <div className="w-9 h-9 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <Layers size={18} />
                             </div>
-                            <h3 className="text-base font-bold text-slate-800">Arrays</h3>
+                            <h3 className="text-base font-bold text-slate-800">Setup Areas and Arrays</h3>
                         </div>
                         <ul className="space-y-1.5 text-slate-600 text-sm list-disc list-inside ml-1">
-                            <li><strong>One place for your whole site</strong> — model multiple roof areas and arrays instead of juggling separate tools or sheets.</li>
-                            <li><strong>Electrical Checks</strong> — cold Voc and hot Vmp are calculated for your string layout so you don’t guess or oversize blindly.</li>
-                            <li><strong>Physical fit</strong> — filter by max panel size and weight so you only see options that actually fit your roof and mounting.</li>
-                            <li><strong>Compare fairly</strong> — see peak power and cost per kWp per array so you can choose the best panel for each spot.</li>
+                            <li>Add each installation area from the sidebar.</li>
+                            <li>Add one or more Arrays inside each Area.</li>
+                            <li>Set Array constraints such as mounting, format, and panel limits.</li>
                         </ul>
                     </section>
                     <section>
@@ -105,12 +120,12 @@ const Guide = () => {
                             <div className="w-9 h-9 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <LayoutDashboard size={18} />
                             </div>
-                            <h3 className="text-base font-bold text-slate-800">Panels</h3>
+                            <h3 className="text-base font-bold text-slate-800">Pick panels and layout</h3>
                         </div>
                         <ul className="space-y-1.5 text-slate-600 text-sm list-disc list-inside ml-1">
-                            <li><strong>Roof-first, not panel-first</strong> — start from “I have N panels here” and find what works, instead of designing around one brand’s tool.</li>
-                            <li><strong>Mix and match</strong> — one database for many brands; enable or hide manufacturers to focus on what you can actually source.</li>
-                            <li><strong>In-roof (GSE) aware</strong> — only see panels that suit in-roof if that’s your mounting, so you avoid incompatible choices.</li>
+                            <li>Use the panel database to choose models you want to compare.</li>
+                            <li>Use the layout and planner tools to check roofspace fit.</li>
+                            <li>Only keep panel options that work for that Array.</li>
                         </ul>
                     </section>
                     <section>
@@ -118,13 +133,12 @@ const Guide = () => {
                             <div className="w-9 h-9 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <Server size={18} />
                             </div>
-                            <h3 className="text-base font-bold text-slate-800">PV Controllers</h3>
+                            <h3 className="text-base font-bold text-slate-800">Match PV controllers</h3>
                         </div>
                         <ul className="space-y-1.5 text-slate-600 text-sm list-disc list-inside ml-1">
-                            <li><strong>Panel and controller in one flow</strong> — pick panels then see which controllers match (or the other way round), without switching apps.</li>
-                            <li><strong>Proper compatibility checks</strong> — Voc, Vmp, and Isc are validated so you don’t pair a string that’s outside the controller’s range.</li>
-                            <li><strong>System type and voltage</strong> — filter by DC bus (12–96 V), grid vs off-grid, and EPS/backup so you only see relevant kit.</li>
-                            <li><strong>Multiple controllers per array</strong> — model splitting an array across units and keep everything electrically consistent.</li>
+                            <li>Use controller filters to find models that match your system setup.</li>
+                            <li>Check Voc, Vmp, and Isc compatibility before finalizing.</li>
+                            <li>Review the System Summary and BoM once Arrays are configured.</li>
                         </ul>
                     </section>
                 </div>
@@ -133,14 +147,13 @@ const Guide = () => {
             <section className="bg-slate-900 rounded-xl p-6 text-slate-300 border border-slate-700/80 shadow-lg">
                 <div className="flex items-center gap-3 mb-4">
                     <AlertTriangle className="text-amber-400 flex-shrink-0" size={22} />
-                    <h2 className="text-lg font-bold text-white">Limitations & Disclaimers</h2>
+                    <h2 className="text-lg font-bold text-white">Limitations and assumptions</h2>
                 </div>
                 <ul className="space-y-3 text-sm list-disc list-inside">
-                    <li><span className="text-white font-medium">Prices:</span> All pre-loaded costs are estimates. Enter your own researched prices for a more accurate BoM.</li>
-                    <li><span className="text-white font-medium">Panels and controller only:</span> The BoM only includes panels and controllers - no harnessing, connectors, mounting etc! This is not your final install price.</li>
-                    <li><span className="text-white font-medium">AI-Derived Notes:</span> Technical notes on each Panel/Controller are synthesized using AI models. Take them with a pinch of salt! They will be improved over time.</li>
-                    <li><span className="text-white font-medium">Not a Wiring Diagram:</span> This tool verifies electrical compatibility (Voc, Vmp, Isc) but does not generate schematic diagrams.</li>
-                    <li><span className="text-white font-medium">Local Storage:</span> All your changes and site configurations are stored locally in your browser. Clearing your cache or using a different browser will reset your progress.</li>
+                    <li><span className="text-white font-medium">Costs are estimates:</span> pre-loaded prices are placeholders. Use your own values for reliable budgeting.</li>
+                    <li><span className="text-white font-medium">BoM scope is limited:</span> summary includes panels and PV controllers only, not full installation hardware.</li>
+                    <li><span className="text-white font-medium">Compatibility, not schematics:</span> checks validate electrical ranges but do not produce wiring diagrams.</li>
+                    <li><span className="text-white font-medium">Local browser storage:</span> projects are saved locally unless you export them.</li>
                 </ul>
             </section>
             <section className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
@@ -157,7 +170,7 @@ const Guide = () => {
                             <span>Save</span>
                         </div>
                         <p className="text-slate-600 leading-relaxed text-sm">
-                            Click the blue download button in the sidebar to export your entire project as a <span className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-xs">.json</span> file. This is the only way to save your work permanently outside of this browser.
+                            Export your full project to a <span className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-xs">.json</span> backup file from the sidebar.
                         </p>
                     </div>
                     <div className="space-y-2">
@@ -166,7 +179,7 @@ const Guide = () => {
                             <span>Restore</span>
                         </div>
                         <p className="text-slate-600 leading-relaxed text-sm">
-                            To view your project on another computer or after clearing your cache, use the green upload button to import your saved backup file.
+                            Import a backup to continue work on another device or after clearing browser data.
                         </p>
                     </div>
                     <div className="space-y-2">
@@ -175,7 +188,7 @@ const Guide = () => {
                             <span>Reset</span>
                         </div>
                         <p className="text-slate-600 leading-relaxed text-sm">
-                            Use the red reset button to wipe all local data and return the application to its default state. Warning: this cannot be undone without a backup!
+                            Reset clears local project data and returns the app to defaults. Keep a backup first.
                         </p>
                     </div>
                 </div>

@@ -41,7 +41,7 @@ describe("App UI flows", () => {
         renderApp();
         await waitFor(() => {
             expect(
-                screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)
+                screen.getByText(/Free roofspace, panel, and controller matching/i)
             ).toBeInTheDocument();
         });
     });
@@ -49,7 +49,7 @@ describe("App UI flows", () => {
     it("navigates to PV Controllers and shows controllers database", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
         await userEvent.click(
@@ -63,7 +63,7 @@ describe("App UI flows", () => {
     it("navigates to Panels and shows panels database", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
         await userEvent.click(screen.getByRole("button", { name: /^panels$/i }));
@@ -75,7 +75,7 @@ describe("App UI flows", () => {
     it("navigates to System Summary and shows summary view", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
         await userEvent.click(
@@ -91,7 +91,7 @@ describe("App UI flows", () => {
         async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
         await userEvent.click(screen.getByRole("button", { name: /^panels$/i }));
@@ -117,7 +117,7 @@ describe("App UI flows", () => {
     it("opens Confirm modal on Reset click; Cancel closes it", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
         const resetButton = screen.getByTitle(
@@ -145,7 +145,7 @@ describe("App UI flows", () => {
     it("opens Add Array modal from sidebar area action", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
         const addArrayButton = screen.getByRole("button", {
@@ -161,7 +161,7 @@ describe("App UI flows", () => {
     it("opens Edit Array modal from sidebar array edit action", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
         await userEvent.click(
@@ -176,7 +176,7 @@ describe("App UI flows", () => {
     it("opens Edit Area modal from sidebar area edit action", async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
         await userEvent.click(
@@ -193,7 +193,7 @@ describe("App UI flows", () => {
         async () => {
         renderApp();
         await waitFor(() => {
-            expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
         await userEvent.click(screen.getByRole("button", { name: /^panels$/i }));
@@ -221,7 +221,7 @@ describe("App UI flows", () => {
         async () => {
             renderApp();
             await waitFor(() => {
-                expect(screen.getByText(/Intelligent Pairing for roofs, panels, and controllers/i)).toBeInTheDocument();
+                expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
             });
 
             await userEvent.click(screen.getByRole("button", { name: /pv controllers/i }));
