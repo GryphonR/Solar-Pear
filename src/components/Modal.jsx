@@ -35,9 +35,12 @@ export default function Modal({
     const dialogRef = useRef(null);
     const previousActiveElement = useRef(null);
     const wasOpenRef = useRef(false);
+    const onCloseRef = useRef(onClose);
+    onCloseRef.current = onClose;
 
-    // Focus trap and Escape key. Only focus first element when modal first opens, not on every re-render
-    // (parent often passes new onClose each render, which would otherwise steal focus from inputs)
+    // Focus trap and Escape key. Only focus first element when modal first opens, not on every re-render.
+    // Keep latest onClose in a ref so this effect can depend on [open] only — unstable onClose from parents
+    // would otherwise re-run the effect every keystroke (e.g. context updates while typing).
     useEffect(() => {
         const justOpened = open && !wasOpenRef.current;
         wasOpenRef.current = open;
@@ -60,7 +63,7 @@ export default function Modal({
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
                 e.preventDefault();
-                onClose();
+                onCloseRef.current();
                 return;
             }
             if (e.key !== 'Tab') return;
@@ -80,7 +83,7 @@ export default function Modal({
 
         dialog.addEventListener('keydown', handleKeyDown);
         return () => dialog.removeEventListener('keydown', handleKeyDown);
-    }, [open, onClose]);
+    }, [open]);
 
     if (!open) return null;
 

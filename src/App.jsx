@@ -170,7 +170,6 @@ export default function App() {
                     handleAreaModalSave(name);
                     setNotification(addAreaModal.mode === 'edit' ? 'Area updated.' : 'Area added.', 'success');
                 }}
-                onChange={(val) => setAddAreaModal((prev) => ({ ...prev, data: val }))}
                 onDelete={() => {
                     const targetAreaName = addAreaModal.originalName;
                     setAddAreaModal({ open: false, mode: 'add', data: '', originalName: null });

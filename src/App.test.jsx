@@ -188,6 +188,22 @@ describe("App UI flows", () => {
         ).toBeInTheDocument();
     });
 
+    it("keeps focus on area name input while typing in Edit Area modal", async () => {
+        const user = userEvent.setup();
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
+        });
+
+        await user.click(screen.getByRole("button", { name: /edit area house/i }));
+        const dialog = screen.getByRole("dialog", { name: /Edit Area/i });
+        const input = within(dialog).getByPlaceholderText(/outbuilding/i);
+        await user.click(input);
+        await user.keyboard("xyz");
+        expect(input).toHaveValue("Housexyz");
+        expect(document.activeElement).toBe(input);
+    });
+
     it(
         "prevents submit when adding a panel with duplicate Model ID and keeps modal open",
         async () => {

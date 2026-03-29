@@ -9,16 +9,18 @@ export default function AddAreaModal({
     areas,
     onClose,
     onSave,
-    onChange,
     onDelete,
 }) {
     const [error, setError] = useState(null);
+    const [draft, setDraft] = useState(() => value || '');
 
     useEffect(() => {
-        if (open) setError(null);
-    }, [open]);
+        if (!open) return;
+        setDraft(value || '');
+        setError(null);
+    }, [open, value]);
 
-    const trimmed = (value || '').trim();
+    const trimmed = (draft || '').trim();
     const isDuplicate =
         trimmed &&
         areas.some(
@@ -49,7 +51,7 @@ export default function AddAreaModal({
 
     const handleChange = (newValue) => {
         setError(null);
-        onChange(newValue);
+        setDraft(newValue);
     };
 
     return (
@@ -100,7 +102,7 @@ export default function AddAreaModal({
                     autoFocus
                     placeholder="e.g. Outbuilding, Cabin"
                     className="w-full p-3 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-slate-700"
-                    value={value}
+                    value={draft}
                     onChange={(e) => handleChange(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                 />
