@@ -1,5 +1,6 @@
-# Logs
-logs
+# Logs (directory tracked via logs/.gitkeep; ignore generated files)
+logs/*
+!logs/.gitkeep
 *.log
 npm-debug.log*
 yarn-debug.log*

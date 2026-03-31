@@ -1,0 +1,107 @@
+{
+  "fieldOrder": [
+    "id",
+    "name",
+    "manufacturer",
+    "modelNumber",
+    "type",
+    "systemType",
+    "systemVoltages",
+    "maxV",
+    "maxIsc",
+    "maxOperatingI",
+    "mpptRangeMin",
+    "mpptRangeMax",
+    "vNominal",
+    "startupV",
+    "v_start_vbat_dependent",
+    "trackers",
+    "price",
+    "MaxACPower",
+    "MaxDCPower",
+    "islanding",
+    "notes",
+    "datasheetUrl",
+    "buyLinks",
+    "availableUK",
+    "g98_cert",
+    "g99_cert",
+    "g100_cert",
+    "off_grid",
+    "pure_off_grid_native",
+    "eps",
+    "house_backup",
+    "three_phase",
+    "reviewed"
+  ],
+  "defaults": {
+    "notes": "",
+    "reviewed": false,
+    "availableUK": true,
+    "g98_cert": false,
+    "g99_cert": false,
+    "g100_cert": false,
+    "off_grid": false,
+    "pure_off_grid_native": false,
+    "eps": false,
+    "house_backup": false,
+    "three_phase": false,
+    "islanding": false,
+    "v_start_vbat_dependent": false,
+    "buyLinks": []
+  },
+  "rules": {
+    "allowedEmptyStrings": ["notes"],
+    "zeroValueSkips": [
+      {
+        "field": "price",
+        "when": { "field": "availableUK", "equals": false }
+      },
+      {
+        "field": "MaxACPower",
+        "when": { "field": "type", "equals": "charger" }
+      }
+    ],
+    "typeAssertions": [
+      {
+        "when": { "field": "type", "equals": "charger" },
+        "assert": [{ "field": "MaxACPower", "equals": 0, "message": "type is 'charger' but MaxACPower must be 0" }]
+      }
+    ]
+  },
+  "types": {
+    "id": "string",
+    "name": "string",
+    "manufacturer": "string",
+    "modelNumber": "string",
+    "type": "string",
+    "systemType": "string",
+    "systemVoltages": "array",
+    "maxV": "number",
+    "maxIsc": "number",
+    "maxOperatingI": "number",
+    "mpptRangeMin": "number",
+    "mpptRangeMax": "number",
+    "vNominal": "number",
+    "startupV": "number",
+    "v_start_vbat_dependent": "boolean",
+    "trackers": "number",
+    "price": "number",
+    "MaxACPower": "number",
+    "MaxDCPower": "number",
+    "islanding": "boolean",
+    "notes": "string",
+    "datasheetUrl": "string",
+    "buyLinks": "array",
+    "availableUK": "boolean",
+    "g98_cert": "boolean",
+    "g99_cert": "boolean",
+    "g100_cert": "boolean",
+    "off_grid": "boolean",
+    "pure_off_grid_native": "boolean",
+    "eps": "boolean",
+    "house_backup": "boolean",
+    "three_phase": "boolean",
+    "reviewed": "boolean"
+  }
+}

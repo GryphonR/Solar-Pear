@@ -1,42 +1,24 @@
 import fs from 'fs/promises';
 import path from 'path';
 import process from 'process';
+import { fileURLToPath } from 'url';
 
-// --- CONFIGURATION ---
-const PANELS_DIR = path.join(process.cwd(), 'src/data/panels');
-const LOG_FILE = path.join(process.cwd(), `availability_check_log_${Date.now()}.txt`);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
+const PANELS_DIR = path.join(ROOT, 'src/data/panels');
+const SERPER_SITES_PATH = path.join(ROOT, 'data-admin/config/serper-sites.json');
+const LOGS_DIR = path.join(ROOT, 'logs');
 
 // Extract API key from command line arguments (e.g., --api=xyz123)
 const apiArg = process.argv.find(arg => arg.startsWith('--api='));
 const SERPER_API_KEY = apiArg ? apiArg.split('=')[1] : null;
 
-// Expanded UK Whitelist: Top B2B Wholesalers & Major Retailers
-const UK_WHITELIST = [
-    'alternergy.co.uk',
-    'midsummerwholesale.co.uk',
-    'waxmanenergy.co.uk',
-    'cclcomponents.com',
-    'segen.co.uk',
-    'cityplumbing.co.uk',
-    'bimblesolar.com',
-    'green2go.co.uk',
-    'hselec.co.uk',
-    'solartradesales.co.uk',
-    'itstechnologies.shop',
-    'tradesparky.com',
-    'voltaconsolar.com'
-];
-
-// Google restricts queries to 32 words. 
-// This constructs a safe advanced search string: '"Model" (site:a.co.uk OR site:b.co.uk ...)'
-const SITE_FILTER_STRING = `(${UK_WHITELIST.map(domain => `site:${domain}`).join(' OR ')})`;
-
 // --- API FUNCTION ---
 
-async function searchUkAvailability(model) {
+async function searchUkAvailability(model, siteFilterString) {
     if (!model) return null;
 
-    const query = `"${model}" ${SITE_FILTER_STRING}`;
+    const query = `"${model}" ${siteFilterString}`;
     
     try {
         const response = await fetch('https://google.serper.dev/search', {
@@ -90,10 +72,18 @@ async function run() {
     let panelsUpdated = 0;
 
     try {
+        await fs.mkdir(LOGS_DIR, { recursive: true });
+        const LOG_FILE = path.join(LOGS_DIR, `panel_availability_check_log_${Date.now()}.txt`);
+
+        const serperConfig = JSON.parse(await fs.readFile(SERPER_SITES_PATH, 'utf-8'));
+        const UK_WHITELIST = serperConfig.panels || [];
+        // Google restricts queries to ~32 words — keep lists reasonably short or batch in future.
+        const SITE_FILTER_STRING = `(${UK_WHITELIST.map(domain => `site:${domain}`).join(' OR ')})`;
+
         const files = await fs.readdir(PANELS_DIR);
         const jsonFiles = files.filter(f => f.endsWith('.json'));
 
-        console.log(`Starting availability check against ${UK_WHITELIST.length} UK domains...\n`);
+        console.log(`Starting availability check against ${UK_WHITELIST.length} UK domains (panels list)...\n`);
 
         for (const file of jsonFiles) {
             const filePath = path.join(PANELS_DIR, file);
@@ -113,7 +103,7 @@ async function run() {
                 panelsChecked++;
                 process.stdout.write(`Checking ${panel.model}... `);
 
-                const result = await searchUkAvailability(panel.model);
+                const result = await searchUkAvailability(panel.model, SITE_FILTER_STRING);
 
                 if (result && result.found) {
                     process.stdout.write(`FOUND on ${result.domain}\n`);
