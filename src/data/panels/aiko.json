@@ -367,7 +367,7 @@
         "isc": 14.76,
         "imp": 13.81,
         "price": 109.42,
-        "efficiency": 23.5,
+        "efficiency": 23.8,
         "tempCoefPmax": -0.26,
         "tempCoefVoc": -0.22,
         "tempCoefIsc": 0.05,
@@ -383,6 +383,12 @@
                 "URL": "https://www.cityplumbing.co.uk/p/aiko-neostar-3s-475w-all-black-solar-panel/p/200566",
                 "isAffiliate": false,
                 "Checked": false
+            },
+            {
+                "Supplier": "Powerland",
+                "URL": "https://www.powerland.co.uk/collections/solar-panels-1/products/aiko-neostar-3s-475w-n-type-abc-54-cell-mono-glass-all-black-gen-3",
+                "isAffiliate": false,
+                "Checked": true
             },
             {
                 "Supplier": "segen.co.uk",
