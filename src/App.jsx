@@ -14,7 +14,7 @@ import PanelsDbView from './views/PanelsDbView';
 import ChargersDbView from './views/ChargersDbView';
 import ArraySelectorView from './views/ArraySelectorView';
 import Toast from './components/Toast';
-import { useAppState } from './context/AppStateContext';
+import { useDataState, usePlannerState, useUiState } from './context/AppStateContext';
 import { useBackupRestore } from './hooks/useBackupRestore';
 
 export default function App() {
@@ -37,8 +37,6 @@ export default function App() {
     }, []);
 
     const {
-        activeTab,
-        setActiveTab,
         arraysData,
         areasData,
         panelsData,
@@ -47,6 +45,16 @@ export default function App() {
         getArrayAnalysis,
         setPanelsData,
         setChargersData,
+        handleAddArraySave,
+        updateUserNote,
+        getAreaSettings,
+        handleAreaModalSave,
+        deleteArea,
+        deleteArray,
+    } = useDataState();
+    const {
+        activeTab,
+        setActiveTab,
         setAddAreaModal,
         setAddArrayModal,
         setAddPanelModal,
@@ -58,47 +66,66 @@ export default function App() {
         addArrayModal,
         addPanelModal,
         addChargerModal,
-        plannerModal,
         infoModalPanelId,
         infoModalChargerId,
         confirmModal,
-        handleAddArraySave,
-        closePlanner,
-        savePlannerToArray,
-        savePlannerToDraftArray,
-        updateUserNote,
         notification,
         clearNotification,
         setNotification,
         systemVoltage,
-        getAreaSettings,
-        applyPlannerCandidateToDraftArray,
         openAddAreaModal,
         openAddArrayModal,
         openEditAreaModal,
         openEditArrayModal,
-        handleAreaModalSave,
-        deleteArea,
-        deleteArray,
-    } = useAppState();
+    } = useUiState();
+    const { plannerModal, closePlanner, savePlannerToArray, savePlannerToDraftArray, applyPlannerCandidateToDraftArray } =
+        usePlannerState();
 
     const { handleDownload, handleUploadClick, handleResetClick } = useBackupRestore();
     const activeArray = arraysData.find((a) => a.id === activeTab);
     const modalSystemVoltage = activeArray
         ? getAreaSettings(activeArray.area).systemVoltage
         : systemVoltage;
+    const smallScreenTab = activeTab === 'GUIDE' ? 'GUIDE' : 'SUMMARY';
 
     if (isSmallScreen) {
         return (
-            <div className="h-screen w-screen bg-slate-100 px-6 py-10">
-                <div className="mx-auto flex h-full w-full max-w-xl flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+            <div className="min-h-screen w-screen bg-slate-100 px-4 py-6">
+                <div className="mx-auto flex w-full max-w-3xl flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                     <h1 className="text-2xl font-semibold text-slate-900">Larger screen required</h1>
                     <p className="mt-4 text-sm text-slate-600">
                         Solar Selector currently works best on desktop or large tablet screens.
                     </p>
                     <p className="mt-2 text-sm text-slate-600">
-                        Please open this app on a bigger display to continue.
+                        You can still review guidance and high-level system summary below.
                     </p>
+                    <div className="mt-5 flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            className={`rounded-lg px-3 py-2 text-sm font-medium ${
+                                smallScreenTab === 'SUMMARY'
+                                    ? 'bg-slate-900 text-white'
+                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                            }`}
+                            onClick={() => setActiveTab('SUMMARY')}
+                        >
+                            Summary
+                        </button>
+                        <button
+                            type="button"
+                            className={`rounded-lg px-3 py-2 text-sm font-medium ${
+                                smallScreenTab === 'GUIDE'
+                                    ? 'bg-slate-900 text-white'
+                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                            }`}
+                            onClick={() => setActiveTab('GUIDE')}
+                        >
+                            Guide
+                        </button>
+                    </div>
+                    <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        {smallScreenTab === 'GUIDE' ? <Guide /> : <SummaryView />}
+                    </div>
                 </div>
             </div>
         );
@@ -209,7 +236,7 @@ export default function App() {
                 existingModelIds={panelsData.map((p) => p.model)}
                 onClose={() => setAddPanelModal({ open: false, data: {} })}
                 onSave={(d) => {
-                    setPanelsData([...panelsData, d]);
+                    setPanelsData((prev) => [...prev, d]);
                     setAddPanelModal({ open: false, data: {} });
                     setNotification('Panel added.', 'success');
                 }}
@@ -226,7 +253,7 @@ export default function App() {
                 existingIds={chargersData.map((c) => c.id)}
                 onClose={() => setAddChargerModal({ open: false, data: {} })}
                 onSave={(d) => {
-                    setChargersData([...chargersData, d]);
+                    setChargersData((prev) => [...prev, d]);
                     setAddChargerModal({ open: false, data: {} });
                     setNotification('Controller added.', 'success');
                 }}

@@ -58,6 +58,9 @@ export const APP_STORAGE_KEYS = [
 ];
 
 const AppStateContext = createContext(null);
+const DataStateContext = createContext(null);
+const UiStateContext = createContext(null);
+const PlannerStateContext = createContext(null);
 
 export function AppStateProvider({ children }) {
     const [activeTab, setActiveTab] = useState('GUIDE');
@@ -791,25 +794,147 @@ export function AppStateProvider({ children }) {
         ]
     );
 
+    const dataStateValue = useMemo(
+        () => ({
+            arraysData: value.arraysData,
+            panelsData: value.panelsData,
+            chargersData: value.chargersData,
+            siteControllers: value.siteControllers,
+            selections: value.selections,
+            areasData: value.areasData,
+            areaSettingsByArea: value.areaSettingsByArea,
+            userNotes: value.userNotes,
+            availableChargers: value.availableChargers,
+            getArrayAnalysis: value.getArrayAnalysis,
+            getAreaSettings: value.getAreaSettings,
+            updateAreaSettings: value.updateAreaSettings,
+            setArraysData: value.setArraysData,
+            setPanelsData: value.setPanelsData,
+            setChargersData: value.setChargersData,
+            setSiteControllers: value.setSiteControllers,
+            setAreasData: value.setAreasData,
+            setAreaSettingsByArea: value.setAreaSettingsByArea,
+            setUserNotes: value.setUserNotes,
+            updateArray: value.updateArray,
+            updatePanel: value.updatePanel,
+            updateCharger: value.updateCharger,
+            updateSelection: value.updateSelection,
+            updateUserNote: value.updateUserNote,
+            deleteArray: value.deleteArray,
+            deleteArea: value.deleteArea,
+            deleteControllerInstance: value.deleteControllerInstance,
+            createControllerInstance: value.createControllerInstance,
+            handleAreaModalSave: value.handleAreaModalSave,
+            handleAddArraySave: value.handleAddArraySave,
+            performReset: value.performReset,
+            loadStatus: value.loadStatus,
+            startFresh: value.startFresh,
+        }),
+        [value]
+    );
+
+    const uiStateValue = useMemo(
+        () => ({
+            activeTab: value.activeTab,
+            hideHeavyPanels: value.hideHeavyPanels,
+            hideMarginalPanels: value.hideMarginalPanels,
+            hideIncompatiblePanels: value.hideIncompatiblePanels,
+            hideIncompatibleControllers: value.hideIncompatibleControllers,
+            systemVoltage: value.systemVoltage,
+            systemType: value.systemType,
+            filterEps: value.filterEps,
+            filterHouseBackup: value.filterHouseBackup,
+            panelSort: value.panelSort,
+            controllerSort: value.controllerSort,
+            activeSelectorTabs: value.activeSelectorTabs,
+            activeArrayContentTab: value.activeArrayContentTab,
+            infoModalPanelId: value.infoModalPanelId,
+            infoModalChargerId: value.infoModalChargerId,
+            addPanelModal: value.addPanelModal,
+            addChargerModal: value.addChargerModal,
+            addAreaModal: value.addAreaModal,
+            addArrayModal: value.addArrayModal,
+            confirmModal: value.confirmModal,
+            hiddenChargerMfr: value.hiddenChargerMfr,
+            notification: value.notification,
+            setActiveTab: value.setActiveTab,
+            setHideHeavyPanels: value.setHideHeavyPanels,
+            setHideMarginalPanels: value.setHideMarginalPanels,
+            setHideIncompatiblePanels: value.setHideIncompatiblePanels,
+            setHideIncompatibleControllers: value.setHideIncompatibleControllers,
+            setSystemVoltage: value.setSystemVoltage,
+            setSystemType: value.setSystemType,
+            setFilterEps: value.setFilterEps,
+            setFilterHouseBackup: value.setFilterHouseBackup,
+            setPanelSort: value.setPanelSort,
+            setControllerSort: value.setControllerSort,
+            setActiveSelectorTabs: value.setActiveSelectorTabs,
+            setActiveArrayContentTab: value.setActiveArrayContentTab,
+            setInfoModalPanelId: value.setInfoModalPanelId,
+            setInfoModalChargerId: value.setInfoModalChargerId,
+            setAddPanelModal: value.setAddPanelModal,
+            setAddChargerModal: value.setAddChargerModal,
+            setAddAreaModal: value.setAddAreaModal,
+            setAddArrayModal: value.setAddArrayModal,
+            setConfirmModal: value.setConfirmModal,
+            setHiddenChargerMfr: value.setHiddenChargerMfr,
+            addPanel: value.addPanel,
+            addCharger: value.addCharger,
+            openConfirm: value.openConfirm,
+            openAddArrayModal: value.openAddArrayModal,
+            openAddAreaModal: value.openAddAreaModal,
+            openEditAreaModal: value.openEditAreaModal,
+            openEditArrayModal: value.openEditArrayModal,
+            clearNotification: value.clearNotification,
+            setNotification: value.setNotification,
+        }),
+        [value]
+    );
+
+    const plannerStateValue = useMemo(
+        () => ({
+            plannerModal: value.plannerModal,
+            setPlannerModal: value.setPlannerModal,
+            openPlannerForNewArray: value.openPlannerForNewArray,
+            closePlanner: value.closePlanner,
+            savePlannerToArray: value.savePlannerToArray,
+            savePlannerToDraftArray: value.savePlannerToDraftArray,
+            applyPlannerCandidateToDraftArray: value.applyPlannerCandidateToDraftArray,
+        }),
+        [value]
+    );
+
+    const renderStateProviders = (content) => (
+        <AppStateContext.Provider value={value}>
+            <DataStateContext.Provider value={dataStateValue}>
+                <UiStateContext.Provider value={uiStateValue}>
+                    <PlannerStateContext.Provider value={plannerStateValue}>
+                        {content}
+                    </PlannerStateContext.Provider>
+                </UiStateContext.Provider>
+            </DataStateContext.Provider>
+        </AppStateContext.Provider>
+    );
+
     if (loadStatus === 'loading') {
         if (import.meta.env?.VITEST) {
-            return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
+            return renderStateProviders(children);
         }
         return (
-            <AppStateContext.Provider value={value}>
+            renderStateProviders(
                 <div className="fixed inset-0 flex items-center justify-center bg-slate-100" aria-live="polite" aria-busy="true">
                     <div className="flex flex-col items-center gap-4">
                         <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
                         <p className="text-slate-600 font-medium">Loading saved data…</p>
                     </div>
                 </div>
-            </AppStateContext.Provider>
+            )
         );
     }
 
     if (loadStatus === 'error') {
         return (
-            <AppStateContext.Provider value={value}>
+            renderStateProviders(
                 <div className="fixed inset-0 flex items-center justify-center bg-slate-100 p-6" role="alert">
                     <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-8 max-w-md text-center">
                         <h2 className="text-xl font-bold text-slate-800 mb-2">Failed to load saved data</h2>
@@ -825,19 +950,41 @@ export function AppStateProvider({ children }) {
                         </button>
                     </div>
                 </div>
-            </AppStateContext.Provider>
+            )
         );
     }
 
-    return (
-        <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
-    );
+    return renderStateProviders(children);
 }
 
 export function useAppState() {
     const ctx = useContext(AppStateContext);
     if (!ctx) {
         throw new Error('useAppState must be used within AppStateProvider');
+    }
+    return ctx;
+}
+
+export function useDataState() {
+    const ctx = useContext(DataStateContext);
+    if (!ctx) {
+        throw new Error('useDataState must be used within AppStateProvider');
+    }
+    return ctx;
+}
+
+export function useUiState() {
+    const ctx = useContext(UiStateContext);
+    if (!ctx) {
+        throw new Error('useUiState must be used within AppStateProvider');
+    }
+    return ctx;
+}
+
+export function usePlannerState() {
+    const ctx = useContext(PlannerStateContext);
+    if (!ctx) {
+        throw new Error('usePlannerState must be used within AppStateProvider');
     }
     return ctx;
 }

@@ -32,6 +32,18 @@ jobs:
       - name: Run tests
         run: npx vitest run
 
+      - name: Install data-admin dependencies
+        working-directory: data-admin
+        run: npm ci
+
+      - name: Run data-admin tests
+        working-directory: data-admin
+        run: npm run test
+
+      - name: Build data-admin
+        working-directory: data-admin
+        run: npm run build
+
       - name: Build
         env:
           # GitHub Pages serves project sites at /<repo-name>/

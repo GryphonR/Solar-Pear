@@ -1,8 +1,11 @@
 import json
 import os
+from pathlib import Path
 
-schema_path = r'c:\Users\Dell\Documents\Code\Solar-Selector\src\data\controllers\SCHEMA.md'
-controllers_dir = r'c:\Users\Dell\Documents\Code\Solar-Selector\src\data\controllers'
+SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parent
+schema_path = REPO_ROOT / 'src' / 'data' / 'controllers' / 'SCHEMA.md'
+controllers_dir = REPO_ROOT / 'src' / 'data' / 'controllers'
 
 def get_required_fields(schema_file):
     with open(schema_file, 'r') as f:
@@ -24,7 +27,7 @@ print(f"Required fields from SCHEMA.md: {required_fields}")
 errors = 0
 for filename in os.listdir(controllers_dir):
     if filename.endswith('.json'):
-        filepath = os.path.join(controllers_dir, filename)
+        filepath = controllers_dir / filename
         with open(filepath, 'r') as f:
             try:
                 data = json.load(f)

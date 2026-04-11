@@ -75,6 +75,33 @@ function AreaSettingsConsumer() {
     );
 }
 
+function PlannerDraftPersistenceConsumer() {
+    const {
+        openPlannerForNewArray,
+        savePlannerToDraftArray,
+        applyPlannerCandidateToDraftArray,
+        addArrayModal,
+        plannerModal,
+    } = useAppState();
+    const hasUpdated = useRef(false);
+
+    useEffect(() => {
+        if (hasUpdated.current) return;
+        hasUpdated.current = true;
+        openPlannerForNewArray({ name: 'Draft Array', area: 'House' });
+        savePlannerToDraftArray({ roofInput: { mode: 'actual', x_m: 8, y_m: 5 } });
+        applyPlannerCandidateToDraftArray({ count: 12, maxPanelWidth: '1200' });
+    }, [openPlannerForNewArray, savePlannerToDraftArray, applyPlannerCandidateToDraftArray]);
+
+    return (
+        <div data-testid="planner-draft">
+            <span data-testid="planner-draft-count">{String(addArrayModal?.data?.count ?? '')}</span>
+            <span data-testid="planner-draft-width">{String(addArrayModal?.data?.maxPanelWidth ?? '')}</span>
+            <span data-testid="planner-draft-mode">{String(plannerModal?.draftArrayData?.planner?.roofInput?.mode ?? '')}</span>
+        </div>
+    );
+}
+
 describe('AppStateContext integration', () => {
     beforeEach(() => {
         clearAppStorage();
@@ -112,6 +139,20 @@ describe('AppStateContext integration', () => {
         await waitFor(() => {
             expect(screen.getByTestId('area-settings-voltage').textContent).toBe('24');
             expect(screen.getByTestId('area-settings-type').textContent).toBe('dc-charger');
+        });
+    });
+
+    it('persists planner draft candidate fields into add-array draft state', async () => {
+        render(
+            <AppStateProvider>
+                <PlannerDraftPersistenceConsumer />
+            </AppStateProvider>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByTestId('planner-draft-count').textContent).toBe('12');
+            expect(screen.getByTestId('planner-draft-width').textContent).toBe('1200');
+            expect(screen.getByTestId('planner-draft-mode').textContent).toBe('actual');
         });
     });
 });

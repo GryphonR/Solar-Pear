@@ -18,6 +18,25 @@ import {
     panelMeetsWeightCap,
 } from '../../lib/arrayAnalysis';
 import { Info, RotateCcw } from '../Icons';
+import {
+    approxPolyEqual,
+    clamp,
+    computeTrueDimsM,
+    defaultRoofPolygonFromDims,
+    edgeAnnotations,
+    exclusionBounds,
+    MAX_TILT_DEG,
+    metersToMm,
+    MIN_TILT_DEG,
+    mmToMeters,
+    pointToSegmentProjection,
+    polygonBounds,
+    sanitizeTiltDeg,
+    toSvgPoint,
+} from './domain/plannerGeometry';
+import { getAssignedControllerModel, panelLayoutCostPerKWp } from './domain/plannerSelectors';
+import { useClampResultIndex } from './state/useClampResultIndex';
+import PlannerModeHelpPopover from './view/PlannerModeHelpPopover';
 
 const DEFAULT_PLANNER = {
     roofInput: {
@@ -36,170 +55,6 @@ const DEFAULT_PLANNER = {
     layoutOverride: { enabled: false },
     lastResult: null,
 };
-
-const MIN_TILT_DEG = 0;
-const MAX_TILT_DEG = 70;
-
-function getAssignedControllerModel(array, arrayId, selections, siteControllers, chargersData) {
-    if (!array || !arrayId) return null;
-    const sel = selections[arrayId] || {};
-    if (sel.controllerInstanceId) {
-        const inst = siteControllers.find((sc) => sc.id === sel.controllerInstanceId);
-        if (inst) return chargersData.find((c) => c.id === inst.modelId) || null;
-    }
-    if (sel.controller) {
-        return chargersData.find((c) => c.id === sel.controller) || null;
-    }
-    return null;
-}
-
-function clamp(n, min, max) {
-    return Math.max(min, Math.min(max, n));
-}
-
-/** £/kWp for a full layout (matches useValidPanels / analyzeArray: panelCost / (peakPower/1000)). */
-function panelLayoutCostPerKWp(panel, layoutCount) {
-    if (!panel) return null;
-    const n = Math.floor(Number(layoutCount)) || 0;
-    const powerW = Number(panel.power) || 0;
-    const peakPower = powerW * n;
-    if (peakPower <= 0) return null;
-    const cost = (Number(panel.price) || 0) * n;
-    const v = cost / (peakPower / 1000);
-    return Number.isFinite(v) ? v : null;
-}
-
-function metersToMm(m) {
-    const n = Number(m);
-    if (!Number.isFinite(n)) return 0;
-    return Math.round(n * 1000);
-}
-
-function mmToMeters(mm) {
-    const n = Number(mm);
-    if (!Number.isFinite(n)) return 0;
-    return n / 1000;
-}
-
-function sanitizeTiltDeg(value) {
-    const n = Number(value);
-    if (!Number.isFinite(n)) return MIN_TILT_DEG;
-    return clamp(n, MIN_TILT_DEG, MAX_TILT_DEG);
-}
-
-function computeTrueDimsM(roofInput) {
-    const mode = roofInput?.mode || 'actual';
-    if (mode === 'projected') {
-        const projectedX = Number(roofInput?.projectedX_m) || 0;
-        const projectedY = Number(roofInput?.projectedY_m) || 0;
-        const tiltDeg = sanitizeTiltDeg(roofInput?.tilt_deg);
-        const trueY = projectedY / Math.cos(tiltDeg * (Math.PI / 180));
-        return { trueX_m: projectedX, trueY_m: Number.isFinite(trueY) ? trueY : 0 };
-    }
-    return { trueX_m: Number(roofInput?.x_m) || 0, trueY_m: Number(roofInput?.y_m) || 0 };
-}
-
-function defaultRoofPolygonFromDims(trueX_m, trueY_m) {
-    const x = Math.max(0.1, Number(trueX_m) || 0);
-    const y = Math.max(0.1, Number(trueY_m) || 0);
-    return [
-        { x: 0, y: 0 },
-        { x, y: 0 },
-        { x, y },
-        { x: 0, y },
-    ];
-}
-
-function approxPolyEqual(a, b, eps = 1e-6) {
-    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-        if (Math.abs(a[i].x - b[i].x) > eps) return false;
-        if (Math.abs(a[i].y - b[i].y) > eps) return false;
-    }
-    return true;
-}
-
-function polygonBounds(poly) {
-    if (!Array.isArray(poly) || poly.length === 0) return { minX: 0, minY: 0, maxX: 1, maxY: 1 };
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    for (const p of poly) {
-        minX = Math.min(minX, p.x);
-        minY = Math.min(minY, p.y);
-        maxX = Math.max(maxX, p.x);
-        maxY = Math.max(maxY, p.y);
-    }
-    if (!Number.isFinite(minX) || !Number.isFinite(minY) || !Number.isFinite(maxX) || !Number.isFinite(maxY)) {
-        return { minX: 0, minY: 0, maxX: 1, maxY: 1 };
-    }
-    return { minX, minY, maxX, maxY };
-}
-
-function exclusionBounds(exclusions) {
-    if (!Array.isArray(exclusions) || exclusions.length === 0) return null;
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    for (const r of exclusions) {
-        minX = Math.min(minX, r.x);
-        minY = Math.min(minY, r.y);
-        maxX = Math.max(maxX, r.x + r.w);
-        maxY = Math.max(maxY, r.y + r.h);
-    }
-    if (!Number.isFinite(minX) || !Number.isFinite(minY) || !Number.isFinite(maxX) || !Number.isFinite(maxY)) return null;
-    return { minX, minY, maxX, maxY };
-}
-
-function toSvgPoint(svgEl, clientX, clientY, viewBox) {
-    const rect = svgEl.getBoundingClientRect();
-    const nx = (clientX - rect.left) / rect.width;
-    const ny = (clientY - rect.top) / rect.height;
-    return {
-        x: viewBox.x + nx * viewBox.w,
-        y: viewBox.y + ny * viewBox.h,
-    };
-}
-
-function pointToSegmentProjection(pt, a, b) {
-    const vx = b.x - a.x;
-    const vy = b.y - a.y;
-    const wx = pt.x - a.x;
-    const wy = pt.y - a.y;
-    const lenSq = vx * vx + vy * vy;
-    if (lenSq === 0) return { x: a.x, y: a.y, t: 0, dist: Math.hypot(pt.x - a.x, pt.y - a.y) };
-    let t = (wx * vx + wy * vy) / lenSq;
-    t = clamp(t, 0, 1);
-    const x = a.x + t * vx;
-    const y = a.y + t * vy;
-    const dist = Math.hypot(pt.x - x, pt.y - y);
-    return { x, y, t, dist };
-}
-
-function edgeAnnotations(poly) {
-    if (!Array.isArray(poly) || poly.length < 2) return [];
-    const out = [];
-    for (let i = 0; i < poly.length; i++) {
-        const a = poly[i];
-        const b = poly[(i + 1) % poly.length];
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const len = Math.hypot(dx, dy);
-        const mx = (a.x + b.x) / 2;
-        const my = (a.y + b.y) / 2;
-        out.push({
-            i,
-            a,
-            b,
-            len,
-            mx,
-            my,
-        });
-    }
-    return out;
-}
 
 const ArrayPlanner = forwardRef(function ArrayPlanner(
     {
@@ -257,13 +112,15 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
     const [hoverDeleteTarget, setHoverDeleteTarget] = useState(null); // { type: 'vertex'|'exclusion', index } | null
     const [addExclusionModal, setAddExclusionModal] = useState({ open: false, w_m: 1.0, h_m: 1.0 });
     const svgRef = useRef(null);
-    const dragRef = useRef(null); // { type: 'vertex'|'exclusion-move'|'exclusion-resize', index, corner, start, orig }
+    const dragRef = useRef(null); // { type, index?, corner?, pointKey?, start, orig, affectsLayout?, startClient? }
+    const suppressNextSvgClickRef = useRef(false);
     const modeHelpRef = useRef(null);
     const [showModeHelp, setShowModeHelp] = useState(false);
     const [filterPanelsByController, setFilterPanelsByController] = useState(false);
     const hadControllerRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const [dragRecomputeTick, setDragRecomputeTick] = useState(0);
+    const layoutSignatureRef = useRef(null);
     const plannerResetKey = useMemo(
         () => JSON.stringify({ arrayId: arrayId || '', planner: basePlanner }),
         [arrayId, basePlanner]
@@ -271,6 +128,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
 
     useEffect(() => {
         setPlanner(basePlanner);
+        layoutSignatureRef.current = null;
         setActiveResultIndex(0);
         setSelectedExclusionId(null);
         setToolMode('select');
@@ -333,7 +191,6 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
             roofPolygon: nextPoly,
             roofPolygonAuto: true,
         }));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [active, trueX_m, trueY_m, planner.roofPolygonAuto, planner.roofPolygon]);
 
     const exclusions = planner.exclusions || [];
@@ -388,7 +245,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
             effectiveMaxWeightKg,
         };
         const sig = JSON.stringify(sigObj);
-        if (planner.lastResult?._sig === sig) return;
+        if (layoutSignatureRef.current === sig) return;
 
         const res = computePlannerLayouts({
             roofPolygon_m: roofPolygon,
@@ -404,8 +261,8 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
                 includeInactivePanels: false,
             },
         });
+        layoutSignatureRef.current = sig;
         setPlanner((prev) => ({ ...prev, lastResult: { ...res, _sig: sig } }));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         active,
         isDragging,
@@ -460,13 +317,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         systemVoltage,
     ]);
 
-    useEffect(() => {
-        setActiveResultIndex((i) => {
-            const n = visibleRanked.length;
-            if (n === 0) return 0;
-            return Math.min(i, n - 1);
-        });
-    }, [visibleRanked]);
+    useClampResultIndex(visibleRanked, setActiveResultIndex);
 
     const activeResult = visibleRanked[activeResultIndex] || visibleRanked[0] || null;
     const panelRects = activeResult?.rects_m || [];
@@ -739,17 +590,20 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         });
     };
 
-    const deleteExclusion = (id) => {
-        updatePlanner({ exclusions: exclusions.filter((r) => r.id !== id) });
-        setSelectedExclusionId((prev) => (prev === id ? null : prev));
-    };
+    const deleteExclusion = useCallback(
+        (id) => {
+            updatePlanner({ exclusions: exclusions.filter((r) => r.id !== id) });
+            setSelectedExclusionId((prev) => (prev === id ? null : prev));
+        },
+        [exclusions, updatePlanner]
+    );
 
     const onPointerDownVertex = (e, idx) => {
         if (!svgRef.current) return;
         if (toolMode !== 'select') return;
         ensurePolygonPersisted();
         const start = toSvgPoint(svgRef.current, e.clientX, e.clientY, bounds);
-        dragRef.current = { type: 'vertex', index: idx, start, orig: roofPolygon[idx] };
+        dragRef.current = { type: 'vertex', index: idx, start, orig: roofPolygon[idx], affectsLayout: true };
         setIsDragging(true);
         e.currentTarget.setPointerCapture?.(e.pointerId);
     };
@@ -759,7 +613,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         if (toolMode !== 'select') return;
         const start = toSvgPoint(svgRef.current, e.clientX, e.clientY, bounds);
         setSelectedExclusionId(exclusions[idx]?.id || null);
-        dragRef.current = { type: 'exclusion-move', index: idx, start, orig: exclusions[idx] };
+        dragRef.current = { type: 'exclusion-move', index: idx, start, orig: exclusions[idx], affectsLayout: true };
         setIsDragging(true);
         e.currentTarget.setPointerCapture?.(e.pointerId);
     };
@@ -769,12 +623,40 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         if (toolMode !== 'select') return;
         const start = toSvgPoint(svgRef.current, e.clientX, e.clientY, bounds);
         setSelectedExclusionId(exclusions[idx]?.id || null);
-        dragRef.current = { type: 'exclusion-resize', index: idx, corner, start, orig: exclusions[idx] };
+        dragRef.current = {
+            type: 'exclusion-resize',
+            index: idx,
+            corner,
+            start,
+            orig: exclusions[idx],
+            affectsLayout: true,
+        };
         setIsDragging(true);
         e.currentTarget.setPointerCapture?.(e.pointerId);
     };
 
+    const onPointerDownMeasurePoint = (e, pointKey) => {
+        if (!svgRef.current) return;
+        if (toolMode !== 'measure') return;
+        if (!measure?.[pointKey]) return;
+        const start = toSvgPoint(svgRef.current, e.clientX, e.clientY, bounds);
+        dragRef.current = {
+            type: 'measure-point',
+            pointKey,
+            start,
+            orig: measure[pointKey],
+            affectsLayout: false,
+            startClient: { x: e.clientX, y: e.clientY },
+        };
+        e.currentTarget.setPointerCapture?.(e.pointerId);
+        e.stopPropagation();
+    };
+
     const onSvgClick = (e) => {
+        if (suppressNextSvgClickRef.current) {
+            suppressNextSvgClickRef.current = false;
+            return;
+        }
         if (!svgRef.current) return;
         const pt = toSvgPoint(svgRef.current, e.clientX, e.clientY, bounds);
         if (toolMode === 'measure') {
@@ -951,13 +833,29 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
 
             const next = exclusions.map((r, i) => (i === idx ? { ...r, x, y, w, h } : r));
             updatePlanner({ exclusions: next });
+        } else if (drag.type === 'measure-point') {
+            const movePx = Math.hypot(e.clientX - (drag.startClient?.x ?? e.clientX), e.clientY - (drag.startClient?.y ?? e.clientY));
+            if (movePx > 2) suppressNextSvgClickRef.current = true;
+            setMeasure((prev) => {
+                if (!prev?.[drag.pointKey]) return prev;
+                return {
+                    ...prev,
+                    [drag.pointKey]: {
+                        x: clamp(drag.orig.x + dx, -1000, 1000),
+                        y: clamp(drag.orig.y + dy, -1000, 1000),
+                    },
+                };
+            });
         }
     };
 
     const onPointerUp = () => {
-        const hadDrag = !!dragRef.current;
+        const completedDrag = dragRef.current;
         dragRef.current = null;
-        if (hadDrag) {
+        if (completedDrag) {
+            suppressNextSvgClickRef.current = true;
+        }
+        if (completedDrag?.affectsLayout) {
             setIsDragging(false);
             setDragRecomputeTick((n) => n + 1);
         }
@@ -978,8 +876,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         };
         window.addEventListener('keydown', onKeyDown);
         return () => window.removeEventListener('keydown', onKeyDown);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [active, toolMode, selectedExclusionId, exclusions]);
+    }, [active, toolMode, selectedExclusionId, deleteExclusion]);
 
     return (
         <>
@@ -1011,15 +908,12 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
                                             <Info size={14} />
                                         </button>
                                     </div>
-                                    {showModeHelp && (
-                                        <div className="absolute z-30 left-0 top-full mt-1 w-[18rem] max-w-[calc(100vw-2rem)] rounded-lg border border-slate-200 bg-white shadow-lg p-3 text-[11px] text-slate-700">
-                                            <div className="whitespace-pre-line leading-4">
-                                                {`Actual XY - these are the dimensions of the 2D plane of your roof
+                                    <PlannerModeHelpPopover
+                                        show={showModeHelp}
+                                        text={`Actual XY - these are the dimensions of the 2D plane of your roof
 
 Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, as measurable on google maps, plus the degrees slope of your roof, which can be found at solarwizard.org.uk, which are used to calculate your actual roof area`}
-                                            </div>
-                                        </div>
-                                    )}
+                                    />
                                 </div>
                                 <select
                                     className="plannerToolbarSelect w-full border border-slate-300 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none disabled:opacity-50 disabled:bg-slate-100"
@@ -1463,17 +1357,63 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
 
                                 {measure?.a && (
                                     <>
-                                        <circle cx={measure.a.x} cy={measure.a.y} r={0.06} fill="#4f46e5" />
+                                        <g
+                                            onPointerDown={(e) => onPointerDownMeasurePoint(e, 'a')}
+                                            onClick={(e) => e.stopPropagation()}
+                                            style={{ cursor: toolMode === 'measure' ? 'grab' : 'default' }}
+                                        >
+                                            <line
+                                                x1={measure.a.x - 0.06}
+                                                y1={measure.a.y - 0.06}
+                                                x2={measure.a.x + 0.06}
+                                                y2={measure.a.y + 0.06}
+                                                stroke="#4f46e5"
+                                                strokeWidth={0.02}
+                                                strokeLinecap="round"
+                                            />
+                                            <line
+                                                x1={measure.a.x - 0.06}
+                                                y1={measure.a.y + 0.06}
+                                                x2={measure.a.x + 0.06}
+                                                y2={measure.a.y - 0.06}
+                                                stroke="#4f46e5"
+                                                strokeWidth={0.02}
+                                                strokeLinecap="round"
+                                            />
+                                        </g>
                                         {measure.b && (
                                             <>
-                                                <circle cx={measure.b.x} cy={measure.b.y} r={0.06} fill="#4f46e5" />
+                                                <g
+                                                    onPointerDown={(e) => onPointerDownMeasurePoint(e, 'b')}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    style={{ cursor: toolMode === 'measure' ? 'grab' : 'default' }}
+                                                >
+                                                    <line
+                                                        x1={measure.b.x - 0.06}
+                                                        y1={measure.b.y - 0.06}
+                                                        x2={measure.b.x + 0.06}
+                                                        y2={measure.b.y + 0.06}
+                                                        stroke="#4f46e5"
+                                                        strokeWidth={0.02}
+                                                        strokeLinecap="round"
+                                                    />
+                                                    <line
+                                                        x1={measure.b.x - 0.06}
+                                                        y1={measure.b.y + 0.06}
+                                                        x2={measure.b.x + 0.06}
+                                                        y2={measure.b.y - 0.06}
+                                                        stroke="#4f46e5"
+                                                        strokeWidth={0.02}
+                                                        strokeLinecap="round"
+                                                    />
+                                                </g>
                                                 <line
                                                     x1={measure.a.x}
                                                     y1={measure.a.y}
                                                     x2={measure.b.x}
                                                     y2={measure.b.y}
                                                     stroke="#4f46e5"
-                                                    strokeWidth={0.03}
+                                                    strokeWidth={0.015}
                                                 />
                                                 <rect
                                                     x={(measure.a.x + measure.b.x) / 2 - 0.45}

@@ -3,6 +3,8 @@ import path from "path";
 import { paths } from "./paths.mjs";
 import { loadSchema } from "./schemaLoader.mjs";
 import { normalizeBuyLinks, reorderKeys } from "./normalize.mjs";
+import { sortEntries } from "./sortEntries.mjs";
+import { writeJsonAtomic } from "./jsonWrite.mjs";
 
 /**
  * @param {Record<string, unknown>} entry
@@ -58,23 +60,8 @@ export async function applySchemaToAllFiles(kind, options = {}) {
         let arr = JSON.parse(text);
         arr = arr.map((entry) => transformEntry(entry, schema, kind, stripUnknown));
 
-        if (kind === "panels") {
-            arr.sort((a, b) => {
-                const sA = a["panel-series"] || "";
-                const sB = b["panel-series"] || "";
-                if (sA < sB) return -1;
-                if (sA > sB) return 1;
-                return (Number(a.power) || 0) - (Number(b.power) || 0);
-            });
-        } else {
-            arr.sort((a, b) => {
-                const aM = String(a.modelNumber || a.name || "");
-                const bM = String(b.modelNumber || b.name || "");
-                return aM.localeCompare(bM);
-            });
-        }
-
-        await fs.writeFile(filePath, JSON.stringify(arr, null, 4) + "\n", "utf-8");
+        arr = sortEntries(kind, arr);
+        await writeJsonAtomic(filePath, arr);
         touched.push(file);
     }
 
