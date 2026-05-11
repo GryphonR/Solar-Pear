@@ -1,5 +1,11 @@
+/**
+ * @file App.jsx
+ * Root shell: wide-viewport layout with sidebar and modals, or a read-only small-screen gate with the guide only.
+ */
+
 import React, { useEffect, useState } from 'react';
 import Guide from './components/Guide';
+import SolarPearLogo from './components/SolarPearLogo';
 import AppSidebar from './components/AppSidebar';
 import ConfirmModal from './components/modals/ConfirmModal';
 import AddAreaModal from './components/modals/AddAreaModal';
@@ -17,23 +23,52 @@ import Toast from './components/Toast';
 import { useDataState, usePlannerState, useUiState } from './context/AppStateContext';
 import { useBackupRestore } from './hooks/useBackupRestore';
 
+/** Minimum layout width (px) for the full planner UI. Below this, only the guide is shown. */
+const MIN_DESKTOP_LAYOUT_WIDTH = 960;
+
+/**
+ * Reads the effective layout width for breakpoint checks. Mobile Chrome "Desktop site" often uses a ~980px
+ * layout viewport while `innerWidth` can still reflect the narrow device width, so we take the widest signal.
+ *
+ * @returns {number}
+ */
+function getLayoutViewportWidthPx() {
+    if (typeof window === 'undefined') return MIN_DESKTOP_LAYOUT_WIDTH;
+    const inner = window.innerWidth;
+    const docClient = typeof document !== 'undefined' ? document.documentElement?.clientWidth ?? 0 : 0;
+    const visual =
+        typeof window.visualViewport !== 'undefined' && window.visualViewport
+            ? window.visualViewport.width
+            : 0;
+    // Widest value wins so desktop-mode / zoomed viewports unlock the full layout when appropriate.
+    return Math.max(inner, docClient, visual);
+}
+
 export default function App() {
-    const MIN_DESKTOP_WIDTH = 1024;
+    /** When true, render the guide-only gate instead of the planner shell (narrow or mobile layout viewport). */
     const [isSmallScreen, setIsSmallScreen] = useState(() => {
         if (typeof window === 'undefined') return false;
-        return window.innerWidth < MIN_DESKTOP_WIDTH;
+        return getLayoutViewportWidthPx() < MIN_DESKTOP_LAYOUT_WIDTH;
     });
 
     useEffect(() => {
         if (typeof window === 'undefined') return undefined;
 
         const handleResize = () => {
-            setIsSmallScreen(window.innerWidth < MIN_DESKTOP_WIDTH);
+            setIsSmallScreen(getLayoutViewportWidthPx() < MIN_DESKTOP_LAYOUT_WIDTH);
         };
 
         handleResize();
         window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+        window.visualViewport?.addEventListener('resize', handleResize);
+        window.visualViewport?.addEventListener('scroll', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('orientationchange', handleResize);
+            window.visualViewport?.removeEventListener('resize', handleResize);
+            window.visualViewport?.removeEventListener('scroll', handleResize);
+        };
     }, []);
 
     const {
@@ -86,45 +121,26 @@ export default function App() {
     const modalSystemVoltage = activeArray
         ? getAreaSettings(activeArray.area).systemVoltage
         : systemVoltage;
-    const smallScreenTab = activeTab === 'GUIDE' ? 'GUIDE' : 'SUMMARY';
 
     if (isSmallScreen) {
         return (
-            <div className="min-h-screen w-screen bg-slate-100 px-4 py-6">
-                <div className="mx-auto flex w-full max-w-3xl flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <h1 className="text-2xl font-semibold text-slate-900">Larger screen required</h1>
-                    <p className="mt-4 text-sm text-slate-600">
-                        Solar Selector currently works best on desktop or large tablet screens.
-                    </p>
-                    <p className="mt-2 text-sm text-slate-600">
-                        You can still review guidance and high-level system summary below.
-                    </p>
-                    <div className="mt-5 flex flex-wrap gap-2">
-                        <button
-                            type="button"
-                            className={`rounded-lg px-3 py-2 text-sm font-medium ${
-                                smallScreenTab === 'SUMMARY'
-                                    ? 'bg-slate-900 text-white'
-                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                            }`}
-                            onClick={() => setActiveTab('SUMMARY')}
-                        >
-                            Summary
-                        </button>
-                        <button
-                            type="button"
-                            className={`rounded-lg px-3 py-2 text-sm font-medium ${
-                                smallScreenTab === 'GUIDE'
-                                    ? 'bg-slate-900 text-white'
-                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                            }`}
-                            onClick={() => setActiveTab('GUIDE')}
-                        >
-                            Guide
-                        </button>
+            <div className="min-h-screen w-full bg-slate-100 px-4 py-6 pb-12">
+                <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+                        <SolarPearLogo className="mx-auto h-auto w-48 text-slate-900" />
+                        <h1 className="mt-5 text-xl font-semibold tracking-tight text-slate-900">
+                            Not optimised for small screens yet
+                        </h1>
+                        <p className="mt-3 text-left text-sm leading-relaxed text-slate-600 sm:text-center">
+                            Sorry for the inconvenience. Layout tools, databases, and the planner need a wider
+                            display. Please use a laptop or desktop, or enable your browser&apos;s{' '}
+                            <span className="font-semibold text-slate-800">Desktop site</span> /{' '}
+                            <span className="font-semibold text-slate-800">Request desktop website</span> option so
+                            this page can load the full layout.
+                        </p>
                     </div>
-                    <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                        {smallScreenTab === 'GUIDE' ? <Guide /> : <SummaryView />}
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+                        <Guide omitHero />
                     </div>
                 </div>
             </div>

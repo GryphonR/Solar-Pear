@@ -11,7 +11,18 @@ import {
     RotateCcw
 } from './Icons';
 
-const Guide = () => {
+/**
+ * @typedef {object} GuideProps
+ * @property {boolean} [omitHero] When true, skips the duplicate logo/tagline block (used when the parent already shows branding).
+ */
+
+/**
+ * Long-form onboarding and reference content for Solar Pear.
+ *
+ * @param {GuideProps} props
+ * @returns {import('react').ReactElement}
+ */
+const Guide = ({ omitHero = false }) => {
     return (
         <div className="max-w-4xl mx-auto space-y-10 py-10 px-4">
             <div className="flex items-center justify-center gap-2 rounded-xl bg-amber-50 border border-amber-200/80 py-2.5 px-4 text-amber-800 text-sm font-medium tracking-wide">
@@ -21,14 +32,15 @@ const Guide = () => {
                 <span>Solar Pear is in beta. Data and features may change. We welcome feedback.</span>
             </div>
 
-            {/* Hero */}
-            <header className="text-center space-y-5 pt-2">
-                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Quick guide</p>
-                <SolarPearLogo className="w-56 h-auto text-slate-900 mx-auto" />
-                <p className="text-lg text-slate-600 max-w-xl mx-auto leading-relaxed">
-                    Free roofspace, panel, and controller matching.
-                </p>
-            </header>
+            {!omitHero && (
+                <header className="text-center space-y-5 pt-2">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Quick guide</p>
+                    <SolarPearLogo className="w-56 h-auto text-slate-900 mx-auto" />
+                    <p className="text-lg text-slate-600 max-w-xl mx-auto leading-relaxed">
+                        Free roofspace, panel, and controller matching.
+                    </p>
+                </header>
+            )}
 
             <div className="bg-slate-50/80 border border-slate-200 rounded-xl p-5 flex items-start gap-4">
                 <div className="w-10 h-10 bg-slate-200/80 text-slate-600 rounded-lg flex items-center justify-center flex-shrink-0">

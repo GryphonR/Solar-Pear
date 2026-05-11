@@ -46,7 +46,9 @@ body {
 
 #root {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  /* Allow vertical scroll when small-screen gate content exceeds the viewport (body is overflow:hidden). */
+  overflow-y: auto;
 }
 
 /* Reserve space for uPlot legend so live values don't push content when wrapping to two lines */
