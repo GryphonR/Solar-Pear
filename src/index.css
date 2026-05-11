@@ -38,17 +38,27 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
+/**
+ * Viewport-height chain so #root can scroll: with only min-height on #root, the box grew with content and
+ * never overflowed, so overflow-y had nothing to scroll. Fixed height + overflow-y makes #root the scrollport.
+ */
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
   overflow: hidden;
 }
 
 #root {
   width: 100%;
-  min-height: 100vh;
-  /* Allow vertical scroll when small-screen gate content exceeds the viewport (body is overflow:hidden). */
+  height: 100%;
+  overflow-x: hidden;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Reserve space for uPlot legend so live values don't push content when wrapping to two lines */
