@@ -213,4 +213,50 @@ describe('ArrayPlanner quality fixes', () => {
             expect(tiltInput).toHaveValue(70);
         });
     });
+
+    it('toggles between layout selector and manually defined sizing modes', async () => {
+        const arraysData = [
+            makeArray('a1', {
+                roofInput: { mode: 'actual', x_m: 6, y_m: 4, projectedX_m: 6, projectedY_m: 4, tilt_deg: 30 },
+                roofPolygon: null,
+                roofPolygonAuto: true,
+                exclusions: [],
+                spacing: { edge_mm: 400, gap_mm: 25 },
+                options: { orientation: 'either' },
+                layoutOverride: { enabled: false },
+                lastResult: null,
+            }),
+        ];
+        render(
+            <ArrayPlanner
+                active={true}
+                arrayId="a1"
+                draftArrayData={null}
+                arraysData={arraysData}
+                panelsData={panelsData}
+                onHeaderChange={vi.fn()}
+                onApplyCandidateToDraft={vi.fn()}
+            />
+        );
+
+        // Layout selector is the default - manual fields are hidden
+        expect(getControlByLabelText(/^panel count$/i)).toBeNull();
+        expect(screen.getByText('Ranked layouts')).toBeTruthy();
+
+        fireEvent.click(screen.getByRole('radio', { name: /manually defined/i }));
+
+        await waitFor(() => {
+            expect(getControlByLabelText(/^panel count$/i)).toBeTruthy();
+        });
+        expect(screen.queryByText('Ranked layouts')).toBeNull();
+        expect(screen.getByRole('button', { name: /^apply array$/i })).toBeTruthy();
+
+        // Switching back restores the layout selector and hides manual fields
+        fireEvent.click(screen.getByRole('radio', { name: /layout selector/i }));
+
+        await waitFor(() => {
+            expect(getControlByLabelText(/^panel count$/i)).toBeNull();
+            expect(screen.getByText('Ranked layouts')).toBeTruthy();
+        });
+    });
 });

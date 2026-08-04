@@ -78,11 +78,127 @@ describe("App UI flows", () => {
             expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         });
 
+        // Exact match: the Guide also offers a shortcut to the summary, so a loose
+        // pattern would match both that and the sidebar button.
         await userEvent.click(
-            screen.getByRole("button", { name: /system summary/i })
+            screen.getByRole("button", { name: /^system summary$/i })
         );
         expect(
             screen.getByRole("heading", { name: /System Summary/i })
+        ).toBeInTheDocument();
+    });
+
+    it("Guide roof route opens the Layout tab of the seeded array", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
+        });
+
+        await userEvent.click(screen.getByRole("button", { name: /draw the roof/i }));
+
+        expect(screen.getByRole("heading", { name: /^Array 1$/i })).toBeInTheDocument();
+        // The planner stays mounted while hidden, so assert the Layout tab is the selected one
+        // rather than merely that planner markup exists.
+        expect(screen.getByRole("button", { name: /^Layout$/ })).toHaveClass("border-blue-600");
+    });
+
+    it("Guide panel route opens the Panel Selector tab of the seeded array", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
+        });
+
+        await userEvent.click(screen.getByRole("button", { name: /choose a panel/i }));
+
+        expect(
+            screen.getByRole("heading", { name: /Compatible Panels Explorer/i })
+        ).toBeInTheDocument();
+    });
+
+    it("Guide controller route opens the Controller Selector tab of the seeded array", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
+        });
+
+        await userEvent.click(screen.getByRole("button", { name: /choose a controller/i }));
+
+        expect(
+            screen.getByRole("heading", { name: /Add New PV Controller from Database/i })
+        ).toBeInTheDocument();
+    });
+
+    it("Guide progress pills show panel and controller outstanding on a fresh project", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
+        });
+
+        // Nothing is selected on a fresh project, so the pills carry no chosen-item detail.
+        expect(screen.getByRole("button", { name: /^Panel$/i })).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /^Controller$/i })).toBeInTheDocument();
+    });
+
+    it("navigates from the sidebar to the Guide to Panels page", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
+        });
+
+        await userEvent.click(screen.getByRole("button", { name: /^Guide to Panels$/i }));
+
+        expect(
+            screen.getByRole("heading", { name: /^Guide to panels$/i })
+        ).toBeInTheDocument();
+        // Each cell architecture the page explains should have its own card.
+        for (const tech of [/^PERC$/, /^TOPCon$/, /^HJT$/, /^Back-contact$/]) {
+            expect(screen.getByRole("heading", { name: tech })).toBeInTheDocument();
+        }
+        // Doping alone is not an architecture, so it must not appear as a group.
+        expect(
+            screen.queryByRole("heading", { name: /architecture unspecified/i })
+        ).not.toBeInTheDocument();
+        // Panel-adjacent topics the page also covers.
+        for (const topic of [
+            /Why you might want thicker or thinner glass/i,
+            /Optimisers and module-level electronics/i,
+        ]) {
+            expect(screen.getByRole("heading", { name: topic })).toBeInTheDocument();
+        }
+    });
+
+    it("navigates from the sidebar to the Guide to Controllers page", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
+        });
+
+        await userEvent.click(screen.getByRole("button", { name: /^Guide to Controllers$/i }));
+
+        expect(
+            screen.getByRole("heading", { name: /^Guide to controllers$/i })
+        ).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: /PWM and MPPT/i })).toBeInTheDocument();
+    });
+
+    it("reaches the panels guide from the main Guide page and back again", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
+        });
+
+        // The launchpad card and the sidebar entry share a name, so scope to the card's wording.
+        await userEvent.click(
+            screen.getByRole("button", { name: /Guide to panels Mono and poly/i })
+        );
+        expect(screen.getByRole("heading", { name: /^Guide to panels$/i })).toBeInTheDocument();
+
+        // And the page offers a route back to the compatibility explainer.
+        await userEvent.click(
+            screen.getByRole("button", { name: /See the three compatibility checks/i })
+        );
+        expect(
+            screen.getByRole("heading", { name: /The three checks that decide compatibility/i })
         ).toBeInTheDocument();
     });
 

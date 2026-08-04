@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
+import { safeHttpUrl } from '../../lib/safeUrl';
 
 export default function AddChargerModal({ open, data = {}, existingIds = [], onClose, onSave, onUpdateField }) {
     const d = data;
@@ -31,7 +32,16 @@ export default function AddChargerModal({ open, data = {}, existingIds = [], onC
             setError(`A controller with Model ID "${chargerId}" already exists. Please choose a different Model ID.`);
             return;
         }
-        onSave(d);
+        const rawUrl = (d.datasheetUrl || '').trim();
+        if (rawUrl && !safeHttpUrl(rawUrl)) {
+            setError('Datasheet URL must be a valid http(s) link.');
+            return;
+        }
+        onSave({
+            ...d,
+            id: chargerId,
+            datasheetUrl: rawUrl ? safeHttpUrl(rawUrl) : '',
+        });
         onClose();
     };
 
@@ -54,9 +64,9 @@ export default function AddChargerModal({ open, data = {}, existingIds = [], onC
         >
             <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                    <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Manufacturer</label><input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.manufacturer} onChange={(e) => update('manufacturer', e.target.value)} /></div>
-                    <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Device Name</label><input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.name} onChange={(e) => update('name', e.target.value)} /></div>
-                    <div><label htmlFor="add-charger-id" className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Model ID (Unique)</label><input id="add-charger-id" type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.id} onChange={(e) => update('id', e.target.value)} /></div>
+                    <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Manufacturer</label><input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.manufacturer ?? ''} onChange={(e) => update('manufacturer', e.target.value)} /></div>
+                    <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Device Name</label><input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.name ?? ''} onChange={(e) => update('name', e.target.value)} /></div>
+                    <div><label htmlFor="add-charger-id" className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Model ID (Unique)</label><input id="add-charger-id" type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.id ?? ''} onChange={(e) => update('id', e.target.value)} /></div>
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Device Type</label>
                         <select className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.type} onChange={(e) => update('type', e.target.value)}>
@@ -84,8 +94,8 @@ export default function AddChargerModal({ open, data = {}, existingIds = [], onC
                     <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Number of Trackers</label><input type="number" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.trackers} onChange={(e) => update('trackers', parseInt(e.target.value) || 1)} /></div>
                     <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Price (£)</label><input type="number" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.price} onChange={(e) => update('price', parseInt(e.target.value) || 0)} /></div>
                 </div>
-                <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Engineering Notes</label><textarea className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.notes} onChange={(e) => update('notes', e.target.value)} /></div>
-                <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Datasheet URL</label><input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.datasheetUrl} onChange={(e) => update('datasheetUrl', e.target.value)} /></div>
+                <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Engineering Notes</label><textarea className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.notes ?? ''} onChange={(e) => update('notes', e.target.value)} /></div>
+                <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Datasheet URL</label><input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.datasheetUrl ?? ''} onChange={(e) => update('datasheetUrl', e.target.value)} /></div>
             </div>
         </Modal>
     );

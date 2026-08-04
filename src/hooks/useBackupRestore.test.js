@@ -211,46 +211,77 @@ describe('applyBackupData', () => {
         ]);
     });
 
-    it('derives per-area settings from legacy global filter fields when areaSettingsByArea is absent', () => {
-        const captured = {};
+    it('rejects non-array panelsData with a warning and strips malicious buyLinks', () => {
+        let panels = null;
         const setters = {
             setAreasData: () => {},
             setArraysData: () => {},
-            setPanelsData: () => {},
+            setPanelsData: (v) => {
+                panels = v;
+            },
             setChargersData: () => {},
             setSiteControllers: () => {},
-            setAreaSettingsByArea: (v) => {
-                captured.areaSettingsByArea = v;
-            },
+            setAreaSettingsByArea: () => {},
             setSystemVoltage: () => {},
             setHiddenChargerMfr: () => {},
             setHideHeavyPanels: () => {},
             setHideMarginalPanels: () => {},
             setUserNotes: () => {},
         };
-        applyBackupData(
+        const { warnings } = applyBackupData(
             {
-                areasData: ['House', 'Garage'],
-                systemVoltage: 48,
-                systemType: 'grid-connected',
-                filterEps: true,
-                filterHouseBackup: true,
+                panelsData: [
+                    {
+                        model: 'P1',
+                        name: 'Ok',
+                        datasheetUrl: 'javascript:alert(1)',
+                        buyLinks: [{ Supplier: 'Bad', URL: 'javascript:evil()' }, { Supplier: 'Good', URL: 'https://example.com/buy' }],
+                    },
+                ],
             },
             setters
         );
-        expect(captured.areaSettingsByArea).toEqual({
-            House: {
-                systemVoltage: 48,
-                systemType: 'grid-connected',
-                filterEps: true,
-                filterHouseBackup: true,
+        expect(panels[0].datasheetUrl).toBe('');
+        expect(panels[0].buyLinks).toHaveLength(1);
+        expect(panels[0].buyLinks[0].URL).toMatch(/^https:\/\/example\.com/);
+        expect(warnings).toEqual([]);
+    });
+
+    it('throws when root is not an object', () => {
+        const setters = {
+            setAreasData: () => {},
+            setArraysData: () => {},
+            setPanelsData: () => {},
+            setChargersData: () => {},
+            setSiteControllers: () => {},
+            setAreaSettingsByArea: () => {},
+            setSystemVoltage: () => {},
+            setHiddenChargerMfr: () => {},
+            setHideHeavyPanels: () => {},
+            setHideMarginalPanels: () => {},
+            setUserNotes: () => {},
+        };
+        expect(() => applyBackupData([], setters)).toThrow(/JSON object/);
+    });
+
+    it('applies empty userNotes when key is present', () => {
+        let notes = 'unset';
+        const setters = {
+            setAreasData: () => {},
+            setArraysData: () => {},
+            setPanelsData: () => {},
+            setChargersData: () => {},
+            setSiteControllers: () => {},
+            setAreaSettingsByArea: () => {},
+            setSystemVoltage: () => {},
+            setHiddenChargerMfr: () => {},
+            setHideHeavyPanels: () => {},
+            setHideMarginalPanels: () => {},
+            setUserNotes: (v) => {
+                notes = v;
             },
-            Garage: {
-                systemVoltage: 48,
-                systemType: 'grid-connected',
-                filterEps: true,
-                filterHouseBackup: true,
-            },
-        });
+        };
+        applyBackupData({ userNotes: {} }, setters);
+        expect(notes).toEqual({});
     });
 });

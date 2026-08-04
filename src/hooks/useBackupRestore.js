@@ -1,4 +1,5 @@
 import { useAppState } from '../context/AppStateContext';
+import { validateBackupPayload } from '../lib/backupValidation';
 
 /** Backup file schema version for export/import. */
 export const BACKUP_SCHEMA_VERSION = 4;
@@ -27,8 +28,9 @@ export function buildBackupPayload(state) {
 /**
  * Applies imported backup data to setters. Uses !== undefined so falsy values (0, false, null) are restored.
  * Does not call setNotification; caller handles success/error.
- * @param {object} imported - Parsed backup JSON
+ * @param {object} imported - Parsed backup JSON (already validated/sanitized)
  * @param {object} setters - Map of setter functions
+ * @returns {{ warnings: string[] }}
  */
 export function applyBackupData(imported, setters) {
     const {
@@ -44,12 +46,20 @@ export function applyBackupData(imported, setters) {
         setHideMarginalPanels,
         setUserNotes,
     } = setters;
-    if (imported.areasData) setAreasData(imported.areasData);
-    if (imported.arraysData) {
-        const legacySelections = imported.selections;
+
+    const validated = validateBackupPayload(imported);
+    if (!validated.ok) {
+        throw new Error(validated.error);
+    }
+    const data = validated.data;
+    const warnings = validated.warnings || [];
+
+    if (data.areasData) setAreasData(data.areasData);
+    if (data.arraysData) {
+        const legacySelections = data.selections;
         const arraysMerged =
             legacySelections && typeof legacySelections === 'object'
-                ? imported.arraysData.map((a) => {
+                ? data.arraysData.map((a) => {
                       const legacySel = legacySelections?.[a.id] || {};
                       return {
                           ...a,
@@ -67,32 +77,35 @@ export function applyBackupData(imported, setters) {
                           controller: legacySel.controller ?? a.controller ?? '',
                       };
                   })
-                : imported.arraysData;
+                : data.arraysData;
         setArraysData(arraysMerged);
     }
-    if (imported.panelsData) setPanelsData(imported.panelsData);
-    if (imported.chargersData) setChargersData(imported.chargersData);
-    if (imported.siteControllers) setSiteControllers(imported.siteControllers);
-    if (imported.areaSettingsByArea !== undefined) {
-        setAreaSettingsByArea(imported.areaSettingsByArea);
-    } else if (imported.areasData) {
+    if (data.panelsData) setPanelsData(data.panelsData);
+    if (data.chargersData) setChargersData(data.chargersData);
+    if (data.siteControllers) setSiteControllers(data.siteControllers);
+    if (data.areaSettingsByArea !== undefined) {
+        setAreaSettingsByArea(data.areaSettingsByArea);
+    } else if (data.areasData) {
         const fallbackSettings = {
-            systemVoltage: imported.systemVoltage !== undefined ? imported.systemVoltage : null,
-            systemType: imported.systemType || 'any',
-            filterEps: !!imported.filterEps,
-            filterHouseBackup: !!imported.filterHouseBackup,
+            systemVoltage: data.systemVoltage !== undefined ? data.systemVoltage : null,
+            systemType: data.systemType || 'any',
+            filterEps: !!data.filterEps,
+            filterHouseBackup: !!data.filterHouseBackup,
         };
-        const generated = imported.areasData.reduce((acc, area) => {
+        const generated = data.areasData.reduce((acc, area) => {
             acc[area] = { ...fallbackSettings };
             return acc;
         }, {});
         setAreaSettingsByArea(generated);
     }
-    if (imported.systemVoltage !== undefined) setSystemVoltage(imported.systemVoltage);
-    if (imported.hiddenChargerMfr !== undefined) setHiddenChargerMfr(imported.hiddenChargerMfr);
-    if (imported.hideHeavyPanels !== undefined) setHideHeavyPanels(imported.hideHeavyPanels);
-    if (imported.hideMarginalPanels !== undefined) setHideMarginalPanels(imported.hideMarginalPanels);
-    if (imported.userNotes) setUserNotes(imported.userNotes);
+    if (data.systemVoltage !== undefined) setSystemVoltage(data.systemVoltage);
+    if (data.hiddenChargerMfr !== undefined) setHiddenChargerMfr(data.hiddenChargerMfr);
+    if (data.hideHeavyPanels !== undefined) setHideHeavyPanels(data.hideHeavyPanels);
+    if (data.hideMarginalPanels !== undefined) setHideMarginalPanels(data.hideMarginalPanels);
+    // Apply even empty notes object (use !== undefined, not truthiness)
+    if (data.userNotes !== undefined) setUserNotes(data.userNotes);
+
+    return { warnings };
 }
 
 /**
@@ -174,7 +187,7 @@ export function useBackupRestore() {
                                 'warning'
                             );
                         }
-                        applyBackupData(imported, {
+                        const { warnings } = applyBackupData(imported, {
                             setAreasData,
                             setArraysData,
                             setPanelsData,
@@ -187,12 +200,22 @@ export function useBackupRestore() {
                             setHideMarginalPanels,
                             setUserNotes,
                         });
-                        setNotification(
-                            'Backup loaded successfully! You may need to refresh the page to see all changes.',
-                            'success'
-                        );
+                        if (warnings.length > 0) {
+                            setNotification(
+                                `Backup loaded with warnings: ${warnings.join(' ')}`,
+                                'warning'
+                            );
+                        } else {
+                            setNotification(
+                                'Backup loaded successfully! You may need to refresh the page to see all changes.',
+                                'success'
+                            );
+                        }
                     } catch (err) {
-                        setNotification('Failed to parse the backup JSON file.', 'error');
+                        setNotification(
+                            err?.message || 'Failed to parse or validate the backup JSON file.',
+                            'error'
+                        );
                     }
                 };
                 reader.readAsText(file);

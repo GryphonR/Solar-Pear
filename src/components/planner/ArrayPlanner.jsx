@@ -12,6 +12,7 @@ import { computePlannerLayouts, dropSmallestPanelsByFootprint } from '../../lib/
 import { useAppState } from '../../context/AppStateContext';
 import {
     bestParallelStringsForController,
+    clampParallelStrings,
     formatWiringLabel,
     getEffectiveMaxPanelWeightKg,
     isCompatibleFormat,
@@ -432,6 +433,64 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         setNotification,
     ]);
 
+    /** Draft values for Manually defined mode - committed with Apply Array. */
+    const [manualDraft, setManualDraft] = useState({
+        count: '',
+        maxPanelHeight: '',
+        maxPanelWidth: '',
+        maxPanelWeight: '',
+    });
+
+    const layoutOverrideEnabled = planner.layoutOverride?.enabled === true;
+
+    // Rehydrate manual fields when entering Manually defined mode or switching arrays
+    useEffect(() => {
+        if (!layoutOverrideEnabled || !array) return;
+        setManualDraft({
+            count: array.count ?? '',
+            maxPanelHeight: array.maxPanelHeight || '',
+            maxPanelWidth: array.maxPanelWidth || '',
+            maxPanelWeight: array.maxPanelWeight ?? '',
+        });
+    }, [layoutOverrideEnabled, arrayId]); // eslint-disable-line react-hooks/exhaustive-deps -- sync on mode/array switch only
+
+    const handleApplyManualValues = useCallback(() => {
+        if (!arrayId || !array) return;
+
+        const nextCount = parseInt(manualDraft.count, 10) || 0;
+        const nextParallel = clampParallelStrings(nextCount, array.parallelStrings || 1);
+        const nextMaxHeight =
+            manualDraft.maxPanelHeight === '' || manualDraft.maxPanelHeight == null
+                ? ''
+                : parseInt(manualDraft.maxPanelHeight, 10) || '';
+        const nextMaxWidth =
+            manualDraft.maxPanelWidth === '' || manualDraft.maxPanelWidth == null
+                ? ''
+                : parseInt(manualDraft.maxPanelWidth, 10) || '';
+        const nextMaxWeight =
+            manualDraft.maxPanelWeight === '' || manualDraft.maxPanelWeight == null
+                ? ''
+                : parseFloat(manualDraft.maxPanelWeight);
+
+        updateArray(arrayId, {
+            count: nextCount,
+            parallelStrings: nextParallel,
+            maxPanelHeight: nextMaxHeight,
+            maxPanelWidth: nextMaxWidth,
+            maxPanelWeight: nextMaxWeight,
+        });
+        savePlannerToArray(arrayId, planner);
+        setNotification('Array updated with manual values. Planner settings saved.', 'success');
+    }, [
+        arrayId,
+        array,
+        manualDraft,
+        updateArray,
+        savePlannerToArray,
+        planner,
+        setNotification,
+    ]);
+
     useImperativeHandle(
         ref,
         () => ({
@@ -532,7 +591,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         return (
             <div className="min-w-0">
                 <div className="text-sm font-bold text-slate-800 truncate">
-                    Planner{array ? ` — ${array.name}` : draftArrayData?.name ? ` — ${draftArrayData.name}` : ''}
+                    Planner{array ? ` - ${array.name}` : draftArrayData?.name ? ` - ${draftArrayData.name}` : ''}
                 </div>
                 <div className="text-xs text-slate-500">
                     Roof (true) X: {Number(trueX_m || 0).toFixed(2)}m · Roof (true) Y:{' '}
@@ -546,8 +605,6 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         planner.options?.orientation === 'landscape' || planner.options?.orientation === 'portrait'
             ? planner.options.orientation
             : 'either';
-
-    const layoutOverrideEnabled = planner.layoutOverride?.enabled === true;
 
     useEffect(() => {
         onHeaderChange?.(header);
@@ -881,6 +938,89 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
     return (
         <>
             <div className="space-y-4">
+                {arrayId && array ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3" role="radiogroup" aria-label="Sizing mode">
+                        <button
+                            type="button"
+                            role="radio"
+                            aria-checked={!layoutOverrideEnabled}
+                            onClick={() =>
+                                updatePlanner({
+                                    layoutOverride: {
+                                        ...(planner.layoutOverride || DEFAULT_PLANNER.layoutOverride),
+                                        enabled: false,
+                                    },
+                                })
+                            }
+                            className={`text-left rounded-xl border p-4 transition-all ${
+                                !layoutOverrideEnabled
+                                    ? 'border-emerald-400 bg-emerald-50/80 ring-1 ring-emerald-200'
+                                    : 'border-slate-200 bg-slate-50/70 opacity-50 hover:opacity-75'
+                            }`}
+                        >
+                            <div className="flex items-start gap-3">
+                                <span
+                                    className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
+                                        !layoutOverrideEnabled ? 'border-emerald-600' : 'border-slate-300'
+                                    }`}
+                                    aria-hidden="true"
+                                >
+                                    {!layoutOverrideEnabled ? (
+                                        <span className="h-2 w-2 rounded-full bg-emerald-600" />
+                                    ) : null}
+                                </span>
+                                <div className="min-w-0">
+                                    <div className="text-sm font-semibold text-slate-800">Layout selector</div>
+                                    <p className="text-xs text-slate-600 mt-1 leading-snug">
+                                        Use the roof tools and ranked layouts below. Apply Array sets panel, count, and max
+                                        dimensions from the layout you preview.
+                                    </p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button
+                            type="button"
+                            role="radio"
+                            aria-checked={layoutOverrideEnabled}
+                            onClick={() =>
+                                updatePlanner({
+                                    layoutOverride: {
+                                        ...(planner.layoutOverride || DEFAULT_PLANNER.layoutOverride),
+                                        enabled: true,
+                                    },
+                                })
+                            }
+                            className={`text-left rounded-xl border p-4 transition-all ${
+                                layoutOverrideEnabled
+                                    ? 'border-emerald-400 bg-emerald-50/80 ring-1 ring-emerald-200'
+                                    : 'border-slate-200 bg-slate-50/70 opacity-50 hover:opacity-75'
+                            }`}
+                        >
+                            <div className="flex items-start gap-3">
+                                <span
+                                    className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
+                                        layoutOverrideEnabled ? 'border-emerald-600' : 'border-slate-300'
+                                    }`}
+                                    aria-hidden="true"
+                                >
+                                    {layoutOverrideEnabled ? (
+                                        <span className="h-2 w-2 rounded-full bg-emerald-600" />
+                                    ) : null}
+                                </span>
+                                <div className="min-w-0">
+                                    <div className="text-sm font-semibold text-slate-800">Manually defined</div>
+                                    <p className="text-xs text-slate-600 mt-1 leading-snug">
+                                        Set panel count and max dimensions below, then Apply Array.
+                                    </p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                ) : null}
+
+                {(!arrayId || !layoutOverrideEnabled) ? (
+                <div className="space-y-4 rounded-xl border border-emerald-200 bg-white p-3 sm:p-4 shadow-sm">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                     <div className="min-w-0 w-full">
                         <style>{`
@@ -1458,7 +1598,7 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                             Cursor: x {mousePos.x.toFixed(2)}m, y {mousePos.y.toFixed(2)}m
                                         </>
                                     ) : (
-                                        'Cursor: —'
+                                        'Cursor:  - '
                                     )}
                                 </div>
                             </div>
@@ -1475,7 +1615,10 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
 
                     <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col min-h-[60vh]">
                         <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
-                            <div className="text-sm font-semibold text-slate-800">Layout Selection</div>
+                            <div className="text-sm font-semibold text-slate-800">Ranked layouts</div>
+                            <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                                Click to preview on the roof only - use Apply Array to update panel, count, and wiring.
+                            </p>
                         </div>
 
                         <div className="p-4 space-y-4 flex-1 flex flex-col min-h-0">
@@ -1488,7 +1631,10 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                     value={orientationSelectValue}
                                     onChange={(e) =>
                                         updatePlanner({
-                                            options: { ...(planner.options || DEFAULT_PLANNER.options), orientation: e.target.value },
+                                            options: {
+                                                ...(planner.options || DEFAULT_PLANNER.options),
+                                                orientation: e.target.value,
+                                            },
                                         })
                                     }
                                 >
@@ -1503,7 +1649,9 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                     className={`rounded-lg border border-slate-100 bg-slate-50/50 px-3 py-2.5 space-y-1.5 ${!controllerForArray ? 'opacity-60' : ''}`}
                                 >
                                     <label
-                                        className={`flex items-start gap-2 select-none ${controllerForArray ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                                        className={`flex items-start gap-2 select-none ${
+                                            controllerForArray ? 'cursor-pointer' : 'cursor-not-allowed'
+                                        }`}
                                     >
                                         <input
                                             type="checkbox"
@@ -1515,11 +1663,13 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                             }}
                                         />
                                         <span className="text-sm text-slate-700 leading-snug">
-                                            <span className="font-medium text-slate-800">Filter by controller compatibility</span>
+                                            <span className="font-medium text-slate-800">
+                                                Filter by controller compatibility
+                                            </span>
                                             <span className="block text-xs text-slate-500 mt-0.5">
-                                                Voc, Vmp, and Isc for each layout: any valid wiring (divisors of panel count) is
-                                                tried; the suggested label is the option with the most panels in series per string
-                                                that still fits the controller.
+                                                Voc, Vmp, and Isc for each layout: any valid wiring (divisors of panel
+                                                count) is tried; the suggested label is the option with the most panels
+                                                in series per string that still fits the controller.
                                             </span>
                                         </span>
                                     </label>
@@ -1535,17 +1685,13 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                 <div className="flex items-start justify-between gap-3 mb-2">
                                     <div className="min-w-0">
                                         <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                                            Ranked layouts
+                                            Results
                                         </div>
-                                        <p className="text-[11px] text-slate-400 mt-0.5 font-normal normal-case leading-snug">
-                                            Click to preview on the roof only — use Apply Array to update panel, count, and
-                                            wiring.
-                                        </p>
                                     </div>
                                     <div className="text-xs text-slate-400 shrink-0 text-right">
                                         {layoutGroups.length
                                             ? `${layoutGroups.length} layout${layoutGroups.length !== 1 ? 's' : ''} · ${visibleRanked.length} grid variants`
-                                            : '—'}
+                                            : '-'}
                                     </div>
                                 </div>
                                 <div className="flex items-end justify-end border-b border-slate-200 pb-2 mb-3">
@@ -1563,8 +1709,8 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                         <div className="text-sm text-slate-500 italic">No computed results yet.</div>
                                     ) : visibleRanked.length === 0 ? (
                                         <div className="text-sm text-slate-500 italic">
-                                            No layouts match the controller filter. Turn off the filter or choose a different
-                                            controller.
+                                            No layouts match the controller filter. Turn off the filter or choose a
+                                            different controller.
                                         </div>
                                     ) : (
                                         <div className="space-y-2">
@@ -1577,16 +1723,20 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                                         if (typeof idx === 'number') setActiveResultIndex(idx);
                                                     }}
                                                     className={`w-full text-left p-3 rounded border transition-colors ${
-                                                        typeof g.bestResultIndex === 'number' && g.bestResultIndex === activeResultIndex
+                                                        typeof g.bestResultIndex === 'number' &&
+                                                        g.bestResultIndex === activeResultIndex
                                                             ? 'border-emerald-300 bg-emerald-50'
                                                             : 'border-slate-200 bg-white hover:bg-slate-50'
                                                     }`}
                                                 >
                                                     <div className="flex items-center justify-between">
                                                         <div className="text-sm font-semibold text-slate-800">
-                                                            {g.count} panels · {g.rows ?? '?'}×{g.cols ?? '?'} · {g.orientation}
+                                                            {g.count} panels · {g.rows ?? '?'}×{g.cols ?? '?'} ·{' '}
+                                                            {g.orientation}
                                                         </div>
-                                                        <div className="text-sm font-bold text-slate-900">{g.bestTotalW}W</div>
+                                                        <div className="text-sm font-bold text-slate-900">
+                                                            {g.bestTotalW}W
+                                                        </div>
                                                     </div>
                                                     <div className="text-xs text-slate-600 mt-1 space-y-0.5">
                                                         <div>
@@ -1647,7 +1797,9 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                                                 step="0.1"
                                                                 className="w-full p-2 border border-slate-300 rounded text-sm"
                                                                 value={r[k]}
-                                                                onChange={(e) => updateExclusion(r.id, { [k]: Number(e.target.value) })}
+                                                                onChange={(e) =>
+                                                                    updateExclusion(r.id, { [k]: Number(e.target.value) })
+                                                                }
                                                             />
                                                         </div>
                                                     ))}
@@ -1660,32 +1812,27 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                         </div>
                     </div>
                 </div>
+                </div>
+                ) : null}
 
-                {arrayId && array ? (
-                    <div className="rounded-xl border border-amber-200/80 bg-amber-50/50 p-4 shadow-sm">
-                        <h3 className="text-sm font-semibold text-slate-800">Override layout selection</h3>
-                        <p className="text-xs text-slate-600 mt-1 mb-3">
-                            When enabled, choosing a ranked layout updates only the <strong>panel model</strong>. Panel count and
-                            max dimensions stay as you set them here (max weight is never overwritten by the layout tool).
-                        </p>
-                        <label className="flex items-start gap-2 cursor-pointer select-none mb-4">
-                            <input
-                                type="checkbox"
-                                className="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
-                                checked={layoutOverrideEnabled}
-                                onChange={(e) =>
-                                    updatePlanner({
-                                        layoutOverride: {
-                                            ...(planner.layoutOverride || DEFAULT_PLANNER.layoutOverride),
-                                            enabled: e.target.checked,
-                                        },
-                                    })
-                                }
-                            />
-                            <span className="text-sm text-slate-800 font-medium">
-                                Manual override — do not apply count or max dimensions from layout
-                            </span>
-                        </label>
+                {arrayId && array && layoutOverrideEnabled ? (
+                    <div className="rounded-xl border border-emerald-200 bg-white p-4 shadow-sm">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-3">
+                            <div className="min-w-0">
+                                <div className="text-sm font-semibold text-slate-800">Manual values</div>
+                                <p className="text-xs text-slate-500 mt-0.5">
+                                    Edit count and max dimensions, then Apply Array. Max weight is never overwritten by
+                                    the layout tool.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleApplyManualValues}
+                                className="h-[2.125rem] shrink-0 px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 font-medium transition-colors shadow-sm text-sm whitespace-nowrap"
+                            >
+                                Apply Array
+                            </button>
+                        </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                             <div>
                                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
@@ -1695,27 +1842,27 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                     type="number"
                                     min="0"
                                     step="1"
-                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-                                    value={array.count ?? ''}
+                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+                                    value={manualDraft.count}
                                     onChange={(e) =>
-                                        updateArray(arrayId, 'count', parseInt(e.target.value, 10) || 0)
+                                        setManualDraft((prev) => ({ ...prev, count: e.target.value }))
                                     }
                                 />
                             </div>
                             <div>
                                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                                    Max length (mm)
+                                    Max height (mm)
                                 </label>
                                 <input
                                     type="number"
                                     min="0"
                                     step="1"
-                                    placeholder="Height in DB"
-                                    title="Maximum panel length — compared to panel height (portrait module)"
-                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-                                    value={array.maxPanelHeight || ''}
+                                    placeholder="Height in mm"
+                                    title="Maximum panel height (mm)"
+                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+                                    value={manualDraft.maxPanelHeight}
                                     onChange={(e) =>
-                                        updateArray(arrayId, 'maxPanelHeight', parseInt(e.target.value, 10) || '')
+                                        setManualDraft((prev) => ({ ...prev, maxPanelHeight: e.target.value }))
                                     }
                                 />
                             </div>
@@ -1727,12 +1874,12 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                     type="number"
                                     min="0"
                                     step="1"
-                                    placeholder="Width in DB"
-                                    title="Maximum panel width — compared to panel width (portrait module)"
-                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-                                    value={array.maxPanelWidth || ''}
+                                    placeholder="Width in mm"
+                                    title="Maximum panel width (mm)"
+                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+                                    value={manualDraft.maxPanelWidth}
                                     onChange={(e) =>
-                                        updateArray(arrayId, 'maxPanelWidth', parseInt(e.target.value, 10) || '')
+                                        setManualDraft((prev) => ({ ...prev, maxPanelWidth: e.target.value }))
                                     }
                                 />
                             </div>
@@ -1744,14 +1891,10 @@ Projected XY + Tilt - this is the top down dimensions of your roof in X and Y, a
                                     type="number"
                                     min="0"
                                     step="0.1"
-                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-amber-500 outline-none"
-                                    value={array.maxPanelWeight ?? ''}
+                                    className="w-full p-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+                                    value={manualDraft.maxPanelWeight}
                                     onChange={(e) =>
-                                        updateArray(
-                                            arrayId,
-                                            'maxPanelWeight',
-                                            e.target.value === '' ? '' : parseFloat(e.target.value)
-                                        )
+                                        setManualDraft((prev) => ({ ...prev, maxPanelWeight: e.target.value }))
                                     }
                                 />
                             </div>

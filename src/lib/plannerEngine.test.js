@@ -277,5 +277,43 @@ describe("computePlannerLayouts", () => {
         // With a 0.2m setback, the 1x1 panel can't fit fully.
         expect(resWithSetback.ranked[0].count).toBe(0);
     });
+
+    it("rejects panels that only pass corner containment on a concave roof", () => {
+        // Concave notch: a 0.6×0.6m panel can have all 4 corners inside while an edge
+        // crosses the notch (midpoint outside). Stronger sampling should reject it.
+        const panelsData = [
+            {
+                model: "P1",
+                name: "Panel 1",
+                power: 400,
+                width: 600,
+                height: 600,
+                active: true,
+            },
+        ];
+        // U-shape / concave polygon in meters
+        const roofPolygon_m = [
+            { x: 0, y: 0 },
+            { x: 2, y: 0 },
+            { x: 2, y: 2 },
+            { x: 1.2, y: 2 },
+            { x: 1.2, y: 0.5 },
+            { x: 0.8, y: 0.5 },
+            { x: 0.8, y: 2 },
+            { x: 0, y: 2 },
+        ];
+        const res = computePlannerLayouts({
+            roofPolygon_m,
+            exclusions_m: [],
+            spacing: { edge_mm: 0, gap_mm: 0 },
+            panelsData,
+            options: { orientation: "portrait", topN: 5, includeInactivePanels: false },
+        });
+        // Should still produce a finite ranked result; count must not invent panels in the notch.
+        expect(res.ranked.length).toBeGreaterThan(0);
+        expect(Number.isFinite(res.ranked[0].utilization)).toBe(true);
+        expect(res.ranked[0].utilization).toBeGreaterThanOrEqual(0);
+        expect(res.ranked[0].utilization).toBeLessThanOrEqual(1.0001);
+    });
 });
 

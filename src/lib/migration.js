@@ -14,6 +14,7 @@ export function migrateArrays(savedArraysJson, initialArrays) {
     if (!savedArraysJson) return initialArrays;
     try {
         const parsed = JSON.parse(savedArraysJson);
+        if (!Array.isArray(parsed)) return initialArrays;
         return parsed.map((a) => ({
             ...a,
             format: a.format || "Portrait",
@@ -67,12 +68,24 @@ export function migrateSelectionsAndSiteControllers({
     initialChargers,
 }) {
     let selections = initialSelections;
-    let siteControllers = savedSiteControllersJson
-        ? JSON.parse(savedSiteControllersJson)
-        : [];
+    let siteControllers = [];
+    if (savedSiteControllersJson) {
+        try {
+            const parsed = JSON.parse(savedSiteControllersJson);
+            siteControllers = Array.isArray(parsed) ? parsed : [];
+        } catch {
+            siteControllers = [];
+        }
+    }
 
     if (savedSelectionsJson) {
-        const parsed = JSON.parse(savedSelectionsJson);
+        let parsed;
+        try {
+            parsed = JSON.parse(savedSelectionsJson);
+        } catch {
+            parsed = null;
+        }
+        if (parsed && typeof parsed === "object") {
         let migratedSelections = {};
         let generatedInstances = [];
         let instancesByModel = {};
@@ -85,28 +98,36 @@ export function migrateSelectionsAndSiteControllers({
                 !sel.controllerInstanceId
             ) {
                 const modelId = sel.controller;
-                if (!instancesByModel[modelId]) {
-                    const model =
-                        initialChargers.find((c) => c.id === modelId) || {
-                            name: "Migrated Controller",
-                            manufacturer: "Unknown",
-                        };
-                    instancesByModel[modelId] = {
-                        instance: {
-                            id: `inst_${modelId}_${Date.now()}_${Math.random()
-                                .toString(36)
-                                .substr(2, 5)}`,
-                            modelId: modelId,
-                            name: `${
-                                model.manufacturer ? model.manufacturer + " " : ""
-                            }${model.name}`,
-                        },
-                        mpptCount: 1,
+                const model =
+                    initialChargers.find((c) => c.id === modelId) || {
+                        name: "Migrated Controller",
+                        manufacturer: "Unknown",
+                        trackers: 1,
                     };
-                    generatedInstances.push(instancesByModel[modelId].instance);
-                } else {
-                    instancesByModel[modelId].mpptCount++;
+                const trackerCap = Math.max(1, Number(model.trackers) || 1);
+
+                // Cap MPPT index at model.trackers; spawn a new physical instance when full.
+                if (
+                    !instancesByModel[modelId] ||
+                    instancesByModel[modelId].mpptCount >= trackerCap
+                ) {
+                    const instance = {
+                        id: `inst_${modelId}_${Date.now()}_${Math.random()
+                            .toString(36)
+                            .substr(2, 5)}`,
+                        modelId: modelId,
+                        name: `${
+                            model.manufacturer ? model.manufacturer + " " : ""
+                        }${model.name}`,
+                    };
+                    instancesByModel[modelId] = {
+                        instance,
+                        mpptCount: 0,
+                    };
+                    generatedInstances.push(instance);
                 }
+
+                instancesByModel[modelId].mpptCount++;
 
                 migratedSelections[arrId] = {
                     panel: sel.panel,
@@ -123,15 +144,28 @@ export function migrateSelectionsAndSiteControllers({
         if (generatedInstances.length > 0) {
             siteControllers = [...siteControllers, ...generatedInstances];
         }
+        }
     }
 
     if (siteControllers.length > 0) {
-        const currentArrays = savedArraysJson
-            ? JSON.parse(savedArraysJson)
-            : initialArrays;
-        const currentSelections = savedSelectionsJson
-            ? JSON.parse(savedSelectionsJson)
-            : initialSelections;
+        let currentArrays = initialArrays;
+        if (savedArraysJson) {
+            try {
+                const parsed = JSON.parse(savedArraysJson);
+                if (Array.isArray(parsed)) currentArrays = parsed;
+            } catch {
+                /* keep initialArrays */
+            }
+        }
+        let currentSelections = initialSelections;
+        if (savedSelectionsJson) {
+            try {
+                const parsed = JSON.parse(savedSelectionsJson);
+                if (parsed && typeof parsed === "object") currentSelections = parsed;
+            } catch {
+                /* keep initialSelections */
+            }
+        }
 
         siteControllers = siteControllers.map((sc) => {
             if (sc.area) return sc;
@@ -161,24 +195,36 @@ export function mergeChargers(initialChargers, options) {
     let mergedChargersMap = new Map();
     initialChargers.forEach((c) => mergedChargersMap.set(c.id, { ...c }));
 
+    const parseArray = (json) => {
+        if (!json) return null;
+        try {
+            const parsed = JSON.parse(json);
+            return Array.isArray(parsed) ? parsed : null;
+        } catch {
+            return null;
+        }
+    };
+
     if (savedChargersJson) {
-        const parsed = JSON.parse(savedChargersJson);
-        parsed.forEach((c) => {
-            if (mergedChargersMap.has(c.id)) {
-                const initC = mergedChargersMap.get(c.id);
-                mergedChargersMap.set(c.id, {
-                    ...initC,
-                    price: c.price,
-                    notes: c.notes,
-                    active: c.active,
-                });
-            } else {
-                mergedChargersMap.set(c.id, c);
-            }
-        });
+        const parsed = parseArray(savedChargersJson);
+        if (parsed) {
+            parsed.forEach((c) => {
+                if (mergedChargersMap.has(c.id)) {
+                    const initC = mergedChargersMap.get(c.id);
+                    mergedChargersMap.set(c.id, {
+                        ...initC,
+                        price: c.price,
+                        notes: c.notes,
+                        active: c.active,
+                    });
+                } else {
+                    mergedChargersMap.set(c.id, c);
+                }
+            });
+        }
     } else if (savedMpptsJson || savedInvertersJson) {
-        if (savedMpptsJson) {
-            const parsedMppts = JSON.parse(savedMpptsJson);
+        const parsedMppts = parseArray(savedMpptsJson);
+        if (parsedMppts) {
             parsedMppts.forEach((m) => {
                 if (mergedChargersMap.has(m.id)) {
                     const initC = mergedChargersMap.get(m.id);
@@ -190,8 +236,8 @@ export function mergeChargers(initialChargers, options) {
                 }
             });
         }
-        if (savedInvertersJson) {
-            const parsedInverters = JSON.parse(savedInvertersJson);
+        const parsedInverters = parseArray(savedInvertersJson);
+        if (parsedInverters) {
             parsedInverters.forEach((i) => {
                 if (mergedChargersMap.has(i.id)) {
                     const initC = mergedChargersMap.get(i.id);
@@ -210,7 +256,13 @@ export function mergeChargers(initialChargers, options) {
 
 export function mergePanels(initialPanels, savedPanelsJson) {
     if (!savedPanelsJson) return initialPanels;
-    const parsed = JSON.parse(savedPanelsJson);
+    let parsed;
+    try {
+        parsed = JSON.parse(savedPanelsJson);
+    } catch {
+        return initialPanels;
+    }
+    if (!Array.isArray(parsed)) return initialPanels;
     const initPanelsMap = new Map(initialPanels.map((p) => [p.model, p]));
     const mergedPanels = parsed.map((savedP) => {
         const initP = initPanelsMap.get(savedP.model);

@@ -5,6 +5,7 @@ import { loadSchema } from "../lib/schemaLoader.mjs";
 import { normalizeBuyLinks, reorderKeys } from "../lib/normalize.mjs";
 import { sortEntries } from "../lib/sortEntries.mjs";
 import { writeJsonAtomic } from "../lib/jsonWrite.mjs";
+import { validateEntry, validateEntryArray } from "../lib/validateEntry.mjs";
 
 function safeJsonFileName(name) {
     if (!name || typeof name !== "string") return null;
@@ -53,8 +54,10 @@ export function registerDataRoutes(app) {
             const dir = kind === "panels" ? paths.panelsDir : paths.controllersDir;
             const filePath = path.join(dir, name);
             assertUnderBase(filePath, dir);
-            if (!Array.isArray(req.body)) {
-                return res.status(400).json({ error: "Body must be a JSON array" });
+            const schema = await loadSchema(kind);
+            const validated = validateEntryArray(req.body, schema);
+            if (!validated.ok) {
+                return res.status(400).json({ error: validated.error });
             }
             await writeJsonAtomic(filePath, req.body);
             res.json({ ok: true });
@@ -74,6 +77,11 @@ export function registerDataRoutes(app) {
             const dir = kind === "panels" ? paths.panelsDir : paths.controllersDir;
             const filePath = path.join(dir, name);
             assertUnderBase(filePath, dir);
+            const schema = await loadSchema(kind);
+            const validated = validateEntry(req.body, schema);
+            if (!validated.ok) {
+                return res.status(400).json({ error: validated.error });
+            }
             const arr = JSON.parse(await fs.readFile(filePath, "utf-8"));
             if (index >= arr.length) return res.status(404).json({ error: "Index out of range" });
             arr[index] = req.body;

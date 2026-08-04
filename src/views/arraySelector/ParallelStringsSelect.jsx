@@ -1,13 +1,11 @@
 import React from 'react';
+import { divisorsOf } from '../../lib/arrayAnalysis';
 
 /**
  * Dropdown to choose parallel strings (divisors of array.count). Only rendered when count has multiple divisors.
  */
 export default function ParallelStringsSelect({ array, arrayId, updateArray }) {
-    const divisors = [];
-    for (let i = 1; i <= array.count; i++) {
-        if (array.count % i === 0) divisors.push(i);
-    }
+    const divisors = divisorsOf(array.count);
 
     if (divisors.length <= 1) return null;
 

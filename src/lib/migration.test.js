@@ -97,7 +97,7 @@ describe("migrateSelectionsAndSiteControllers", () => {
         expect(siteControllers[0].area).toBe("House");
     });
 
-    it("creates one shared instance when two arrays use the same legacy controller", () => {
+    it("creates one shared instance when two arrays use the same legacy controller with enough trackers", () => {
         const twoArrays = [
             { id: "A1", area: "House" },
             { id: "A2", area: "House" },
@@ -113,7 +113,7 @@ describe("migrateSelectionsAndSiteControllers", () => {
             initialArrays: twoArrays,
             initialSelections: {},
             initialChargers: [
-                { id: "LEGACY_CONTROLLER", name: "Legacy", manufacturer: "X" },
+                { id: "LEGACY_CONTROLLER", name: "Legacy", manufacturer: "X", trackers: 2 },
             ],
         });
 
@@ -121,6 +121,32 @@ describe("migrateSelectionsAndSiteControllers", () => {
         expect(selections.A1.controllerInstanceId).toBe(selections.A2.controllerInstanceId);
         expect(selections.A1.controllerMppt).toBe(1);
         expect(selections.A2.controllerMppt).toBe(2);
+    });
+
+    it("spawns another instance when legacy MPPT count exceeds trackers", () => {
+        const twoArrays = [
+            { id: "A1", area: "House" },
+            { id: "A2", area: "House" },
+        ];
+        const savedSelections = JSON.stringify({
+            A1: { panel: "P1", controller: "LEGACY_CONTROLLER" },
+            A2: { panel: "P2", controller: "LEGACY_CONTROLLER" },
+        });
+        const { selections, siteControllers } = migrateSelectionsAndSiteControllers({
+            savedSelectionsJson: savedSelections,
+            savedSiteControllersJson: null,
+            savedArraysJson: JSON.stringify(twoArrays),
+            initialArrays: twoArrays,
+            initialSelections: {},
+            initialChargers: [
+                { id: "LEGACY_CONTROLLER", name: "Legacy", manufacturer: "X", trackers: 1 },
+            ],
+        });
+
+        expect(siteControllers).toHaveLength(2);
+        expect(selections.A1.controllerInstanceId).not.toBe(selections.A2.controllerInstanceId);
+        expect(selections.A1.controllerMppt).toBe(1);
+        expect(selections.A2.controllerMppt).toBe(1);
     });
 });
 

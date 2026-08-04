@@ -9,9 +9,9 @@ const PANELS_DIR = path.join(ROOT, 'src/data/panels');
 const SERPER_SITES_PATH = path.join(ROOT, 'data-admin/config/serper-sites.json');
 const LOGS_DIR = path.join(ROOT, 'logs');
 
-// Extract API key from command line arguments (e.g., --api=xyz123)
+// Prefer env var so the key is not stored in shell history; --api= remains as a fallback.
 const apiArg = process.argv.find(arg => arg.startsWith('--api='));
-const SERPER_API_KEY = apiArg ? apiArg.split('=')[1] : null;
+const SERPER_API_KEY = process.env.SERPER_API_KEY || (apiArg ? apiArg.split('=')[1] : null);
 
 // --- API FUNCTION ---
 
@@ -62,8 +62,8 @@ async function searchUkAvailability(model, siteFilterString) {
 
 async function run() {
     if (!SERPER_API_KEY) {
-        console.error("ERROR: You must provide your Serper.dev API key using the --api=YOUR_KEY flag.");
-        console.error("Usage: node check-availability.js --api=xyz123");
+        console.error("ERROR: Provide your Serper.dev API key via SERPER_API_KEY env, or --api=YOUR_KEY as fallback.");
+        console.error("Usage: SERPER_API_KEY=xyz123 node panel-availability-scan.js");
         process.exit(1);
     }
 

@@ -1,6 +1,6 @@
 # Controller data schema
 
-Each JSON file in this folder is a **single array of controller objects** (PV charge controllers, hybrid inverters, string inverters, etc.) for one manufacturer. The app loads all `*.json` files in this folder via `loadData.js`; add a new file to include another manufacturer—no code changes needed.
+Each JSON file in this folder is a **single array of controller objects** (PV charge controllers, hybrid inverters, string inverters, etc.) for one manufacturer. The app loads all `*.json` files in this folder via `loadData.js`; add a new file to include another manufacturer - no code changes needed.
 
 **Filename convention:** lowercase, hyphenated from manufacturer name (e.g. `victron-energy.json`, `solax-power.json`).
 

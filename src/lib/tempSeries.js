@@ -26,10 +26,16 @@ export function buildTempRange() {
 export function computeTempSeries(panel, array, controller = null, effectiveStartupV = null) {
     const temps = buildTempRange();
     const pStrings = array.parallelStrings || 1;
-    const panelsPerSeriesString = array.count / pStrings;
+    // Fail closed: non-divisor wiring yields no electrical series (avoids fractional series length).
+    const wiringValid =
+        Number.isFinite(array.count) &&
+        array.count > 0 &&
+        pStrings > 0 &&
+        array.count % pStrings === 0;
+    const panelsPerSeriesString = wiringValid ? array.count / pStrings : 0;
 
     let vocSeries = null;
-    if (panel.tempCoefVoc != null && panel.voc != null) {
+    if (wiringValid && panel.tempCoefVoc != null && panel.voc != null) {
         const stringVocSTC = panel.voc * panelsPerSeriesString;
         vocSeries = temps.map((T) =>
             stringVocSTC * (1 + ((T - STC_TEMP_C) * panel.tempCoefVoc) / 100)
@@ -37,7 +43,7 @@ export function computeTempSeries(panel, array, controller = null, effectiveStar
     }
 
     let iscSeries = null;
-    if (panel.tempCoefIsc != null && panel.isc != null) {
+    if (wiringValid && panel.tempCoefIsc != null && panel.isc != null) {
         iscSeries = temps.map((T) =>
             panel.isc * pStrings * (1 + ((T - STC_TEMP_C) * panel.tempCoefIsc) / 100)
         );

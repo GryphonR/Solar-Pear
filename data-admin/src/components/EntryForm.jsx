@@ -1,10 +1,16 @@
 import BuyLinksEditor from "./BuyLinksEditor.jsx";
 import UrlWithActions from "./UrlWithActions.jsx";
 
+/**
+ * Coerce form input by schema type. Empty numeric fields stay null (not 0).
+ * @param {string} type
+ * @param {unknown} raw
+ */
 function coerceValue(type, raw) {
     if (type === "number") {
-        const n = parseFloat(raw);
-        return Number.isFinite(n) ? n : 0;
+        if (raw === "" || raw === null || raw === undefined) return null;
+        const n = typeof raw === "number" ? raw : parseFloat(String(raw).trim());
+        return Number.isFinite(n) ? n : null;
     }
     if (type === "boolean") return raw === true || raw === "true";
     return raw;

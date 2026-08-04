@@ -1,6 +1,6 @@
 # Panel data schema
 
-Each JSON file in this folder is a **single array of panel objects** for one manufacturer. The app loads all `*.json` files in this folder via `loadData.js`; add a new file (e.g. `sunpower.json`) to include another manufacturer—no code changes needed.
+Each JSON file in this folder is a **single array of panel objects** for one manufacturer. The app loads all `*.json` files in this folder via `loadData.js`; add a new file (e.g. `sunpower.json`) to include another manufacturer - no code changes needed.
 
 **Filename convention:** lowercase, hyphenated from manufacturer name (e.g. `ja-solar.json`, `canadian-solar.json`).
 
@@ -19,8 +19,8 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | ----- | ---- | ----------- |
 | `name` | string | Display name (e.g. "Trina Vertex S+ 430W"). |
 | `model` | string | **Unique ID** for this panel. Used in selections and compatibility logic. Must be unique across all panel files. |
-| `manufacturer` | string | Manufacturer name (e.g. "Trina", "JA Solar"). Used for grouping in the UI. |
-| `panel-series` | string | The series of panels that this panel belongs to (e.g. "Infinitiy RT", "Hi-MO X6 Max Artist")  Used for grouping in the UI. |
+| `manufacturer` | string | Manufacturer name (e.g. "Trina", "JA Solar"). Top-level grouping key in Panels DB and Array Selector. |
+| `panel-series` | string | Product series (e.g. "Vertex S+", "Hi-MO X6 Max Artist"). With manufacturer and power, forms the UI hierarchy manufacturer → series → power. Blank values group as "(no series)". |
 | `height` | number | Panel height in mm. Used for physical fit and filters. |
 | `width` | number | Panel width in mm. |
 | `depth` | number | Depth in mm. |
@@ -34,8 +34,9 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `imp` | number | Current at max power (A). |
 | `price` | number | Estimated unit price (user can override in app). |
 | `efficiency` | number | Module efficiency (%). |
-| `tempCoefPmax` | number | Temperature coefficient of Pmax (%/°C). Used for cold Voc / hot Vmp. |
-| `tempCoefVoc` | number | Temperature coefficient of Voc (%/°C). |
+| `tempCoefPmax` | number | Temperature coefficient of Pmax (%/°C). Used for Pmax temp sweeps and as √P fallback for hot Vmp when `tempCoefVmp` is absent. |
+| `tempCoefVoc` | number | Temperature coefficient of Voc (%/°C). Used for cold Voc checks. |
+| `tempCoefVmp` | number | Optional temperature coefficient of Vmp (%/°C). Preferred for hot Vmp when present. |
 | `tempCoefIsc` | number | Temperature coefficient of Isc (%/°C). |
 | `maxSeriesFuse` | number | Max series fuse rating (A). |
 | `maxSystemVoltage` | number | Max system voltage (V). |

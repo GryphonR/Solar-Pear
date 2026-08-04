@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AlertTriangle, CheckCircle, Info, ExternalLink, Trash2 } from '../../components/Icons';
 import BarCell from '../../components/BarCell';
 import { getEffectiveStartupV } from '../../lib/arrayAnalysis';
+import { safeHttpUrl } from '../../lib/safeUrl';
 
 export default function ControllerSection({
     areaControllers,
@@ -27,6 +28,20 @@ export default function ControllerSection({
     deleteControllerInstance,
     setInfoModalChargerId,
 }) {
+    const [manufacturerFilter, setManufacturerFilter] = useState('');
+
+    const manufacturers = useMemo(() => {
+        const set = new Set(sortedControllersList.map((c) => c.manufacturer || 'Unknown'));
+        return [...set].sort((a, b) => a.localeCompare(b));
+    }, [sortedControllersList]);
+
+    const filteredControllers = useMemo(() => {
+        if (!manufacturerFilter) return sortedControllersList;
+        return sortedControllersList.filter(
+            (c) => (c.manufacturer || 'Unknown') === manufacturerFilter
+        );
+    }, [sortedControllersList, manufacturerFilter]);
+
     const setAreaSystemVoltage = (value) =>
         updateAreaSettings?.(array.area, { systemVoltage: value });
     const setAreaSystemType = (value) =>
@@ -43,7 +58,7 @@ export default function ControllerSection({
         });
 
     const col = useMemo(() => {
-        const list = sortedControllersList;
+        const list = filteredControllers;
         const maxVVals = list.map((c) => c.maxV);
         const maxIscVals = list.map((c) => c.maxIsc);
         const priceVals = list.map((c) => c.price ?? 0);
@@ -54,7 +69,7 @@ export default function ControllerSection({
             maxIsc: [min(maxIscVals), max(maxIscVals)],
             price: [min(priceVals), max(priceVals)],
         };
-    }, [sortedControllersList]);
+    }, [filteredControllers]);
 
     return (
         <div className="space-y-8">
@@ -230,6 +245,23 @@ export default function ControllerSection({
                     <div className="flex flex-wrap items-center gap-6">
                         <div className="flex items-center gap-3">
                             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                Manufacturer
+                            </span>
+                            <select
+                                className="min-w-[10rem] px-3 py-1.5 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white"
+                                value={manufacturerFilter}
+                                onChange={(e) => setManufacturerFilter(e.target.value)}
+                            >
+                                <option value="">All</option>
+                                {manufacturers.map((mfr) => (
+                                    <option key={mfr} value={mfr}>
+                                        {mfr}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                 Controller Type
                             </span>
                             <div className="flex rounded-lg overflow-hidden border border-slate-300 shadow-sm text-sm font-medium">
@@ -355,8 +387,8 @@ export default function ControllerSection({
                                 </tr>
                             </thead>
                             <tbody>
-                                {sortedControllersList.length > 0 ? (
-                                    sortedControllersList.map((c) => {
+                                {filteredControllers.length > 0 ? (
+                                    filteredControllers.map((c) => {
                                         const isSelected =
                                             selections[arrayId]?.controller &&
                                             chargersData.find(
@@ -364,6 +396,7 @@ export default function ControllerSection({
                                             )?.id === c.id &&
                                             !selections[arrayId].controllerInstanceId;
                                         const inc = !c.isFullyCompatible;
+                                        const safeDatasheet = safeHttpUrl(c.datasheetUrl);
                                         return (
                                             <tr
                                                 key={c.id}
@@ -391,9 +424,9 @@ export default function ControllerSection({
                                                         >
                                                             <Info size={16} />
                                                         </button>
-                                                        {c.datasheetUrl && (
+                                                        {safeDatasheet && (
                                                             <a
-                                                                href={c.datasheetUrl}
+                                                                href={safeDatasheet}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="text-slate-400 hover:text-blue-600 transition-colors"

@@ -133,7 +133,7 @@
         "MaxACPower": 15000,
         "MaxDCPower": 22500,
         "islanding": true,
-        "notes": "32A Isc handling—best in class for commercial modules. 3 MPPTs.",
+        "notes": "32A Isc handling - best in class for commercial modules. 3 MPPTs.",
         "datasheetUrl": "https://www.fox-ess.com/products/h3-pro",
         "buyLinks": [],
         "availableUK": true,

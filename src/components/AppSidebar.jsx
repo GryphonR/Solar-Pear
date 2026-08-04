@@ -45,6 +45,21 @@ export default function AppSidebar({
                     >
                         <Info className="mr-3" size={16} /> Guide
                     </button>
+                    {/* Technology explainers, indented to read as sub-pages of the Guide. */}
+                    <div className="ml-3 pl-2 border-l border-slate-700/80 space-y-1">
+                        <button
+                            onClick={() => setActiveTab('GUIDE_PANELS')}
+                            className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors text-[13px] ${activeTab === 'GUIDE_PANELS' ? 'bg-slate-700 text-white font-medium' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+                        >
+                            <Database className="mr-3 flex-shrink-0" size={14} /> Guide to Panels
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('GUIDE_CONTROLLERS')}
+                            className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors text-[13px] ${activeTab === 'GUIDE_CONTROLLERS' ? 'bg-slate-700 text-white font-medium' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+                        >
+                            <Server className="mr-3 flex-shrink-0" size={14} /> Guide to Controllers
+                        </button>
+                    </div>
                 </nav>
 
                 <div className="my-4 mx-4 border-t border-slate-800" />

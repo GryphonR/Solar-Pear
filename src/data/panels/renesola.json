@@ -67,7 +67,7 @@
         "tempCoefIsc": 0.046,
         "maxSeriesFuse": 30,
         "maxSystemVoltage": 1500,
-        "cells": "108 Half-Cell (N-Type)",
+        "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://cdn.enfsolar.com/z/pp/2024/11/0qr40juk7u3cwt6/rs41-430-450nxg-e3-1722-1134-30.pdf",
         "notes": "Saturn Bi-Facial panel with double glass. Catches sun rays from both directions for up to 90W additional back-side energy.",

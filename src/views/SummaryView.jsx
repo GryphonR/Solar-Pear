@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertTriangle } from '../components/Icons';
 import { useAppState } from '../context/AppStateContext';
+import { checkVictronRsSharedTrackerLimits } from '../lib/arrayAnalysis';
 
 export default function SummaryView() {
     const {
@@ -19,25 +20,24 @@ export default function SummaryView() {
         areaTotals[area] = { power: 0, cost: 0 };
     });
 
-    let rs450_100_primary = 0;
-    let rs450_100_shared = 0;
-    let rs450_200_primary = 0;
-    let rs450_200_shared = 0;
     let hasErrors = false;
     const bomPanels = {};
     const bomControllers = {};
+    const activeModelIds = [];
 
+    // Panel rows use panel-only cost; controllers are added once below (avoids double-count).
     const panelSummaryRows = arraysData.map((array) => {
         const analysis = getArrayAnalysis(array.id);
         if (!analysis) return null;
 
-        totalCost += analysis.cost;
+        const panelCost = analysis.panelCost ?? 0;
+        totalCost += panelCost;
         const assignedArea = array.area || 'House';
         if (!areaTotals[assignedArea]) {
             areaTotals[assignedArea] = { power: 0, cost: 0 };
         }
         areaTotals[assignedArea].power += analysis.peakPower;
-        areaTotals[assignedArea].cost += analysis.cost;
+        areaTotals[assignedArea].cost += panelCost;
         if (analysis.status === 'error') hasErrors = true;
 
         if (analysis.panel) {
@@ -46,6 +46,10 @@ export default function SummaryView() {
             }
             bomPanels[analysis.panel.model].qty += array.count;
         }
+
+        // £/kWp for the panel column uses panel-only cost
+        const panelCostPerKWp =
+            analysis.peakPower > 0 ? panelCost / (analysis.peakPower / 1000) : 0;
 
         return (
             <tr key={array.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
@@ -69,9 +73,9 @@ export default function SummaryView() {
                         <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">OK</span>
                     )}
                 </td>
-                <td className="py-3 px-4">£{analysis.costPerKWp.toFixed(2)}</td>
+                <td className="py-3 px-4">£{panelCostPerKWp.toFixed(2)}</td>
                 <td className="py-3 px-4 text-right font-medium text-slate-800">
-                    £{analysis.cost.toLocaleString()}
+                    £{panelCost.toLocaleString()}
                 </td>
             </tr>
         );
@@ -90,7 +94,8 @@ export default function SummaryView() {
                     bomControllers[model.id] = { item: model, qty: 0 };
                 }
                 bomControllers[model.id].qty += 1;
-                totalCost += model.price;
+                totalCost += model.price || 0;
+                activeModelIds.push(model.id);
                 const arraysUsingThis = arraysData.filter(
                     (a) => selections[a.id]?.controllerInstanceId === sc.id
                 );
@@ -98,8 +103,8 @@ export default function SummaryView() {
                     key: sc.id,
                     name: sc.name,
                     modelRef: model.modelNumber ?? model.id,
-                    arrayNames: arraysUsingThis.map((a) => a.name).join(', ') || '—',
-                    cost: model.price,
+                    arrayNames: arraysUsingThis.map((a) => a.name).join(', ') || '-',
+                    cost: model.price || 0,
                 });
                 const assignedArrayId = Object.entries(selections).find(
                     ([_, sel]) => sel.controllerInstanceId === sc.id
@@ -107,20 +112,14 @@ export default function SummaryView() {
                 if (assignedArrayId) {
                     const arr = arraysData.find((a) => a.id === assignedArrayId);
                     if (arr && areaTotals[arr.area || 'House']) {
-                        areaTotals[arr.area || 'House'].cost += model.price;
+                        areaTotals[arr.area || 'House'].cost += model.price || 0;
                     }
                 }
-                if (model.id === 'rs450_100') rs450_100_primary++;
-                if (model.id === 'rs450_100_shared') rs450_100_shared++;
-                if (model.id === 'rs450_200') rs450_200_primary++;
-                if (model.id === 'rs450_200_shared') rs450_200_shared++;
             }
         }
     });
 
-    const trackerError100 = rs450_100_shared > rs450_100_primary;
-    const trackerError200 = rs450_200_shared > rs450_200_primary * 3;
-    const hasTrackerError = trackerError100 || trackerError200;
+    const { hasTrackerError } = checkVictronRsSharedTrackerLimits(activeModelIds);
 
     return (
         <div className="space-y-8">

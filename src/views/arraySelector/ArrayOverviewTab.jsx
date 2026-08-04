@@ -2,6 +2,7 @@ import React from 'react';
 import { AlertTriangle, CheckCircle, Info, XIcon, ExternalLink } from '../../components/Icons';
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
 import { isCompatibleFormat } from '../../lib/arrayAnalysis';
+import { safeHttpUrl } from '../../lib/safeUrl';
 
 export default function ArrayOverviewTab({
     array,
@@ -20,6 +21,9 @@ export default function ArrayOverviewTab({
     updateSelection,
     updateUserNote,
 }) {
+    const safePanelDatasheet = safeHttpUrl(panel?.datasheetUrl);
+    const safeControllerDatasheet = safeHttpUrl(controller?.datasheetUrl);
+
     return (
         <>
             <div className="grid grid-cols-2 gap-8">
@@ -121,39 +125,39 @@ export default function ArrayOverviewTab({
                     <div className="flex flex-wrap items-center gap-2 mb-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{panel.power} W</span>
                         <span className="text-sm font-medium text-slate-600">£{panel.price} per unit</span>
-                        {panel.datasheetUrl && <a href={panel.datasheetUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"><ExternalLink size={12} className="mr-1" /> Datasheet</a>}
+                        {safePanelDatasheet && <a href={safePanelDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"><ExternalLink size={12} className="mr-1" /> Datasheet</a>}
                     </div>
                     <div className="grid grid-cols-2 gap-6 mb-6">
                         <div className="bg-white p-3 rounded border border-slate-200">
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-100 pb-1">Physical specifications</h4>
                             <dl className="space-y-2 text-sm">
-                                <div className="flex justify-between"><dt className="text-slate-500">Dimensions</dt><dd className="text-slate-800 font-medium">{panel.height || '—'} × {panel.width || '—'} mm</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Depth</dt><dd className="text-slate-800 font-medium">{panel.depth != null ? `${panel.depth} mm` : '—'}</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Weight</dt><dd className="text-slate-800 font-medium">{panel.weight ? `${panel.weight} kg` : '—'}</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Glass</dt><dd className="text-slate-800 font-medium">{panel.glass || '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Dimensions</dt><dd className="text-slate-800 font-medium">{panel.height || '-'} × {panel.width || '-'} mm</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Depth</dt><dd className="text-slate-800 font-medium">{panel.depth != null ? `${panel.depth} mm` : '-'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Weight</dt><dd className="text-slate-800 font-medium">{panel.weight ? `${panel.weight} kg` : '-'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Glass</dt><dd className="text-slate-800 font-medium">{panel.glass || '-'}</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Bifacial</dt><dd className="text-slate-800 font-medium">{panel.bifacial ? 'Yes' : 'No'}</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Cells</dt><dd className="text-slate-800 font-medium">{panel.cells || '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Cells</dt><dd className="text-slate-800 font-medium">{panel.cells || '-'}</dd></div>
                             </dl>
                         </div>
                         <div className="bg-white p-3 rounded border border-slate-200">
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-100 pb-1">Electrical (STC)</h4>
                             <dl className="space-y-2 text-sm">
-                                <div className="flex justify-between"><dt className="text-slate-500">Efficiency</dt><dd className="text-slate-800 font-medium text-blue-700">{panel.efficiency ? `${panel.efficiency}%` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Efficiency</dt><dd className="text-slate-800 font-medium text-blue-700">{panel.efficiency ? `${panel.efficiency}%` : '-'}</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Voc</dt><dd className="text-slate-800 font-medium">{panel.voc} V</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Vmp</dt><dd className="text-slate-800 font-medium">{panel.vmp} V</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Isc</dt><dd className="text-slate-800 font-medium">{panel.isc} A</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Imp</dt><dd className="text-slate-800 font-medium">{panel.imp != null ? `${panel.imp} A` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Imp</dt><dd className="text-slate-800 font-medium">{panel.imp != null ? `${panel.imp} A` : '-'}</dd></div>
                             </dl>
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-3 mb-2 border-b border-slate-100 pb-1">Temp. coeff. (%/°C)</h4>
                             <dl className="space-y-2 text-sm">
-                                <div className="flex justify-between"><dt className="text-slate-500">Pmax</dt><dd className="text-slate-800 font-medium">{panel.tempCoefPmax != null ? `${panel.tempCoefPmax}%` : '—'}</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Voc</dt><dd className="text-slate-800 font-medium">{panel.tempCoefVoc != null ? `${panel.tempCoefVoc}%` : '—'}</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Isc</dt><dd className="text-slate-800 font-medium">{panel.tempCoefIsc != null ? `${panel.tempCoefIsc}%` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Pmax</dt><dd className="text-slate-800 font-medium">{panel.tempCoefPmax != null ? `${panel.tempCoefPmax}%` : '-'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Voc</dt><dd className="text-slate-800 font-medium">{panel.tempCoefVoc != null ? `${panel.tempCoefVoc}%` : '-'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Isc</dt><dd className="text-slate-800 font-medium">{panel.tempCoefIsc != null ? `${panel.tempCoefIsc}%` : '-'}</dd></div>
                             </dl>
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-3 mb-2 border-b border-slate-100 pb-1">Safety / limits</h4>
                             <dl className="space-y-2 text-sm">
-                                <div className="flex justify-between"><dt className="text-slate-500">Max series fuse</dt><dd className="text-slate-800 font-medium">{panel.maxSeriesFuse != null ? `${panel.maxSeriesFuse} A` : '—'}</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Max system V</dt><dd className="text-slate-800 font-medium">{panel.maxSystemVoltage != null ? `${panel.maxSystemVoltage} V` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Max series fuse</dt><dd className="text-slate-800 font-medium">{panel.maxSeriesFuse != null ? `${panel.maxSeriesFuse} A` : '-'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Max system V</dt><dd className="text-slate-800 font-medium">{panel.maxSystemVoltage != null ? `${panel.maxSystemVoltage} V` : '-'}</dd></div>
                             </dl>
                         </div>
                     </div>
@@ -176,14 +180,14 @@ export default function ArrayOverviewTab({
                     <div className="flex flex-wrap items-center gap-2 mb-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${controller.type === 'hybrid_inverter' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>{controller.type === 'hybrid_inverter' ? 'Hybrid Inverter' : 'Charger'}</span>
                         <span className="text-sm font-medium text-slate-600">£{controller.price || 0} per unit</span>
-                        {controller.datasheetUrl && <a href={controller.datasheetUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"><ExternalLink size={12} className="mr-1" /> Datasheet</a>}
+                        {safeControllerDatasheet && <a href={safeControllerDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"><ExternalLink size={12} className="mr-1" /> Datasheet</a>}
                     </div>
                     <div className="grid grid-cols-2 gap-6 mb-4">
                         <div className="bg-white p-3 rounded border border-slate-200">
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 border-b border-slate-100 pb-1">Input specifications</h4>
                             <dl className="space-y-2 text-sm">
                                 <div className="flex justify-between"><dt className="text-slate-500">Max PV Voltage</dt><dd className="text-red-700 font-bold">{controller.maxV} V</dd></div>
-                                <div className="flex justify-between"><dt className="text-slate-500">Startup Voltage</dt><dd className="text-slate-800 font-medium">{effectiveStartupV != null ? `${effectiveStartupV} V` : '—'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Startup Voltage</dt><dd className="text-slate-800 font-medium">{effectiveStartupV != null ? `${effectiveStartupV} V` : '-'}</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Max Isc</dt><dd className="text-slate-800 font-medium">{controller.maxIsc ?? 'N/A'} A</dd></div>
                             </dl>
                         </div>

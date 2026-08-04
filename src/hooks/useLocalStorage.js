@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 /**
  * Persists state to localStorage and syncs on read/update.
+ * Falls back to initialValue when stored JSON is corrupt or the wrong top-level type.
  * @param {string} key - localStorage key
  * @param {*} initialValue - value when key is missing or invalid
  * @returns {[*, function]} [storedValue, setValue] - same API as useState
@@ -13,7 +14,19 @@ export function useLocalStorage(key, initialValue) {
         }
         try {
             const item = window.localStorage.getItem(key);
-            return item ? JSON.parse(item) : initialValue;
+            if (!item) return initialValue;
+            const parsed = JSON.parse(item);
+            // Guard against wrong top-level types (e.g. object stored where array expected).
+            if (Array.isArray(initialValue) && !Array.isArray(parsed)) return initialValue;
+            if (
+                initialValue !== null &&
+                typeof initialValue === 'object' &&
+                !Array.isArray(initialValue) &&
+                (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed))
+            ) {
+                return initialValue;
+            }
+            return parsed;
         } catch (error) {
             console.warn('Error reading localStorage', key, error);
             return initialValue;

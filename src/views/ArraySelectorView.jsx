@@ -44,24 +44,21 @@ export default function ArraySelectorView({ arrayId }) {
         updateAreaSettings,
     } = useAppState();
 
+    // Resolve analysis first, but do not early-return before hooks (Rules of Hooks).
     const analysis = getArrayAnalysis(arrayId);
-    if (!analysis) return null;
+    const array = analysis?.array;
+    const panel = analysis?.panel;
+    const controller = analysis?.controller;
+    const coldVoc = analysis?.coldVoc ?? 0;
+    const hotVmp = analysis?.hotVmp ?? 0;
+    const arrayIscHot = analysis?.arrayIscHot ?? 0;
+    const peakPower = analysis?.peakPower ?? 0;
+    const status = analysis?.status;
+    const messages = analysis?.messages ?? [];
+    const cost = analysis?.cost ?? 0;
+    const costPerKWp = analysis?.costPerKWp ?? 0;
 
-    const {
-        array,
-        panel,
-        controller,
-        coldVoc,
-        hotVmp,
-        arrayIscHot,
-        peakPower,
-        status,
-        messages,
-        cost,
-        costPerKWp,
-    } = analysis;
-
-    const areaSettings = getAreaSettings(array.area);
+    const areaSettings = getAreaSettings(array?.area || 'House');
     const areaSystemVoltage = areaSettings.systemVoltage;
 
     const effectiveStartupV = controller
@@ -141,7 +138,9 @@ export default function ArraySelectorView({ arrayId }) {
         [controllersForTable, controllerSort]
     );
 
-    const areaControllers = siteControllers.filter((sc) => sc.area === array.area);
+    const areaControllers = siteControllers.filter((sc) => sc.area === (array?.area));
+
+    if (!analysis || !array) return null;
 
     return (
         <div className="space-y-6 pb-12">
@@ -231,14 +230,11 @@ export default function ArraySelectorView({ arrayId }) {
             {contentTab === 'panels' && (
                 <PanelTable
                     validPanels={validPanels}
-                    array={array}
-                    arrayId={arrayId}
                     selectedPanelModel={selections[arrayId]?.panel}
                     onSelectPanel={(model) => updateSelection(arrayId, 'panel', model)}
                     onOpenInfo={setInfoModalPanelId}
                     panelSort={panelSort}
                     togglePanelSort={togglePanelSort}
-                    updateArray={updateArray}
                     hideHeavyPanels={hideHeavyPanels}
                     setHideHeavyPanels={setHideHeavyPanels}
                     hideMarginalPanels={hideMarginalPanels}

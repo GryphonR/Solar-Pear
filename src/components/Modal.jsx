@@ -39,7 +39,7 @@ export default function Modal({
     onCloseRef.current = onClose;
 
     // Focus trap and Escape key. Only focus first element when modal first opens, not on every re-render.
-    // Keep latest onClose in a ref so this effect can depend on [open] only — unstable onClose from parents
+    // Keep latest onClose in a ref so this effect can depend on [open] only - unstable onClose from parents
     // would otherwise re-run the effect every keystroke (e.g. context updates while typing).
     useEffect(() => {
         const justOpened = open && !wasOpenRef.current;

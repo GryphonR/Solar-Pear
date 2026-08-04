@@ -105,6 +105,34 @@ export function rectCornersMm(rectMm) {
     ];
 }
 
+/** Corners, edge midpoints, and center - used for stronger containment on concave roofs. */
+export function rectSamplePointsMm(rectMm) {
+    const x = rectMm.x;
+    const y = rectMm.y;
+    const w = rectMm.w;
+    const h = rectMm.h;
+    return [
+        ...rectCornersMm(rectMm),
+        { x: x + w / 2, y: y },
+        { x: x + w, y: y + h / 2 },
+        { x: x + w / 2, y: y + h },
+        { x: x, y: y + h / 2 },
+        { x: x + w / 2, y: y + h / 2 },
+    ];
+}
+
+/** Absolute polygon area via shoelace (mm²). */
+export function polygonAreaMm2(polygonMm) {
+    if (!Array.isArray(polygonMm) || polygonMm.length < 3) return 0;
+    let sum = 0;
+    for (let i = 0; i < polygonMm.length; i++) {
+        const a = polygonMm[i];
+        const b = polygonMm[(i + 1) % polygonMm.length];
+        sum += a.x * b.y - b.x * a.y;
+    }
+    return Math.abs(sum) / 2;
+}
+
 export function pointToSegmentDistanceMm(pt, a, b) {
     const vx = b.x - a.x;
     const vy = b.y - a.y;
@@ -184,7 +212,8 @@ export function computePlannerLayouts({
     };
     const usableW = Math.max(0, usable.maxX - usable.minX);
     const usableH = Math.max(0, usable.maxY - usable.minY);
-    const usableArea = usableW * usableH;
+    // Utilization uses true roof polygon area (not usable AABB).
+    const roofAreaMm2 = polygonAreaMm2(roofPolygonMm);
 
     const eligiblePanels = (Array.isArray(panelsData) ? panelsData : [])
         .filter((p) => (options?.includeInactivePanels ? true : p.active !== false))
@@ -256,11 +285,11 @@ export function computePlannerLayouts({
                         ) {
                             const rect = { x: Math.round(x), y: Math.round(y), w: panelW, h: panelH };
 
-                            const corners = rectCornersMm(rect);
-                            const inside = corners.every((pt) => pointInPolygonMm(pt, roofPolygonMm));
+                            const samples = rectSamplePointsMm(rect);
+                            const inside = samples.every((pt) => pointInPolygonMm(pt, roofPolygonMm));
                             if (!inside) continue;
                             if (edge_mm > 0) {
-                                const farEnough = corners.every(
+                                const farEnough = samples.every(
                                     (pt) => minDistanceToPolygonEdgesMm(pt, roofPolygonMm) >= edge_mm
                                 );
                                 if (!farEnough) continue;
@@ -282,7 +311,7 @@ export function computePlannerLayouts({
 
             const count = best.rectsMm.length;
             const totalW = count * (Number(panel.power) || 0);
-            const utilization = usableArea > 0 ? (count * panelW * panelH) / usableArea : 0;
+            const utilization = roofAreaMm2 > 0 ? (count * panelW * panelH) / roofAreaMm2 : 0;
 
             const rects_m = best.rectsMm.map((r) => ({
                 x: mmIntToMeters(r.x),

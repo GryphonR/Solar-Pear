@@ -2,12 +2,14 @@ import React from 'react';
 import Modal from '../Modal';
 import { CheckCircle, ExternalLink, Info, XIcon } from '../Icons';
 import { getEffectiveStartupV } from '../../lib/arrayAnalysis';
+import { safeHttpUrl } from '../../lib/safeUrl';
 
 export default function ChargerInfoModal({ open, charger, systemVoltage, userNote, onClose, onUpdateNote }) {
     if (!charger) return null;
 
     const c = charger;
     const displayStartupV = getEffectiveStartupV(c, systemVoltage);
+    const safeDatasheet = safeHttpUrl(c.datasheetUrl);
 
     const header = (
         <div>
@@ -17,8 +19,8 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                     {c.type === 'hybrid_inverter' ? 'Hybrid Inverter' : 'MPPT Charger'}
                 </span>
                 <span className="text-sm font-medium text-slate-600">£{c.price || 0} per unit</span>
-                {c.datasheetUrl && (
-                    <a href={c.datasheetUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors">
+                {safeDatasheet && (
+                    <a href={safeDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors">
                         <ExternalLink size={12} className="mr-1" /> Datasheet
                     </a>
                 )}

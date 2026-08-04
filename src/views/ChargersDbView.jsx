@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus, Info, ExternalLink } from '../components/Icons';
 import BuyButton from '../components/BuyButton';
 import { useAppState } from '../context/AppStateContext';
+import { safeHttpUrl } from '../lib/safeUrl';
 
 export default function ChargersDbView() {
     const {
@@ -110,7 +111,9 @@ export default function ChargersDbView() {
                                     <tbody>
                                         {chargersData
                                             .filter((c) => (c.manufacturer || 'Unknown') === mfr)
-                                            .map((c) => (
+                                            .map((c) => {
+                                                const safeDatasheet = safeHttpUrl(c.datasheetUrl);
+                                                return (
                                                 <tr
                                                     key={c.id}
                                                     className="border-b border-slate-100 hover:bg-slate-50 focus-within:bg-blue-50"
@@ -144,9 +147,9 @@ export default function ChargersDbView() {
                                                             >
                                                                 <Info size={18} />
                                                             </button>
-                                                            {c.datasheetUrl && (
+                                                            {safeDatasheet && (
                                                                 <a
-                                                                    href={c.datasheetUrl}
+                                                                    href={safeDatasheet}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
                                                                     className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
@@ -196,7 +199,8 @@ export default function ChargersDbView() {
                                                         <BuyButton buyLinks={c.buyLinks ?? {}} />
                                                     </td>
                                                 </tr>
-                                            ))}
+                                                );
+                                            })}
                                     </tbody>
                                 </table>
                             </div>

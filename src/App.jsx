@@ -1,6 +1,7 @@
 /**
  * @file App.jsx
- * Root shell: wide-viewport layout with sidebar and modals, or a read-only small-screen gate with the guide only.
+ * Root shell: wide-viewport layout with sidebar and modals, or a read-only small-screen gate
+ * that explains what the app does and asks the user to return on a wider display.
  */
 
 import React, { useEffect, useState } from 'react';
@@ -19,6 +20,8 @@ import SummaryView from './views/SummaryView';
 import PanelsDbView from './views/PanelsDbView';
 import ChargersDbView from './views/ChargersDbView';
 import ArraySelectorView from './views/ArraySelectorView';
+import PanelsGuideView from './views/PanelsGuideView';
+import ControllersGuideView from './views/ControllersGuideView';
 import Toast from './components/Toast';
 import { useDataState, usePlannerState, useUiState } from './context/AppStateContext';
 import { useBackupRestore } from './hooks/useBackupRestore';
@@ -112,6 +115,7 @@ export default function App() {
         openAddArrayModal,
         openEditAreaModal,
         openEditArrayModal,
+        openConfirm,
     } = useUiState();
     const { plannerModal, closePlanner, savePlannerToArray, savePlannerToDraftArray, applyPlannerCandidateToDraftArray } =
         usePlannerState();
@@ -139,8 +143,35 @@ export default function App() {
                             this page can load the full layout.
                         </p>
                     </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-                        <Guide omitHero />
+                    {/* Short orientation copy rather than the full guide: the planner it describes
+                        cannot be reached from this screen, so a long read would only frustrate. */}
+                    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <h2 className="text-base font-semibold text-slate-900">
+                            What you&apos;ll be able to do
+                        </h2>
+                        <ul className="mt-3 space-y-2.5 text-sm leading-relaxed text-slate-600">
+                            <li>
+                                Draw your roof and let the planner work out how many panels fit around
+                                windows, vents, and other obstructions.
+                            </li>
+                            <li>
+                                Search a large database of panels and PV controllers, or add your own
+                                with your supplier&apos;s prices.
+                            </li>
+                            <li>
+                                Check that a panel and controller pairing is safe: voltage on a freezing
+                                morning, startup voltage on a hot afternoon, and current limits.
+                            </li>
+                            <li>
+                                Get a costed summary across every roof area, and export the project as a
+                                backup file.
+                            </li>
+                        </ul>
+                        <p className="mt-4 text-xs leading-relaxed text-slate-500">
+                            This tool is free and in beta. It checks compatibility rather than
+                            producing a full system design, and prices are placeholders until you enter
+                            your own.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -170,6 +201,10 @@ export default function App() {
                         <div key={activeTab} className="animate-in fade-in duration-150">
                             {activeTab === 'GUIDE' ? (
                                 <Guide />
+                            ) : activeTab === 'GUIDE_PANELS' ? (
+                                <PanelsGuideView />
+                            ) : activeTab === 'GUIDE_CONTROLLERS' ? (
+                                <ControllersGuideView />
                             ) : activeTab === 'SUMMARY' ? (
                                 <SummaryView />
                             ) : activeTab === 'DB_PANELS' ? (
@@ -240,10 +275,19 @@ export default function App() {
                 }
                 onDelete={() => {
                     const targetArrayId = addArrayModal.targetArrayId;
-                    setAddArrayModal({ open: false, mode: 'add', targetArrayId: null, data: {} });
-                    if (!targetArrayId) return;
-                    deleteArray(targetArrayId);
-                    setNotification('Array deleted.', 'success');
+                    if (!targetArrayId) {
+                        setAddArrayModal({ open: false, mode: 'add', targetArrayId: null, data: {} });
+                        return;
+                    }
+                    openConfirm(
+                        'Delete Array',
+                        'Are you sure you want to delete this array? Its layout, panel selection, and controller assignment will be lost.',
+                        () => {
+                            setAddArrayModal({ open: false, mode: 'add', targetArrayId: null, data: {} });
+                            deleteArray(targetArrayId);
+                            setNotification('Array deleted.', 'success');
+                        }
+                    );
                 }}
             />
             <AddPanelModal

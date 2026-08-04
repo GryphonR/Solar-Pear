@@ -10,6 +10,10 @@ import {
     formatWiringLabel,
     bestParallelStringsForController,
     layoutCompatibleWiring,
+    clampParallelStrings,
+    getEffectiveStartupV,
+    hotVmpFactor,
+    isValidWiring,
 } from "./arrayAnalysis";
 
 describe("isCompatibleFormat", () => {
@@ -110,7 +114,7 @@ describe("bestParallelStringsForController / layoutCompatibleWiring", () => {
 
     it("returns smallest parallelStrings that passes when one long string exceeds maxV", () => {
         const controller = { maxV: 200, maxIsc: 40, startupV: 5, v_start_vbat_dependent: false };
-        // 8S1P: 8*40 cold Voc > 200; 4S2P: ~173V cold — passes
+        // 8S1P: 8*40 cold Voc > 200; 4S2P: ~173V cold - passes
         expect(bestParallelStringsForController(arrayBase, panel, 8, controller, 48)).toBe(2);
         expect(layoutCompatibleWiring(arrayBase, panel, 8, controller, 48)).toBe(true);
     });
@@ -506,6 +510,98 @@ describe("analyzeArray", () => {
             selections: bothArraysShareController,
         });
         expect(result2.cost).toBe(100 * 4 + 300);
+        expect(result2.panelCost).toBe(100 * 4);
+    });
+
+    it("does not substitute another panel when selected model is missing", () => {
+        const result = analyzeArray("A1", {
+            arraysData,
+            panelsData,
+            chargersData,
+            siteControllers,
+            selections: {
+                A1: {
+                    panel: "MISSING_MODEL",
+                    controllerInstanceId: "INST_SAFE",
+                    controllerMppt: 1,
+                },
+            },
+        });
+        expect(result.panel).toBeNull();
+        expect(result.status).toBe("warning");
+        expect(result.messages.some((m) => m.includes("no longer in the database"))).toBe(true);
+    });
+
+    it("flags non-divisor parallelStrings as fatal wiring error", () => {
+        const result = analyzeArray("A1", {
+            arraysData: [{ ...arraysData[0], count: 5, parallelStrings: 2 }],
+            panelsData,
+            chargersData,
+            siteControllers,
+            selections: baseSelections,
+        });
+        expect(result.status).toBe("error");
+        expect(result.messages.some((m) => m.includes("Invalid wiring"))).toBe(true);
+        expect(panelPassesControllerLimits(
+            { count: 5, parallelStrings: 2 },
+            panelsData[0],
+            chargersData[0],
+            48
+        )).toBe(false);
+    });
+
+    it("enforces hideHeavyPanels weight cap in analysis", () => {
+        const heavy = { ...panelsData[0], weight: 30 };
+        const result = analyzeArray("A1", {
+            arraysData: [{ ...arraysData[0], maxPanelWeight: "" }],
+            panelsData: [heavy],
+            chargersData,
+            siteControllers,
+            selections: baseSelections,
+            hideHeavyPanels: true,
+        });
+        expect(result.status).toBe("error");
+        expect(result.messages.some((m) => m.includes("maximum panel weight"))).toBe(true);
     });
 });
 
+describe("getEffectiveStartupV", () => {
+    it("adds battery voltage when v_start_vbat_dependent is true", () => {
+        const ctrl = {
+            startupV: 5,
+            v_start_vbat_dependent: true,
+            systemVoltages: [12, 24, 48],
+        };
+        expect(getEffectiveStartupV(ctrl, 24)).toBe(29);
+        expect(getEffectiveStartupV(ctrl, null)).toBe(12 + 5);
+    });
+
+    it("uses absolute startupV when flag is false or missing", () => {
+        expect(
+            getEffectiveStartupV(
+                { startupV: 5, v_start_vbat_dependent: false, systemVoltages: [48] },
+                48
+            )
+        ).toBe(5);
+        // Missing flag: no heuristic - absolute startupV only
+        expect(
+            getEffectiveStartupV({ startupV: 5, systemVoltages: [48] }, 48)
+        ).toBe(5);
+    });
+});
+
+describe("hotVmpFactor / clampParallelStrings", () => {
+    it("prefers tempCoefVmp when present", () => {
+        const withVmp = { tempCoefVmp: -0.3, tempCoefPmax: -0.4 };
+        // 65°C vs 25°C → factor = 1 + 40 * (-0.3)/100 = 0.88
+        expect(hotVmpFactor(withVmp)).toBeCloseTo(0.88);
+    });
+
+    it("clamps parallelStrings to a valid divisor", () => {
+        expect(clampParallelStrings(12, 2)).toBe(2);
+        expect(clampParallelStrings(10, 3)).toBe(2);
+        expect(clampParallelStrings(7, 4)).toBe(1);
+        expect(isValidWiring(12, 3)).toBe(true);
+        expect(isValidWiring(10, 3)).toBe(false);
+    });
+});

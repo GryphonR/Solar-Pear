@@ -1,18 +1,37 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AlertTriangle, CheckCircle, Info, ExternalLink } from '../../components/Icons';
 import BuyButton from '../../components/BuyButton';
 import BarCell from '../../components/BarCell';
+import { safeHttpUrl } from '../../lib/safeUrl';
+import {
+    groupPanelsBySeries,
+    manufacturerSeriesFilterValue,
+    panelSeriesKey,
+    parseManufacturerSeriesFilterValue,
+} from '../../lib/panelSeries';
+
+/**
+ * Sort a panel list by the active Compatible Panels Explorer column sort.
+ * @param {object[]} panels
+ * @param {{ key: string, dir: string }} panelSort
+ */
+function sortPanelsByColumn(panels, panelSort) {
+    return [...panels].sort((a, b) => {
+        const valA = a[panelSort.key];
+        const valB = b[panelSort.key];
+        if (valA < valB) return panelSort.dir === 'asc' ? -1 : 1;
+        if (valA > valB) return panelSort.dir === 'asc' ? 1 : -1;
+        return 0;
+    });
+}
 
 export default function PanelTable({
     validPanels,
-    array,
-    arrayId,
     selectedPanelModel,
     onSelectPanel,
     onOpenInfo,
     panelSort,
     togglePanelSort,
-    updateArray,
     hideHeavyPanels,
     setHideHeavyPanels,
     hideMarginalPanels,
@@ -21,16 +40,108 @@ export default function PanelTable({
     setHideIncompatiblePanels,
     controller,
 }) {
+    const [manufacturerFilter, setManufacturerFilter] = useState('');
+    const [seriesFilter, setSeriesFilter] = useState('');
+
+    const manufacturers = useMemo(() => {
+        const set = new Set(validPanels.map((p) => p.manufacturer || 'Unknown'));
+        return [...set].sort((a, b) => a.localeCompare(b));
+    }, [validPanels]);
+
+    // Panels after manufacturer filter only (feeds series option list)
+    const manufacturerScopedPanels = useMemo(() => {
+        if (!manufacturerFilter) return validPanels;
+        return validPanels.filter((p) => (p.manufacturer || 'Unknown') === manufacturerFilter);
+    }, [validPanels, manufacturerFilter]);
+
+    // Series dropdown options: plain series key when one mfr selected; composite when All
+    const seriesOptions = useMemo(() => {
+        if (manufacturerFilter) {
+            const keys = [...new Set(manufacturerScopedPanels.map(panelSeriesKey))];
+            return keys
+                .sort((a, b) => a.localeCompare(b))
+                .map((seriesKey) => ({ value: seriesKey, label: seriesKey }));
+        }
+        /** @type {Map<string, string>} */
+        const optMap = new Map();
+        for (const p of manufacturerScopedPanels) {
+            const mfr = p.manufacturer || 'Unknown';
+            const seriesKey = panelSeriesKey(p);
+            const value = manufacturerSeriesFilterValue(mfr, seriesKey);
+            if (!optMap.has(value)) {
+                optMap.set(value, `${mfr} - ${seriesKey}`);
+            }
+        }
+        return [...optMap.entries()]
+            .sort((a, b) => a[1].localeCompare(b[1]))
+            .map(([value, label]) => ({ value, label }));
+    }, [manufacturerFilter, manufacturerScopedPanels]);
+
+    const filteredPanels = useMemo(() => {
+        let list = manufacturerScopedPanels;
+        if (seriesFilter) {
+            if (manufacturerFilter) {
+                list = list.filter((p) => panelSeriesKey(p) === seriesFilter);
+            } else {
+                const parsed = parseManufacturerSeriesFilterValue(seriesFilter);
+                if (parsed) {
+                    list = list.filter(
+                        (p) =>
+                            (p.manufacturer || 'Unknown') === parsed.manufacturer &&
+                            panelSeriesKey(p) === parsed.seriesKey
+                    );
+                }
+            }
+        }
+        return list;
+    }, [manufacturerScopedPanels, manufacturerFilter, seriesFilter]);
+
+    // Nested manufacturer → series groups; within each series, apply column sort
+    const displayGroups = useMemo(() => {
+        const showMfrHeaders = !manufacturerFilter;
+        /** @type {{ mfr: string, seriesKey: string, panels: object[], showMfrHeader: boolean }[]} */
+        const groups = [];
+        let prevMfr = null;
+
+        if (showMfrHeaders) {
+            const mfrs = [...new Set(filteredPanels.map((p) => p.manufacturer || 'Unknown'))].sort((a, b) =>
+                a.localeCompare(b)
+            );
+            for (const mfr of mfrs) {
+                const mfrPanels = filteredPanels.filter((p) => (p.manufacturer || 'Unknown') === mfr);
+                for (const { seriesKey, panels } of groupPanelsBySeries(mfrPanels)) {
+                    groups.push({
+                        mfr,
+                        seriesKey,
+                        panels: sortPanelsByColumn(panels, panelSort),
+                        showMfrHeader: mfr !== prevMfr,
+                    });
+                    prevMfr = mfr;
+                }
+            }
+        } else {
+            for (const { seriesKey, panels } of groupPanelsBySeries(filteredPanels)) {
+                groups.push({
+                    mfr: manufacturerFilter,
+                    seriesKey,
+                    panels: sortPanelsByColumn(panels, panelSort),
+                    showMfrHeader: false,
+                });
+            }
+        }
+        return groups;
+    }, [filteredPanels, manufacturerFilter, panelSort]);
+
     const col = useMemo(() => {
-        const peakPowerVals = validPanels.map((p) => p.peakPower);
-        const coldVocVals = validPanels.map((p) => p.coldVoc);
-        const hotVmpVals = validPanels.map((p) => p.hotVmp);
-        const arrayIscHotVals = validPanels.map((p) => p.arrayIscHot);
-        const costPerKWpVals = validPanels.map((p) => p.costPerKWp);
-        const panelCostVals = validPanels.map((p) => p.panelCost);
-        const widthVals = validPanels.map((p) => p.width).filter((v) => v != null);
-        const heightVals = validPanels.map((p) => p.height).filter((v) => v != null);
-        const weightVals = validPanels.map((p) => p.weight).filter((v) => v != null);
+        const peakPowerVals = filteredPanels.map((p) => p.peakPower);
+        const coldVocVals = filteredPanels.map((p) => p.coldVoc);
+        const hotVmpVals = filteredPanels.map((p) => p.hotVmp);
+        const arrayIscHotVals = filteredPanels.map((p) => p.arrayIscHot);
+        const costPerKWpVals = filteredPanels.map((p) => p.costPerKWp);
+        const panelCostVals = filteredPanels.map((p) => p.panelCost);
+        const widthVals = filteredPanels.map((p) => p.width).filter((v) => v != null);
+        const heightVals = filteredPanels.map((p) => p.height).filter((v) => v != null);
+        const weightVals = filteredPanels.map((p) => p.weight).filter((v) => v != null);
         const min = (arr) => (arr.length ? Math.min(...arr) : 0);
         const max = (arr) => (arr.length ? Math.max(...arr) : 0);
         return {
@@ -44,7 +155,13 @@ export default function PanelTable({
             height: [min(heightVals), max(heightVals)],
             weight: [min(weightVals), max(weightVals)],
         };
-    }, [validPanels]);
+    }, [filteredPanels]);
+
+    const handleManufacturerChange = (value) => {
+        setManufacturerFilter(value);
+        // Clearing or changing manufacturer resets series so options stay in sync
+        setSeriesFilter('');
+    };
 
     return (
         <div>
@@ -59,52 +176,42 @@ export default function PanelTable({
                             : 'Showing active panels that pass physical limits (select a controller to see electrical compatibility).'}
                     </p>
                 </div>
-                <div className="flex items-stretch space-x-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                    <div className="flex flex-col justify-center space-y-1 pr-4 border-r border-slate-200">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                            Max Allowed Dimensions & Weight
-                        </p>
-                        <div className="flex items-center space-x-2">
-                            <input
-                                type="number"
-                                placeholder="Length (mm)"
-                                title="Maximum Panel Length (mm)"
-                                className="w-24 p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-xs"
-                                value={array.maxPanelHeight || ''}
-                                onChange={(e) =>
-                                    updateArray(array.id, 'maxPanelHeight', parseInt(e.target.value) || '')
-                                }
-                            />
-                            <span className="text-slate-400 text-xs">x</span>
-                            <input
-                                type="number"
-                                placeholder="Width (mm)"
-                                title="Maximum Panel Width (mm)"
-                                className="w-24 p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-xs"
-                                value={array.maxPanelWidth || ''}
-                                onChange={(e) =>
-                                    updateArray(array.id, 'maxPanelWidth', parseInt(e.target.value) || '')
-                                }
-                            />
-                            <span className="text-slate-400 text-xs">|</span>
-                            <input
-                                type="number"
-                                step="0.1"
-                                placeholder="Max weight (kg)"
-                                title="Maximum Panel Weight (kg)"
-                                className="w-24 p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-xs"
-                                value={array.maxPanelWeight ?? ''}
-                                onChange={(e) =>
-                                    updateArray(
-                                        array.id,
-                                        'maxPanelWeight',
-                                        e.target.value === '' ? '' : parseFloat(e.target.value)
-                                    )
-                                }
-                            />
-                        </div>
+                <div className="flex flex-wrap items-stretch gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <div className="flex flex-col justify-center min-w-[10rem]">
+                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                            Manufacturer
+                        </label>
+                        <select
+                            className="w-full min-w-[10rem] p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-xs bg-white"
+                            value={manufacturerFilter}
+                            onChange={(e) => handleManufacturerChange(e.target.value)}
+                        >
+                            <option value="">All manufacturers</option>
+                            {manufacturers.map((mfr) => (
+                                <option key={mfr} value={mfr}>
+                                    {mfr}
+                                </option>
+                            ))}
+                        </select>
                     </div>
-                    <div className="flex flex-col justify-center space-y-2 pl-2">
+                    <div className="flex flex-col justify-center min-w-[10rem]">
+                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                            Series
+                        </label>
+                        <select
+                            className="w-full min-w-[10rem] p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-xs bg-white"
+                            value={seriesFilter}
+                            onChange={(e) => setSeriesFilter(e.target.value)}
+                        >
+                            <option value="">All series</option>
+                            {seriesOptions.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="flex flex-col justify-center space-y-2 pl-2 border-l border-slate-200">
                         <label className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer hover:text-blue-600 transition-colors">
                             <input
                                 type="checkbox"
@@ -223,139 +330,169 @@ export default function PanelTable({
                             </tr>
                         </thead>
                         <tbody>
-                            {validPanels.length > 0 ? (
-                                validPanels.map((p) => {
-                                    const isSelected = selectedPanelModel === p.model;
-                                    const inc = !p.isFullyCompatible;
-                                    return (
-                                        <tr
-                                            key={p.model}
-                                            className={`border-b border-slate-100 transition-colors ${
-                                                isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'
-                                            }`}
-                                        >
+                            {filteredPanels.length > 0 ? (
+                                displayGroups.flatMap((group) => {
+                                    const rows = [];
+                                    if (group.showMfrHeader) {
+                                        rows.push(
+                                            <tr key={`mfr-${group.mfr}`} className="bg-slate-100">
+                                                <td
+                                                    colSpan={11}
+                                                    className="py-1.5 px-3 text-xs font-bold text-slate-600 uppercase tracking-wider"
+                                                >
+                                                    {group.mfr}
+                                                </td>
+                                            </tr>
+                                        );
+                                    }
+                                    rows.push(
+                                        <tr key={`series-${group.mfr}|${group.seriesKey}`} className="bg-slate-50">
                                             <td
-                                                className={`py-2 px-3 border-r border-slate-200/70 ${
-                                                    inc ? 'bg-red-100' : ''
-                                                }`}
+                                                colSpan={11}
+                                                className="py-1 px-3 text-xs font-semibold text-slate-500"
                                             >
-                                                <div className="flex items-center gap-1.5 flex-wrap">
-                                                    <span>{p.name}</span>
-                                                    <button
-                                                        onClick={() => onOpenInfo(p.model)}
-                                                        className="text-slate-400 hover:text-blue-600 transition-colors"
-                                                        title="View Technical Specs"
-                                                        aria-label="View technical specs"
-                                                    >
-                                                        <Info size={16} />
-                                                    </button>
-                                                    {p.datasheetUrl && (
-                                                        <a
-                                                            href={p.datasheetUrl}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-slate-400 hover:text-blue-600 transition-colors"
-                                                            title="View Manufacturer Datasheet"
-                                                            aria-label="View manufacturer datasheet"
-                                                        >
-                                                            <ExternalLink size={16} />
-                                                        </a>
-                                                    )}
-                                                    {p.isVocWarn && (
-                                                        <AlertTriangle
-                                                            size={16}
-                                                            className="text-orange-500"
-                                                            title="Voltage Warning: Cold Voc is within 6% of MPPT limit. Margin is dangerously tight."
-                                                        />
-                                                    )}
-                                                    <BuyButton buyLinks={p.buyLinks} />
-                                                </div>
-                                            </td>
-                                            <BarCell
-                                                value={p.peakPower}
-                                                range={col.peakPower}
-                                                incompatible={inc}
-                                                formatter={(v) => `${Number(v).toLocaleString()} W`}
-                                                className="font-medium text-blue-700"
-                                            />
-                                            <BarCell
-                                                value={p.coldVoc}
-                                                range={col.coldVoc}
-                                                incompatible={inc}
-                                                formatter={(v) => `${Number(v).toFixed(1)} V`}
-                                                className={!p.isVocOk ? 'font-bold text-red-600' : 'text-slate-700'}
-                                            />
-                                            <BarCell
-                                                value={p.hotVmp}
-                                                range={col.hotVmp}
-                                                incompatible={inc}
-                                                formatter={(v) => `${Number(v).toFixed(1)} V`}
-                                                className={!p.isVmpOk ? 'font-bold text-red-600' : 'text-slate-700'}
-                                            />
-                                            <BarCell
-                                                value={p.arrayIscHot}
-                                                range={col.arrayIscHot}
-                                                incompatible={inc}
-                                                formatter={(v) => `${Number(v).toFixed(2)} A`}
-                                                className={!p.isIscOk ? 'font-bold text-red-600' : 'text-slate-700'}
-                                            />
-                                            <BarCell
-                                                value={p.width}
-                                                range={col.width}
-                                                incompatible={inc}
-                                                formatter={(v) => (v != null ? `${v} mm` : '—')}
-                                                className={!p.isWidthOk ? 'font-bold text-red-600' : 'text-slate-700'}
-                                            />
-                                            <BarCell
-                                                value={p.height}
-                                                range={col.height}
-                                                incompatible={inc}
-                                                formatter={(v) => (v != null ? `${v} mm` : '—')}
-                                                className={!p.isHeightOk ? 'font-bold text-red-600' : 'text-slate-700'}
-                                            />
-                                            <BarCell
-                                                value={p.weight}
-                                                range={col.weight}
-                                                incompatible={inc}
-                                                formatter={(v) => (v != null ? `${v} kg` : '—')}
-                                                className={!p.isWeightOk ? 'font-bold text-red-600' : 'text-slate-700'}
-                                            />
-                                            <BarCell
-                                                value={p.costPerKWp}
-                                                range={col.costPerKWp}
-                                                incompatible={inc}
-                                                formatter={(v) => `£${Number(v).toFixed(2)}`}
-                                            />
-                                            <BarCell
-                                                value={p.panelCost}
-                                                range={col.panelCost}
-                                                incompatible={inc}
-                                                formatter={(v) => `£${Number(v).toLocaleString()}`}
-                                            />
-                                            <td
-                                                className={`py-2 px-3 text-right ${
-                                                    inc ? 'bg-red-100' : ''
-                                                }`}
-                                            >
-                                                {isSelected ? (
-                                                    <span className="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded">
-                                                        <CheckCircle size={14} className="mr-1" /> Selected
-                                                    </span>
-                                                ) : (
-                                                    <button
-                                                        onClick={() => onSelectPanel(p.model)}
-                                                        className={`px-3 py-1.5 text-xs font-bold rounded transition-colors ${
-                                                            p.isFullyCompatible
-                                                                ? 'bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600'
-                                                                : 'bg-red-50 border border-red-400 text-red-700 hover:bg-red-100 hover:border-red-600'
-                                                        }`}
-                                                    >
-                                                        Select Panel
-                                                    </button>
-                                                )}
+                                                {group.seriesKey}
+                                                <span className="font-normal text-slate-400 ml-1">
+                                                    ({group.panels.length})
+                                                </span>
                                             </td>
                                         </tr>
                                     );
+                                    for (const p of group.panels) {
+                                        const isSelected = selectedPanelModel === p.model;
+                                        const inc = !p.isFullyCompatible;
+                                        const safeDatasheet = safeHttpUrl(p.datasheetUrl);
+                                        rows.push(
+                                            <tr
+                                                key={p.model}
+                                                className={`border-b border-slate-100 transition-colors ${
+                                                    isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50'
+                                                }`}
+                                            >
+                                                <td
+                                                    className={`py-2 px-3 border-r border-slate-200/70 ${
+                                                        inc ? 'bg-red-100' : ''
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                                        <span>{p.name}</span>
+                                                        <button
+                                                            onClick={() => onOpenInfo(p.model)}
+                                                            className="text-slate-400 hover:text-blue-600 transition-colors"
+                                                            title="View Technical Specs"
+                                                            aria-label="View technical specs"
+                                                        >
+                                                            <Info size={16} />
+                                                        </button>
+                                                        {safeDatasheet && (
+                                                            <a
+                                                                href={safeDatasheet}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-slate-400 hover:text-blue-600 transition-colors"
+                                                                title="View Manufacturer Datasheet"
+                                                                aria-label="View manufacturer datasheet"
+                                                            >
+                                                                <ExternalLink size={16} />
+                                                            </a>
+                                                        )}
+                                                        {p.isVocWarn && (
+                                                            <AlertTriangle
+                                                                size={16}
+                                                                className="text-orange-500"
+                                                                title="Voltage Warning: Cold Voc is within 6% of MPPT limit. Margin is dangerously tight."
+                                                            />
+                                                        )}
+                                                        <BuyButton buyLinks={p.buyLinks} />
+                                                    </div>
+                                                </td>
+                                                <BarCell
+                                                    value={p.peakPower}
+                                                    range={col.peakPower}
+                                                    incompatible={inc}
+                                                    formatter={(v) => `${Number(v).toLocaleString()} W`}
+                                                    className="font-medium text-blue-700"
+                                                />
+                                                <BarCell
+                                                    value={p.coldVoc}
+                                                    range={col.coldVoc}
+                                                    incompatible={inc}
+                                                    formatter={(v) => `${Number(v).toFixed(1)} V`}
+                                                    className={!p.isVocOk ? 'font-bold text-red-600' : 'text-slate-700'}
+                                                />
+                                                <BarCell
+                                                    value={p.hotVmp}
+                                                    range={col.hotVmp}
+                                                    incompatible={inc}
+                                                    formatter={(v) => `${Number(v).toFixed(1)} V`}
+                                                    className={!p.isVmpOk ? 'font-bold text-red-600' : 'text-slate-700'}
+                                                />
+                                                <BarCell
+                                                    value={p.arrayIscHot}
+                                                    range={col.arrayIscHot}
+                                                    incompatible={inc}
+                                                    formatter={(v) => `${Number(v).toFixed(2)} A`}
+                                                    className={!p.isIscOk ? 'font-bold text-red-600' : 'text-slate-700'}
+                                                />
+                                                <BarCell
+                                                    value={p.width}
+                                                    range={col.width}
+                                                    incompatible={inc}
+                                                    formatter={(v) => (v != null ? `${v} mm` : '-')}
+                                                    className={!p.isWidthOk ? 'font-bold text-red-600' : 'text-slate-700'}
+                                                />
+                                                <BarCell
+                                                    value={p.height}
+                                                    range={col.height}
+                                                    incompatible={inc}
+                                                    formatter={(v) => (v != null ? `${v} mm` : '-')}
+                                                    className={!p.isHeightOk ? 'font-bold text-red-600' : 'text-slate-700'}
+                                                />
+                                                <BarCell
+                                                    value={p.weight}
+                                                    range={col.weight}
+                                                    incompatible={inc}
+                                                    formatter={(v) => (v != null ? `${v} kg` : '-')}
+                                                    className={!p.isWeightOk ? 'font-bold text-red-600' : 'text-slate-700'}
+                                                />
+                                                <BarCell
+                                                    value={p.costPerKWp}
+                                                    range={col.costPerKWp}
+                                                    incompatible={inc}
+                                                    formatter={(v) => `£${Number(v).toFixed(2)}`}
+                                                />
+                                                <BarCell
+                                                    value={p.panelCost}
+                                                    range={col.panelCost}
+                                                    incompatible={inc}
+                                                    formatter={(v) => `£${Number(v).toLocaleString()}`}
+                                                />
+                                                <td
+                                                    className={`py-2 px-3 text-right ${
+                                                        inc ? 'bg-red-100' : ''
+                                                    }`}
+                                                >
+                                                    {isSelected ? (
+                                                        <span className="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded">
+                                                            <CheckCircle size={14} className="mr-1" /> Selected
+                                                        </span>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => onSelectPanel(p.model)}
+                                                            className={`px-3 py-1.5 text-xs font-bold rounded transition-colors ${
+                                                                p.isFullyCompatible
+                                                                    ? 'bg-white border border-slate-300 text-slate-600 hover:bg-blue-600 hover:text-white hover:border-blue-600'
+                                                                    : 'bg-red-50 border border-red-400 text-red-700 hover:bg-red-100 hover:border-red-600'
+                                                            }`}
+                                                        >
+                                                            Select Panel
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    }
+                                    return rows;
                                 })
                             ) : (
                                 <tr>

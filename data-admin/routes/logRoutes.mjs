@@ -58,6 +58,19 @@ async function listVerificationLogs() {
 }
 
 /**
+ * Build allowlist of readable log paths from the same sources as the list endpoints.
+ * @returns {Promise<Set<string>>} normalized absolute paths
+ */
+async function allowedReadPaths() {
+    const [changelogs, verification] = await Promise.all([listChangelogPaths(), listVerificationLogs()]);
+    const set = new Set();
+    for (const item of [...changelogs, ...verification]) {
+        set.add(path.normalize(item.path));
+    }
+    return set;
+}
+
+/**
  * @param {import("express").Express} app
  */
 export function registerLogRoutes(app) {
@@ -85,6 +98,13 @@ export function registerLogRoutes(app) {
             if (!rel || typeof rel !== "string") return res.status(400).json({ error: "path query required" });
             const resolved = path.resolve(REPO_ROOT, rel);
             assertUnderBase(resolved, REPO_ROOT);
+
+            // Only allow files already exposed by list endpoints (no arbitrary .md/.txt under REPO_ROOT)
+            const allowed = await allowedReadPaths();
+            if (!allowed.has(path.normalize(resolved))) {
+                return res.status(403).json({ error: "Path not in allowlist" });
+            }
+
             if (resolved.endsWith(".md")) {
                 const text = await fs.readFile(resolved, "utf-8");
                 return res.json({ type: "markdown", content: text });

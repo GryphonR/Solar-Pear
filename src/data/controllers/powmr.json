@@ -25,7 +25,7 @@
         "MaxACPower": 0,
         "MaxDCPower": 2800,
         "islanding": false,
-        "notes": "WARNING: Common Positive Grounding—risk of short circuit if mounted to a UK vehicle chassis.",
+        "notes": "WARNING: Common Positive Grounding - risk of short circuit if mounted to a UK vehicle chassis.",
         "datasheetUrl": "https://powmr.com/products/mppt-solar-charge-controller-60a",
         "buyLinks": [],
         "availableUK": true,

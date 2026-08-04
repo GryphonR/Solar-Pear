@@ -359,8 +359,15 @@ export function AppStateProvider({ children }) {
         );
     };
 
-    const updateArray = (id, field, value) => {
-        setArraysData((prev) => prev.map((a) => (a.id === id ? { ...a, [field]: value } : a)));
+    /** Update one field, or pass an object of fields as the second argument. */
+    const updateArray = (id, fieldOrFields, value) => {
+        if (fieldOrFields && typeof fieldOrFields === 'object' && !Array.isArray(fieldOrFields)) {
+            setArraysData((prev) =>
+                prev.map((a) => (a.id === id ? { ...a, ...fieldOrFields } : a))
+            );
+            return;
+        }
+        setArraysData((prev) => prev.map((a) => (a.id === id ? { ...a, [fieldOrFields]: value } : a)));
     };
 
     const updatePanel = (model, field, value) => {
@@ -417,6 +424,7 @@ export function AppStateProvider({ children }) {
                 model: `panel_${Date.now()}`,
                 name: '',
                 manufacturer: '',
+                'panel-series': '',
                 power: 0,
                 voc: 0,
                 vmp: 0,
@@ -432,6 +440,7 @@ export function AppStateProvider({ children }) {
                 bifacial: false,
                 cells: '',
                 notes: '',
+                datasheetUrl: '',
             },
         });
     };
@@ -543,17 +552,17 @@ export function AppStateProvider({ children }) {
     };
 
     const closePlanner = () => {
-        setPlannerModal((prev) => {
-            if (prev.returnTo === 'addArray') {
-                setAddArrayModal({
-                    open: true,
-                    mode: 'add',
-                    targetArrayId: null,
-                    data: prev.draftArrayData || {},
-                });
-            }
-            return { open: false, arrayId: null, draftArrayData: null, returnTo: null };
-        });
+        // Read current modal from closure - do not nest setAddArrayModal inside a setState updater.
+        const prev = plannerModal;
+        setPlannerModal({ open: false, arrayId: null, draftArrayData: null, returnTo: null });
+        if (prev.returnTo === 'addArray') {
+            setAddArrayModal({
+                open: true,
+                mode: 'add',
+                targetArrayId: null,
+                data: prev.draftArrayData || {},
+            });
+        }
     };
 
     const savePlannerToArray = (arrayId, plannerData) => {
@@ -595,8 +604,13 @@ export function AppStateProvider({ children }) {
             'Delete Area',
             `Are you sure you want to delete the Area "${areaName}"? Any arrays assigned to it will be safely moved to the first available area.`,
             (deleteArraysInArea = false) => {
-                const newAreas = areasData.filter((a) => a !== areaName);
-                setAreasData(newAreas);
+                let fallbackArea = null;
+                setAreasData((prevAreas) => {
+                    if (prevAreas.length <= 1) return prevAreas;
+                    const newAreas = prevAreas.filter((a) => a !== areaName);
+                    fallbackArea = newAreas[0] || null;
+                    return newAreas;
+                });
                 setAreaSettingsByArea((prev) => {
                     const current = prev && typeof prev === 'object' ? prev : {};
                     const next = { ...current };
@@ -606,9 +620,13 @@ export function AppStateProvider({ children }) {
                 if (deleteArraysInArea) {
                     setArraysData((prev) => prev.filter((a) => a.area !== areaName));
                 } else {
-                    setArraysData((prev) =>
-                        prev.map((a) => (a.area === areaName ? { ...a, area: newAreas[0] } : a))
-                    );
+                    setArraysData((prev) => {
+                        const fallback =
+                            fallbackArea ||
+                            [...new Set(prev.map((a) => a.area).filter((a) => a && a !== areaName))][0];
+                        if (!fallback) return prev;
+                        return prev.map((a) => (a.area === areaName ? { ...a, area: fallback } : a));
+                    });
                 }
             },
             {
@@ -631,6 +649,7 @@ export function AppStateProvider({ children }) {
                 siteControllers,
                 selections,
                 systemVoltage: areaSettings.systemVoltage,
+                hideHeavyPanels,
             });
         })();
 
@@ -646,8 +665,8 @@ export function AppStateProvider({ children }) {
             return;
         }
         const newId = `array_${Date.now()}`;
-        setArraysData([
-            ...arraysData,
+        setArraysData((prev) => [
+            ...prev,
             {
                 id: newId,
                 ...d,

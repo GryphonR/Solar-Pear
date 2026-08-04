@@ -1,43 +1,52 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ShoppingCart, ChevronDown } from './Icons';
+import { safeHttpUrl } from '../lib/safeUrl';
 
 /** Smart buy button: disabled if no links, plain link if one, dropdown if many */
 export default function BuyButton({ buyLinks }) {
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
 
-    // Normalise legacy object format and new array-of-objects format
+    // Normalise legacy object format and new array-of-objects format; drop unsafe URLs
     const links = useMemo(() => {
         if (!buyLinks) return [];
+
+        const mapEntry = (supplier, url, isAffiliate, index) => {
+            const safe = safeHttpUrl(url);
+            if (!safe) return null;
+            return {
+                key: `${index}-${supplier}-${safe}`,
+                supplier,
+                url: safe,
+                isAffiliate: !!isAffiliate,
+            };
+        };
 
         // New format: array of vendor objects
         if (Array.isArray(buyLinks)) {
             return buyLinks
-                .filter(
-                    (entry) =>
-                        entry &&
-                        (typeof entry.URL === 'string' || typeof entry.url === 'string') &&
-                        (entry.URL || entry.url).trim()
-                )
-                .map((entry, index) => ({
-                    key: entry.Supplier || `Supplier ${index + 1}`,
-                    supplier: entry.Supplier || `Supplier ${index + 1}`,
-                    url: entry.URL || entry.url,
-                    isAffiliate: !!entry.isAffiliate,
-                }));
+                .map((entry, index) => {
+                    if (!entry) return null;
+                    const url = entry.URL || entry.url;
+                    if (typeof url !== 'string' || !url.trim()) return null;
+                    return mapEntry(
+                        entry.Supplier || `Supplier ${index + 1}`,
+                        url,
+                        entry.isAffiliate,
+                        index
+                    );
+                })
+                .filter(Boolean);
         }
 
         // Legacy format: object map of supplier -> URL
         return Object.entries(buyLinks)
-            .filter(
-                ([, url]) => typeof url === 'string' && url.trim()
+            .map(([supplier, url], index) =>
+                typeof url === 'string' && url.trim()
+                    ? mapEntry(supplier, url, false, index)
+                    : null
             )
-            .map(([supplier, url]) => ({
-                key: supplier,
-                supplier,
-                url,
-                isAffiliate: false,
-            }));
+            .filter(Boolean);
     }, [buyLinks]);
 
     useEffect(() => {

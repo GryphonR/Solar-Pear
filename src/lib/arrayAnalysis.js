@@ -1,15 +1,30 @@
 import { GSE_COMPATIBILITY, getPanelGseCompatibility } from './gseCompatibility';
 
-const COLD_TEMP_C = -10;
-const HOT_TEMP_C = 65;
-const STC_TEMP_C = 25;
+/** Worst-case cold cell temperature (°C) used for the Voc headroom check. */
+export const COLD_TEMP_C = -10;
+/** Worst-case hot cell temperature (°C) used for the Vmp startup and Isc checks. */
+export const HOT_TEMP_C = 65;
+/** Datasheet reference temperature (°C) that panel specs are quoted at. */
+export const STC_TEMP_C = 25;
+/**
+ * Fraction of the controller's max PV voltage above which cold Voc is flagged as a warning
+ * rather than passing silently, i.e. the margin is real but uncomfortably tight.
+ */
+export const VOC_WARN_FRACTION = 0.94;
 
 export function coldVocFactor(panel) {
     if (panel.tempCoefVoc == null) return 1.084;
     return 1 + ((COLD_TEMP_C - STC_TEMP_C) * panel.tempCoefVoc) / 100;
 }
 
+/**
+ * Hot-day Vmp derate factor.
+ * Prefers tempCoefVmp (linear %/°C) when present; otherwise approximates from tempCoefPmax via √P.
+ */
 export function hotVmpFactor(panel) {
+    if (panel.tempCoefVmp != null) {
+        return 1 + ((HOT_TEMP_C - STC_TEMP_C) * panel.tempCoefVmp) / 100;
+    }
     if (panel.tempCoefPmax == null) return 0.9;
     const pRatio = 1 + ((HOT_TEMP_C - STC_TEMP_C) * panel.tempCoefPmax) / 100;
     return pRatio > 0 ? Math.sqrt(pRatio) : 0.9;
@@ -24,21 +39,14 @@ export function hotIscFactor(panel) {
  * Effective minimum PV voltage to start the MPPT.
  * When v_start_vbat_dependent is true, startup is relative to battery: Vbat + controller.startupV.
  * Uses user-selected systemVoltage when set; otherwise falls back to controller.vNominal or first systemVoltages entry.
- * When v_start_vbat_dependent is missing (e.g. old saved data), treats as Vbat-dependent if controller has
- * systemVoltages and a small startupV (typical for MPPT chargers).
+ * Only the explicit flag is used (no startupV heuristic).
  * @param {object} controller - Charger/controller with startupV and optional v_start_vbat_dependent, vNominal, systemVoltages
  * @param {number | null} systemVoltage - User-selected DC battery voltage (e.g. 12, 24, 48)
  */
 export function getEffectiveStartupV(controller, systemVoltage) {
     if (!controller) return 0;
     const base = controller.startupV ?? 0;
-    const isVbatDependent =
-        controller.v_start_vbat_dependent === true ||
-        (controller.v_start_vbat_dependent !== false &&
-            Array.isArray(controller.systemVoltages) &&
-            controller.systemVoltages.length > 0 &&
-            base <= 20);
-    if (isVbatDependent) {
+    if (controller.v_start_vbat_dependent === true) {
         const vbat =
             systemVoltage != null
                 ? systemVoltage
@@ -49,11 +57,22 @@ export function getEffectiveStartupV(controller, systemVoltage) {
 }
 
 /**
+ * Whether parallelStrings evenly divides panel count (valid string wiring).
+ */
+export function isValidWiring(count, parallelStrings) {
+    const c = Math.floor(Number(count));
+    const p = Math.floor(Number(parallelStrings)) || 1;
+    return Number.isFinite(c) && c > 0 && p > 0 && c % p === 0;
+}
+
+/**
  * Whether the array wiring (series strings × panel electricals) stays within controller Voc/Vmp/Isc limits.
  */
 export function panelPassesControllerLimits(array, panel, controller, systemVoltage) {
     if (!controller || !array || !panel) return true;
     const pStrings = array.parallelStrings || 1;
+    // Fail closed when count is not divisible by parallelStrings (fractional series length).
+    if (!isValidWiring(array.count, pStrings)) return false;
     const panelsPerSeriesString = array.count / pStrings;
     const pStringVocSTC = panel.voc * panelsPerSeriesString;
     const pColdVoc = pStringVocSTC * coldVocFactor(panel);
@@ -75,6 +94,19 @@ export function divisorsOf(n) {
         if (k % d === 0) out.push(d);
     }
     return out;
+}
+
+/**
+ * Clamp parallelStrings to a valid divisor of count.
+ * Keeps current if still valid; otherwise picks the largest divisor <= current, else 1.
+ */
+export function clampParallelStrings(count, current) {
+    const divisors = divisorsOf(count);
+    if (divisors.length === 0) return 1;
+    const cur = Math.floor(Number(current)) || 1;
+    if (divisors.includes(cur)) return cur;
+    const smaller = divisors.filter((d) => d <= cur);
+    return smaller.length > 0 ? smaller[smaller.length - 1] : 1;
 }
 
 /** e.g. count=12, parallelStrings=2 → "6S2P" (matches ParallelStringsSelect wording). */
@@ -161,9 +193,41 @@ export const isCompatibleFormat = (array, panel) => {
     return true;
 };
 
+/**
+ * Victron RS legacy shared-tracker SKU limits (product-specific; not generalized trackers math).
+ * @returns {{ hasTrackerError: boolean, trackerError100: boolean, trackerError200: boolean }}
+ */
+export function checkVictronRsSharedTrackerLimits(activeModelIds) {
+    let rs450_100_primary = 0;
+    let rs450_100_shared = 0;
+    let rs450_200_primary = 0;
+    let rs450_200_shared = 0;
+    for (const id of activeModelIds) {
+        if (id === 'rs450_100') rs450_100_primary++;
+        if (id === 'rs450_100_shared') rs450_100_shared++;
+        if (id === 'rs450_200') rs450_200_primary++;
+        if (id === 'rs450_200_shared') rs450_200_shared++;
+    }
+    const trackerError100 = rs450_100_shared > rs450_100_primary;
+    const trackerError200 = rs450_200_shared > rs450_200_primary * 3;
+    return {
+        hasTrackerError: trackerError100 || trackerError200,
+        trackerError100,
+        trackerError200,
+    };
+}
+
 export const analyzeArray = (
     arrayId,
-    { arraysData, panelsData, chargersData, siteControllers, selections, systemVoltage = null }
+    {
+        arraysData,
+        panelsData,
+        chargersData,
+        siteControllers,
+        selections,
+        systemVoltage = null,
+        hideHeavyPanels = false,
+    }
 ) => {
     const array = arraysData.find((a) => a.id === arrayId);
     if (!array) return null;
@@ -171,14 +235,12 @@ export const analyzeArray = (
     const sel = selections[arrayId] || {};
 
     let panel = null;
+    let missingPanelWarning = false;
     if (sel.panel !== "") {
-        panel = panelsData.find((p) => p.model === sel.panel);
-        // Optional: fallback to first compatible if the selected one is completely missing from DB somehow, but don't default if intentionally cleared.
+        panel = panelsData.find((p) => p.model === sel.panel) || null;
+        // Do not substitute another panel when the selected model is gone from the DB.
         if (!panel && sel.panel) {
-            panel =
-                panelsData.find(
-                    (p) => p.active !== false && isCompatibleFormat(array, p)
-                ) || panelsData[0];
+            missingPanelWarning = true;
         }
     }
 
@@ -213,24 +275,47 @@ export const analyzeArray = (
         return price; // legacy single-array assignment
     };
 
+    const pStringsRaw = array.parallelStrings || 1;
+    const wiringValid = !panel || isValidWiring(array.count, pStringsRaw);
+    // Use integer series length only when wiring is valid; otherwise treat as 0 for metrics.
+    const pStrings = wiringValid ? pStringsRaw : pStringsRaw;
+    const panelsPerSeriesString = wiringValid ? array.count / pStrings : 0;
+
     if (!panel || !controller) {
         let coldVoc = 0;
         let hotVmp = 0;
         let peakPower = 0;
-        let cost = 0;
+        let panelCost = 0;
 
-        if (panel) {
+        if (panel && wiringValid) {
             peakPower = panel.power * array.count;
-            const pStrings = array.parallelStrings || 1;
-            const panelsPerSeriesString = array.count / pStrings;
             coldVoc = panel.voc * panelsPerSeriesString * coldVocFactor(panel);
             hotVmp = panel.vmp * panelsPerSeriesString * hotVmpFactor(panel);
-            cost = panel.price * array.count;
+            panelCost = panel.price * array.count;
+        } else if (panel) {
+            peakPower = panel.power * array.count;
+            panelCost = panel.price * array.count;
         }
-        cost += getControllerCostShare();
-        const arrayIscHot = panel
-            ? panel.isc * (array.parallelStrings || 1) * hotIscFactor(panel)
-            : 0;
+        const cost = panelCost + getControllerCostShare();
+        const arrayIscHot =
+            panel && wiringValid ? panel.isc * pStrings * hotIscFactor(panel) : 0;
+
+        const messages = [];
+        if (missingPanelWarning) {
+            messages.push(
+                `Selected panel model "${sel.panel}" is no longer in the database. Please choose another panel.`
+            );
+        }
+        if (panel && !wiringValid) {
+            messages.push(
+                `Invalid wiring: panel count (${array.count}) is not divisible by parallel strings (${pStringsRaw}).`
+            );
+        }
+        if (messages.length === 0) {
+            messages.push(
+                "Please select both a Solar Panel and a PV Controller to view system analysis."
+            );
+        }
 
         return {
             array,
@@ -239,10 +324,9 @@ export const analyzeArray = (
             controllerInstance,
             mpptIndex,
             status: "warning",
-            messages: [
-                "Please select both a Solar Panel and a PV Controller to view system analysis.",
-            ],
+            messages,
             peakPower,
+            panelCost,
             cost,
             costPerKWp: peakPower > 0 ? cost / (peakPower / 1000) : 0,
             coldVoc,
@@ -252,28 +336,34 @@ export const analyzeArray = (
     }
 
     const peakPower = panel.power * array.count;
-    const pStrings = array.parallelStrings || 1;
-    const panelsPerSeriesString = array.count / pStrings;
-
-    const stringVocSTC = panel.voc * panelsPerSeriesString;
-    const coldVoc = stringVocSTC * coldVocFactor(panel);
-
-    const stringVmpSTC = panel.vmp * panelsPerSeriesString;
-    const hotVmp = stringVmpSTC * hotVmpFactor(panel);
     const panelCost = panel.price * array.count;
     const cost = panelCost + getControllerCostShare();
 
-    const arrayIscHot = panel.isc * pStrings * hotIscFactor(panel);
+    const coldVoc = wiringValid
+        ? panel.voc * panelsPerSeriesString * coldVocFactor(panel)
+        : 0;
+    const hotVmp = wiringValid
+        ? panel.vmp * panelsPerSeriesString * hotVmpFactor(panel)
+        : 0;
+    const arrayIscHot = wiringValid ? panel.isc * pStrings * hotIscFactor(panel) : 0;
 
     const effectiveStartupV = getEffectiveStartupV(controller, systemVoltage);
-    const isVocError = coldVoc > controller.maxV;
-    const isVocWarn = coldVoc > controller.maxV * 0.94 && !isVocError;
-    const isVmpError = hotVmp < effectiveStartupV;
-    const isIscError = arrayIscHot > controller.maxIsc;
+    const isWiringError = !wiringValid;
+    const isVocError = wiringValid && coldVoc > controller.maxV;
+    const isVocWarn = wiringValid && coldVoc > controller.maxV * VOC_WARN_FRACTION && !isVocError;
+    const isVmpError = wiringValid && hotVmp < effectiveStartupV;
+    const isIscError = wiringValid && arrayIscHot > controller.maxIsc;
     const isFormatError = !isCompatibleFormat(array, panel);
 
     let status = "valid";
     let messages = [];
+
+    if (isWiringError) {
+        status = "error";
+        messages.push(
+            `FATAL: Invalid wiring - panel count (${array.count}) is not divisible by parallel strings (${pStringsRaw}).`
+        );
+    }
 
     if (isFormatError) {
         status = "error";
@@ -300,19 +390,18 @@ export const analyzeArray = (
     const isWidthOk =
         !array.maxPanelWidth ||
         (panel.width && panel.width <= array.maxPanelWidth);
-    const isWeightOk =
-        !array.maxPanelWeight ||
-        (panel.weight != null && panel.weight <= Number(array.maxPanelWeight));
+    const effectiveMaxKg = getEffectiveMaxPanelWeightKg(array, hideHeavyPanels);
+    const isWeightOk = panelMeetsWeightCap(panel, effectiveMaxKg);
     if (!isHeightOk || !isWidthOk) {
         status = "error";
         messages.push(
             `FATAL PHYSICAL: The selected panel (${panel.height}x${panel.width}mm) exceeds your specified maximum dimensions for this array.`
         );
     }
-    if (!isWeightOk && array.maxPanelWeight) {
+    if (!isWeightOk && effectiveMaxKg != null) {
         status = "error";
         messages.push(
-            `FATAL PHYSICAL: The selected panel (${panel.weight}kg) exceeds your specified maximum panel weight (${array.maxPanelWeight}kg) for this array.`
+            `FATAL PHYSICAL: The selected panel (${panel.weight}kg) exceeds your specified maximum panel weight (${effectiveMaxKg}kg) for this array.`
         );
     }
 
@@ -351,7 +440,6 @@ export const analyzeArray = (
     }
 
     if (messages.length === 0) {
-        // messages.push("Configuration is safe.");
         messages.push("");
     }
 
@@ -364,6 +452,7 @@ export const analyzeArray = (
         status,
         messages,
         peakPower,
+        panelCost,
         cost,
         costPerKWp: peakPower > 0 ? cost / (peakPower / 1000) : 0,
         coldVoc,
@@ -372,4 +461,3 @@ export const analyzeArray = (
         effectiveStartupV,
     };
 };
-

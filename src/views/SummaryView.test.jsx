@@ -108,4 +108,10 @@ describe('SummaryView', () => {
         expect(screen.getAllByText(minimalArray.name).length).toBeGreaterThanOrEqual(1);
         expect(screen.getAllByText(/Test Panel 400W/).length).toBeGreaterThanOrEqual(1);
     });
+
+    it('BOM footer totals panels + controllers once (no double-count)', () => {
+        render(<SummaryView />);
+        // 6 × £100 panels + £200 controller = £800 (not £1000)
+        expect(screen.getByText('£800')).toBeInTheDocument();
+    });
 });
