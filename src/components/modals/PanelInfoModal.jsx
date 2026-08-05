@@ -3,7 +3,6 @@ import Modal from '../Modal';
 import { ExternalLink, Info } from '../Icons';
 import { GSE_COMPATIBILITY, getPanelGseCompatibility } from '../../lib/gseCompatibility';
 import { safeHttpUrl } from '../../lib/safeUrl';
-import { panelSeriesKey, isNoSeriesKey } from '../../lib/panelSeries';
 
 export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdateNote }) {
     if (!panel) return null;
@@ -11,10 +10,6 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
     const p = panel;
     const gseCompatibility = getPanelGseCompatibility(p);
     const safeDatasheet = safeHttpUrl(p.datasheetUrl);
-    // Design Notes are written per-series (see SCHEMA.md), except for the "(no series)" edge
-    // case, where a panel has no series to share a note with and keeps its own note instead.
-    const seriesKey = panelSeriesKey(p);
-    const noSeries = isNoSeriesKey(seriesKey);
 
     const header = (
         <div>
@@ -75,11 +70,6 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
                 <div className="bg-slate-50 p-5 rounded-lg border border-slate-200">
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center"><Info size={14} className="mr-2" /> Design Notes</h3>
                     <p className="text-sm text-slate-700 leading-relaxed">{p.notes || 'No specific design notes for this module. Refer to standard datasheets.'}</p>
-                    <p className="text-xs text-slate-400 mt-2">
-                        {noSeries
-                            ? "This model has no documented series, so this note is specific to it rather than shared."
-                            : `Shared across every "${seriesKey}" panel from ${p.manufacturer || 'this manufacturer'}.`}
-                    </p>
                 </div>
                 <div>
                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center">Your Persistent Notes</h3>

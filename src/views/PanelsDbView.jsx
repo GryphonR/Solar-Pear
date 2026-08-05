@@ -1,13 +1,18 @@
 import React, { useMemo, useState } from 'react';
 import { Plus, Info, ExternalLink } from '../components/Icons';
+import Modal from '../components/Modal';
 import { useAppState } from '../context/AppStateContext';
 import { getGseCompatibilityDbLabel } from '../lib/gseCompatibility';
 import { safeHttpUrl } from '../lib/safeUrl';
-import { groupPanelsBySeries, panelSeriesKey, isNoSeriesKey, seriesDesignNotes } from '../lib/panelSeries';
+import { groupPanelsBySeries, panelSeriesKey, seriesDesignNotes } from '../lib/panelSeries';
 
 export default function PanelsDbView() {
     const { panelsData, setPanelsData, updatePanel, addPanel, setInfoModalPanelId } = useAppState();
     const [ukFilterEnabled, setUkFilterEnabled] = useState(false);
+    // Design Notes are per-series (see SCHEMA.md); rather than showing the note inline for every
+    // series section, a small info button opens it in a modal on demand. The "(no series)" edge
+    // case has no shared note, so seriesDesignNotes() returns "" for it and no button is shown.
+    const [seriesNotesModal, setSeriesNotesModal] = useState(null);
 
     // Pre-group panels by manufacturer → series → power for nested sections
     const { manufacturers, panelsByManufacturer } = useMemo(() => {
@@ -124,19 +129,26 @@ export default function PanelsDbView() {
                         {seriesGroups.map(({ seriesKey, panels: seriesPanels }) => {
                             const seriesAllActive = seriesPanels.every((p) => p.active !== false);
                             const seriesNoneActive = seriesPanels.every((p) => p.active === false);
-                            const noSeries = isNoSeriesKey(seriesKey);
-                            // Design Notes are written once per series (see SCHEMA.md); the
-                            // "(no series)" bucket is the edge case where each panel keeps its
-                            // own note instead, shown per-row via the Info modal rather than here.
                             const designNotes = seriesDesignNotes(seriesKey, seriesPanels);
                             return (
                                 <div key={`${mfr}|${seriesKey}`} className="ml-0 sm:ml-2">
                                     <div className="flex items-center justify-between mb-1.5 px-1">
-                                        <h4 className="text-xs font-semibold text-slate-600">
+                                        <h4 className="text-xs font-semibold text-slate-600 flex items-center gap-1">
                                             {seriesKey}{' '}
                                             <span className="font-normal text-slate-400">
                                                 ({seriesPanels.length})
                                             </span>
+                                            {designNotes && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSeriesNotesModal({ seriesKey, notes: designNotes })}
+                                                    className="p-1 -m-1 text-slate-400 hover:text-blue-600 transition-colors"
+                                                    title="View Design Notes for this series"
+                                                    aria-label={`View design notes for the ${seriesKey} series`}
+                                                >
+                                                    <Info size={14} />
+                                                </button>
+                                            )}
                                         </h4>
                                         <div className="flex gap-2">
                                             <button
@@ -155,21 +167,6 @@ export default function PanelsDbView() {
                                             </button>
                                         </div>
                                     </div>
-                                    {noSeries ? (
-                                        <p className="mb-2 px-1 text-xs text-slate-400 italic">
-                                            No documented series - each panel below has its own design notes rather
-                                            than a shared one; open a panel&apos;s info to read it.
-                                        </p>
-                                    ) : (
-                                        designNotes && (
-                                            <div className="mb-2 mx-1 px-3 py-2 rounded-lg bg-amber-50/70 border border-amber-200/80 text-xs text-slate-700 leading-relaxed">
-                                                <span className="font-bold uppercase tracking-wider text-[10px] text-amber-700 mr-1.5">
-                                                    Design Notes
-                                                </span>
-                                                {designNotes}
-                                            </div>
-                                        )
-                                    )}
                                     <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                                         <div className="max-h-[500px] overflow-y-auto">
                                             <table className="w-full text-left border-collapse relative">
@@ -305,6 +302,14 @@ export default function PanelsDbView() {
                     </div>
                 );
             })}
+            <Modal
+                open={!!seriesNotesModal}
+                onClose={() => setSeriesNotesModal(null)}
+                title={seriesNotesModal ? `Design Notes: ${seriesNotesModal.seriesKey}` : ''}
+                closeOnBackdropClick
+            >
+                <p className="text-sm text-slate-700 leading-relaxed">{seriesNotesModal?.notes}</p>
+            </Modal>
         </div>
     );
 }

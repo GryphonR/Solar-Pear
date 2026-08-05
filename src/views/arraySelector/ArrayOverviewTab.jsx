@@ -3,7 +3,6 @@ import { AlertTriangle, CheckCircle, Info, XIcon, ExternalLink } from '../../com
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
 import { isCompatibleFormat } from '../../lib/arrayAnalysis';
 import { safeHttpUrl } from '../../lib/safeUrl';
-import { panelSeriesKey, isNoSeriesKey } from '../../lib/panelSeries';
 
 export default function ArrayOverviewTab({
     array,
@@ -165,12 +164,7 @@ export default function ArrayOverviewTab({
                     <div className="grid grid-cols-2 gap-8 items-stretch">
                         <div className="flex flex-col">
                             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Design Notes</p>
-                            <p className="text-xs text-slate-400 italic mb-2">
-                                AI generated, may not be accurate.{' '}
-                                {isNoSeriesKey(panelSeriesKey(panel))
-                                    ? 'This model has no documented series, so this note is specific to it.'
-                                    : `Shared across the "${panelSeriesKey(panel)}" series.`}
-                            </p>
+                            <p className="text-xs text-slate-400 italic mb-2">AI generated, may not be accurate.</p>
                             <div className="text-sm text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">{panel.notes || 'No specific design notes for this module.'}</div>
                         </div>
                         <div className="flex flex-col">
