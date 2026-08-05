@@ -38,8 +38,11 @@ const TECH_RULES = [
     { tech: PANEL_TECH.HJT, pattern: /\b(HJT|heterojunction)\b/i },
     { tech: PANEL_TECH.TOPCON, pattern: /TOPCon/i },
     { tech: PANEL_TECH.HJT, pattern: /\bHIT\b/ },
-    // Q.ANTUM is Q-Cells' branded PERC derivative.
-    { tech: PANEL_TECH.PERC, pattern: /\b(PERC|Q\.ANTUM)\b/i },
+    // Q.ANTUM is Q-Cells' branded PERC derivative, but Q.ANTUM NEO (used on the newer N-type
+    // Q.TRON line) is a different, newer architecture that Qcells' own datasheets do not name
+    // more specifically - so it is deliberately excluded here and goes uncited, rather than
+    // being mislabelled as PERC just because the two names share a word.
+    { tech: PANEL_TECH.PERC, pattern: /\bPERC\b|\bQ\.ANTUM\b(?!\s*NEO)/i },
     { tech: PANEL_TECH.MONO_GENERIC, pattern: /\b(mono|monocrystalline)\b/i },
 ];
 

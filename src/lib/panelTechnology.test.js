@@ -51,6 +51,13 @@ describe('classifyPanelTechnology', () => {
         expect(classifyPanelTechnology({ cells: '132 Half-Cell (PERC)' })).toBe(PANEL_TECH.PERC);
     });
 
+    it('does not lump the newer Q.ANTUM NEO in with plain Q.ANTUM PERC', () => {
+        // Q.ANTUM NEO (Q.TRON) is a different, newer N-type architecture; Qcells' own
+        // datasheets do not name it more specifically, so it should go uncited rather than
+        // being mislabelled as PERC just because the names share a word.
+        expect(classifyPanelTechnology({ cells: '96 Half-Cell (N-Type Q.ANTUM NEO)' })).toBeNull();
+    });
+
     it('recognises heterojunction cells', () => {
         expect(classifyPanelTechnology({ cells: '80 Half-Cell (HJT)' })).toBe(PANEL_TECH.HJT);
     });
