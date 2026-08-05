@@ -1,0 +1,41 @@
+[
+    {
+        "name": "GB-Sol GBS Custom 350W",
+        "model": "GBS-Custom-350",
+        "manufacturer": "GB-Sol",
+        "panel-series": "GBS Custom",
+        "height": 2337.5,
+        "width": 1072,
+        "depth": 40,
+        "weight": 0,
+        "glass": "Single (4.0mm)",
+        "bifacial": false,
+        "power": 350,
+        "voc": 47.66,
+        "vmp": 40.1,
+        "isc": 9.42,
+        "imp": 8.87,
+        "price": 0,
+        "efficiency": 14.0,
+        "tempCoefPmax": -0.42,
+        "tempCoefVoc": -0.33,
+        "tempCoefIsc": 0.05,
+        "maxSeriesFuse": 0,
+        "maxSystemVoltage": 0,
+        "cells": "84 Full-Cell (Crystalline Silicon)",
+        "gseCompatibility": "None",
+        "datasheetUrl": "https://www.lowcarbonhub.org/wp-content/uploads/2021/04/5.1-Panels-GB-Sol-Custom-Panel.pdf",
+        "notes": "Technology: standard (non half-cut) crystalline silicon cells, 84-cell, monofacial with a single 4mm low-iron toughened front glass - thicker than the 3.2mm used on most panels in this database. Made in Pontypridd, South Wales, since 1994; GB-Sol don't sell a catalogue of wattage bins like the Tier-1 manufacturers - this 350W laminate is their standard framed/BIPV module, built to order for their own RIS in-roof and PV Slate systems as well as conventional mounting. Pros: MCS-accredited and genuinely UK-manufactured, with a structural glass build proven since 1994 - the RIS in-roof system it's designed for is a distinct, established UK alternative to Viridian's Clearline Fusion for conservation-area and listed-building projects where standard on-roof racking isn't acceptable. Cons: older cell technology than current Tier-1 panels, with a correspondingly steep -0.42%/degC Pmax temperature coefficient; the published datasheet doesn't state a weight, max series fuse, max system voltage, or list price - GB-Sol sell bespoke to project specification rather than off-the-shelf, so get a full spec and quote directly rather than assuming these.",
+        "buyLinks": [
+            {
+                "Supplier": "gb-sol.co.uk",
+                "URL": "https://gb-sol.co.uk/",
+                "isAffiliate": false,
+                "Checked": true
+            }
+        ],
+        "active": true,
+        "reviewed": false,
+        "availableUK": true
+    }
+]
