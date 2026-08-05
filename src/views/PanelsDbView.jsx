@@ -3,7 +3,7 @@ import { Plus, Info, ExternalLink } from '../components/Icons';
 import { useAppState } from '../context/AppStateContext';
 import { getGseCompatibilityDbLabel } from '../lib/gseCompatibility';
 import { safeHttpUrl } from '../lib/safeUrl';
-import { groupPanelsBySeries, panelSeriesKey } from '../lib/panelSeries';
+import { groupPanelsBySeries, panelSeriesKey, isNoSeriesKey, seriesDesignNotes } from '../lib/panelSeries';
 
 export default function PanelsDbView() {
     const { panelsData, setPanelsData, updatePanel, addPanel, setInfoModalPanelId } = useAppState();
@@ -124,6 +124,11 @@ export default function PanelsDbView() {
                         {seriesGroups.map(({ seriesKey, panels: seriesPanels }) => {
                             const seriesAllActive = seriesPanels.every((p) => p.active !== false);
                             const seriesNoneActive = seriesPanels.every((p) => p.active === false);
+                            const noSeries = isNoSeriesKey(seriesKey);
+                            // Design Notes are written once per series (see SCHEMA.md); the
+                            // "(no series)" bucket is the edge case where each panel keeps its
+                            // own note instead, shown per-row via the Info modal rather than here.
+                            const designNotes = seriesDesignNotes(seriesKey, seriesPanels);
                             return (
                                 <div key={`${mfr}|${seriesKey}`} className="ml-0 sm:ml-2">
                                     <div className="flex items-center justify-between mb-1.5 px-1">
@@ -150,6 +155,21 @@ export default function PanelsDbView() {
                                             </button>
                                         </div>
                                     </div>
+                                    {noSeries ? (
+                                        <p className="mb-2 px-1 text-xs text-slate-400 italic">
+                                            No documented series - each panel below has its own design notes rather
+                                            than a shared one; open a panel&apos;s info to read it.
+                                        </p>
+                                    ) : (
+                                        designNotes && (
+                                            <div className="mb-2 mx-1 px-3 py-2 rounded-lg bg-amber-50/70 border border-amber-200/80 text-xs text-slate-700 leading-relaxed">
+                                                <span className="font-bold uppercase tracking-wider text-[10px] text-amber-700 mr-1.5">
+                                                    Design Notes
+                                                </span>
+                                                {designNotes}
+                                            </div>
+                                        )
+                                    )}
                                     <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                                         <div className="max-h-[500px] overflow-y-auto">
                                             <table className="w-full text-left border-collapse relative">
