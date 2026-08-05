@@ -25,7 +25,7 @@
         "cells": "132 Half-Cell (PERC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.jasolar.com/uploadfile/fujian/2024/0807/57de8d106c8d247.pdf",
-        "notes": "This 510W module shares JA Solar's 132-cell DeepBlue 3.0 Pro platform electrically, but JA Solar doesn't market it under that series name, so it has no documented `panel-series` and is tracked individually rather than grouped with a series-wide note. It is the highest-wattage 132-cell PERC module in this file.",
+        "notes": "Technology: PERC cells, 132 half-cell, monofacial with single 3.2mm glass - electrically it shares JA Solar's Deepblue 3.0 Pro platform, but JA Solar doesn't market it under that series name, so it has no documented `panel-series` and is tracked individually rather than grouped with a series-wide note. Pros: the highest-wattage 132-cell PERC module in this file. Cons: PERC lags TOPCon/HJT on temperature coefficient and degradation, and as an unnamed one-off it has less certainty around long-term availability than a named series.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -64,7 +64,7 @@
         "cells": "108 Half-Cell (PERC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/3.0/JAM54S31_MR/2024/JAM54S31_395-420_MR_Global_EN_20240522A.pdf",
-        "notes": "JA Solar's budget PERC line, split between a compact 108-cell format (420W) and a larger 132-cell format (500-505W). The 132-cell bins are almost 2.1m long - verify rafter spans, and note they are GSE Portrait Only - while the 420W bin is the most compact and cheapest entry point in the range.",
+        "notes": "Technology: PERC cells, monofacial with single 3.2mm glass, split between a compact 108-cell format (420W) and a larger 132-cell format (500-505W). Pros: budget-friendly and ubiquitous, so it's easy to source and price-competitive against newer technology. Cons: PERC's weaker temperature coefficient and higher degradation than TOPCon/HJT rivals; the 132-cell bins are almost 2.1m long, so verify rafter spans, and note they are GSE Portrait Only.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -96,7 +96,7 @@
         "cells": "132 Half-Cell (PERC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.jasolar.eu/en/product/deepblue-3-0-pro",
-        "notes": "JA Solar's budget PERC line, split between a compact 108-cell format (420W) and a larger 132-cell format (500-505W). The 132-cell bins are almost 2.1m long - verify rafter spans, and note they are GSE Portrait Only - while the 420W bin is the most compact and cheapest entry point in the range.",
+        "notes": "Technology: PERC cells, monofacial with single 3.2mm glass, split between a compact 108-cell format (420W) and a larger 132-cell format (500-505W). Pros: budget-friendly and ubiquitous, so it's easy to source and price-competitive against newer technology. Cons: PERC's weaker temperature coefficient and higher degradation than TOPCon/HJT rivals; the 132-cell bins are almost 2.1m long, so verify rafter spans, and note they are GSE Portrait Only.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -128,7 +128,7 @@
         "cells": "132 Half-Cell (PERC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.jasolar.com/uploadfile/2022/0928/20220928044113690.pdf",
-        "notes": "JA Solar's budget PERC line, split between a compact 108-cell format (420W) and a larger 132-cell format (500-505W). The 132-cell bins are almost 2.1m long - verify rafter spans, and note they are GSE Portrait Only - while the 420W bin is the most compact and cheapest entry point in the range.",
+        "notes": "Technology: PERC cells, monofacial with single 3.2mm glass, split between a compact 108-cell format (420W) and a larger 132-cell format (500-505W). Pros: budget-friendly and ubiquitous, so it's easy to source and price-competitive against newer technology. Cons: PERC's weaker temperature coefficient and higher degradation than TOPCon/HJT rivals; the 132-cell bins are almost 2.1m long, so verify rafter spans, and note they are GSE Portrait Only.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -160,7 +160,7 @@
         "cells": "108 Half-Cell (PERC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54S31_LR.pdf",
-        "notes": "A mixed-technology series under one name: the 430-435W LR bins are budget PERC with a comparatively low Voc (verify cold-climate string counts), while the 435W MB bin at the same headline wattage swaps in N-Type bifacial double-glass for a materially better temperature coefficient and durability - check the model suffix (LR vs MB), not just the watt rating, when comparing panels within this series.",
+        "notes": "Technology: a mixed-technology series under one name - the 430-435W LR bins are PERC, monofacial with single glass, while the 435W MB bin swaps in N-Type TOPCon bifacial double-glass at the same headline wattage. Pros: the MB bin gets a materially better temperature coefficient and durability than the LR bins for no extra watts. Cons: the LR bins have a comparatively low Voc (verify cold-climate string counts), and buyers must check the model suffix (LR vs MB), not just the watt rating, since two very different panels share this series name.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -192,7 +192,7 @@
         "cells": "108 Half-Cell (PERC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54S31_LR.pdf",
-        "notes": "A mixed-technology series under one name: the 430-435W LR bins are budget PERC with a comparatively low Voc (verify cold-climate string counts), while the 435W MB bin at the same headline wattage swaps in N-Type bifacial double-glass for a materially better temperature coefficient and durability - check the model suffix (LR vs MB), not just the watt rating, when comparing panels within this series.",
+        "notes": "Technology: a mixed-technology series under one name - the 430-435W LR bins are PERC, monofacial with single glass, while the 435W MB bin swaps in N-Type TOPCon bifacial double-glass at the same headline wattage. Pros: the MB bin gets a materially better temperature coefficient and durability than the LR bins for no extra watts. Cons: the LR bins have a comparatively low Voc (verify cold-climate string counts), and buyers must check the model suffix (LR vs MB), not just the watt rating, since two very different panels share this series name.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -224,7 +224,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54S31_LR.pdf",
-        "notes": "A mixed-technology series under one name: the 430-435W LR bins are budget PERC with a comparatively low Voc (verify cold-climate string counts), while the 435W MB bin at the same headline wattage swaps in N-Type bifacial double-glass for a materially better temperature coefficient and durability - check the model suffix (LR vs MB), not just the watt rating, when comparing panels within this series.",
+        "notes": "Technology: a mixed-technology series under one name - the 430-435W LR bins are PERC, monofacial with single glass, while the 435W MB bin swaps in N-Type TOPCon bifacial double-glass at the same headline wattage. Pros: the MB bin gets a materially better temperature coefficient and durability than the LR bins for no extra watts. Cons: the LR bins have a comparatively low Voc (verify cold-climate string counts), and buyers must check the model suffix (LR vs MB), not just the watt rating, since two very different panels share this series name.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -256,7 +256,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54D40_MB.pdf",
-        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, in the standard 108-cell format (440-465W, 1.6mm+1.6mm glass) plus a 600W large-format 144-cell variant (2.0mm+2.0mm glass) for commercial and utility roofs. Pros: bifacial TOPCon gives a strong temperature coefficient, low LID, and rear-side gain across the whole range. Cons: the 460W, 465W and 600W bins step up to a 30A series fuse versus 25A for the 440-450W bins, and the 600W variant is sized for utility-scale rather than residential arrays, so it isn't a drop-in swap for the smaller bins.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -288,7 +288,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54D40_MB.pdf",
-        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, in the standard 108-cell format (440-465W, 1.6mm+1.6mm glass) plus a 600W large-format 144-cell variant (2.0mm+2.0mm glass) for commercial and utility roofs. Pros: bifacial TOPCon gives a strong temperature coefficient, low LID, and rear-side gain across the whole range. Cons: the 460W, 465W and 600W bins step up to a 30A series fuse versus 25A for the 440-450W bins, and the 600W variant is sized for utility-scale rather than residential arrays, so it isn't a drop-in swap for the smaller bins.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -320,7 +320,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.com/uploadfile/fujian/2024/0328/a85bf0dfe569316.pdf",
-        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, in the standard 108-cell format (440-465W, 1.6mm+1.6mm glass) plus a 600W large-format 144-cell variant (2.0mm+2.0mm glass) for commercial and utility roofs. Pros: bifacial TOPCon gives a strong temperature coefficient, low LID, and rear-side gain across the whole range. Cons: the 460W, 465W and 600W bins step up to a 30A series fuse versus 25A for the 440-450W bins, and the 600W variant is sized for utility-scale rather than residential arrays, so it isn't a drop-in swap for the smaller bins.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -365,7 +365,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.estg.eu/p/1/e/3/5/1e351733df2b105dffddaf4816f7891c21a44a6e_25_yr_Warranty_JAM54D40_440_465_LB_Black_Frame_Global_EN_20250530A.pdf",
-        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, in the standard 108-cell format (440-465W, 1.6mm+1.6mm glass) plus a 600W large-format 144-cell variant (2.0mm+2.0mm glass) for commercial and utility roofs. Pros: bifacial TOPCon gives a strong temperature coefficient, low LID, and rear-side gain across the whole range. Cons: the 460W, 465W and 600W bins step up to a 30A series fuse versus 25A for the 440-450W bins, and the 600W variant is sized for utility-scale rather than residential arrays, so it isn't a drop-in swap for the smaller bins.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -410,7 +410,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.estg.eu/p/1/e/3/5/1e351733df2b105dffddaf4816f7891c21a44a6e_25_yr_Warranty_JAM54D40_440_465_LB_Black_Frame_Global_EN_20250530A.pdf",
-        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, in the standard 108-cell format (440-465W, 1.6mm+1.6mm glass) plus a 600W large-format 144-cell variant (2.0mm+2.0mm glass) for commercial and utility roofs. Pros: bifacial TOPCon gives a strong temperature coefficient, low LID, and rear-side gain across the whole range. Cons: the 460W, 465W and 600W bins step up to a 30A series fuse versus 25A for the 440-450W bins, and the 600W variant is sized for utility-scale rather than residential arrays, so it isn't a drop-in swap for the smaller bins.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -455,7 +455,7 @@
         "cells": "144 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM72D40_MB.pdf",
-        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, in the standard 108-cell format (440-465W, 1.6mm+1.6mm glass) plus a 600W large-format 144-cell variant (2.0mm+2.0mm glass) for commercial and utility roofs. Pros: bifacial TOPCon gives a strong temperature coefficient, low LID, and rear-side gain across the whole range. Cons: the 460W, 465W and 600W bins step up to a 30A series fuse versus 25A for the 440-450W bins, and the 600W variant is sized for utility-scale rather than residential arrays, so it isn't a drop-in swap for the smaller bins.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",

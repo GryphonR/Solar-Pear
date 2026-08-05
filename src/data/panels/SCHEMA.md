@@ -55,7 +55,13 @@ All fields listed above are required for the app to function properly. When addi
 
 ## Design notes (`notes`)
 
-`notes` is a **per-series** field, not a per-panel one: every panel that shares the same `manufacturer` and `panel-series` must carry the **exact same** `notes` text, in the same way that `height`, `width`, `depth`, `weight` and the `tempCoef*` fields are already shared across a series. Write it as a short paragraph about the series as a whole — what it is, how it's built, and where it sits relative to other series — and use it to call out **any notable power outputs within that series** (the highest/lowest bin, a bin with a materially different Voc/Isc, a bin needing a wider series fuse, etc.), rather than restating the same generic description on every wattage bin.
+`notes` is a **per-series** field, not a per-panel one: every panel that shares the same `manufacturer` and `panel-series` must carry the **exact same** `notes` text, in the same way that `height`, `width`, `depth`, `weight` and the `tempCoef*` fields are already shared across a series. Write it as a short paragraph about the series as a whole — what it is, how it's built, and where it sits relative to other series — covering three things:
+
+1. **Technology** — the cell architecture (PERC, TOPCon, HJT, ABC, HPBC, IBC, etc.), whether it's monofacial or bifacial, and the glass construction.
+2. **Pros / Cons** — the series' real strengths and trade-offs (price, aesthetics, warranty, temperature behaviour, physical size, etc.), not just a restatement of the spec sheet.
+3. **Notable power outputs within the series** — the highest/lowest bin, a bin with a materially different Voc/Isc, a bin needing a wider series fuse, etc.
+
+Use plain sentences with `Technology:`, `Pros:` and `Cons:` as inline lead-ins (the note renders as plain text, not markdown, so avoid bullet characters or headings that need formatting to read correctly).
 
 When editing a series' panels, update `notes` on every member together (the data-admin Panels browser has an "Edit design notes" action per series that does this in one step) so the series never drifts out of sync.
 

@@ -25,7 +25,7 @@
         "cells": "UKS-S108/M10N-440",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://dam.cityplumbing.co.uk/private/xkg302j/GPID_1500084942_TECH_00.pdf",
-        "notes": "A single 440W entry - UKSOL's standard M10N half-cell module, with nothing unusual in its electrical profile relative to other 108-cell panels in this database.",
+        "notes": "Technology: monocrystalline cells (architecture not stated), 108-cell format, monofacial with single 2.0mm glass. A single 440W entry - UKSOL's standard M10N half-cell module. Pros: nothing unusual in its electrical profile relative to other 108-cell panels in this database, so it's a straightforward, easy-to-integrate choice. Cons: thinner 2.0mm single glass is only heat-strengthened rather than fully tempered (see the Guide's glass section), and there's no bifacial or premium-cell variant in this range.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",

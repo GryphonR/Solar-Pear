@@ -25,7 +25,7 @@
         "cells": "66 IBC (Maxeon 6)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://maxeon-production.squarespace.com/s/Maxeon-6-DC-425-440-W.pdf",
-        "notes": "Maxeon's IBC (back-contact) flagship in two finishes on the same 66-cell platform. The 425W all-black bin runs slightly lower current due to its black backsheet heat profile, while the white-backsheet 440W bin is the outright performance leader with higher current for the same cell technology - the choice is aesthetics vs a few extra watts.",
+        "notes": "Technology: IBC (interdigitated back contact) cells, 66-cell, monofacial with single 3.2mm glass, in two finishes. Runs 425-440W. Pros: IBC eliminates front grid lines and reduces micro-cracking, and the white-backsheet 440W bin is the outright performance leader with higher current for the same cell technology; Maxeon backs it with a 40-year warranty if registered. Cons: the most expensive panel per watt in this database by a wide margin, and the all-black 425W bin trades a little current for its darker backsheet's heat profile.",
         "buyLinks": [
             {
                 "Supplier": "bimblesolar.com",
@@ -64,7 +64,7 @@
         "cells": "66 IBC (Maxeon 6)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://maxeon-production.squarespace.com/s/Maxeon-6-DC-425-440-W.pdf",
-        "notes": "Maxeon's IBC (back-contact) flagship in two finishes on the same 66-cell platform. The 425W all-black bin runs slightly lower current due to its black backsheet heat profile, while the white-backsheet 440W bin is the outright performance leader with higher current for the same cell technology - the choice is aesthetics vs a few extra watts.",
+        "notes": "Technology: IBC (interdigitated back contact) cells, 66-cell, monofacial with single 3.2mm glass, in two finishes. Runs 425-440W. Pros: IBC eliminates front grid lines and reduces micro-cracking, and the white-backsheet 440W bin is the outright performance leader with higher current for the same cell technology; Maxeon backs it with a 40-year warranty if registered. Cons: the most expensive panel per watt in this database by a wide margin, and the all-black 425W bin trades a little current for its darker backsheet's heat profile.",
         "buyLinks": [
             {
                 "Supplier": "bimblesolar.com",

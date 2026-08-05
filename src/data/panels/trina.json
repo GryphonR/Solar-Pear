@@ -25,7 +25,7 @@
         "cells": "144 Half-Cell (i-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2024/09/240831_Datasheet_Vertex-S_NEG9R.28_EN_2024_C_web.pdf",
-        "notes": "Trina's dual-format Vertex S+ range covers two distinct platforms under one series name. The 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, while the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range.",
+        "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -57,7 +57,7 @@
         "cells": "144 Half-Cell (i-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2024/09/240831_Datasheet_Vertex-S_NEG9R.28_EN_2024_C_web.pdf",
-        "notes": "Trina's dual-format Vertex S+ range covers two distinct platforms under one series name. The 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, while the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range.",
+        "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -89,7 +89,7 @@
         "cells": "144 Half-Cell (i-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2024/09/240831_Datasheet_Vertex-S_NEG9R.28_EN_2024_C_web.pdf",
-        "notes": "Trina's dual-format Vertex S+ range covers two distinct platforms under one series name. The 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, while the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range.",
+        "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -121,7 +121,7 @@
         "cells": "144 Half-Cell (i-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2024/09/240831_Datasheet_Vertex-S_NEG9R.28_EN_2024_C_web.pdf",
-        "notes": "Trina's dual-format Vertex S+ range covers two distinct platforms under one series name. The 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, while the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range.",
+        "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -153,7 +153,7 @@
         "cells": "144 Half-Cell (i-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2024/09/240831_Datasheet_Vertex-S_NEG9R.28_EN_2024_C_web.pdf",
-        "notes": "Trina's dual-format Vertex S+ range covers two distinct platforms under one series name. The 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, while the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range.",
+        "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
         "buyLinks": [
             {
                 "Supplier": "cclcomponents.com",
@@ -192,7 +192,7 @@
         "cells": "144 Half-Cell (i-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2024/09/240831_Datasheet_Vertex-S_NEG9R.28_EN_2024_C_web.pdf",
-        "notes": "Trina's dual-format Vertex S+ range covers two distinct platforms under one series name. The 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, while the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range.",
+        "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
         "buyLinks": [
             {
                 "Supplier": "cclcomponents.com",
@@ -231,7 +231,7 @@
         "cells": "108 Half-Cell (i-TOPCon)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2025/01/Datasheet_Vertex-S_NEG18R.28_EN_2024_C_web.pdf",
-        "notes": "Trina's dual-format Vertex S+ range covers two distinct platforms under one series name. The 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, while the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range.",
+        "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
         "buyLinks": [
             {
                 "Supplier": "cclcomponents.com",
@@ -270,7 +270,7 @@
         "cells": "108 Half-Cell (i-TOPCon)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2025/01/Datasheet_Vertex-S_NEG18R.28_EN_2024_C_web.pdf",
-        "notes": "Trina's dual-format Vertex S+ range covers two distinct platforms under one series name. The 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, while the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range.",
+        "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
         "buyLinks": [
             {
                 "Supplier": "dev.cclcomponents.com",
@@ -309,7 +309,7 @@
         "cells": "108 Half-Cell (i-TOPCon)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2025/01/Datasheet_Vertex-S_NEG18R.28_EN_2024_C_web.pdf",
-        "notes": "Trina's dual-format Vertex S+ range covers two distinct platforms under one series name. The 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, while the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range.",
+        "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
         "buyLinks": [
             {
                 "Supplier": "cclcomponents.com",

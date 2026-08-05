@@ -25,7 +25,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-445AG-M10-Data-Sheet.pdf",
-        "notes": "A single 445W entry - Viridian's premium N-Type TOPCon bifacial-ready (glass-glass) module, the highest-wattage panel in the Clearline Fusion range.",
+        "notes": "Technology: N-Type TOPCon cells, 108 half-cell, bifacial-ready glass-glass construction. A single 445W entry - the highest-wattage panel in the Clearline Fusion range. Pros: TOPCon's strong temperature coefficient and low LID, backed by a 15yr product / 30yr power warranty - the longest warranty in this range. Cons: despite the bifacial-ready glass-glass build the cells are wired monofacial, so there's no rear-side yield; the most expensive panel in Viridian's range per watt.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -70,7 +70,7 @@
         "cells": "108 Half-Cell (Monocrystalline)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-G1-Data-Sheet.pdf",
-        "notes": "Viridian's entry-level monocrystalline series at 335W and 340W - the smallest-format, lowest-wattage panels in this database, suited to compact roofs or where unit weight matters more than peak power.",
+        "notes": "Technology: monocrystalline cells, 108 half-cell, monofacial with standard tempered glass. Viridian's entry-level tier at 335W and 340W - the smallest-format, lowest-wattage panels in this database. Pros: lower unit weight and a smaller footprint than every other panel here, useful for compact roofs or tight weight limits. Cons: lowest efficiency in Viridian's range (20.7-21%) and only a 25yr power warranty, shorter than the AG-M10 flagship's 30 years.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -115,7 +115,7 @@
         "cells": "108 Half-Cell (Monocrystalline)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-G1-Data-Sheet.pdf",
-        "notes": "Viridian's entry-level monocrystalline series at 335W and 340W - the smallest-format, lowest-wattage panels in this database, suited to compact roofs or where unit weight matters more than peak power.",
+        "notes": "Technology: monocrystalline cells, 108 half-cell, monofacial with standard tempered glass. Viridian's entry-level tier at 335W and 340W - the smallest-format, lowest-wattage panels in this database. Pros: lower unit weight and a smaller footprint than every other panel here, useful for compact roofs or tight weight limits. Cons: lowest efficiency in Viridian's range (20.7-21%) and only a 25yr power warranty, shorter than the AG-M10 flagship's 30 years.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -160,7 +160,7 @@
         "cells": "108 Half-Cell (Monocrystalline)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-M10-Data-Sheet.pdf",
-        "notes": "A single 405W entry - a mid-range monocrystalline module sitting between the G1 entry tier and the AG-M10 bifacial-ready flagship in Viridian's range.",
+        "notes": "Technology: monocrystalline cells, 108 half-cell, monofacial with standard tempered glass. A single 405W entry sitting between the G1 entry tier and the AG-M10 bifacial-ready flagship. Pros: a mid-range efficiency step up from the G1 tier without the AG-M10's price premium. Cons: monofacial only, and only a 25yr power warranty, shorter than the AG-M10's 30 years.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",

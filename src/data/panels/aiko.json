@@ -25,7 +25,7 @@
         "cells": "144 Half-Cell (ABC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.vicoexport.com/wp-content/uploads/2024/07/AIKO-A-MAH72Mw-600-620W-350mm-Vico-Export-Solar-Energy.pdf",
-        "notes": "AIKO's 144-cell ABC flagship for utility-scale or oversized residential roofs (each module is over 2.2m long). Power runs 600-620W; the 620W top bin is the highest wattage in this file, yet Isc stays under 14.6A across the whole series, so it stays within reach of standard tracker current limits.",
+        "notes": "Technology: All Back Contact (ABC) cells, 144 half-cell, monofacial with single 3.2mm tempered glass. Power runs 600-620W - the highest wattage in this database - with efficiency climbing to 24% at the 620W top bin. Pros: no front grid lines gives a completely uniform black face, and Isc stays under 14.6A across the range despite the huge power, so it doesn't overwhelm standard tracker current limits. Cons: each module is over 2.2m long, so it only suits roofs and trays built for large-format panels; monofacial with single glass forgoes both rear-side gain and the extra durability of a glass-glass build.",
         "buyLinks": [
             {
                 "Supplier": "portal.segen.co.uk",
@@ -64,7 +64,7 @@
         "cells": "144 Half-Cell (ABC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.vicoexport.com/wp-content/uploads/2024/07/AIKO-A-MAH72Mw-600-620W-350mm-Vico-Export-Solar-Energy.pdf",
-        "notes": "AIKO's 144-cell ABC flagship for utility-scale or oversized residential roofs (each module is over 2.2m long). Power runs 600-620W; the 620W top bin is the highest wattage in this file, yet Isc stays under 14.6A across the whole series, so it stays within reach of standard tracker current limits.",
+        "notes": "Technology: All Back Contact (ABC) cells, 144 half-cell, monofacial with single 3.2mm tempered glass. Power runs 600-620W - the highest wattage in this database - with efficiency climbing to 24% at the 620W top bin. Pros: no front grid lines gives a completely uniform black face, and Isc stays under 14.6A across the range despite the huge power, so it doesn't overwhelm standard tracker current limits. Cons: each module is over 2.2m long, so it only suits roofs and trays built for large-format panels; monofacial with single glass forgoes both rear-side gain and the extra durability of a glass-glass build.",
         "buyLinks": [
             {
                 "Supplier": "portal.segen.co.uk",
@@ -103,7 +103,7 @@
         "cells": "144 Half-Cell (ABC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.vicoexport.com/wp-content/uploads/2024/07/AIKO-A-MAH72Mw-600-620W-350mm-Vico-Export-Solar-Energy.pdf",
-        "notes": "AIKO's 144-cell ABC flagship for utility-scale or oversized residential roofs (each module is over 2.2m long). Power runs 600-620W; the 620W top bin is the highest wattage in this file, yet Isc stays under 14.6A across the whole series, so it stays within reach of standard tracker current limits.",
+        "notes": "Technology: All Back Contact (ABC) cells, 144 half-cell, monofacial with single 3.2mm tempered glass. Power runs 600-620W - the highest wattage in this database - with efficiency climbing to 24% at the 620W top bin. Pros: no front grid lines gives a completely uniform black face, and Isc stays under 14.6A across the range despite the huge power, so it doesn't overwhelm standard tracker current limits. Cons: each module is over 2.2m long, so it only suits roofs and trays built for large-format panels; monofacial with single glass forgoes both rear-side gain and the extra durability of a glass-glass build.",
         "buyLinks": [
             {
                 "Supplier": "portal.segen.co.uk",
@@ -142,7 +142,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
+        "notes": "Technology: All Back Contact (ABC) cells, 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 445W to 470W. Pros: ABC gives a clean, all-black aesthetic with no visible front grid lines, and efficiency rises with the bin (22.3-23.6%) so higher wattage also means better yield per square metre. Cons: the 470W top bin's Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer; monofacial and single glass means no bifacial gain and a shorter warranty pedigree than glass-glass rivals.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -181,7 +181,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
+        "notes": "Technology: All Back Contact (ABC) cells, 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 445W to 470W. Pros: ABC gives a clean, all-black aesthetic with no visible front grid lines, and efficiency rises with the bin (22.3-23.6%) so higher wattage also means better yield per square metre. Cons: the 470W top bin's Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer; monofacial and single glass means no bifacial gain and a shorter warranty pedigree than glass-glass rivals.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -220,7 +220,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
+        "notes": "Technology: All Back Contact (ABC) cells, 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 445W to 470W. Pros: ABC gives a clean, all-black aesthetic with no visible front grid lines, and efficiency rises with the bin (22.3-23.6%) so higher wattage also means better yield per square metre. Cons: the 470W top bin's Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer; monofacial and single glass means no bifacial gain and a shorter warranty pedigree than glass-glass rivals.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -259,7 +259,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
+        "notes": "Technology: All Back Contact (ABC) cells, 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 445W to 470W. Pros: ABC gives a clean, all-black aesthetic with no visible front grid lines, and efficiency rises with the bin (22.3-23.6%) so higher wattage also means better yield per square metre. Cons: the 470W top bin's Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer; monofacial and single glass means no bifacial gain and a shorter warranty pedigree than glass-glass rivals.",
         "buyLinks": [
             {
                 "Supplier": "tradesparky.com",
@@ -298,7 +298,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
+        "notes": "Technology: All Back Contact (ABC) cells, 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 445W to 470W. Pros: ABC gives a clean, all-black aesthetic with no visible front grid lines, and efficiency rises with the bin (22.3-23.6%) so higher wattage also means better yield per square metre. Cons: the 470W top bin's Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer; monofacial and single glass means no bifacial gain and a shorter warranty pedigree than glass-glass rivals.",
         "buyLinks": [
             {
                 "Supplier": "tradesparky.com",
@@ -337,7 +337,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
+        "notes": "Technology: All Back Contact (ABC) cells, 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 445W to 470W. Pros: ABC gives a clean, all-black aesthetic with no visible front grid lines, and efficiency rises with the bin (22.3-23.6%) so higher wattage also means better yield per square metre. Cons: the 470W top bin's Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer; monofacial and single glass means no bifacial gain and a shorter warranty pedigree than glass-glass rivals.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -376,7 +376,7 @@
         "cells": "108(6*18)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://dam.cityplumbing.co.uk/private/oyy21rj/GPID_1500104215_TECH_00.pdf",
-        "notes": "A newer 108-cell ABC variant rated at 475W - one step above the NeoStar 2S ceiling of 470W, with a reworked 6x18 cell layout and a noticeably higher current (14.76A vs 14.32A for the NeoStar 2S top bin).",
+        "notes": "Technology: All Back Contact (ABC) cells in a reworked 6x18 layout, monofacial with 3.2mm tempered glass. A single 475W entry - one step above the NeoStar 2S ceiling of 470W. Pros: highest efficiency (23.8%) and highest current (14.76A) of AIKO's standard-footprint ABC panels, so it packs more into the same physical size. Cons: as a lone model rather than a multi-bin series it has less pricing flexibility, and it shares ABC's usual trade-offs of monofacial output and pricier third-party servicing.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",

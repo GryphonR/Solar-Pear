@@ -25,7 +25,7 @@
         "cells": "120 Half-Cell (PERC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://voltaconsolar.com/products/420w-solar-panel-black-frame-half-cut-cell",
-        "notes": "No documented series name for this model, so it's tracked individually rather than grouped with a series-wide note. Worth flagging: the model number references 450W, but the rated power recorded here is 420W - double-check against the datasheet if the discrepancy matters for your string sizing.",
+        "notes": "Technology: PERC cells, 120 half-cell, monofacial with single 3.2mm glass. No documented series name for this model, so it's tracked individually rather than grouped with a series-wide note. Pros: a straightforward, competitively priced PERC panel. Cons: PERC trails TOPCon/HJT on temperature coefficient and degradation; also worth flagging - the model number references 450W, but the rated power recorded here is 420W, so double-check against the datasheet if the discrepancy matters for your string sizing.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -64,7 +64,7 @@
         "cells": "36-Cell Monocrystalline",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://voltaconsolar.com/products/flexible-solar-panel-195w",
-        "notes": "A single 195W entry - an ultra-lightweight ETFE-coated flexible panel for curved surfaces (RVs, boats), not a rigid-mount module, so the usual weight and glass comparisons in this database don't apply to it.",
+        "notes": "Technology: monocrystalline cells, 36-cell, monofacial, ETFE-coated laminate (no glass). A single 195W entry. Pros: ultra-lightweight and flexible for curved surfaces (RVs, boats) where a rigid glass panel can't be fitted or the roof can't take the load. Cons: ETFE laminates have a shorter service life and a face that scratches and hazes faster than glass (see the Guide's glass section); low power output rules it out for a grid-tied rooftop string.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -103,7 +103,7 @@
         "cells": "36-Cell Monocrystalline",
         "gseCompatibility": "None",
         "datasheetUrl": "https://www.sungoldsolar.com/wp-content/uploads/2024/01/SGM2-180W.pdf",
-        "notes": "A single 180W entry - Voltacon's smallest rigid-frame panel, aimed at motorhomes, campervans and boats rather than rooftop arrays.",
+        "notes": "Technology: monocrystalline cells, 36-cell, monofacial with high-transmission tempered glass. A single 180W entry. Pros: Voltacon's smallest rigid-frame panel, well suited to motorhomes, campervans and boats where a full-size residential module won't fit. Cons: too low-power and low-voltage for a grid-tied residential string design; no bifacial or premium-cell option.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
