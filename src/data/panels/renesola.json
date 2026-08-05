@@ -25,7 +25,7 @@
         "cells": "108 Half-Cell (N-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "hhttps://cdn.enfsolar.com/z/pp/2023/8/3493buiwej311/RS41-400-425NX-E3-1722-1134-30-full-black.pdf",
-        "notes": "Saturn Series Monofacial All-Black. N-TOPCon technology for high efficiency and reliability.",
+        "notes": "ReneSola's monofacial all-black N-TOPCon entry, rated at 425W - the single-glass counterpart to the Rene 2n bifacial variant at the same headline wattage.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -70,7 +70,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://cdn.enfsolar.com/z/pp/2024/11/0qr40juk7u3cwt6/rs41-430-450nxg-e3-1722-1134-30.pdf",
-        "notes": "Saturn Bi-Facial panel with double glass. Catches sun rays from both directions for up to 90W additional back-side energy.",
+        "notes": "ReneSola's bifacial double-glass variant, also rated at 425W on the front face like the monofacial RS-41, but able to add up to 90W of additional rear-side energy depending on mounting and ground reflectivity.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",

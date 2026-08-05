@@ -25,7 +25,7 @@
         "cells": "132 Half-Cell",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.longi.com/en/products/modules/hi-mo-5/",
-        "notes": "Large format 132-cell module. Highly dependable for larger arrays.",
+        "notes": "LONGi's large-format 132-cell PERC line, running 500W to 510W with a high Voc (45.55-45.85V) that gives a wide safety margin on shorter series strings.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -57,7 +57,7 @@
         "cells": "132 Half-Cell",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.longi.com/en/products/modules/hi-mo-5/",
-        "notes": "Commercial format utilizing reliable Hi-MO 5 technology. Solid performance history.",
+        "notes": "LONGi's large-format 132-cell PERC line, running 500W to 510W with a high Voc (45.55-45.85V) that gives a wide safety margin on shorter series strings.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -89,7 +89,7 @@
         "cells": "132 Half-Cell",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.longi.com/en/products/modules/hi-mo-5/",
-        "notes": "Top variant of the 132-cell Hi-MO 5 series.",
+        "notes": "LONGi's large-format 132-cell PERC line, running 500W to 510W with a high Voc (45.55-45.85V) that gives a wide safety margin on shorter series strings.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -121,7 +121,7 @@
         "cells": "108 (6*18) Half Cell",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.cityplumbing.co.uk/p/longi-solar-hi-mo-5m-410wp-full-black-pv-module-lr5-54hpb-410m/p/787545",
-        "notes": "",
+        "notes": "A single 410W entry using a smaller 108-cell (6x18) layout. Notably steep -0.34%/°C Voc temperature coefficient - the coldest-sensitive Voc figure in this file - so cold-climate string lengths are worth double-checking.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -166,7 +166,7 @@
         "cells": "108 Half-Cell (HPBC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://static.longi.com/18_L_Gi_LE_PM_T_PMD_059_F128_LR_5_54_HTB_410_430_M_30_30_and_15_Frame_Explorer_DG_V17_073ef4ba26.pdf",
-        "notes": "Uses proprietary HPBC technology to remove all silver busbars from the front. Explorer variant offers standard high efficiency with excellent aesthetics.",
+        "notes": "The entry point for LONGi's zero-busbar HPBC (back-contact) line, rated at 430W - one step below the 440-450W Hi-MO 6 Scientists bins that share the same technology.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -205,7 +205,7 @@
         "cells": "108 Half-Cell (HPBC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://midsummerwholesale.co.uk/pdfs/l-gi-le-pm-t-pmd-059-f129-lr-5-54-htb-440-450-m-v1-30-30-and-15-frame-scientist-v19-black-en-pdf-d066cc073b.pdf",
-        "notes": "Scientist variant with premium efficiency. HPBC technology provided market-leading yield and zero-busbar aesthetics.",
+        "notes": "LONGi's premium HPBC tier, running 440W to 450W in the standard 108-cell format. All three bins share the flatter -0.23%/°C Voc coefficient typical of back-contact designs; the 450W top bin maximises yield in that footprint.",
         "buyLinks": [
             {
                 "Supplier": "Midsummer Wholesale",
@@ -244,7 +244,7 @@
         "cells": "108 Half-Cell (HPBC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://midsummerwholesale.co.uk/pdfs/l-gi-le-pm-t-pmd-059-f129-lr-5-54-htb-440-450-m-v1-30-30-and-15-frame-scientist-v19-black-en-pdf-d066cc073b.pdf",
-        "notes": "High wattage Scientist variant. Exceptional aesthetics and yield.",
+        "notes": "LONGi's premium HPBC tier, running 440W to 450W in the standard 108-cell format. All three bins share the flatter -0.23%/°C Voc coefficient typical of back-contact designs; the 450W top bin maximises yield in that footprint.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -276,7 +276,7 @@
         "cells": "108 Half-Cell (HPBC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://static.longi.com/Hi_MO_6_Scientist_LR_5_54_HTH_435_450_M_V03_DG_21637b209b.pdf",
-        "notes": "The top-bin residential Scientist variant. Maximizes energy production in a standard footprint.",
+        "notes": "LONGi's premium HPBC tier, running 440W to 450W in the standard 108-cell format. All three bins share the flatter -0.23%/°C Voc coefficient typical of back-contact designs; the 450W top bin maximises yield in that footprint.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -308,7 +308,7 @@
         "cells": "120",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://dam.cityplumbing.co.uk/private/xp81p4g/GPID_1500080454_TECH_00.pdf",
-        "notes": "",
+        "notes": "A single 505W entry on LONGi's large-format 120-cell Artist platform - the highest-wattage standard-footprint panel LONGi offers in this database.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -353,7 +353,7 @@
         "cells": "LR7-54HVB-475",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://dam.cityplumbing.co.uk/private/ormdz1r/GPID_1500110497_TECH_00.pdf",
-        "notes": "",
+        "notes": "A single 475W entry with the gentlest Voc temperature coefficient in this whole database (-0.20%/°C), which widens cold-string headroom more than any other panel here, at the cost of a higher Isc (15.03A) than most 475W-class modules.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",

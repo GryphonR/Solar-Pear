@@ -25,7 +25,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-445AG-M10-Data-Sheet.pdf",
-        "notes": "Premium N-Type TOPCon bifacial-ready (glass-glass) module. 15yr product / 30yr power warranty.",
+        "notes": "A single 445W entry - Viridian's premium N-Type TOPCon bifacial-ready (glass-glass) module, the highest-wattage panel in the Clearline Fusion range.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -70,7 +70,7 @@
         "cells": "108 Half-Cell (Monocrystalline)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-G1-Data-Sheet.pdf",
-        "notes": "G1 series monocrystalline module. 15yr product / 25yr power warranty.",
+        "notes": "Viridian's entry-level monocrystalline series at 335W and 340W - the smallest-format, lowest-wattage panels in this database, suited to compact roofs or where unit weight matters more than peak power.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -115,7 +115,7 @@
         "cells": "108 Half-Cell (Monocrystalline)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-G1-Data-Sheet.pdf",
-        "notes": "G1 series monocrystalline module. 15yr product / 25yr power warranty.",
+        "notes": "Viridian's entry-level monocrystalline series at 335W and 340W - the smallest-format, lowest-wattage panels in this database, suited to compact roofs or where unit weight matters more than peak power.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -160,7 +160,7 @@
         "cells": "108 Half-Cell (Monocrystalline)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-M10-Data-Sheet.pdf",
-        "notes": "M10 series monocrystalline module. 15yr product / 25yr power warranty.",
+        "notes": "A single 405W entry - a mid-range monocrystalline module sitting between the G1 entry tier and the AG-M10 bifacial-ready flagship in Viridian's range.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",

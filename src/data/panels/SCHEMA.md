@@ -43,10 +43,20 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `cells` | string | Cell description (e.g. "144 Half-Cell (i-TOPCon)"). |
 | `gseCompatibility` | string | In-roof (GSE) format: `"Both"`, `"None"`, `"Portrait Only"`, or `"Landscape Only"`. |
 | `datasheetUrl` | string | URL to datasheet. |
-| `notes` | string | Engineering or selection notes. |
+| `notes` | string | **Design Notes** — see [Design notes](#design-notes-notes) below. Shown to users as "Design Notes" in the app. |
 | `buyLinks` | object | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
 | `active` | boolean | If `true`, panel appears in selectors. |
 | `availableUK` | boolean | True if panel is readily available in the UK|
 | `reviewed` | bool | Confirmation of human review of the data|
 
 All fields listed above are required for the app to function properly. When adding a new panel, include every field; use neutral values (e.g. `0`, `""`, `false`, `{}`) where a value is not applicable.
+
+---
+
+## Design notes (`notes`)
+
+`notes` is a **per-series** field, not a per-panel one: every panel that shares the same `manufacturer` and `panel-series` must carry the **exact same** `notes` text, in the same way that `height`, `width`, `depth`, `weight` and the `tempCoef*` fields are already shared across a series. Write it as a short paragraph about the series as a whole — what it is, how it's built, and where it sits relative to other series — and use it to call out **any notable power outputs within that series** (the highest/lowest bin, a bin with a materially different Voc/Isc, a bin needing a wider series fuse, etc.), rather than restating the same generic description on every wattage bin.
+
+When editing a series' panels, update `notes` on every member together (the data-admin Panels browser has an "Edit design notes" action per series that does this in one step) so the series never drifts out of sync.
+
+**Edge case — panels with no series:** panels with a blank or missing `panel-series` (grouped in the UI as `"(no series)"`) have no series to share a note with, so for these `notes` stays **per-panel**: write it about that specific model, and say plainly that it has no documented series (e.g. because the manufacturer sells it as a one-off, or names it inconsistently). `allowedEmptyStrings` in the panels schema permits `notes` to be blank, but prefer writing something over leaving it empty.

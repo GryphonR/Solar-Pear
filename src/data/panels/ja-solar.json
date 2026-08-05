@@ -25,7 +25,7 @@
         "cells": "132 Half-Cell (PERC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.jasolar.com/uploadfile/fujian/2024/0807/57de8d106c8d247.pdf",
-        "notes": "High-wattage variant of the 132-cell DeepBlue 3.0 Pro series.",
+        "notes": "This 510W module shares JA Solar's 132-cell DeepBlue 3.0 Pro platform electrically, but JA Solar doesn't market it under that series name, so it has no documented `panel-series` and is tracked individually rather than grouped with a series-wide note. It is the highest-wattage 132-cell PERC module in this file.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -64,7 +64,7 @@
         "cells": "108 Half-Cell (PERC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/3.0/JAM54S31_MR/2024/JAM54S31_395-420_MR_Global_EN_20240522A.pdf",
-        "notes": "Compact 1.72m residential panel. Budget-friendly and ubiquitous. Solid mid-range efficiency.",
+        "notes": "JA Solar's budget PERC line, split between a compact 108-cell format (420W) and a larger 132-cell format (500-505W). The 132-cell bins are almost 2.1m long - verify rafter spans, and note they are GSE Portrait Only - while the 420W bin is the most compact and cheapest entry point in the range.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -96,7 +96,7 @@
         "cells": "132 Half-Cell (PERC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.jasolar.eu/en/product/deepblue-3-0-pro",
-        "notes": "Large format 132-cell panel. High voltage makes it suitable for long strings, but verify handling and loading for roof installations.",
+        "notes": "JA Solar's budget PERC line, split between a compact 108-cell format (420W) and a larger 132-cell format (500-505W). The 132-cell bins are almost 2.1m long - verify rafter spans, and note they are GSE Portrait Only - while the 420W bin is the most compact and cheapest entry point in the range.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -128,7 +128,7 @@
         "cells": "132 Half-Cell (PERC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.jasolar.com/uploadfile/2022/0928/20220928044113690.pdf",
-        "notes": "Large format. At almost 2.1 meters long, verify the rafter spans and orientation (GSE Portrait Only).",
+        "notes": "JA Solar's budget PERC line, split between a compact 108-cell format (420W) and a larger 132-cell format (500-505W). The 132-cell bins are almost 2.1m long - verify rafter spans, and note they are GSE Portrait Only - while the 420W bin is the most compact and cheapest entry point in the range.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -160,7 +160,7 @@
         "cells": "108 Half-Cell (PERC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54S31_LR.pdf",
-        "notes": "Slightly longer 1.76m variant. Ubiquitous budget panel. However, it has a relatively low Voc; verify string calculations for cold climates.",
+        "notes": "A mixed-technology series under one name: the 430-435W LR bins are budget PERC with a comparatively low Voc (verify cold-climate string counts), while the 435W MB bin at the same headline wattage swaps in N-Type bifacial double-glass for a materially better temperature coefficient and durability - check the model suffix (LR vs MB), not just the watt rating, when comparing panels within this series.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -192,7 +192,7 @@
         "cells": "108 Half-Cell (PERC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54S31_LR.pdf",
-        "notes": "Higher power LR variant. Good value for money in string inverter applications.",
+        "notes": "A mixed-technology series under one name: the 430-435W LR bins are budget PERC with a comparatively low Voc (verify cold-climate string counts), while the 435W MB bin at the same headline wattage swaps in N-Type bifacial double-glass for a materially better temperature coefficient and durability - check the model suffix (LR vs MB), not just the watt rating, when comparing panels within this series.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -224,7 +224,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54S31_LR.pdf",
-        "notes": "N-Type Bifacial Double-Glass. Excellent temperature coefficient and durability. Ideal for high-performance residential arrays.",
+        "notes": "A mixed-technology series under one name: the 430-435W LR bins are budget PERC with a comparatively low Voc (verify cold-climate string counts), while the 435W MB bin at the same headline wattage swaps in N-Type bifacial double-glass for a materially better temperature coefficient and durability - check the model suffix (LR vs MB), not just the watt rating, when comparing panels within this series.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -256,7 +256,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54D40_MB.pdf",
-        "notes": "N-Type Bifacial Double-Glass. Highly recommended for premium setups requiring low LID and better weak light performance.",
+        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -288,7 +288,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54D40_MB.pdf",
-        "notes": "High wattage variant of the DeepBlue 4.0 Pro series. Balanced performance and footprint.",
+        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -320,7 +320,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.jasolar.com/uploadfile/fujian/2024/0328/a85bf0dfe569316.pdf",
-        "notes": "N-Type Bifacial Double-Glass All Black solar panel. High performance, long life, and a clean modern look.",
+        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -365,7 +365,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.estg.eu/p/1/e/3/5/1e351733df2b105dffddaf4816f7891c21a44a6e_25_yr_Warranty_JAM54D40_440_465_LB_Black_Frame_Global_EN_20250530A.pdf",
-        "notes": "N-Type Bifacial Double-Glass (All Black) DeepBlue 4.0 PRO. Premium aesthetics and 23.0% efficiency.",
+        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -410,7 +410,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.estg.eu/p/1/e/3/5/1e351733df2b105dffddaf4816f7891c21a44a6e_25_yr_Warranty_JAM54D40_440_465_LB_Black_Frame_Global_EN_20250530A.pdf",
-        "notes": "N-Type Bifacial Double-Glass DeepBlue 4.0 PRO. High 23.3% efficiency and lightweight 1.6mm glass.",
+        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -455,7 +455,7 @@
         "cells": "144 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM72D40_MB.pdf",
-        "notes": "Large format N-Type Bifacial Double-Glass module for high power commercial and utility-scale solar installations.",
+        "notes": "JA Solar's premium N-Type bifacial double-glass series, running 440W to 465W in the standard 108-cell format plus a 600W large-format 144-cell variant for commercial and utility roofs. The 600W bin is the standout: it's the highest wattage in this file, needs a 30A series fuse (vs 25A for the rest of the series), and is sized for utility-scale rather than residential arrays.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",

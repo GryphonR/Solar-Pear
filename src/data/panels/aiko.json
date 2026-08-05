@@ -25,7 +25,7 @@
         "cells": "144 Half-Cell (ABC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.vicoexport.com/wp-content/uploads/2024/07/AIKO-A-MAH72Mw-600-620W-350mm-Vico-Export-Solar-Energy.pdf",
-        "notes": "Massive utility-scale footprint. Part of the 'White Hole' series. Over 2.2 meters long. If your roof can physically take it in portrait, it offers incredible power without exceeding standard tracker current limits.",
+        "notes": "AIKO's 144-cell ABC flagship for utility-scale or oversized residential roofs (each module is over 2.2m long). Power runs 600-620W; the 620W top bin is the highest wattage in this file, yet Isc stays under 14.6A across the whole series, so it stays within reach of standard tracker current limits.",
         "buyLinks": [
             {
                 "Supplier": "portal.segen.co.uk",
@@ -64,7 +64,7 @@
         "cells": "144 Half-Cell (ABC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.vicoexport.com/wp-content/uploads/2024/07/AIKO-A-MAH72Mw-600-620W-350mm-Vico-Export-Solar-Energy.pdf",
-        "notes": "Upgraded Comet 1N variant with improved temperature coefficients and higher efficiency.",
+        "notes": "AIKO's 144-cell ABC flagship for utility-scale or oversized residential roofs (each module is over 2.2m long). Power runs 600-620W; the 620W top bin is the highest wattage in this file, yet Isc stays under 14.6A across the whole series, so it stays within reach of standard tracker current limits.",
         "buyLinks": [
             {
                 "Supplier": "portal.segen.co.uk",
@@ -103,7 +103,7 @@
         "cells": "144 Half-Cell (ABC)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.vicoexport.com/wp-content/uploads/2024/07/AIKO-A-MAH72Mw-600-620W-350mm-Vico-Export-Solar-Energy.pdf",
-        "notes": "Extreme wattage ABC module for large-scale rooftops.",
+        "notes": "AIKO's 144-cell ABC flagship for utility-scale or oversized residential roofs (each module is over 2.2m long). Power runs 600-620W; the 620W top bin is the highest wattage in this file, yet Isc stays under 14.6A across the whole series, so it stays within reach of standard tracker current limits.",
         "buyLinks": [
             {
                 "Supplier": "portal.segen.co.uk",
@@ -142,7 +142,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "Starting bin for the premium ABC series. Features a clean black aesthetic with no front grid lines.",
+        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -181,7 +181,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "Mid-bin ABC residential module. High power density in a standard footprint.",
+        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -220,7 +220,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "Popular high-efficiency bin. ABC technology ensures the best possible yield from 108 cells.",
+        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -259,7 +259,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "Market-leading efficiency using ABC (All Back Contact) technology. No front grid lines results in a premium pure black aesthetic. Excellent power density.",
+        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
         "buyLinks": [
             {
                 "Supplier": "tradesparky.com",
@@ -298,7 +298,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "Premium efficiency ABC module. Strong performance, but voltage drops sharply in extreme heat. 3-panel strings will cut it uncomfortably close to the 120V Victron RS 450 startup threshold in summer.",
+        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
         "buyLinks": [
             {
                 "Supplier": "tradesparky.com",
@@ -337,7 +337,7 @@
         "cells": "108 Half-Cell (ABC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf",
-        "notes": "The pinnacle of standard-footprint wattage. Use this to cram maximum generation into a small roof space where budget is less of a concern than absolute yield.",
+        "notes": "AIKO's standard-footprint premium ABC series, binned in 5W steps from 445W to 470W. The 470W top bin packs the most watts into that footprint, but its Vmp sags enough in heat that 3-panel strings run close to the 120V startup floor on a Victron RS 450 in summer - the lower bins (445-460W) give more thermal headroom for the same all-black aesthetic.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -376,7 +376,7 @@
         "cells": "108(6*18)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://dam.cityplumbing.co.uk/private/oyy21rj/GPID_1500104215_TECH_00.pdf",
-        "notes": "",
+        "notes": "A newer 108-cell ABC variant rated at 475W - one step above the NeoStar 2S ceiling of 470W, with a reworked 6x18 cell layout and a noticeably higher current (14.76A vs 14.32A for the NeoStar 2S top bin).",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",

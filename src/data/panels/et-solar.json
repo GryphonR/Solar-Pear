@@ -25,7 +25,7 @@
         "cells": "108 Half-Cell (N-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.elite-solar.com/uploads/20260309/f331f25e8ff9ef284de461fd0e89a041.pdf",
-        "notes": "Premium N-TOPCon bifacial double-glass module. High durability and 30-year linear performance warranty.",
+        "notes": "ET Solar's single 430W entry in this format - a standard 108-cell N-TOPCon bifacial double-glass module with nothing unusual in its electrical profile.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -64,7 +64,7 @@
         "cells": "96 Half-Cell (N-TOPCon 210R)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.elite-solar.com/uploads/20260309/6c5c550956b03cc92c9245153b4c3865.pdf",
-        "notes": "210R rectangular cell technology with higher current density. Excellent low-light performance.",
+        "notes": "ET Solar's rectangular 210R wafer line, running 440W and 460W on a reduced 96-cell count. Voltage is correspondingly low, but current climbs to 15.8-16.1A - among the highest current draw of any standard-footprint panel in this database. The 460W top bin sits closest to typical 16A MPPT ceilings, so check controller current limits before a wide parallel array.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -103,7 +103,7 @@
         "cells": "96 Half-Cell (N-TOPCon 210R)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.elite-solar.com/uploads/20260309/6c5c550956b03cc92c9245153b4c3865.pdf",
-        "notes": "Flagship 460W module using rectangular cell format. High current design, verify controller compatibility.",
+        "notes": "ET Solar's rectangular 210R wafer line, running 440W and 460W on a reduced 96-cell count. Voltage is correspondingly low, but current climbs to 15.8-16.1A - among the highest current draw of any standard-footprint panel in this database. The 460W top bin sits closest to typical 16A MPPT ceilings, so check controller current limits before a wide parallel array.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,

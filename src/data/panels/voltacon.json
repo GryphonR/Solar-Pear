@@ -25,7 +25,7 @@
         "cells": "120 Half-Cell (PERC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://voltaconsolar.com/products/420w-solar-panel-black-frame-half-cut-cell",
-        "notes": "Voltacon 420W All Black Photovoltaic Module. High quality and outstanding performance even in shadow.",
+        "notes": "No documented series name for this model, so it's tracked individually rather than grouped with a series-wide note. Worth flagging: the model number references 450W, but the rated power recorded here is 420W - double-check against the datasheet if the discrepancy matters for your string sizing.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -64,7 +64,7 @@
         "cells": "36-Cell Monocrystalline",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://voltaconsolar.com/products/flexible-solar-panel-195w",
-        "notes": "Ultra-lightweight flexible panel with ETFE coating for curved surfaces (RVs, boats).",
+        "notes": "A single 195W entry - an ultra-lightweight ETFE-coated flexible panel for curved surfaces (RVs, boats), not a rigid-mount module, so the usual weight and glass comparisons in this database don't apply to it.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -103,7 +103,7 @@
         "cells": "36-Cell Monocrystalline",
         "gseCompatibility": "None",
         "datasheetUrl": "https://www.sungoldsolar.com/wp-content/uploads/2024/01/SGM2-180W.pdf",
-        "notes": "Ideal for motorhomes, campervans and boats. Sturdy anodized aluminium frame.",
+        "notes": "A single 180W entry - Voltacon's smallest rigid-frame panel, aimed at motorhomes, campervans and boats rather than rooftop arrays.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
