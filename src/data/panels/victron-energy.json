@@ -15,7 +15,8 @@
         "vmp": 19.68,
         "isc": 9.91,
         "imp": 9.41,
-        "price": 109,
+        "price": 98.95,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 18.65,
         "tempCoefPmax": -0.45,
         "tempCoefVoc": -0.35,
@@ -28,14 +29,14 @@
         "notes": "Technology: monocrystalline cells, 36-cell, monofacial with high-transmission tempered glass. A single 185W entry aimed at leisure/marine 12-24V systems rather than rooftop string arrays. Pros: exceptional low-light performance and high sensitivity to light, useful for boats and vans with variable shading; the simple 36-cell layout keeps voltage low and safe for small systems. Cons: far too low-power and low-voltage for a grid-tied residential string design; no bifacial or high-efficiency cell option.",
         "buyLinks": [
             {
-                "Supplier": "Voltacon Solar",
-                "URL": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-monocrystalline-series-4a-spm041851200",
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-mono-series-4a-spm041851200",
                 "isAffiliate": false,
                 "Checked": false
             },
             {
                 "Supplier": "voltaconsolar.com",
-                "URL": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-mono-series-4a-spm041851200",
+                "URL": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-monocrystalline-series-4a-spm041851200",
                 "isAffiliate": false,
                 "Checked": false
             }

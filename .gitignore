@@ -17,6 +17,9 @@ dist
 dist-ssr
 *.local
 
+# Local secrets (SERPER_API_KEY etc.) - see .env.example for the template
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

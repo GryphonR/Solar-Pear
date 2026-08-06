@@ -16,6 +16,7 @@
     "isc",
     "imp",
     "price",
+    "priceCheckedAt",
     "efficiency",
     "tempCoefPmax",
     "tempCoefVoc",
@@ -37,10 +38,11 @@
     "notes": "",
     "active": false,
     "gseCompatibility": "None",
-    "availableUK": true
+    "availableUK": true,
+    "priceCheckedAt": ""
   },
   "rules": {
-    "allowedEmptyStrings": ["notes"],
+    "allowedEmptyStrings": ["notes", "priceCheckedAt"],
     "zeroValueSkips": [
       {
         "field": "price",
@@ -66,6 +68,7 @@
     "isc": "number",
     "imp": "number",
     "price": "number",
+    "priceCheckedAt": "string",
     "efficiency": "number",
     "tempCoefPmax": "number",
     "tempCoefVoc": "number",

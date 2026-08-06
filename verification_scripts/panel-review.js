@@ -61,6 +61,20 @@ function shouldSkipZero(entry, field, zeroValueSkips) {
     return false;
 }
 
+/**
+ * True when the final URL after redirects is a retailer soft-error page (e.g. City Plumbing's
+ * `/error-500`). Those pages are full HTML documents and sometimes even return HTTP 200, so a
+ * bare status check would miss them.
+ * @param {string} url
+ */
+function isSoftErrorPageUrl(url) {
+    try {
+        return /\/error-\d+/i.test(new URL(url).pathname);
+    } catch {
+        return false;
+    }
+}
+
 async function checkUrl(url) {
     if (!url) return { ok: false, status: "No URL" };
 
@@ -76,6 +90,15 @@ async function checkUrl(url) {
             signal: controller.signal,
         });
         clearTimeout(timeoutId);
+
+        // Soft-error redirects (dead product → /error-500) must fail even if status is 200.
+        if (isSoftErrorPageUrl(response.url)) {
+            return {
+                ok: false,
+                status: `Soft error page (${response.status}) → ${response.url}`,
+            };
+        }
+
         return {
             ok: response.status === 200,
             status: response.status,

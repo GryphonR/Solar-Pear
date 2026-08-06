@@ -16,6 +16,7 @@
         "isc": 10.8,
         "imp": 10.3,
         "price": 0,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 20.7,
         "tempCoefPmax": -0.259,
         "tempCoefVoc": -0.234,
@@ -25,11 +26,11 @@
         "cells": "120 Half-Cell (HJT)",
         "gseCompatibility": "None",
         "datasheetUrl": "https://solar-distribution.baywa-re.pl/out/media/1_-_Meyer_Burger_White_380-400_EN_Meyer_Burger_White_380_400_Datasheet.pdf",
-        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, single 3.2mm front glass with a white opaque backsheet. Runs 380-400W. Pros: HJT's excellent temperature coefficient (-0.259%/degC) and low degradation (0.25%/yr) backed by a 25-year product / 25-year performance warranty, made in Germany to a Swiss design; despite using the same bifacial-capable SWCT HJT cells as the Glass variant below, the opaque backsheet means this White variant is specified and sold as monofacial. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so the White series is now discontinued - what stock remains is residual distributor inventory only, and this specific variant is not listed under the MCS certificates the Glass variant carries, so confirm UK installability and warranty backing before specifying it.",
+        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, single 3.2mm front glass with a white opaque backsheet. Runs 380-400W. Pros: HJT's excellent temperature coefficient (-0.259%/degC) and low degradation (0.25%/yr) backed by a 25-year product / 25-year performance warranty, made in Germany to a Swiss design; despite using the same bifacial-capable SWCT HJT cells as the Glass variant, the opaque backsheet means this White variant is specified and sold as monofacial. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so the White series is now discontinued - what stock remains is residual distributor inventory only, and this specific variant is not listed under the MCS certificates the Glass variant carries, so confirm UK installability and warranty backing before specifying it.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
-        "availableUK": false
+        "availableUK": true
     },
     {
         "name": "Meyer Burger White 390W",
@@ -48,6 +49,7 @@
         "isc": 10.9,
         "imp": 10.4,
         "price": 0,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21.2,
         "tempCoefPmax": -0.259,
         "tempCoefVoc": -0.234,
@@ -57,11 +59,11 @@
         "cells": "120 Half-Cell (HJT)",
         "gseCompatibility": "None",
         "datasheetUrl": "https://solar-distribution.baywa-re.pl/out/media/1_-_Meyer_Burger_White_380-400_EN_Meyer_Burger_White_380_400_Datasheet.pdf",
-        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, single 3.2mm front glass with a white opaque backsheet. Runs 380-400W. Pros: HJT's excellent temperature coefficient (-0.259%/degC) and low degradation (0.25%/yr) backed by a 25-year product / 25-year performance warranty, made in Germany to a Swiss design; despite using the same bifacial-capable SWCT HJT cells as the Glass variant below, the opaque backsheet means this White variant is specified and sold as monofacial. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so the White series is now discontinued - what stock remains is residual distributor inventory only, and this specific variant is not listed under the MCS certificates the Glass variant carries, so confirm UK installability and warranty backing before specifying it.",
+        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, single 3.2mm front glass with a white opaque backsheet. Runs 380-400W. Pros: HJT's excellent temperature coefficient (-0.259%/degC) and low degradation (0.25%/yr) backed by a 25-year product / 25-year performance warranty, made in Germany to a Swiss design; despite using the same bifacial-capable SWCT HJT cells as the Glass variant, the opaque backsheet means this White variant is specified and sold as monofacial. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so the White series is now discontinued - what stock remains is residual distributor inventory only, and this specific variant is not listed under the MCS certificates the Glass variant carries, so confirm UK installability and warranty backing before specifying it.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
-        "availableUK": false
+        "availableUK": true
     },
     {
         "name": "Meyer Burger White 400W",
@@ -80,6 +82,7 @@
         "isc": 11.1,
         "imp": 10.5,
         "price": 0,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21.7,
         "tempCoefPmax": -0.259,
         "tempCoefVoc": -0.234,
@@ -89,11 +92,11 @@
         "cells": "120 Half-Cell (HJT)",
         "gseCompatibility": "None",
         "datasheetUrl": "https://solar-distribution.baywa-re.pl/out/media/1_-_Meyer_Burger_White_380-400_EN_Meyer_Burger_White_380_400_Datasheet.pdf",
-        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, single 3.2mm front glass with a white opaque backsheet. Runs 380-400W. Pros: HJT's excellent temperature coefficient (-0.259%/degC) and low degradation (0.25%/yr) backed by a 25-year product / 25-year performance warranty, made in Germany to a Swiss design; despite using the same bifacial-capable SWCT HJT cells as the Glass variant below, the opaque backsheet means this White variant is specified and sold as monofacial. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so the White series is now discontinued - what stock remains is residual distributor inventory only, and this specific variant is not listed under the MCS certificates the Glass variant carries, so confirm UK installability and warranty backing before specifying it.",
+        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, single 3.2mm front glass with a white opaque backsheet. Runs 380-400W. Pros: HJT's excellent temperature coefficient (-0.259%/degC) and low degradation (0.25%/yr) backed by a 25-year product / 25-year performance warranty, made in Germany to a Swiss design; despite using the same bifacial-capable SWCT HJT cells as the Glass variant, the opaque backsheet means this White variant is specified and sold as monofacial. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so the White series is now discontinued - what stock remains is residual distributor inventory only, and this specific variant is not listed under the MCS certificates the Glass variant carries, so confirm UK installability and warranty backing before specifying it.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
-        "availableUK": false
+        "availableUK": true
     },
     {
         "name": "Meyer Burger Glass 370W",
@@ -112,6 +115,7 @@
         "isc": 10.3,
         "imp": 9.8,
         "price": 0,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 20.6,
         "tempCoefPmax": -0.259,
         "tempCoefVoc": -0.234,
@@ -121,11 +125,11 @@
         "cells": "120 Half-Cell (HJT)",
         "gseCompatibility": "None",
         "datasheetUrl": "https://cdn.enfsolar.com/z/pp/2025/2/n1rf13qqmo6/ds-meyer-burger-glass-en.pdf",
-        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, genuinely bifacial with dual 2.0mm+2.0mm transparent glass (90%+-5% bifaciality - the highest in this database). Runs 370-390W. Pros: MCS 010 & MCS 005 certified for the UK market, a 30-year product AND 30-year performance warranty (93.2% guaranteed at year 30), and real rear-side yield thanks to the transparent rear glass, unlike the opaque-backsheet White variant above. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so this series is discontinued - what stock remains is residual distributor inventory, and a 40'HC container-scale minimum order is typical, so single-unit UK retail availability is effectively nil; confirm any warranty claim path before relying on the stated 30-year cover.",
+        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, genuinely bifacial with dual 2.0mm+2.0mm transparent glass (90%+-5% bifaciality - exceptionally high for a bifacial panel). Runs 370-390W. Pros: MCS 010 & MCS 005 certified for the UK market, a 30-year product AND 30-year performance warranty (93.2% guaranteed at year 30), and real rear-side yield thanks to the transparent rear glass, unlike the opaque-backsheet White variant. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so this series is discontinued - what stock remains is residual distributor inventory, and a 40'HC container-scale minimum order is typical, so single-unit UK retail availability is effectively nil; confirm any warranty claim path before relying on the stated 30-year cover.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
-        "availableUK": false
+        "availableUK": true
     },
     {
         "name": "Meyer Burger Glass 380W",
@@ -144,6 +148,7 @@
         "isc": 10.4,
         "imp": 9.9,
         "price": 0,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21.2,
         "tempCoefPmax": -0.259,
         "tempCoefVoc": -0.234,
@@ -153,11 +158,11 @@
         "cells": "120 Half-Cell (HJT)",
         "gseCompatibility": "None",
         "datasheetUrl": "https://cdn.enfsolar.com/z/pp/2025/2/n1rf13qqmo6/ds-meyer-burger-glass-en.pdf",
-        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, genuinely bifacial with dual 2.0mm+2.0mm transparent glass (90%+-5% bifaciality - the highest in this database). Runs 370-390W. Pros: MCS 010 & MCS 005 certified for the UK market, a 30-year product AND 30-year performance warranty (93.2% guaranteed at year 30), and real rear-side yield thanks to the transparent rear glass, unlike the opaque-backsheet White variant above. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so this series is discontinued - what stock remains is residual distributor inventory, and a 40'HC container-scale minimum order is typical, so single-unit UK retail availability is effectively nil; confirm any warranty claim path before relying on the stated 30-year cover.",
+        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, genuinely bifacial with dual 2.0mm+2.0mm transparent glass (90%+-5% bifaciality - exceptionally high for a bifacial panel). Runs 370-390W. Pros: MCS 010 & MCS 005 certified for the UK market, a 30-year product AND 30-year performance warranty (93.2% guaranteed at year 30), and real rear-side yield thanks to the transparent rear glass, unlike the opaque-backsheet White variant. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so this series is discontinued - what stock remains is residual distributor inventory, and a 40'HC container-scale minimum order is typical, so single-unit UK retail availability is effectively nil; confirm any warranty claim path before relying on the stated 30-year cover.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
-        "availableUK": false
+        "availableUK": true
     },
     {
         "name": "Meyer Burger Glass 390W",
@@ -174,8 +179,9 @@
         "voc": 44.8,
         "vmp": 39.1,
         "isc": 10.4,
-        "imp": 10.0,
+        "imp": 10,
         "price": 0,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21.8,
         "tempCoefPmax": -0.259,
         "tempCoefVoc": -0.234,
@@ -185,10 +191,10 @@
         "cells": "120 Half-Cell (HJT)",
         "gseCompatibility": "None",
         "datasheetUrl": "https://cdn.enfsolar.com/z/pp/2025/2/n1rf13qqmo6/ds-meyer-burger-glass-en.pdf",
-        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, genuinely bifacial with dual 2.0mm+2.0mm transparent glass (90%+-5% bifaciality - the highest in this database). Runs 370-390W. Pros: MCS 010 & MCS 005 certified for the UK market, a 30-year product AND 30-year performance warranty (93.2% guaranteed at year 30), and real rear-side yield thanks to the transparent rear glass, unlike the opaque-backsheet White variant above. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so this series is discontinued - what stock remains is residual distributor inventory, and a 40'HC container-scale minimum order is typical, so single-unit UK retail availability is effectively nil; confirm any warranty claim path before relying on the stated 30-year cover.",
+        "notes": "Technology: HJT (heterojunction) cells with SmartWire Connection Technology (SWCT), 120 half-cell, genuinely bifacial with dual 2.0mm+2.0mm transparent glass (90%+-5% bifaciality - exceptionally high for a bifacial panel). Runs 370-390W. Pros: MCS 010 & MCS 005 certified for the UK market, a 30-year product AND 30-year performance warranty (93.2% guaranteed at year 30), and real rear-side yield thanks to the transparent rear glass, unlike the opaque-backsheet White variant. Cons: Meyer Burger filed for bankruptcy and closed its manufacturing in 2025, so this series is discontinued - what stock remains is residual distributor inventory, and a 40'HC container-scale minimum order is typical, so single-unit UK retail availability is effectively nil; confirm any warranty claim path before relying on the stated 30-year cover.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
-        "availableUK": false
+        "availableUK": true
     }
 ]

@@ -16,6 +16,7 @@
         "isc": 13.88,
         "imp": 13.16,
         "price": 85,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 20.5,
         "tempCoefPmax": -0.34,
         "tempCoefVoc": -0.27,
@@ -26,14 +27,7 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Technology: Q.ANTUM cells (Q Cells' PERC variant), 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 400W to 420W on an essentially identical physical platform. Pros: solid German/Korean build quality and mechanical design, with superior wind and snow load ratings; a dependable, well-understood choice for both residential and commercial jobs. Cons: as a PERC-based technology it trails TOPCon/HJT panels on temperature coefficient and degradation, and Voc barely moves across the range (37.06-37.17V), so choosing a higher bin is really just paying for a few extra watts rather than a materially different panel.",
-        "buyLinks": [
-            {
-                "Supplier": "midsummerwholesale.co.uk",
-                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -54,7 +48,8 @@
         "vmp": 30.62,
         "isc": 13.91,
         "imp": 13.23,
-        "price": 90,
+        "price": 72.83,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 20.7,
         "tempCoefPmax": -0.34,
         "tempCoefVoc": -0.27,
@@ -65,14 +60,7 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Technology: Q.ANTUM cells (Q Cells' PERC variant), 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 400W to 420W on an essentially identical physical platform. Pros: solid German/Korean build quality and mechanical design, with superior wind and snow load ratings; a dependable, well-understood choice for both residential and commercial jobs. Cons: as a PERC-based technology it trails TOPCon/HJT panels on temperature coefficient and degradation, and Voc barely moves across the range (37.06-37.17V), so choosing a higher bin is really just paying for a few extra watts rather than a materially different panel.",
-        "buyLinks": [
-            {
-                "Supplier": "midsummerwholesale.co.uk",
-                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -93,7 +81,8 @@
         "vmp": 30.83,
         "isc": 13.95,
         "imp": 13.3,
-        "price": 95,
+        "price": 79.99,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21,
         "tempCoefPmax": -0.34,
         "tempCoefVoc": -0.27,
@@ -104,14 +93,7 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Technology: Q.ANTUM cells (Q Cells' PERC variant), 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 400W to 420W on an essentially identical physical platform. Pros: solid German/Korean build quality and mechanical design, with superior wind and snow load ratings; a dependable, well-understood choice for both residential and commercial jobs. Cons: as a PERC-based technology it trails TOPCon/HJT panels on temperature coefficient and degradation, and Voc barely moves across the range (37.06-37.17V), so choosing a higher bin is really just paying for a few extra watts rather than a materially different panel.",
-        "buyLinks": [
-            {
-                "Supplier": "midsummerwholesale.co.uk",
-                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -133,6 +115,7 @@
         "isc": 13.99,
         "imp": 13.37,
         "price": 100,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21.2,
         "tempCoefPmax": -0.34,
         "tempCoefVoc": -0.27,
@@ -143,14 +126,7 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Technology: Q.ANTUM cells (Q Cells' PERC variant), 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 400W to 420W on an essentially identical physical platform. Pros: solid German/Korean build quality and mechanical design, with superior wind and snow load ratings; a dependable, well-understood choice for both residential and commercial jobs. Cons: as a PERC-based technology it trails TOPCon/HJT panels on temperature coefficient and degradation, and Voc barely moves across the range (37.06-37.17V), so choosing a higher bin is really just paying for a few extra watts rather than a materially different panel.",
-        "buyLinks": [
-            {
-                "Supplier": "midsummerwholesale.co.uk",
-                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -172,6 +148,7 @@
         "isc": 14.03,
         "imp": 13.44,
         "price": 105,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21.3,
         "tempCoefPmax": -0.34,
         "tempCoefVoc": -0.27,
@@ -182,14 +159,7 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://media.qcells.com/v/oTlFyugh/",
         "notes": "Technology: Q.ANTUM cells (Q Cells' PERC variant), 108 half-cell, monofacial with single 3.2mm glass. Binned in 5W steps from 400W to 420W on an essentially identical physical platform. Pros: solid German/Korean build quality and mechanical design, with superior wind and snow load ratings; a dependable, well-understood choice for both residential and commercial jobs. Cons: as a PERC-based technology it trails TOPCon/HJT panels on temperature coefficient and degradation, and Voc barely moves across the range (37.06-37.17V), so choosing a higher bin is really just paying for a few extra watts rather than a materially different panel.",
-        "buyLinks": [
-            {
-                "Supplier": "midsummerwholesale.co.uk",
-                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -210,7 +180,8 @@
         "vmp": 29.54,
         "isc": 15.9,
         "imp": 14.73,
-        "price": 51,
+        "price": 61.15,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21.8,
         "tempCoefPmax": -0.3,
         "tempCoefVoc": -0.25,
@@ -250,7 +221,8 @@
         "isc": 15.95,
         "imp": 14.81,
         "price": 52,
-        "efficiency": 22.0,
+        "priceCheckedAt": "2026-08-05",
+        "efficiency": 22,
         "tempCoefPmax": -0.3,
         "tempCoefVoc": -0.25,
         "tempCoefIsc": 0.04,
@@ -279,9 +251,10 @@
         "power": 445,
         "voc": 34.85,
         "vmp": 29.9,
-        "isc": 16.0,
+        "isc": 16,
         "imp": 14.89,
         "price": 53,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 22.3,
         "tempCoefPmax": -0.3,
         "tempCoefVoc": -0.25,
