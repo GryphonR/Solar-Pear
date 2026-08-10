@@ -10,3 +10,9 @@ export function seriesEditPath(file, series) {
     const q = new URLSearchParams({ file, series });
     return `/panels?${q.toString()}`;
 }
+
+/** Bulk-edit the shared Design Notes text for one panel-series in a manufacturer file. */
+export function seriesNotesEditPath(file, series) {
+    const q = new URLSearchParams({ file, series, notes: "1" });
+    return `/panels?${q.toString()}`;
+}

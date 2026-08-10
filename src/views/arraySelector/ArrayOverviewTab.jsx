@@ -163,9 +163,9 @@ export default function ArrayOverviewTab({
                     </div>
                     <div className="grid grid-cols-2 gap-8 items-stretch">
                         <div className="flex flex-col">
-                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Engineering Notes</p>
+                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Design Notes</p>
                             <p className="text-xs text-slate-400 italic mb-2">AI generated, may not be accurate.</p>
-                            <div className="text-sm text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">{panel.notes || 'No specific architectural notes for this module.'}</div>
+                            <div className="text-sm text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">{panel.notes || 'No specific design notes for this module.'}</div>
                         </div>
                         <div className="flex flex-col">
                             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex justify-between items-end"><span>Your Notes</span><span className="text-slate-400 text-[10px] normal-case font-normal">Autosaves</span></p>

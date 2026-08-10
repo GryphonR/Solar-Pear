@@ -58,6 +58,36 @@ export function groupPanelsBySeries(panels) {
 }
 
 /**
+ * Whether a series key is the sentinel bucket for panels with a missing/blank `panel-series`.
+ * These panels have no series to share a design note with, so notes stay per-panel for them.
+ * @param {string} seriesKey
+ * @returns {boolean}
+ */
+export function isNoSeriesKey(seriesKey) {
+    return seriesKey === NO_SERIES_LABEL;
+}
+
+/**
+ * The shared "Design Notes" text for a series. Every panel in a real series is expected to
+ * carry identical `notes`, so the first non-empty value represents the whole group; this
+ * tolerates a lone blank/mismatched entry rather than hiding the note entirely.
+ *
+ * Returns "" for the "(no series)" edge case bucket, since those panels have no series-wide
+ * note to share - each keeps its own individual `notes` instead (read `panel.notes` directly).
+ *
+ * @param {string} seriesKey
+ * @param {{ notes?: string }[]} panels Panels already filtered to this series.
+ * @returns {string}
+ */
+export function seriesDesignNotes(seriesKey, panels) {
+    if (isNoSeriesKey(seriesKey)) return '';
+    for (const p of panels || []) {
+        if (p?.notes) return p.notes;
+    }
+    return '';
+}
+
+/**
  * Composite filter value when manufacturer filter is "All" so series names
  * do not collide across brands.
  * @param {string} manufacturer

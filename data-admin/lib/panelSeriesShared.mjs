@@ -9,9 +9,12 @@ export const PANEL_SERIES_SHARED_FIELDS = [
     "tempCoefIsc",
 ];
 
+/** Sentinel series key for panels with a missing/blank `panel-series` (see SCHEMA.md "Design notes"). */
+export const NO_SERIES_KEY = "(no series)";
+
 export function panelSeriesKey(entry) {
     const s = entry["panel-series"];
-    if (s === undefined || s === null || String(s).trim() === "") return "(no series)";
+    if (s === undefined || s === null || String(s).trim() === "") return NO_SERIES_KEY;
     return String(s);
 }
 
@@ -67,5 +70,50 @@ export function pushPanelSeriesUniformityIssues(file, arr, issues) {
                 variants,
             });
         }
+    }
+}
+
+/**
+ * `notes` ("Design Notes", see SCHEMA.md) is a per-series field: every panel sharing the same
+ * `panel-series` must carry identical text. Panels bucketed into the `NO_SERIES_KEY` sentinel
+ * are the documented edge case - they have no series to share a note with, so they are excluded
+ * from this check entirely and keep independent, panel-specific notes.
+ *
+ * @param {string} file
+ * @param {Record<string, unknown>[]} arr
+ * @param {object[]} issues
+ */
+export function pushDesignNotesUniformityIssues(file, arr, issues) {
+    /** @type {Map<string, { index: number, row: Record<string, unknown> }[]>} */
+    const groups = new Map();
+    for (let index = 0; index < arr.length; index++) {
+        const row = arr[index];
+        const key = panelSeriesKey(row);
+        if (key === NO_SERIES_KEY) continue;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push({ index, row });
+    }
+
+    for (const [series, members] of groups) {
+        if (members.length < 2) continue;
+        const ref = members[0].row.notes;
+        const mismatched = members.filter((m) => !valuesEqual(m.row.notes, ref));
+        if (mismatched.length === 0) continue;
+        const variants = members.map(({ index, row }) => ({
+            index,
+            model: row.model,
+            value: row.notes,
+        }));
+        issues.push({
+            kind: "design_notes_mismatch",
+            severity: "warning",
+            file,
+            series,
+            field: "notes",
+            index: members[0].index,
+            label: `${file.replace(/\.json$/i, "")} — “${series}” (${members.length} panels)`,
+            message: `Design Notes differ within this series`,
+            variants,
+        });
     }
 }

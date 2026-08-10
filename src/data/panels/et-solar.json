@@ -25,7 +25,7 @@
         "cells": "108 Half-Cell (N-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.elite-solar.com/uploads/20260309/f331f25e8ff9ef284de461fd0e89a041.pdf",
-        "notes": "Premium N-TOPCon bifacial double-glass module. High durability and 30-year linear performance warranty.",
+        "notes": "Technology: N-TOPCon cells, 108 half-cell, bifacial with dual 2.0mm glass. A single 430W entry. Pros: N-type TOPCon plus bifacial glass-glass construction for better temperature behaviour and durability than a monofacial PERC panel at a similar price point. Cons: as a standalone model it isn't available in other power bins, and the 2.0mm+2.0mm glass build is heavier than the thinner 1.6mm dual-glass panels elsewhere in this database.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -64,7 +64,7 @@
         "cells": "96 Half-Cell (N-TOPCon 210R)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.elite-solar.com/uploads/20260309/6c5c550956b03cc92c9245153b4c3865.pdf",
-        "notes": "210R rectangular cell technology with higher current density. Excellent low-light performance.",
+        "notes": "Technology: N-TOPCon cells on rectangular 210R wafers, 96 half-cell, bifacial with dual 2.0mm glass. Runs 440W and 460W. Pros: bifacial TOPCon technology, and the reduced cell count keeps the module compact for its wattage. Cons: current climbs to 15.8-16.1A - among the highest of any standard-footprint panel in this database - so the 460W top bin sits close to typical 16A MPPT ceilings; check controller current limits before a wide parallel array.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -103,7 +103,7 @@
         "cells": "96 Half-Cell (N-TOPCon 210R)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.elite-solar.com/uploads/20260309/6c5c550956b03cc92c9245153b4c3865.pdf",
-        "notes": "Flagship 460W module using rectangular cell format. High current design, verify controller compatibility.",
+        "notes": "Technology: N-TOPCon cells on rectangular 210R wafers, 96 half-cell, bifacial with dual 2.0mm glass. Runs 440W and 460W. Pros: bifacial TOPCon technology, and the reduced cell count keeps the module compact for its wattage. Cons: current climbs to 15.8-16.1A - among the highest of any standard-footprint panel in this database - so the 460W top bin sits close to typical 16A MPPT ceilings; check controller current limits before a wide parallel array.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,

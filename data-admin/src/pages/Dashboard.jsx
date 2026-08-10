@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiGet, apiPost } from "../api.js";
-import { entryEditPath, seriesEditPath } from "../lib/editLinks.js";
+import { entryEditPath, seriesEditPath, seriesNotesEditPath } from "../lib/editLinks.js";
 
 const severityRank = { error: 0, warning: 1, info: 2 };
 
@@ -28,6 +28,15 @@ function issueSummary(i) {
             .slice(0, 4);
         const more = (i.variants || []).length > 4 ? ` … +${(i.variants || []).length - 4}` : "";
         return `${i.field} — ${bits.join("; ")}${more}`;
+    }
+    if (i.kind === "design_notes_mismatch") {
+        const preview = (v) => {
+            const s = v == null || v === "" ? "(blank)" : String(v);
+            return s.length > 40 ? `${s.slice(0, 37)}…` : s;
+        };
+        const bits = (i.variants || []).map((v) => `${v.model}: “${preview(v.value)}”`).slice(0, 3);
+        const more = (i.variants || []).length > 3 ? ` … +${(i.variants || []).length - 3}` : "";
+        return `Design Notes differ — ${bits.join("; ")}${more}`;
     }
     if (i.kind === "buy_link_pdf") {
         const who = i.supplier ? String(i.supplier) : "vendor";
@@ -198,8 +207,12 @@ export default function Dashboard() {
                                         {i.kind === "series_spec_mismatch" && i.file && i.series != null && (
                                             <Link to={seriesEditPath(i.file, i.series)}>Edit series fields</Link>
                                         )}
+                                        {i.kind === "design_notes_mismatch" && i.file && i.series != null && (
+                                            <Link to={seriesNotesEditPath(i.file, i.series)}>Edit design notes</Link>
+                                        )}
                                         {i.kind !== "duplicate_id" &&
                                             i.kind !== "series_spec_mismatch" &&
+                                            i.kind !== "design_notes_mismatch" &&
                                             i.file != null &&
                                             i.index != null &&
                                             (i.dataset === "panels" || i.dataset === "controllers") && (

@@ -25,7 +25,7 @@
         "cells": "132 Half-Cell",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.longi.com/en/products/modules/hi-mo-5/",
-        "notes": "Large format 132-cell module. Highly dependable for larger arrays.",
+        "notes": "Technology: monocrystalline cells (no stated architecture beyond generation-era mono), 132 half-cell, monofacial with single 3.2mm glass. Runs 500-510W. Pros: high Voc (45.55-45.85V) suits shorter series strings, and it's a mature, dependable platform for larger arrays. Cons: no bifacial option, and it trails newer TOPCon/HPBC panels on temperature coefficient and rear-side yield.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -57,7 +57,7 @@
         "cells": "132 Half-Cell",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.longi.com/en/products/modules/hi-mo-5/",
-        "notes": "Commercial format utilizing reliable Hi-MO 5 technology. Solid performance history.",
+        "notes": "Technology: monocrystalline cells (no stated architecture beyond generation-era mono), 132 half-cell, monofacial with single 3.2mm glass. Runs 500-510W. Pros: high Voc (45.55-45.85V) suits shorter series strings, and it's a mature, dependable platform for larger arrays. Cons: no bifacial option, and it trails newer TOPCon/HPBC panels on temperature coefficient and rear-side yield.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -89,7 +89,7 @@
         "cells": "132 Half-Cell",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.longi.com/en/products/modules/hi-mo-5/",
-        "notes": "Top variant of the 132-cell Hi-MO 5 series.",
+        "notes": "Technology: monocrystalline cells (no stated architecture beyond generation-era mono), 132 half-cell, monofacial with single 3.2mm glass. Runs 500-510W. Pros: high Voc (45.55-45.85V) suits shorter series strings, and it's a mature, dependable platform for larger arrays. Cons: no bifacial option, and it trails newer TOPCon/HPBC panels on temperature coefficient and rear-side yield.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -121,7 +121,7 @@
         "cells": "108 (6*18) Half Cell",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.cityplumbing.co.uk/p/longi-solar-hi-mo-5m-410wp-full-black-pv-module-lr5-54hpb-410m/p/787545",
-        "notes": "",
+        "notes": "Technology: monocrystalline half-cell (6x18 layout), monofacial with single 3.2mm tempered glass. A single 410W entry. Pros: a smaller-format alternative to the full Hi-MO 5 for roofs that can't take a 132-cell module. Cons: notably steep -0.34%/°C Voc temperature coefficient - the coldest-sensitive Voc figure in this database - so cold-climate string lengths need extra care; lowest efficiency (21%) of LONGi's panels here.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -166,7 +166,7 @@
         "cells": "108 Half-Cell (HPBC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://static.longi.com/18_L_Gi_LE_PM_T_PMD_059_F128_LR_5_54_HTB_410_430_M_30_30_and_15_Frame_Explorer_DG_V17_073ef4ba26.pdf",
-        "notes": "Uses proprietary HPBC technology to remove all silver busbars from the front. Explorer variant offers standard high efficiency with excellent aesthetics.",
+        "notes": "Technology: HPBC (hybrid passivated back contact) cells, 108 half-cell, monofacial with single 3.2mm glass. A single 430W entry point for LONGi's zero-busbar back-contact line. Pros: HPBC's flatter -0.23%/°C Voc coefficient outperforms PERC-era panels in heat, with a fully black, busbar-free face. Cons: monofacial only despite the premium back-contact technology, and it's the base bin below the higher-power Hi-MO 6 Scientists variants.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -205,7 +205,7 @@
         "cells": "108 Half-Cell (HPBC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://midsummerwholesale.co.uk/pdfs/l-gi-le-pm-t-pmd-059-f129-lr-5-54-htb-440-450-m-v1-30-30-and-15-frame-scientist-v19-black-en-pdf-d066cc073b.pdf",
-        "notes": "Scientist variant with premium efficiency. HPBC technology provided market-leading yield and zero-busbar aesthetics.",
+        "notes": "Technology: HPBC (hybrid passivated back contact) cells, 108 half-cell, monofacial with single 3.2mm glass. Runs 440-450W. Pros: all three bins share HPBC's flatter -0.23%/°C Voc coefficient, and the 450W top bin maximises yield in a standard footprint with a clean, busbar-free look. Cons: monofacial only - LONGi doesn't offer a bifacial HPBC variant in this range - so there's no rear-side gain even on a favourable mounting.",
         "buyLinks": [
             {
                 "Supplier": "Midsummer Wholesale",
@@ -244,7 +244,7 @@
         "cells": "108 Half-Cell (HPBC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://midsummerwholesale.co.uk/pdfs/l-gi-le-pm-t-pmd-059-f129-lr-5-54-htb-440-450-m-v1-30-30-and-15-frame-scientist-v19-black-en-pdf-d066cc073b.pdf",
-        "notes": "High wattage Scientist variant. Exceptional aesthetics and yield.",
+        "notes": "Technology: HPBC (hybrid passivated back contact) cells, 108 half-cell, monofacial with single 3.2mm glass. Runs 440-450W. Pros: all three bins share HPBC's flatter -0.23%/°C Voc coefficient, and the 450W top bin maximises yield in a standard footprint with a clean, busbar-free look. Cons: monofacial only - LONGi doesn't offer a bifacial HPBC variant in this range - so there's no rear-side gain even on a favourable mounting.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -276,7 +276,7 @@
         "cells": "108 Half-Cell (HPBC)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://static.longi.com/Hi_MO_6_Scientist_LR_5_54_HTH_435_450_M_V03_DG_21637b209b.pdf",
-        "notes": "The top-bin residential Scientist variant. Maximizes energy production in a standard footprint.",
+        "notes": "Technology: HPBC (hybrid passivated back contact) cells, 108 half-cell, monofacial with single 3.2mm glass. Runs 440-450W. Pros: all three bins share HPBC's flatter -0.23%/°C Voc coefficient, and the 450W top bin maximises yield in a standard footprint with a clean, busbar-free look. Cons: monofacial only - LONGi doesn't offer a bifacial HPBC variant in this range - so there's no rear-side gain even on a favourable mounting.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -308,7 +308,7 @@
         "cells": "120",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://dam.cityplumbing.co.uk/private/xp81p4g/GPID_1500080454_TECH_00.pdf",
-        "notes": "",
+        "notes": "Technology: monocrystalline cells, 120-cell large-format layout, monofacial with single 3.2mm tempered glass. A single 505W entry. Pros: the highest-wattage standard-footprint panel LONGi offers in this database, useful where roof space is the binding constraint. Cons: no stated cell architecture and no bifacial option, so despite the flagship wattage it doesn't carry the temperature/degradation advantages of LONGi's HPBC panels.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -353,7 +353,7 @@
         "cells": "LR7-54HVB-475",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://dam.cityplumbing.co.uk/private/ormdz1r/GPID_1500110497_TECH_00.pdf",
-        "notes": "",
+        "notes": "Technology: monocrystalline cells, monofacial with single 3.2mm tempered glass. A single 475W entry. Pros: the gentlest Voc temperature coefficient in this entire database (-0.20%/°C), which widens cold-string headroom more than any other panel here. Cons: that flat coefficient comes with a higher Isc (15.03A) than most 475W-class modules, so check controller current limits; no bifacial option.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",

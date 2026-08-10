@@ -6,6 +6,8 @@ import {
     groupPanelsBySeries,
     manufacturerSeriesFilterValue,
     parseManufacturerSeriesFilterValue,
+    isNoSeriesKey,
+    seriesDesignNotes,
 } from './panelSeries';
 
 describe('panelSeriesKey', () => {
@@ -63,5 +65,39 @@ describe('manufacturerSeriesFilterValue', () => {
     it('returns null for invalid parse input', () => {
         expect(parseManufacturerSeriesFilterValue('')).toBeNull();
         expect(parseManufacturerSeriesFilterValue('nosep')).toBeNull();
+    });
+});
+
+describe('isNoSeriesKey', () => {
+    it('flags only the no-series sentinel', () => {
+        expect(isNoSeriesKey(NO_SERIES_LABEL)).toBe(true);
+        expect(isNoSeriesKey('Vertex S+')).toBe(false);
+    });
+});
+
+describe('seriesDesignNotes', () => {
+    it('returns the shared note for a real series', () => {
+        const panels = [
+            { model: 'a', notes: 'Series-wide note.' },
+            { model: 'b', notes: 'Series-wide note.' },
+        ];
+        expect(seriesDesignNotes('Vertex S+', panels)).toBe('Series-wide note.');
+    });
+
+    it('falls back to the first non-empty note if one entry is blank', () => {
+        const panels = [
+            { model: 'a', notes: '' },
+            { model: 'b', notes: 'Series-wide note.' },
+        ];
+        expect(seriesDesignNotes('Vertex S+', panels)).toBe('Series-wide note.');
+    });
+
+    it('returns empty string for the no-series edge case, even if a panel has notes', () => {
+        const panels = [{ model: 'a', notes: 'One-off panel note.' }];
+        expect(seriesDesignNotes(NO_SERIES_LABEL, panels)).toBe('');
+    });
+
+    it('returns empty string when no panel has a note', () => {
+        expect(seriesDesignNotes('Vertex S+', [{ model: 'a', notes: '' }])).toBe('');
     });
 });

@@ -8,7 +8,7 @@ import {
     isPdfDatasheetUrl,
     LINK_CHECK_CONCURRENCY,
 } from "./normalize.mjs";
-import { pushPanelSeriesUniformityIssues } from "./panelSeriesShared.mjs";
+import { pushPanelSeriesUniformityIssues, pushDesignNotesUniformityIssues } from "./panelSeriesShared.mjs";
 
 /** @param {Record<string, unknown>} entry @param {{ field: string, equals?: unknown }} when */
 function matchesWhen(entry, when) {
@@ -166,6 +166,7 @@ export async function runStaticChecks(kind) {
 
         if (kind === "panels") {
             pushPanelSeriesUniformityIssues(file, arr, issues);
+            pushDesignNotesUniformityIssues(file, arr, issues);
         }
     }
 

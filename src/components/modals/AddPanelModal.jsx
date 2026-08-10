@@ -106,7 +106,13 @@ export default function AddPanelModal({ open, data = {}, existingModelIds = [], 
                     </div>
                     <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Price (£)</label><input type="number" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.price ?? 0} onChange={(e) => update('price', parseFloat(e.target.value) || 0)} /></div>
                 </div>
-                <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Engineering Notes</label><textarea className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.notes ?? ''} onChange={(e) => update('notes', e.target.value)} /></div>
+                <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Design Notes</label>
+                    <p className="text-xs text-slate-400 mb-1">
+                        If this panel joins an existing series, copy that series&apos; note text here so every panel in the series matches. Leave blank only if it has no series.
+                    </p>
+                    <textarea className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.notes ?? ''} onChange={(e) => update('notes', e.target.value)} />
+                </div>
                 <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Datasheet URL</label><input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.datasheetUrl ?? ''} onChange={(e) => update('datasheetUrl', e.target.value)} /></div>
             </div>
         </Modal>

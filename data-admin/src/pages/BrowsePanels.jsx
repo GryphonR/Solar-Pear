@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { apiGet, apiPut, apiPost } from "../api.js";
 import EntryForm from "../components/EntryForm.jsx";
 import Modal from "../components/Modal.jsx";
-import { PANEL_SERIES_SHARED_FIELDS, panelSeriesKeyFromRow } from "../constants/panelSeriesFields.js";
+import { PANEL_SERIES_SHARED_FIELDS, NO_SERIES_KEY, panelSeriesKeyFromRow } from "../constants/panelSeriesFields.js";
 
 function cellNum(v) {
     if (v === null || v === undefined || v === "") return "—";
@@ -38,6 +38,9 @@ export default function BrowsePanels() {
     const [seriesEditTarget, setSeriesEditTarget] = useState(null);
     const [seriesDraft, setSeriesDraft] = useState({});
     const [seriesConflictFields, setSeriesConflictFields] = useState([]);
+    const [notesEditTarget, setNotesEditTarget] = useState(null);
+    const [notesDraft, setNotesDraft] = useState("");
+    const [notesConflict, setNotesConflict] = useState(false);
     const [err, setErr] = useState("");
 
     const loadAll = useCallback(async () => {
@@ -109,6 +112,9 @@ export default function BrowsePanels() {
             if (members.length === 0) return;
             setEditTarget(null);
             setDraft(null);
+            setNotesEditTarget(null);
+            setNotesDraft("");
+            setNotesConflict(false);
             setSeriesEditTarget({ file, series: seriesKey });
             applySeriesEditorState(file, seriesKey);
             const q = new URLSearchParams({ file, series: seriesKey });
@@ -121,19 +127,68 @@ export default function BrowsePanels() {
         [getSeriesMembers, setSearchParams, applySeriesEditorState, seriesBlockId]
     );
 
+    // Design Notes ("notes") is a per-series shared field too (see SCHEMA.md), but it's free text
+    // rather than a numeric spec, so it gets its own single-textarea editor instead of joining
+    // PANEL_SERIES_SHARED_FIELDS. The "(no series)" bucket is the documented edge case where
+    // panels have no series to share a note with, so callers must not invoke this for it.
+    const applyNotesEditorState = useCallback((file, seriesKey) => {
+        const members = getSeriesMembers(file, seriesKey);
+        if (members.length === 0) return false;
+        const notesValues = new Set(members.map((m) => m.row.notes ?? ""));
+        setNotesDraft(members[0].row.notes ?? "");
+        setNotesConflict(notesValues.size > 1);
+        setMfrOpen((o) => ({ ...o, [file]: true }));
+        setSeriesOpen((o) => ({ ...o, [`${file}|${seriesKey}`]: true }));
+        return true;
+    }, [getSeriesMembers]);
+
+    const openSeriesNotesEdit = useCallback(
+        (file, seriesKey) => {
+            if (seriesKey === NO_SERIES_KEY) return;
+            const members = getSeriesMembers(file, seriesKey);
+            if (members.length === 0) return;
+            setEditTarget(null);
+            setDraft(null);
+            setSeriesEditTarget(null);
+            setSeriesDraft({});
+            setSeriesConflictFields([]);
+            setNotesEditTarget({ file, series: seriesKey });
+            applyNotesEditorState(file, seriesKey);
+            const q = new URLSearchParams({ file, series: seriesKey, notes: "1" });
+            setSearchParams(q);
+            requestAnimationFrame(() => {
+                const el = document.getElementById(seriesBlockId(file, seriesKey));
+                el?.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
+        },
+        [getSeriesMembers, setSearchParams, applyNotesEditorState, seriesBlockId]
+    );
+
     const openFromQuery = useCallback(() => {
         const file = searchParams.get("file");
         if (!file || !dataByFile[file]) return;
 
         if (searchParams.has("series")) {
             const s = searchParams.get("series");
-            const seriesKey = s === "" || s === null ? "(no series)" : s;
+            const seriesKey = s === "" || s === null ? NO_SERIES_KEY : s;
+            const wantsNotes = searchParams.get("notes") === "1" && seriesKey !== NO_SERIES_KEY;
             const members = getSeriesMembers(file, seriesKey);
             if (members.length > 0) {
                 setEditTarget(null);
                 setDraft(null);
-                setSeriesEditTarget({ file, series: seriesKey });
-                applySeriesEditorState(file, seriesKey);
+                if (wantsNotes) {
+                    setSeriesEditTarget(null);
+                    setSeriesDraft({});
+                    setSeriesConflictFields([]);
+                    setNotesEditTarget({ file, series: seriesKey });
+                    applyNotesEditorState(file, seriesKey);
+                } else {
+                    setNotesEditTarget(null);
+                    setNotesDraft("");
+                    setNotesConflict(false);
+                    setSeriesEditTarget({ file, series: seriesKey });
+                    applySeriesEditorState(file, seriesKey);
+                }
             }
             return;
         }
@@ -145,16 +200,19 @@ export default function BrowsePanels() {
         setSeriesEditTarget(null);
         setSeriesDraft({});
         setSeriesConflictFields([]);
+        setNotesEditTarget(null);
+        setNotesDraft("");
+        setNotesConflict(false);
         const row = dataByFile[file][index];
         setEditTarget({ file, index });
         setDraft({ ...row });
-        const series = row["panel-series"] || "(no series)";
+        const series = row["panel-series"] || NO_SERIES_KEY;
         setMfrOpen((o) => ({ ...o, [file]: true }));
         setSeriesOpen((o) => ({ ...o, [`${file}|${series}`]: true }));
         requestAnimationFrame(() => {
             document.getElementById(`panel-row-${file}-${index}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
         });
-    }, [searchParams, dataByFile, getSeriesMembers, applySeriesEditorState]);
+    }, [searchParams, dataByFile, getSeriesMembers, applySeriesEditorState, applyNotesEditorState]);
 
     useEffect(() => {
         if (!loaded) return;
@@ -233,6 +291,37 @@ export default function BrowsePanels() {
         setSeriesDraft((d) => ({ ...d, [field]: raw }));
     }
 
+    async function saveNotesEdit() {
+        if (!notesEditTarget) return;
+        const { file, series } = notesEditTarget;
+        const members = getSeriesMembers(file, series);
+        if (members.length === 0) return;
+        setErr("");
+        try {
+            for (const { row, idx } of members) {
+                await apiPut(`/data/panels/file/${encodeURIComponent(file)}/entry/${idx}`, {
+                    ...row,
+                    notes: notesDraft,
+                });
+            }
+            const data = await apiGet(`/data/panels/file/${encodeURIComponent(file)}`);
+            setDataByFile((prev) => ({ ...prev, [file]: Array.isArray(data) ? data : [] }));
+            setNotesEditTarget(null);
+            setNotesDraft("");
+            setNotesConflict(false);
+            setSearchParams({});
+        } catch (e) {
+            setErr(String(e.message));
+        }
+    }
+
+    function cancelNotesEdit() {
+        setNotesEditTarget(null);
+        setNotesDraft("");
+        setNotesConflict(false);
+        setSearchParams({});
+    }
+
     async function sortOneFile(file) {
         setErr("");
         try {
@@ -248,6 +337,9 @@ export default function BrowsePanels() {
         setSeriesEditTarget(null);
         setSeriesDraft({});
         setSeriesConflictFields([]);
+        setNotesEditTarget(null);
+        setNotesDraft("");
+        setNotesConflict(false);
         setEditTarget({ file, index });
         setDraft({ ...row });
         setSearchParams({ file, index: String(index) });
@@ -268,13 +360,18 @@ export default function BrowsePanels() {
 
     const seriesMemberCount =
         seriesEditTarget && getSeriesMembers(seriesEditTarget.file, seriesEditTarget.series).length;
+    const notesMemberCount =
+        notesEditTarget && getSeriesMembers(notesEditTarget.file, notesEditTarget.series).length;
 
     return (
         <>
             <h2>Panels</h2>
             <p style={{ color: "var(--muted)", fontSize: "0.9rem" }}>
-                All manufacturer files on one page. Edit one row, or use <strong>Edit series fields</strong> to set
-                shared dimensions, weight, and temperature coefficients for every panel in the same series (same file).
+                All manufacturer files on one page. Edit one row, use <strong>Edit series fields</strong> to set
+                shared dimensions, weight, and temperature coefficients for every panel in the same series (same
+                file), or use <strong>Edit design notes</strong> to set the shared "Design Notes" text for a series.
+                The <code>(no series)</code> group has no "Edit design notes" action — those panels have no series to
+                share a note with, so their notes stay per-panel (edit them via the row&apos;s Edit button instead).
             </p>
             {err && <p style={{ color: "var(--danger)" }}>{err}</p>}
             {!loaded && <p>Loading…</p>}
@@ -331,7 +428,42 @@ export default function BrowsePanels() {
                 </Modal>
             )}
 
-            {editTarget && draft && !seriesEditTarget && (
+            {notesEditTarget && (
+                <Modal
+                    title={`Design Notes: ${notesEditTarget.file.replace(/\.json$/, "")} — “${notesEditTarget.series}” (${notesMemberCount} panels)`}
+                    onClose={cancelNotesEdit}
+                    footer={
+                        <>
+                            <button type="button" className="primary" onClick={saveNotesEdit}>
+                                Save to all {notesMemberCount} panels
+                            </button>
+                            <button type="button" onClick={cancelNotesEdit}>
+                                Cancel
+                            </button>
+                        </>
+                    }
+                >
+                    <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 0 }}>
+                        Sets <code>notes</code> to the same text on every panel in this series. Write it as a
+                        short paragraph about the series as a whole, and call out any notable power outputs within
+                        it (highest/lowest bin, a bin needing a wider series fuse, etc.) — see SCHEMA.md.
+                    </p>
+                    {notesConflict && (
+                        <p style={{ color: "var(--warn)", fontSize: "0.9rem" }}>
+                            These panels currently have different notes — this shows the first row&apos;s text;
+                            edit and save to align the whole series.
+                        </p>
+                    )}
+                    <textarea
+                        rows={6}
+                        style={{ width: "100%", fontSize: "0.9rem" }}
+                        value={notesDraft}
+                        onChange={(e) => setNotesDraft(e.target.value)}
+                    />
+                </Modal>
+            )}
+
+            {editTarget && draft && !seriesEditTarget && !notesEditTarget && (
                 <Modal
                     wide
                     title={`Edit: ${editTarget.file.replace(/\.json$/, "")} — ${draft.model || `row ${editTarget.index}`}`}
@@ -382,7 +514,9 @@ export default function BrowsePanels() {
                                 const count = bs.m.get(series)?.length || 0;
                                 const blockId = seriesBlockId(file, series);
                                 const seriesActive =
-                                    seriesEditTarget?.file === file && seriesEditTarget?.series === series;
+                                    (seriesEditTarget?.file === file && seriesEditTarget?.series === series) ||
+                                    (notesEditTarget?.file === file && notesEditTarget?.series === series);
+                                const isNoSeries = series === NO_SERIES_KEY;
                                 return (
                                     <div key={`${file}|${series}`} id={blockId} style={{ marginTop: "0.75rem" }}>
                                         <div className="row" style={{ flexWrap: "wrap", alignItems: "center", gap: 8 }}>
@@ -400,7 +534,34 @@ export default function BrowsePanels() {
                                                     Edit series fields
                                                 </button>
                                             )}
+                                            {count >= 1 && !isNoSeries && (
+                                                <button type="button" onClick={() => openSeriesNotesEdit(file, series)}>
+                                                    Edit design notes
+                                                </button>
+                                            )}
+                                            {isNoSeries && (
+                                                <span style={{ color: "var(--muted)", fontSize: "0.85rem" }}>
+                                                    No series — notes are per panel, not shared.
+                                                </span>
+                                            )}
                                         </div>
+                                        {!isNoSeries &&
+                                            (() => {
+                                                const members = bs.m.get(series) || [];
+                                                const preview = members.find((m) => m.row.notes)?.row.notes;
+                                                if (!preview) return null;
+                                                return (
+                                                    <p
+                                                        style={{
+                                                            color: "var(--muted)",
+                                                            fontSize: "0.85rem",
+                                                            margin: "0.35rem 0 0.5rem",
+                                                        }}
+                                                    >
+                                                        <strong>Design Notes:</strong> {preview}
+                                                    </p>
+                                                );
+                                            })()}
                                         {openS && (
                                             <div className="table-scroll">
                                                 <table className="data compact">

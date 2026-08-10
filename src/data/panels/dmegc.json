@@ -25,7 +25,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
-        "notes": "A very strong middle-ground option. Offers the durability of double-glass and bifacial cell tech with excellent voltage profiles.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, mostly on standard M10 wafers (450-465W) plus two G12-RT rectangular-wafer outliers (465W and the 515W flagship). Pros: bifacial gain on top of TOPCon's strong temperature behaviour, and the standard M10 bins keep a well-behaved, moderate current for easy string design. Cons: the G12-RT 465W variant trades voltage for current (Isc 15.88A vs the M10 465W's 13.99A) on the same headline wattage, and the 515W flagship needs a wider 30A series fuse than the rest of the series (25A) - check MPPT current headroom before selecting either.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -64,7 +64,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
-        "notes": "Solid N-Type bifacial panel. High quality build with premium efficiency ratings.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, mostly on standard M10 wafers (450-465W) plus two G12-RT rectangular-wafer outliers (465W and the 515W flagship). Pros: bifacial gain on top of TOPCon's strong temperature behaviour, and the standard M10 bins keep a well-behaved, moderate current for easy string design. Cons: the G12-RT 465W variant trades voltage for current (Isc 15.88A vs the M10 465W's 13.99A) on the same headline wattage, and the 515W flagship needs a wider 30A series fuse than the rest of the series (25A) - check MPPT current headroom before selecting either.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -103,7 +103,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
-        "notes": "Higher power variant of the Infinity series. Top-tier efficiency for standard-sized modules.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, mostly on standard M10 wafers (450-465W) plus two G12-RT rectangular-wafer outliers (465W and the 515W flagship). Pros: bifacial gain on top of TOPCon's strong temperature behaviour, and the standard M10 bins keep a well-behaved, moderate current for easy string design. Cons: the G12-RT 465W variant trades voltage for current (Isc 15.88A vs the M10 465W's 13.99A) on the same headline wattage, and the 515W flagship needs a wider 30A series fuse than the rest of the series (25A) - check MPPT current headroom before selecting either.",
         "buyLinks": [
             {
                 "Supplier": "midsummerwholesale.co.uk",
@@ -142,7 +142,7 @@
         "cells": "108 Half-Cell (N-Type TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
-        "notes": "Premium power bin. Best-in-class performance for residential bifacial applications.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, mostly on standard M10 wafers (450-465W) plus two G12-RT rectangular-wafer outliers (465W and the 515W flagship). Pros: bifacial gain on top of TOPCon's strong temperature behaviour, and the standard M10 bins keep a well-behaved, moderate current for easy string design. Cons: the G12-RT 465W variant trades voltage for current (Isc 15.88A vs the M10 465W's 13.99A) on the same headline wattage, and the 515W flagship needs a wider 30A series fuse than the rest of the series (25A) - check MPPT current headroom before selecting either.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
@@ -174,7 +174,7 @@
         "cells": "G12 Infinity RT",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.cityplumbing.co.uk/p/dmegc-465w-g12-all-black-solar-panel/p/231059",
-        "notes": "",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, mostly on standard M10 wafers (450-465W) plus two G12-RT rectangular-wafer outliers (465W and the 515W flagship). Pros: bifacial gain on top of TOPCon's strong temperature behaviour, and the standard M10 bins keep a well-behaved, moderate current for easy string design. Cons: the G12-RT 465W variant trades voltage for current (Isc 15.88A vs the M10 465W's 13.99A) on the same headline wattage, and the 515W flagship needs a wider 30A series fuse than the rest of the series (25A) - check MPPT current headroom before selecting either.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
@@ -219,7 +219,7 @@
         "cells": "108 Half-Cell (G12 RT)",
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
-        "notes": "ENGINEERING WARNING: Uses larger G12-RT rectangular wafers. Massive 16A current pushes many MPPTs to their limit. Verify safety margins for cloud-edge effects.",
+        "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, mostly on standard M10 wafers (450-465W) plus two G12-RT rectangular-wafer outliers (465W and the 515W flagship). Pros: bifacial gain on top of TOPCon's strong temperature behaviour, and the standard M10 bins keep a well-behaved, moderate current for easy string design. Cons: the G12-RT 465W variant trades voltage for current (Isc 15.88A vs the M10 465W's 13.99A) on the same headline wattage, and the 515W flagship needs a wider 30A series fuse than the rest of the series (25A) - check MPPT current headroom before selecting either.",
         "buyLinks": [
             {
                 "Supplier": "City Plumbing",
