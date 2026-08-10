@@ -66,8 +66,8 @@ export default function SerperPage() {
         <>
             <h2>Serper shopping sites</h2>
             <p style={{ color: "var(--muted)" }}>
-                Domains used by <code>panel-availability-scan.js</code> and <code>controller-availability-scan.js</code>{" "}
-                for <code>site:</code> filters (stored in <code>data-admin/config/serper-sites.json</code>).
+                Domains used by <code>panel-pricing-scan.js</code> and <code>controller-pricing-scan.js</code>{" "}
+                for stage-1b <code>site:</code> buy-link searches (stored in <code>data-admin/config/serper-sites.json</code>).
             </p>
             {err && <p style={{ color: "var(--danger)" }}>{err}</p>}
             {msg && <p style={{ color: "var(--ok)" }}>{msg}</p>}

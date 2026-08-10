@@ -127,9 +127,16 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         [arrayId, basePlanner]
     );
 
+    // Rehydrate local planner when the persisted planner arrives or changes (e.g. late load).
+    // Clearing the layout signature forces a recompute against the new roof/spacing inputs.
     useEffect(() => {
         setPlanner(basePlanner);
         layoutSignatureRef.current = null;
+    }, [plannerResetKey, basePlanner]);
+
+    // Reset interactive UI only when switching arrays. Apply Array writes array fields and the
+    // planner back into app state; those updates must not jump the ranked layout selection to index 0.
+    useEffect(() => {
         setActiveResultIndex(0);
         setSelectedExclusionId(null);
         setToolMode('select');
@@ -150,7 +157,8 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
             chargersData
         );
         setIsDragging(false);
-    }, [plannerResetKey, basePlanner, array, arrayId, selections, siteControllers, chargersData]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- arrayId only; apply/persist must keep selection
+    }, [arrayId]);
 
     useEffect(() => {
         if (!showModeHelp) return;

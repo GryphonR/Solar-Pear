@@ -16,7 +16,7 @@
         "isc": 13.98,
         "imp": 13.17,
         "price": 93.45,
-        "priceCheckedAt": "2026-08-05",
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 21.76,
         "tempCoefPmax": -0.31,
         "tempCoefVoc": -0.26,
@@ -31,12 +31,6 @@
             {
                 "Supplier": "voltaconsolar.com",
                 "URL": "https://voltaconsolar.com/products/renesola-solar-panel-425w-half-cut-108-cells-n-topcon-mono-facial-all-black",
-                "isAffiliate": false,
-                "Checked": false
-            },
-            {
-                "Supplier": "voltaconsolar.com",
-                "URL": "https://voltaconsolar.com/products/425watt-solar-panel-renesola-monofacial-all-black",
                 "isAffiliate": false,
                 "Checked": false
             }
@@ -62,7 +56,7 @@
         "isc": 14.02,
         "imp": 13.08,
         "price": 93.45,
-        "priceCheckedAt": "2026-08-05",
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 21.77,
         "tempCoefPmax": -0.31,
         "tempCoefVoc": -0.26,
@@ -77,12 +71,6 @@
             {
                 "Supplier": "voltaconsolar.com",
                 "URL": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425w-front-90w-back-half-cut-monocrystalline",
-                "isAffiliate": false,
-                "Checked": false
-            },
-            {
-                "Supplier": "voltaconsolar.com",
-                "URL": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425watt-solar-panel",
                 "isAffiliate": false,
                 "Checked": false
             }

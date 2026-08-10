@@ -17,6 +17,7 @@
     "v_start_vbat_dependent",
     "trackers",
     "price",
+    "priceCheckedAt",
     "MaxACPower",
     "MaxDCPower",
     "islanding",
@@ -36,6 +37,7 @@
   ],
   "defaults": {
     "notes": "",
+    "priceCheckedAt": "",
     "reviewed": false,
     "availableUK": true,
     "g98_cert": false,
@@ -51,7 +53,7 @@
     "buyLinks": []
   },
   "rules": {
-    "allowedEmptyStrings": ["notes"],
+    "allowedEmptyStrings": ["notes", "priceCheckedAt"],
     "zeroValueSkips": [
       {
         "field": "price",
@@ -87,6 +89,7 @@
     "v_start_vbat_dependent": "boolean",
     "trackers": "number",
     "price": "number",
+    "priceCheckedAt": "string",
     "MaxACPower": "number",
     "MaxDCPower": "number",
     "islanding": "boolean",

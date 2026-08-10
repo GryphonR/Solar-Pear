@@ -37,6 +37,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     }
 ]

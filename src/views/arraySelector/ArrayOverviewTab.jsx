@@ -3,6 +3,7 @@ import { AlertTriangle, CheckCircle, Info, XIcon, ExternalLink } from '../../com
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
 import DesignNotes from '../../components/DesignNotes';
 import { isCompatibleFormat } from '../../lib/arrayAnalysis';
+import { controllerTypeBadgeClass, controllerTypeLabel } from '../../lib/controllerTypes';
 import { safeHttpUrl } from '../../lib/safeUrl';
 
 export default function ArrayOverviewTab({
@@ -181,7 +182,7 @@ export default function ArrayOverviewTab({
                 <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-4">
                     <h3 className="text-sm font-bold text-slate-800 mb-2 flex items-center"><Info size={16} className="mr-2 text-emerald-600" /> Controller: <span className="ml-2 font-normal">{controller.manufacturer ? `${controller.manufacturer} ${controller.name}` : controller.name}</span></h3>
                     <div className="flex flex-wrap items-center gap-2 mb-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${controller.type === 'hybrid_inverter' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>{controller.type === 'hybrid_inverter' ? 'Hybrid Inverter' : 'Charger'}</span>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${controllerTypeBadgeClass(controller.type)}`}>{controllerTypeLabel(controller.type)}</span>
                         <span className="text-sm font-medium text-slate-600">£{controller.price || 0} per unit</span>
                         {safeControllerDatasheet && <a href={safeControllerDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"><ExternalLink size={12} className="mr-1" /> Datasheet</a>}
                     </div>

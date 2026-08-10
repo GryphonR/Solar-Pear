@@ -10,6 +10,8 @@ import {
     CONTROLLER_TYPE,
     CONTROLLER_TYPE_ORDER,
     CONTROLLER_TYPE_LABELS,
+    controllerTypeBadgeClass,
+    controllerTypeLabel,
     hasPvInput,
     isBatteryVoltageClass,
     groupControllersByType,
@@ -17,6 +19,26 @@ import {
     summariseGridCapabilities,
     findCurrentHeadroomExamples,
 } from './controllerTypes';
+
+describe('controllerTypeLabel', () => {
+    it('uses the full guide label by default', () => {
+        expect(controllerTypeLabel(CONTROLLER_TYPE.STRING_INVERTER)).toBe('String inverter');
+        expect(controllerTypeLabel(CONTROLLER_TYPE.CHARGER)).toBe('MPPT charge controller');
+    });
+
+    it('uses a compact badge label when short is requested', () => {
+        expect(controllerTypeLabel(CONTROLLER_TYPE.STRING_INVERTER, { short: true })).toBe('String');
+        expect(controllerTypeLabel(CONTROLLER_TYPE.HYBRID_INVERTER, { short: true })).toBe('Hybrid');
+    });
+});
+
+describe('controllerTypeBadgeClass', () => {
+    it('gives string inverters their own colour, not the charger blue', () => {
+        expect(controllerTypeBadgeClass(CONTROLLER_TYPE.STRING_INVERTER)).toContain('emerald');
+        expect(controllerTypeBadgeClass(CONTROLLER_TYPE.CHARGER)).toContain('blue');
+        expect(controllerTypeBadgeClass(CONTROLLER_TYPE.HYBRID_INVERTER)).toContain('purple');
+    });
+});
 
 describe('hasPvInput', () => {
     it('is false for devices with no solar tracker', () => {

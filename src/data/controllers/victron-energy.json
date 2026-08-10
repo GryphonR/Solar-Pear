@@ -18,13 +18,26 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 1150,
+        "price": 867.56,
         "MaxACPower": 1300,
         "MaxDCPower": 700,
         "islanding": true,
         "notes": "All-in-one solar solution: MultiPlus 12/1600/70 + MPPT 100/50 + AC Distribution. Integrated RCD and four AC outputs.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-EasySolar-1600VA-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/12v-victron-easysolar",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-easysolar-12-1600-70-16-230v-mppt-100-50",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": true,
         "g99_cert": true,
@@ -34,7 +47,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "easysolar_24_1600_40",
@@ -55,13 +69,26 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 1150,
+        "price": 789.59,
         "MaxACPower": 1300,
         "MaxDCPower": 1400,
         "islanding": true,
         "notes": "All-in-one solar solution: MultiPlus 24/1600/40 + MPPT 100/50 + AC Distribution. Integrated RCD and four AC outputs.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-EasySolar-1600VA-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/24v-victron-easysolar",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-easysolar-24-1600-40-16-230v-mppt-100-50",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": true,
         "g99_cert": true,
@@ -71,7 +98,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "easysolar_ii_24_3000_70_gx",
@@ -115,7 +143,8 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "easysolar_ii_48_3000_35_gx",
@@ -159,7 +188,8 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "easysolar_ii_48_5000_70_gx",
@@ -203,7 +233,8 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "victron_orion_xs",
@@ -224,13 +255,32 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 280,
+        "price": 219.49,
         "MaxACPower": 0,
         "MaxDCPower": 700,
         "islanding": false,
         "notes": "Latest Orion-XS. Smart alternator detection. ~700W throughput at 14V.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-Orion-XS-DC-DC-battery-charger-EN-.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/V-Orion-XS-50A-EMC",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-orion-xs-12-12-50a-dc-dc-battery-charger",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-orion-xs-1212-50a-dc-dc-battery-charger-ori121217050",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -240,44 +290,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
-    },
-    {
-        "id": "multiplus_ii_8k",
-        "name": "MultiPlus-II 48/8000/110-100",
-        "manufacturer": "Victron Energy",
-        "modelNumber": "PMP482805000",
-        "type": "inverter_charger",
-        "systemType": "grid-interactive",
-        "systemVoltages": [
-            48
-        ],
-        "maxV": 0,
-        "maxIsc": 0,
-        "maxOperatingI": 0,
-        "mpptRangeMin": 0,
-        "mpptRangeMax": 0,
-        "vNominal": 0,
-        "startupV": 0,
-        "v_start_vbat_dependent": false,
-        "trackers": 0,
-        "price": 2200,
-        "MaxACPower": 6400,
-        "MaxDCPower": 0,
-        "islanding": true,
-        "notes": "UPS-Grade Inverter/Charger. Whole-house backup capability. No PV interface.",
-        "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-MultiPlus-II-inverter-charger-EN.pdf",
-        "buyLinks": [],
-        "availableUK": true,
-        "g98_cert": false,
-        "g99_cert": true,
-        "g100_cert": true,
-        "off_grid": true,
-        "pure_off_grid_native": true,
-        "eps": true,
-        "house_backup": true,
-        "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss75_10",
@@ -299,13 +313,32 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 45,
+        "price": 39.98,
         "MaxACPower": 0,
         "MaxDCPower": 290,
         "islanding": false,
         "notes": "Smallest SmartSolar unit. Startup Vbat + 5V. Ideal for single-panel telemetry or small boat maintainers.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-75-10,-75-15,-100-15,-100-20-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-smartsolar-mppt-7510-scc075010060",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-75-10",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/victron-smartsolar-mppt-10a-75-10",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -315,7 +348,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss75_15",
@@ -337,13 +371,32 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 60,
+        "price": 39.83,
         "MaxACPower": 0,
         "MaxDCPower": 440,
         "islanding": false,
         "notes": "Non-RS: Startup Vbat + 5V. Max efficiency at Vbat + 2V. Ideal for campervans.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-75-10,-75-15,-100-15,-100-20-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-75-15-charge-controller",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-smartsolar-mppt-7515-scc075015060",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/15a-victron-mppt-75-15",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -353,7 +406,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss100_20",
@@ -376,13 +430,32 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 85,
+        "price": 58.36,
         "MaxACPower": 0,
         "MaxDCPower": 1160,
         "islanding": false,
         "notes": "Popular mid-range DC charger. 100V limit allows for 2 panels in series on a 12V system.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-75-10,-75-15,-100-15,-100-20-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-smartsolar-mppt-10020-to-48v-scc110020160",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/victron-smartsolar-20a-12v-48v",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-100-20-charge-controller-48v",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -392,7 +465,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss100_30",
@@ -414,13 +488,32 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 140,
+        "price": 93.99,
         "MaxACPower": 0,
         "MaxDCPower": 880,
         "islanding": false,
         "notes": "30A version of the 100V series. Startup Vbat + 5V.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-100-30-&-100-50-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-smartsolar-mppt-10030-scc110030210",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-100-30",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/30a-victron-mppt-100-30",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -430,7 +523,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss100_50",
@@ -452,13 +546,32 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 240,
+        "price": 135.99,
         "MaxACPower": 0,
         "MaxDCPower": 1400,
         "islanding": false,
         "notes": "Non-RS: High-current MPPT for 12V/24V systems. Startup is Vbat + 5V.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-100-30-&-100-50-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/VSS-MPPT100-50",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-100-50-scc110050210",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-smartsolar-mppt-10050-scc110050210",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -468,7 +581,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss150_35",
@@ -492,13 +606,32 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 210,
+        "price": 124.98,
         "MaxACPower": 0,
         "MaxDCPower": 2000,
         "islanding": false,
         "notes": "Allows 3-4 standard panels in series. Reliable off-grid workhorse.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-150-35-&-150-45-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-smartsolar-mppt-15035-scc115035210",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/victron-smart-solar-150-35",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-150-35",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -508,7 +641,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss150_45",
@@ -532,13 +666,32 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 195,
+        "price": 148.49,
         "MaxACPower": 0,
         "MaxDCPower": 2600,
         "islanding": false,
         "notes": "Marine Staple: Startup Vbat + 5V. Ultra-fast MPPT tracking. Common for narrowboats.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-150-35-&-150-45-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/victron-mppt-150-45",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-150-45",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-smartsolar-mppt-15045-scc115045212",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -548,7 +701,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss150_70",
@@ -588,7 +742,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss150_85_can",
@@ -612,13 +767,32 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 460,
+        "price": 333.99,
         "MaxACPower": 0,
         "MaxDCPower": 4900,
         "islanding": false,
         "notes": "Mid-tier VE.Can model. 85A rating provides 4.9kW at 48V.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-150-70-up-to-150-100-VE.Can-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-150-85-tr-ve-can",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/victron-mppt-150-85",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-smartsolar-mppt-15085-mc4-vecan-scc115085511",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -628,7 +802,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss150_100",
@@ -652,13 +827,20 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 580,
+        "price": 379.99,
         "MaxACPower": 0,
         "MaxDCPower": 5800,
         "islanding": false,
         "notes": "Full power achieved when PV voltage is Vbat + 2V. Highly efficient DC-DC conversion.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-150-70-up-to-150-100-VE.Can-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-150-100-tr-ve-can",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -668,7 +850,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss250_70_can",
@@ -708,7 +891,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss250_85_can",
@@ -732,13 +916,26 @@
         "startupV": 5,
         "v_start_vbat_dependent": true,
         "trackers": 1,
-        "price": 540,
+        "price": 364.99,
         "MaxACPower": 0,
         "MaxDCPower": 4900,
         "islanding": false,
         "notes": "High voltage 85A VE.Can model. Ideal for standard 250V strings.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-250-70-up-to-250-100-VE.Can-EN.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-250-85-tr-ve-can",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solar-power-panels-and-batteries/victron/victron-smartsolar-mppt-25085-tr-vecan-scc125085411",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -748,7 +945,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "ss250_100_can",
@@ -788,7 +986,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "rs450_100",
@@ -815,7 +1014,20 @@
         "islanding": false,
         "notes": "RS Series: Fixed 120V startup. Isolated PV architecture for high safety strings.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-MPPT-RS-EN-.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/V-Smart-MPPT450-100-VECan-MC4",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-rs-450-100-mc4",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -825,7 +1037,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "rs450_200",
@@ -852,7 +1065,26 @@
         "islanding": false,
         "notes": "RS Series: Fixed 120V startup. 4 independent trackers. Isolated PV architecture.",
         "datasheetUrl": "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-MPPT-RS-EN-.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "bimblesolar.com",
+                "URL": "https://www.bimblesolar.com/V-Smart-MPPT450-200-VECan-MC4",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "voltaconsolar.com",
+                "URL": "https://voltaconsolar.com/products/victron-smartsolar-mppt-rs-450-200-mc4",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "cclcomponents.com",
+                "URL": "https://www.cclcomponents.com/victron-smartsolar-mppt-rs-450-200-mc4",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": false,
@@ -862,6 +1094,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     }
 ]

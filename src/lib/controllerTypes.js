@@ -43,6 +43,54 @@ export const CONTROLLER_TYPE_LABELS = {
     [CONTROLLER_TYPE.DC_DC_CHARGER]: 'DC-to-DC charger',
 };
 
+/** Compact badge text for dense tables (Controllers DB). */
+export const CONTROLLER_TYPE_SHORT_LABELS = {
+    [CONTROLLER_TYPE.CHARGER]: 'Charger',
+    [CONTROLLER_TYPE.HYBRID_INVERTER]: 'Hybrid',
+    [CONTROLLER_TYPE.STRING_INVERTER]: 'String',
+    [CONTROLLER_TYPE.MICROINVERTER]: 'Micro',
+    [CONTROLLER_TYPE.AC_COUPLED_INVERTER]: 'AC-coupled',
+    [CONTROLLER_TYPE.INVERTER_CHARGER]: 'Inverter/Charger',
+    [CONTROLLER_TYPE.DC_DC_CHARGER]: 'DC-DC',
+};
+
+/**
+ * Human-readable label for a controller `type` value.
+ * @param {string | undefined | null} type
+ * @param {{ short?: boolean }} [opts]
+ * @returns {string}
+ */
+export function controllerTypeLabel(type, opts = {}) {
+    const map = opts.short ? CONTROLLER_TYPE_SHORT_LABELS : CONTROLLER_TYPE_LABELS;
+    return map[type] || (type ? String(type).replace(/_/g, ' ') : 'Unknown');
+}
+
+/**
+ * Tailwind classes for the coloured type pill used in the Controllers DB and info modal.
+ * @param {string | undefined | null} type
+ * @returns {string}
+ */
+export function controllerTypeBadgeClass(type) {
+    switch (type) {
+        case CONTROLLER_TYPE.HYBRID_INVERTER:
+            return 'bg-purple-100 text-purple-800';
+        case CONTROLLER_TYPE.STRING_INVERTER:
+            return 'bg-emerald-100 text-emerald-800';
+        case CONTROLLER_TYPE.MICROINVERTER:
+            return 'bg-amber-100 text-amber-800';
+        case CONTROLLER_TYPE.AC_COUPLED_INVERTER:
+            return 'bg-indigo-100 text-indigo-800';
+        case CONTROLLER_TYPE.INVERTER_CHARGER:
+            return 'bg-violet-100 text-violet-800';
+        case CONTROLLER_TYPE.DC_DC_CHARGER:
+            return 'bg-cyan-100 text-cyan-800';
+        case CONTROLLER_TYPE.CHARGER:
+            return 'bg-blue-100 text-blue-800';
+        default:
+            return 'bg-slate-100 text-slate-700';
+    }
+}
+
 /**
  * Whether panels connect to this unit directly. AC-coupled inverters and plain inverter/chargers
  * have no solar tracker at all, which the database records as a zero max PV voltage.

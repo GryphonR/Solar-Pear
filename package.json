@@ -9,7 +9,11 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "verify:panels:review": "node verification_scripts/panel-review.js",
+    "verify:controllers:review": "node verification_scripts/controller-review.js",
+    "verify:panels:pricing": "node verification_scripts/panel-pricing-scan.js",
+    "verify:controllers:pricing": "node verification_scripts/controller-pricing-scan.js"
   },
   "keywords": [],
   "author": "",

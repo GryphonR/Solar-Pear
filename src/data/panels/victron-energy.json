@@ -15,8 +15,8 @@
         "vmp": 19.68,
         "isc": 9.91,
         "imp": 9.41,
-        "price": 98.95,
-        "priceCheckedAt": "2026-08-05",
+        "price": 99.99,
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 18.65,
         "tempCoefPmax": -0.45,
         "tempCoefVoc": -0.35,
@@ -31,12 +31,6 @@
             {
                 "Supplier": "voltaconsolar.com",
                 "URL": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-mono-series-4a-spm041851200",
-                "isAffiliate": false,
-                "Checked": false
-            },
-            {
-                "Supplier": "voltaconsolar.com",
-                "URL": "https://voltaconsolar.com/products/victron-solar-panel-12v-185w-monocrystalline-series-4a-spm041851200",
                 "isAffiliate": false,
                 "Checked": false
             }

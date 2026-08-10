@@ -38,7 +38,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "fangpusun_flexmax_80",
@@ -79,7 +80,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "fangpusun_flexmax_100_300",
@@ -118,7 +120,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "fangpusun_vt_65",
@@ -157,7 +160,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "fangpusun_vt_80",
@@ -196,6 +200,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     }
 ]

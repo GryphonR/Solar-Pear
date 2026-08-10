@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+    extractExVatDisplayPrice,
     extractPriceFromHtml,
     findPriceInJsonLd,
     isClearanceOrDamagedListing,
@@ -7,6 +8,7 @@ import {
     isPdfLink,
     isSoftErrorPageUrl,
     looksLikeSoftErrorHtml,
+    medianPrice,
     needsPriceCheck,
     parsePriceText,
     priceLooksPlausible,
@@ -78,6 +80,44 @@ describe('findPriceInJsonLd', () => {
     it('returns null when nothing matches', () => {
         expect(findPriceInJsonLd({ '@type': 'Article' })).toBeNull();
         expect(findPriceInJsonLd(null)).toBeNull();
+    });
+});
+
+describe('extractExVatDisplayPrice', () => {
+    it('prefers a visible "+ VAT" trade headline over an inc-VAT JSON-LD Offer.price', () => {
+        // Real ITS Technologies pattern: page says £1,095.00 + VAT, JSON-LD stores £1314 (= ×1.2).
+        const html = `
+            <h1>£1,095.00 + VAT</h1>
+            <script type="application/ld+json">
+                { "@type": "Product", "offers": { "price": "1314", "priceCurrency": "GBP" } }
+            </script>
+        `;
+        expect(extractExVatDisplayPrice(html)).toBe(1095);
+        expect(extractPriceFromHtml(html)).toBe(1095);
+    });
+
+    it('accepts Bimble-style "+vat" without a space', () => {
+        expect(extractExVatDisplayPrice('<p>Price: £39.40 +vat</p>')).toBe(39.4);
+    });
+
+    it('skips tiny +VAT amounts such as postage', () => {
+        const html = '<p>Postage £12.95+VAT</p><p>Unit £93.99 + VAT</p>';
+        expect(extractExVatDisplayPrice(html)).toBe(93.99);
+    });
+
+    it('returns null when the page has no ex-VAT marker', () => {
+        expect(extractExVatDisplayPrice('<p>£39.98</p>')).toBeNull();
+    });
+});
+
+describe('medianPrice', () => {
+    it('returns the middle value for an odd-length list', () => {
+        expect(medianPrice([1095, 916.67, 1075.19])).toBe(1075.19);
+    });
+
+    it('averages the two middle values for an even-length list', () => {
+        expect(medianPrice([100, 200])).toBe(150);
+        expect(medianPrice([1095, 1075.19])).toBe(1085.1);
     });
 });
 

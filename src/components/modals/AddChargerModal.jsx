@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
+import { CONTROLLER_TYPE_LABELS, CONTROLLER_TYPE_ORDER } from '../../lib/controllerTypes';
 import { safeHttpUrl } from '../../lib/safeUrl';
 
 export default function AddChargerModal({ open, data = {}, existingIds = [], onClose, onSave, onUpdateField }) {
@@ -70,8 +71,11 @@ export default function AddChargerModal({ open, data = {}, existingIds = [], onC
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Device Type</label>
                         <select className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.type} onChange={(e) => update('type', e.target.value)}>
-                            <option value="charger">Standalone Charger</option>
-                            <option value="hybrid_inverter">Hybrid Inverter</option>
+                            {CONTROLLER_TYPE_ORDER.map((type) => (
+                                <option key={type} value={type}>
+                                    {CONTROLLER_TYPE_LABELS[type]}
+                                </option>
+                            ))}
                         </select>
                     </div>
                 </div>

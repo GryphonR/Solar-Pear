@@ -15,8 +15,8 @@
         "vmp": 33.02,
         "isc": 14.18,
         "imp": 13.48,
-        "price": 333.54,
-        "priceCheckedAt": "2026-08-05",
+        "price": 133.5,
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 23.6,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -36,7 +36,31 @@
             },
             {
                 "Supplier": "alternergy.co.uk",
-                "URL": "https://www.alternergy.co.uk/mpattachments/file/viewonline/id/5246/product_id/5784/",
+                "URL": "https://www.alternergy.co.uk/shop/pv16-445ag-m10-viridian-445w-pv16-m10-clearline-fusion-in-roof-n-type-topcon-dual-glass-all-black-2646",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solarsparky/solar-panels/viridian/mono/viridian-pv16-445ag-m10-445w-solar-panel",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "cclcomponents.com",
+                "URL": "https://www.cclcomponents.com/viridian-clearline-pv16-m10-445w-mono-solar-module-full-black-15882",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "itstechnologies.shop",
+                "URL": "https://www.itstechnologies.shop/products/445w-viridian-clearline-high-performance-monocrystalline-all-black",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "segen.co.uk",
+                "URL": "https://www.segen.co.uk/product/viridian-clearline-high-performance-dual-glass-all-black-445w/",
                 "isAffiliate": false,
                 "Checked": false
             }
@@ -61,8 +85,8 @@
         "vmp": 34.7,
         "isc": 10.3,
         "imp": 9.7,
-        "price": 163.44,
-        "priceCheckedAt": "2026-08-05",
+        "price": 120.5,
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 20.7,
         "tempCoefPmax": -0.38,
         "tempCoefVoc": -0.3,
@@ -83,6 +107,18 @@
             {
                 "Supplier": "tradesparky.com",
                 "URL": "https://www.tradesparky.com/solarsparky/solar-panels/viridian/mono/viridian-pv16-335-g1-wp-mono-pv-panel-black",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "itstechnologies.shop",
+                "URL": "https://www.itstechnologies.shop/products/335w-viridian-clearline-mono-all-black-g1-version-3-bipv-roof-integrated-solar-panel",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "segen.co.uk",
+                "URL": "https://www.segen.co.uk/product/viridian-clearline-335w-mono-all-black-g1-version-3/",
                 "isAffiliate": false,
                 "Checked": false
             }
@@ -108,7 +144,7 @@
         "isc": 10.4,
         "imp": 9.7,
         "price": 196.96,
-        "priceCheckedAt": "2026-08-05",
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 21,
         "tempCoefPmax": -0.38,
         "tempCoefVoc": -0.3,
@@ -154,7 +190,7 @@
         "isc": 13.62,
         "imp": 13.06,
         "price": 242.08,
-        "priceCheckedAt": "2026-08-05",
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 21.5,
         "tempCoefPmax": -0.35,
         "tempCoefVoc": -0.28,

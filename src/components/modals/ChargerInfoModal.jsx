@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from '../Modal';
 import { CheckCircle, ExternalLink, Info, XIcon } from '../Icons';
 import { getEffectiveStartupV } from '../../lib/arrayAnalysis';
+import { controllerTypeBadgeClass, controllerTypeLabel } from '../../lib/controllerTypes';
 import { safeHttpUrl } from '../../lib/safeUrl';
 
 export default function ChargerInfoModal({ open, charger, systemVoltage, userNote, onClose, onUpdateNote }) {
@@ -15,8 +16,8 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
         <div>
             <h2 className="text-2xl font-bold text-slate-800">{c.name}</h2>
             <div className="flex items-center flex-wrap gap-2 mt-2">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.type === 'hybrid_inverter' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
-                    {c.type === 'hybrid_inverter' ? 'Hybrid Inverter' : 'MPPT Charger'}
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${controllerTypeBadgeClass(c.type)}`}>
+                    {controllerTypeLabel(c.type)}
                 </span>
                 <span className="text-sm font-medium text-slate-600">£{c.price || 0} per unit</span>
                 {safeDatasheet && (

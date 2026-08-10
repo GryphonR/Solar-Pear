@@ -18,13 +18,20 @@
         "startupV": 0,
         "v_start_vbat_dependent": false,
         "trackers": 0,
-        "price": 740,
+        "price": 986.11,
         "MaxACPower": 3000,
         "MaxDCPower": 0,
         "islanding": true,
         "notes": "Retrofit solution. No PV input. Adds battery to existing solar. G98 compliant.",
         "datasheetUrl": "https://givenergy.co.uk/hardware/ac-coupled-inverter/",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "segen.co.uk",
+                "URL": "https://www.segen.co.uk/product/givenergy-3-0kw-ac-coupled-inverter-with-5-12kwh-battery-50-off-inverter-promotion/",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": true,
         "g99_cert": true,
@@ -34,7 +41,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "giv_aio_2",
@@ -71,7 +79,8 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "giv_hy10.0_g3",
@@ -108,7 +117,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "giv_hy11.0_3ph",
@@ -145,7 +155,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "giv_hy3.6_g3",
@@ -182,7 +193,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "giv_hy5.0_g3",
@@ -219,6 +231,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     }
 ]

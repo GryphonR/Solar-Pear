@@ -16,7 +16,7 @@
         "isc": 13.91,
         "imp": 13.32,
         "price": 95,
-        "priceCheckedAt": "2026-08-05",
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 22.5,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -49,7 +49,7 @@
         "isc": 13.99,
         "imp": 13.39,
         "price": 98,
-        "priceCheckedAt": "2026-08-05",
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 22.8,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -82,7 +82,7 @@
         "isc": 14.07,
         "imp": 13.46,
         "price": 100,
-        "priceCheckedAt": "2026-08-05",
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 23,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -115,7 +115,7 @@
         "isc": 14.15,
         "imp": 13.53,
         "price": 105,
-        "priceCheckedAt": "2026-08-05",
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 23.3,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -147,8 +147,8 @@
         "vmp": 31.21,
         "isc": 15.88,
         "imp": 14.91,
-        "price": 79.99,
-        "priceCheckedAt": "2026-08-05",
+        "price": 75,
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 23.3,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -169,6 +169,12 @@
             {
                 "Supplier": "cclcomponents.com",
                 "URL": "https://www.cclcomponents.com/dmegc-solar-465w-infinity-rt-96-cut-dual-glass-n-type-mono-solar-module-full-black-16035",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solarsparky/solar-panels/dmegc/dmegc-dm465g12rt-g48hbb-465w-all-black-solar-panel",
                 "isAffiliate": false,
                 "Checked": false
             }
@@ -194,7 +200,7 @@
         "isc": 15.83,
         "imp": 14.88,
         "price": 95.27,
-        "priceCheckedAt": "2026-08-05",
+        "priceCheckedAt": "2026-08-08",
         "efficiency": 22.9,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -209,6 +215,18 @@
             {
                 "Supplier": "City Plumbing",
                 "URL": "https://www.cityplumbing.co.uk/p/dmegc-515w-all-black-solar-panel/p/223866",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "tradesparky.com",
+                "URL": "https://www.tradesparky.com/solarsparky/solar-panels/dmegc/dmegc-515w-solar-panel-dm515g12rt-b54hbt-bifacial",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "waxmanenergy.co.uk",
+                "URL": "https://www.waxmanenergy.co.uk/product/dmegc-mono-515w-black-frame-n-type-bifacial-double-glass-1134x1977x30mm/",
                 "isAffiliate": false,
                 "Checked": false
             }

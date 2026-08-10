@@ -13,6 +13,10 @@ This workflow instructs the agent to perform a rigorous verification of all sola
 -   Access to `src/data/panels/SCHEMA.md`.
 -   Browser and search tools enabled.
 -   **Backup**: Ensure the repo has a clean commit or backup before running. Schema drift and deletion are destructive; do not proceed without a restorable state.
+-   **Node pre-steps (mandatory before the audit below):**
+    1. `npm run verify:panels:review -- --nourl` (or omit `--nourl` to also ping every URL). Fills missing schema fields, normalizes `buyLinks`, writes `logs/panel_processing_log_*.txt`.
+    2. `npm run verify:panels:pricing` when prices/buy links need a refresh (`SERPER_API_KEY` required). Writes `logs/panel_pricing_check_log_*.txt`.
+    Machine logs stay under `logs/`; this workflow's per-manufacturer `.log` files next to the JSON remain the human audit trail for spec/hallucination changes.
 
 ## Steps
 

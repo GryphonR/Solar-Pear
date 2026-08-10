@@ -10,12 +10,24 @@ const computePlannerLayoutsMock = vi.fn(() => ({
             panelModel: 'P1',
             panelName: 'Panel 1',
             orientation: 'portrait',
+            rows: 2,
+            cols: 3,
+            count: 6,
+            totalW: 2400,
+            utilization: 0.8,
+            rects_m: [{ x: 0, y: 0, w: 1, h: 1.7 }],
+        },
+        {
+            id: 'P1_landscape',
+            panelModel: 'P1',
+            panelName: 'Panel 1',
+            orientation: 'landscape',
             rows: 1,
-            cols: 1,
-            count: 1,
-            totalW: 400,
+            cols: 4,
+            count: 4,
+            totalW: 1600,
             utilization: 0.5,
-            rects_m: [{ x: 0, y: 0, w: 1, h: 1 }],
+            rects_m: [{ x: 0, y: 0, w: 1.7, h: 1 }],
         },
     ],
     meta: {},
@@ -34,6 +46,9 @@ const mockAppState = {
     setArraysData: vi.fn(),
     updateArray: vi.fn(),
     hideHeavyPanels: false,
+    savePlannerToArray: vi.fn(),
+    savePlannerToDraftArray: vi.fn(),
+    setNotification: vi.fn(),
 };
 
 vi.mock('../../context/AppStateContext', () => ({
@@ -88,6 +103,9 @@ describe('ArrayPlanner quality fixes', () => {
         computePlannerLayoutsMock.mockClear();
         mockAppState.setArraysData.mockClear();
         mockAppState.updateArray.mockClear();
+        mockAppState.savePlannerToArray.mockClear();
+        mockAppState.savePlannerToDraftArray.mockClear();
+        mockAppState.setNotification.mockClear();
     });
 
     it('rehydrates planner state when saved planner arrives after mount', async () => {
@@ -258,5 +276,58 @@ describe('ArrayPlanner quality fixes', () => {
             expect(getControlByLabelText(/^panel count$/i)).toBeNull();
             expect(screen.getByText('Ranked layouts')).toBeTruthy();
         });
+    });
+
+    it('keeps the selected ranked layout after Apply Array persists array and planner', async () => {
+        const planner = {
+            roofInput: { mode: 'actual', x_m: 6, y_m: 4, projectedX_m: 6, projectedY_m: 4, tilt_deg: 30 },
+            roofPolygon: null,
+            roofPolygonAuto: true,
+            exclusions: [],
+            spacing: { edge_mm: 400, gap_mm: 25 },
+            options: { orientation: 'either' },
+            layoutOverride: { enabled: false },
+            lastResult: null,
+        };
+        let arraysData = [makeArray('a1', planner)];
+
+        mockAppState.setArraysData.mockImplementation((updater) => {
+            arraysData = typeof updater === 'function' ? updater(arraysData) : updater;
+        });
+        mockAppState.savePlannerToArray.mockImplementation((id, plannerData) => {
+            arraysData = arraysData.map((a) => (a.id === id ? { ...a, planner: plannerData } : a));
+        });
+
+        const baseProps = {
+            active: true,
+            arrayId: 'a1',
+            draftArrayData: null,
+            panelsData,
+            onHeaderChange: vi.fn(),
+            onApplyCandidateToDraft: vi.fn(),
+            showApplyArrayInToolbar: true,
+        };
+
+        const { rerender } = render(<ArrayPlanner {...baseProps} arraysData={arraysData} />);
+
+        const secondLayout = await waitFor(() =>
+            screen.getByRole('button', { name: /4 panels · 1×4 · landscape/i })
+        );
+        fireEvent.click(secondLayout);
+        expect(secondLayout.className).toMatch(/border-emerald-300/);
+
+        fireEvent.click(screen.getByRole('button', { name: /^apply array$/i }));
+        expect(mockAppState.setArraysData).toHaveBeenCalled();
+        expect(mockAppState.savePlannerToArray).toHaveBeenCalled();
+
+        // Simulate parent re-render after arraysData was updated by Apply Array
+        rerender(<ArrayPlanner {...baseProps} arraysData={arraysData} />);
+
+        await waitFor(() => {
+            const stillSelected = screen.getByRole('button', { name: /4 panels · 1×4 · landscape/i });
+            expect(stillSelected.className).toMatch(/border-emerald-300/);
+        });
+        const firstLayout = screen.getByRole('button', { name: /6 panels · 2×3 · portrait/i });
+        expect(firstLayout.className).not.toMatch(/border-emerald-300/);
     });
 });

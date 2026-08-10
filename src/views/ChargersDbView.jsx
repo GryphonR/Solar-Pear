@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus, Info, ExternalLink } from '../components/Icons';
 import BuyButton from '../components/BuyButton';
 import { useAppState } from '../context/AppStateContext';
+import { controllerTypeBadgeClass, controllerTypeLabel } from '../lib/controllerTypes';
 import { safeHttpUrl } from '../lib/safeUrl';
 
 export default function ChargersDbView() {
@@ -163,13 +164,9 @@ export default function ChargersDbView() {
                                                     </td>
                                                     <td className="p-1 px-4">
                                                         <span
-                                                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                                                                c.type === 'hybrid_inverter'
-                                                                    ? 'bg-purple-100 text-purple-700'
-                                                                    : 'bg-blue-100 text-blue-700'
-                                                            }`}
+                                                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${controllerTypeBadgeClass(c.type)}`}
                                                         >
-                                                            {c.type === 'hybrid_inverter' ? 'Hybrid' : 'Charger'}
+                                                            {controllerTypeLabel(c.type, { short: true })}
                                                         </span>
                                                     </td>
                                                     <td className="p-1 px-4 text-xs text-slate-500">

@@ -18,13 +18,32 @@
         "startupV": 22,
         "v_start_vbat_dependent": false,
         "trackers": 1,
-        "price": 160,
+        "price": 120.27,
         "MaxACPower": 366,
         "MaxDCPower": 530,
         "islanding": true,
         "notes": "Per-panel MPPT. Supports house backup via Enphase System Controller. 366VA peak.",
         "datasheetUrl": "https://enphase.com/en-ie/download/iq8-series-microinverters-data-sheet",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/buy/enphase/iq8-ac",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "solartradesales.co.uk",
+                "URL": "https://www.solartradesales.co.uk/enphase-iq8ac-54-72-cell-microinverter-366-va-peak-power-mc4",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "itstechnologies.shop",
+                "URL": "https://www.itstechnologies.shop/products/enphase-iq8ac-54-to-72-cell-microinverter-366-va-peak-power-mc4",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": true,
         "g99_cert": true,
@@ -34,7 +53,8 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "enphase_iq8hc",
@@ -55,13 +75,32 @@
         "startupV": 22,
         "v_start_vbat_dependent": false,
         "trackers": 1,
-        "price": 175,
+        "price": 127,
         "MaxACPower": 384,
         "MaxDCPower": 560,
         "islanding": true,
         "notes": "Per-panel MPPT. Supports house backup via Enphase System Controller. 384VA peak.",
         "datasheetUrl": "https://enphase.com/en-ie/download/iq8-series-microinverters-data-sheet",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/buy/enphase/iq8-hc",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "itstechnologies.shop",
+                "URL": "https://www.itstechnologies.shop/products/enphase-iq8hc-54-and-72-cell-microinverter-384-va-peak-power-mc4",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "solartradesales.co.uk",
+                "URL": "https://www.solartradesales.co.uk/enphase-iq8hc-54-72-cell-microinverter-384-va-peak-power-mc4",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": true,
         "g99_cert": true,
@@ -71,7 +110,8 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "enphase_iq8m",
@@ -108,7 +148,8 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "enphase_iq8mc",
@@ -129,13 +170,20 @@
         "startupV": 22,
         "v_start_vbat_dependent": false,
         "trackers": 1,
-        "price": 145,
+        "price": 154.03,
         "MaxACPower": 330,
         "MaxDCPower": 480,
         "islanding": true,
         "notes": "Per-panel MPPT. Supports house backup via Enphase System Controller. 330VA peak.",
         "datasheetUrl": "https://enphase.com/en-ie/download/iq8-series-microinverters-data-sheet",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/buy/enphase/iq8-mc",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": true,
         "g99_cert": true,
@@ -145,7 +193,8 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "enphase_iq8plus",
@@ -182,7 +231,8 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "enphase_iq8x",
@@ -203,13 +253,20 @@
         "startupV": 30,
         "v_start_vbat_dependent": false,
         "trackers": 1,
-        "price": 180,
+        "price": 124.87,
         "MaxACPower": 384,
         "MaxDCPower": 505,
         "islanding": true,
         "notes": "Per-panel MPPT. Supports house backup via Enphase System Controller. 384VA peak. High-voltage (80-cell) modules.",
         "datasheetUrl": "https://enphase.com/en-ie/download/iq8-series-microinverters-data-sheet",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/buy/enphase/iq8x-microinverter",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": true,
         "g99_cert": true,
@@ -219,6 +276,7 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     }
 ]

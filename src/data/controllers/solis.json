@@ -34,7 +34,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "solis_s6_6.0",
@@ -71,7 +72,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "solis_s6_3ph_10k",
@@ -108,7 +110,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "solis_s6_3ph_30k",
@@ -145,7 +148,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "solis_s6_gu50",
@@ -182,6 +186,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     }
 ]

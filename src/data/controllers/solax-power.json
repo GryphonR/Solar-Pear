@@ -34,7 +34,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "solax_x1_hybrid_g4_5",
@@ -71,7 +72,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "solax_x1_hybrid_g4_7.5",
@@ -108,7 +110,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "solax_x3_forth_80",
@@ -129,13 +132,38 @@
         "startupV": 200,
         "v_start_vbat_dependent": false,
         "trackers": 9,
-        "price": 4150,
+        "price": 2293.63,
         "MaxACPower": 80000,
         "MaxDCPower": 120000,
         "islanding": false,
         "notes": "Massive 9 MPPT commercial unit. PLC comms ready.",
         "datasheetUrl": "https://www.solaxpower.com/uploads/file/solax-x3-forth-datasheet-en.pdf",
-        "buyLinks": [],
+        "buyLinks": [
+            {
+                "Supplier": "solartradesales.co.uk",
+                "URL": "https://www.solartradesales.co.uk/solax-x3-forth-80kw-three-phase-inverter",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "waxmanenergy.co.uk",
+                "URL": "https://www.waxmanenergy.co.uk/product/solax-x3-forth-80kw-three-phase-inverter-9-mppt-dc-switch/",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "midsummerwholesale.co.uk",
+                "URL": "https://midsummerwholesale.co.uk/buy/solax-inverters/Solax-Forth-80kW-Inverter",
+                "isAffiliate": false,
+                "Checked": false
+            },
+            {
+                "Supplier": "green2go.co.uk",
+                "URL": "https://www.green2go.co.uk/solax-3-phase-inverter-80kw-12-x-mppt-inc-wifi-x3-forth-80kw.html",
+                "isAffiliate": false,
+                "Checked": false
+            }
+        ],
         "availableUK": true,
         "g98_cert": false,
         "g99_cert": true,
@@ -145,7 +173,8 @@
         "eps": false,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "solax_x3_hybrid_g4_10",
@@ -182,7 +211,8 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     },
     {
         "id": "solax_x3_hybrid_g4_15",
@@ -219,6 +249,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "priceCheckedAt": "2026-08-08"
     }
 ]

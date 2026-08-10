@@ -8,6 +8,12 @@ Verify all controller JSON files in `src/data/controllers/` against the **manufa
 
 **Prerequisites:** `src/data/controllers/`, `SCHEMA.md`, browser/fetch. Backup before running.
 
+**Node pre-steps (mandatory before the audit below):**
+1. `npm run verify:controllers:review -- --nourl` (or omit `--nourl` to also ping every URL). Fills missing schema fields (including `priceCheckedAt`), normalizes `buyLinks`, writes `logs/controller_processing_log_*.txt`.
+2. `npm run verify:controllers:pricing` when prices/buy links need a refresh (`SERPER_API_KEY` required). Writes `logs/controller_pricing_check_log_*.txt`.
+
+Machine logs stay under `logs/`; this workflow's per-manufacturer `.log` files next to the JSON remain the human audit trail for datasheet/spec changes. Controllers intentionally **add** family variants found on a datasheet — do not apply the panels workflow's delete-on-hallucination policy here.
+
 ### 0. .gitignore
 - **Start:** Comment out `*.log` in `.gitignore` (e.g. `# *.log`) so logs in `src/data/controllers/` can be written.
 - **End:** Uncomment to restore.
