@@ -129,14 +129,17 @@ export default function PanelsGuideView() {
         <div className="max-w-4xl mx-auto space-y-8 pb-12">
             <GuidePageHeader eyebrow="Guide" title="Guide to panels">
                 <p>
-                    Every panel does the same job, so the differences come down to three things: how
+                    Every panel does the same job, so the differences come down to four things: how
                     many watts you get per square metre of roof, how much of that you keep on a hot
-                    day, and how long the module lasts before the weather gets into it. Cell
-                    architecture drives the first two, and glass construction drives the third.
+                    day, how long the module lasts before the weather gets into it, and what you pay
+                    per watt for all of that. Cell architecture drives the first two, glass
+                    construction drives the third, and manufacturing complexity drives the fourth -
+                    which is why the newest, best-performing architectures also carry the biggest
+                    price premium.
                 </p>
                 <p>
                     This page walks through the technologies you will meet on datasheets, oldest to
-                    newest, with what each one is good and bad at. Every example is a panel in your
+                    newest, with what each one is good and bad at. Every example is a panel in the
                     database - click one to open its full specification.
                 </p>
             </GuidePageHeader>
