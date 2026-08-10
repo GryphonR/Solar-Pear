@@ -16,6 +16,7 @@
         "isc": 13.91,
         "imp": 13.32,
         "price": 95,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 22.5,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -26,14 +27,7 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
         "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, mostly on standard M10 wafers (450-465W) plus two G12-RT rectangular-wafer outliers (465W and the 515W flagship). Pros: bifacial gain on top of TOPCon's strong temperature behaviour, and the standard M10 bins keep a well-behaved, moderate current for easy string design. Cons: the G12-RT 465W variant trades voltage for current (Isc 15.88A vs the M10 465W's 13.99A) on the same headline wattage, and the 515W flagship needs a wider 30A series fuse than the rest of the series (25A) - check MPPT current headroom before selecting either.",
-        "buyLinks": [
-            {
-                "Supplier": "midsummerwholesale.co.uk",
-                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -55,6 +49,7 @@
         "isc": 13.99,
         "imp": 13.39,
         "price": 98,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 22.8,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -65,14 +60,7 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
         "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, mostly on standard M10 wafers (450-465W) plus two G12-RT rectangular-wafer outliers (465W and the 515W flagship). Pros: bifacial gain on top of TOPCon's strong temperature behaviour, and the standard M10 bins keep a well-behaved, moderate current for easy string design. Cons: the G12-RT 465W variant trades voltage for current (Isc 15.88A vs the M10 465W's 13.99A) on the same headline wattage, and the 515W flagship needs a wider 30A series fuse than the rest of the series (25A) - check MPPT current headroom before selecting either.",
-        "buyLinks": [
-            {
-                "Supplier": "midsummerwholesale.co.uk",
-                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -94,6 +82,7 @@
         "isc": 14.07,
         "imp": 13.46,
         "price": 100,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 23,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -104,14 +93,7 @@
         "gseCompatibility": "Both",
         "datasheetUrl": "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf",
         "notes": "Technology: N-Type TOPCon cells, bifacial with dual glass, mostly on standard M10 wafers (450-465W) plus two G12-RT rectangular-wafer outliers (465W and the 515W flagship). Pros: bifacial gain on top of TOPCon's strong temperature behaviour, and the standard M10 bins keep a well-behaved, moderate current for easy string design. Cons: the G12-RT 465W variant trades voltage for current (Isc 15.88A vs the M10 465W's 13.99A) on the same headline wattage, and the 515W flagship needs a wider 30A series fuse than the rest of the series (25A) - check MPPT current headroom before selecting either.",
-        "buyLinks": [
-            {
-                "Supplier": "midsummerwholesale.co.uk",
-                "URL": "https://midsummerwholesale.co.uk/pdfs/gse-integration-mcs-012-issue-3-certificate-kiwa00041-issue-11.2---revision-final-16-01-2026.pdf",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
         "availableUK": true
@@ -133,6 +115,7 @@
         "isc": 14.15,
         "imp": 13.53,
         "price": 105,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 23.3,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -164,7 +147,8 @@
         "vmp": 31.21,
         "isc": 15.88,
         "imp": 14.91,
-        "price": 88.42,
+        "price": 79.99,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 23.3,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -209,7 +193,8 @@
         "vmp": 34.61,
         "isc": 15.83,
         "imp": 14.88,
-        "price": 92,
+        "price": 95.27,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 22.9,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,

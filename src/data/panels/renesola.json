@@ -16,6 +16,7 @@
         "isc": 13.98,
         "imp": 13.17,
         "price": 93.45,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21.76,
         "tempCoefPmax": -0.31,
         "tempCoefVoc": -0.26,
@@ -28,7 +29,7 @@
         "notes": "Technology: N-TOPCon cells, 108 half-cell, monofacial, single 3.2mm AR-coated glass. A single 425W entry - ReneSola's Saturn Series in an all-black monofacial finish. Pros: TOPCon's efficiency and reliability at a competitive price; the AR coating buys a little extra transmission over uncoated glass. Cons: monofacial, so it forgoes the rear-side gain of the otherwise-identical Rene 2n at the same headline wattage.",
         "buyLinks": [
             {
-                "Supplier": "Voltacon Solar",
+                "Supplier": "voltaconsolar.com",
                 "URL": "https://voltaconsolar.com/products/renesola-solar-panel-425w-half-cut-108-cells-n-topcon-mono-facial-all-black",
                 "isAffiliate": false,
                 "Checked": false
@@ -61,6 +62,7 @@
         "isc": 14.02,
         "imp": 13.08,
         "price": 93.45,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 21.77,
         "tempCoefPmax": -0.31,
         "tempCoefVoc": -0.26,
@@ -73,7 +75,7 @@
         "notes": "Technology: N-Type TOPCon cells, 108 half-cell, bifacial with dual 2.0mm glass. Also rated 425W on the front face, like the monofacial RS-41. Pros: can add up to 90W of additional rear-side energy depending on mounting and ground reflectivity, on top of TOPCon's strong temperature behaviour. Cons: heavier than the monofacial RS-41 due to the second glass pane, and the rear-side gain is highly mounting-dependent - see the Guide's bifacial section before counting on it.",
         "buyLinks": [
             {
-                "Supplier": "Voltacon Solar",
+                "Supplier": "voltaconsolar.com",
                 "URL": "https://voltaconsolar.com/products/renesola-bifacial-double-sided-425w-front-90w-back-half-cut-monocrystalline",
                 "isAffiliate": false,
                 "Checked": false

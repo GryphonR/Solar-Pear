@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Plus, Info, ExternalLink } from '../components/Icons';
 import Modal from '../components/Modal';
+import DesignNotes from '../components/DesignNotes';
 import { useAppState } from '../context/AppStateContext';
 import { getGseCompatibilityDbLabel } from '../lib/gseCompatibility';
 import { safeHttpUrl } from '../lib/safeUrl';
@@ -308,7 +309,7 @@ export default function PanelsDbView() {
                 title={seriesNotesModal ? `Design Notes: ${seriesNotesModal.seriesKey}` : ''}
                 closeOnBackdropClick
             >
-                <p className="text-sm text-slate-700 leading-relaxed">{seriesNotesModal?.notes}</p>
+                <DesignNotes notes={seriesNotesModal?.notes} className="text-sm text-slate-700 leading-relaxed" />
             </Modal>
         </div>
     );

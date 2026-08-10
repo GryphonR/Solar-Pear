@@ -16,6 +16,7 @@
         "isc": 13.92,
         "imp": 13.35,
         "price": 85,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 22,
         "tempCoefPmax": -0.3,
         "tempCoefVoc": -0.25,
@@ -25,10 +26,10 @@
         "cells": "108 Half-Cell (N-TOPCon)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.elite-solar.com/uploads/20260309/f331f25e8ff9ef284de461fd0e89a041.pdf",
-        "notes": "Technology: N-TOPCon cells, 108 half-cell, bifacial with dual 2.0mm glass. A single 430W entry. Pros: N-type TOPCon plus bifacial glass-glass construction for better temperature behaviour and durability than a monofacial PERC panel at a similar price point. Cons: as a standalone model it isn't available in other power bins, and the 2.0mm+2.0mm glass build is heavier than the thinner 1.6mm dual-glass panels elsewhere in this database.",
+        "notes": "Technology: N-TOPCon cells, 108 half-cell, bifacial with dual 2.0mm glass. A single 430W entry. Pros: N-type TOPCon plus bifacial glass-glass construction for better temperature behaviour and durability than a monofacial PERC panel at a similar price point. Cons: as a standalone model it isn't available in other power bins, and the 2.0mm+2.0mm glass build is heavier than thinner 1.6mm dual-glass panels available elsewhere.",
         "buyLinks": [
             {
-                "Supplier": "Voltacon Solar",
+                "Supplier": "voltaconsolar.com",
                 "URL": "https://voltaconsolar.com/products/elite-430watt-solar-panel-bifacial-full-black",
                 "isAffiliate": false,
                 "Checked": false
@@ -55,6 +56,7 @@
         "isc": 15.79,
         "imp": 14.98,
         "price": 0,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 22,
         "tempCoefPmax": -0.3,
         "tempCoefVoc": -0.22,
@@ -64,7 +66,7 @@
         "cells": "96 Half-Cell (N-TOPCon 210R)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.elite-solar.com/uploads/20260309/6c5c550956b03cc92c9245153b4c3865.pdf",
-        "notes": "Technology: N-TOPCon cells on rectangular 210R wafers, 96 half-cell, bifacial with dual 2.0mm glass. Runs 440W and 460W. Pros: bifacial TOPCon technology, and the reduced cell count keeps the module compact for its wattage. Cons: current climbs to 15.8-16.1A - among the highest of any standard-footprint panel in this database - so the 460W top bin sits close to typical 16A MPPT ceilings; check controller current limits before a wide parallel array.",
+        "notes": "Technology: N-TOPCon cells on rectangular 210R wafers, 96 half-cell, bifacial with dual 2.0mm glass. Runs 440W and 460W. Pros: bifacial TOPCon technology, and the reduced cell count keeps the module compact for its wattage. Cons: current climbs to 15.8-16.1A - notably high for a standard-footprint panel - so the 460W top bin sits close to typical 16A MPPT ceilings; check controller current limits before a wide parallel array.",
         "buyLinks": [
             {
                 "Supplier": "Voltacon Solar",
@@ -75,7 +77,7 @@
         ],
         "active": true,
         "reviewed": false,
-        "availableUK": false
+        "availableUK": true
     },
     {
         "name": "ET Solar 210R N-Type 460W",
@@ -93,7 +95,8 @@
         "vmp": 30.15,
         "isc": 16.07,
         "imp": 15.26,
-        "price": 0,
+        "price": 77,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 23,
         "tempCoefPmax": -0.3,
         "tempCoefVoc": -0.22,
@@ -103,10 +106,10 @@
         "cells": "96 Half-Cell (N-TOPCon 210R)",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://cdn.elite-solar.com/uploads/20260309/6c5c550956b03cc92c9245153b4c3865.pdf",
-        "notes": "Technology: N-TOPCon cells on rectangular 210R wafers, 96 half-cell, bifacial with dual 2.0mm glass. Runs 440W and 460W. Pros: bifacial TOPCon technology, and the reduced cell count keeps the module compact for its wattage. Cons: current climbs to 15.8-16.1A - among the highest of any standard-footprint panel in this database - so the 460W top bin sits close to typical 16A MPPT ceilings; check controller current limits before a wide parallel array.",
+        "notes": "Technology: N-TOPCon cells on rectangular 210R wafers, 96 half-cell, bifacial with dual 2.0mm glass. Runs 440W and 460W. Pros: bifacial TOPCon technology, and the reduced cell count keeps the module compact for its wattage. Cons: current climbs to 15.8-16.1A - notably high for a standard-footprint panel - so the 460W top bin sits close to typical 16A MPPT ceilings; check controller current limits before a wide parallel array.",
         "buyLinks": [],
         "active": true,
         "reviewed": false,
-        "availableUK": false
+        "availableUK": true
     }
 ]

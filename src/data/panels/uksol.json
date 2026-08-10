@@ -15,7 +15,8 @@
         "vmp": 32.9,
         "isc": 14.19,
         "imp": 13.38,
-        "price": 71.33,
+        "price": 78,
+        "priceCheckedAt": "2026-08-05",
         "efficiency": 22.5,
         "tempCoefPmax": -0.29,
         "tempCoefVoc": -0.25,
@@ -25,21 +26,8 @@
         "cells": "UKS-S108/M10N-440",
         "gseCompatibility": "Both",
         "datasheetUrl": "https://dam.cityplumbing.co.uk/private/xkg302j/GPID_1500084942_TECH_00.pdf",
-        "notes": "Technology: monocrystalline cells (architecture not stated), 108-cell format, monofacial with single 2.0mm glass. A single 440W entry - UKSOL's standard M10N half-cell module. Pros: nothing unusual in its electrical profile relative to other 108-cell panels in this database, so it's a straightforward, easy-to-integrate choice. Cons: thinner 2.0mm single glass is only heat-strengthened rather than fully tempered (see the Guide's glass section), and there's no bifacial or premium-cell variant in this range.",
-        "buyLinks": [
-            {
-                "Supplier": "City Plumbing",
-                "URL": "https://www.cityplumbing.co.uk/p/uksol-440w-all-black-monofacial-solar-panel/p/159868",
-                "isAffiliate": false,
-                "Checked": false
-            },
-            {
-                "Supplier": "cityplumbing.co.uk",
-                "URL": "https://www.cityplumbing.co.uk/p/uksol-440w-full-black-topcon-monofacial-pv-module-uks-s108m10n-440/p/159868?srsltid=AfmBOoqO5wFBYpk6RncI9jpsXqhLtPpuCyVINFz8JvlVIcFznr450rL1",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "notes": "Technology: monocrystalline cells (architecture not stated), 108-cell format, monofacial with single 2.0mm glass. A single 440W entry - UKSOL's standard M10N half-cell module. Pros: nothing unusual in its electrical profile relative to other 108-cell panels generally, so it's a straightforward, easy-to-integrate choice. Cons: thinner 2.0mm single glass is only heat-strengthened rather than fully tempered (see the Guide's glass section), and there's no bifacial or premium-cell variant in this range.",
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
         "availableUK": true

@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from '../Modal';
+import DesignNotes from '../DesignNotes';
 import { ExternalLink, Info } from '../Icons';
 import { GSE_COMPATIBILITY, getPanelGseCompatibility } from '../../lib/gseCompatibility';
 import { safeHttpUrl } from '../../lib/safeUrl';
@@ -69,7 +70,7 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
                 </div>
                 <div className="bg-slate-50 p-5 rounded-lg border border-slate-200">
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center"><Info size={14} className="mr-2" /> Design Notes</h3>
-                    <p className="text-sm text-slate-700 leading-relaxed">{p.notes || 'No specific design notes for this module. Refer to standard datasheets.'}</p>
+                    <DesignNotes notes={p.notes} fallback="No specific design notes for this module. Refer to standard datasheets." className="text-sm text-slate-700 leading-relaxed" />
                 </div>
                 <div>
                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center">Your Persistent Notes</h3>

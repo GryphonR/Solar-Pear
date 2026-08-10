@@ -33,6 +33,7 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `isc` | number | Short-circuit current (A). Checked against controller `maxIsc` / `maxOperatingI`. |
 | `imp` | number | Current at max power (A). |
 | `price` | number | Estimated unit price (user can override in app). |
+| `priceCheckedAt` | string | ISO date (`YYYY-MM-DD`) the `price`/`buyLinks` were last verified by `verification_scripts/panel-pricing-scan.js`. Blank (`""`) if never checked. |
 | `efficiency` | number | Module efficiency (%). |
 | `tempCoefPmax` | number | Temperature coefficient of Pmax (%/°C). Used for Pmax temp sweeps and as √P fallback for hot Vmp when `tempCoefVmp` is absent. |
 | `tempCoefVoc` | number | Temperature coefficient of Voc (%/°C). Used for cold Voc checks. |
