@@ -1,6 +1,34 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, waitFor, within, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
+// App UI flows only need a tiny catalog. Rendering the full panels/controllers DB
+// makes Testing Library role queries too slow for the default timeouts in CI.
+vi.mock("./data/loadData.js", async (importOriginal) => {
+    const actual = await importOriginal();
+    const duplicatePanel =
+        actual.initialPanels.find((p) => p.model === "TSM-430NEG9R.28") || actual.initialPanels[0];
+    const otherPanel =
+        actual.initialPanels.find((p) => p.model !== duplicatePanel.model) || {
+            ...duplicatePanel,
+            model: "TEST-PANEL-2",
+            name: "Test Panel 2",
+        };
+    const duplicateCharger =
+        actual.initialChargers.find((c) => c.id === "ss75_15") || actual.initialChargers[0];
+    const otherCharger =
+        actual.initialChargers.find((c) => c.id !== duplicateCharger.id) || {
+            ...duplicateCharger,
+            id: "test_charger_2",
+            name: "Test Charger 2",
+        };
+    return {
+        ...actual,
+        initialPanels: [duplicatePanel, otherPanel],
+        initialChargers: [duplicateCharger, otherCharger],
+    };
+});
+
 import { AppStateProvider } from "./context/AppStateContext";
 import App from "./App";
 
@@ -202,9 +230,7 @@ describe("App UI flows", () => {
         ).toBeInTheDocument();
     });
 
-    it(
-        "opens Add Panel modal from Panels tab and shows form",
-        async () => {
+    it("opens Add Panel modal from Panels tab and shows form", async () => {
         renderApp();
         await waitFor(() => {
             expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
@@ -226,9 +252,7 @@ describe("App UI flows", () => {
         expect(
             screen.getByRole("button", { name: /Add Panel to Database/i })
         ).toBeInTheDocument();
-        },
-        10000
-    );
+    });
 
     it("opens Confirm modal on Reset click; Cancel closes it", async () => {
         renderApp();
@@ -320,9 +344,7 @@ describe("App UI flows", () => {
         expect(document.activeElement).toBe(input);
     });
 
-    it(
-        "prevents submit when adding a panel with duplicate Model ID and keeps modal open",
-        async () => {
+    it("prevents submit when adding a panel with duplicate Model ID and keeps modal open", async () => {
         renderApp();
         await waitFor(() => {
             expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
@@ -344,35 +366,29 @@ describe("App UI flows", () => {
         const addButton = screen.getByRole("button", { name: /Add Panel to Database/i });
         expect(addButton).toBeDisabled();
         expect(screen.getByRole("heading", { name: /Add Custom Solar Panel/i })).toBeInTheDocument();
-        },
-        10000
-    );
+    });
 
-    it(
-        "prevents submit when adding a controller with duplicate Model ID and keeps modal open",
-        async () => {
-            renderApp();
-            await waitFor(() => {
-                expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-            });
+    it("prevents submit when adding a controller with duplicate Model ID and keeps modal open", async () => {
+        renderApp();
+        await waitFor(() => {
+            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
+        });
 
-            await userEvent.click(screen.getByRole("button", { name: /pv controllers/i }));
-            await waitFor(() => {
-                expect(screen.getByRole("heading", { name: /PV Controllers Database/i })).toBeInTheDocument();
-            });
-            await userEvent.click(screen.getByRole("button", { name: /add controller/i }));
-            await waitFor(() => {
-                expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
-            });
-
-            const dialog = screen.getByRole("dialog");
-            const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
-            fireEvent.change(modelIdInput, { target: { value: "ss75_15" } });
-
-            const addButton = screen.getByRole("button", { name: /Add Controller to Database/i });
-            expect(addButton).toBeDisabled();
+        await userEvent.click(screen.getByRole("button", { name: /pv controllers/i }));
+        await waitFor(() => {
+            expect(screen.getByRole("heading", { name: /PV Controllers Database/i })).toBeInTheDocument();
+        });
+        await userEvent.click(screen.getByRole("button", { name: /add controller/i }));
+        await waitFor(() => {
             expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
-        },
-        20000
-    );
+        });
+
+        const dialog = screen.getByRole("dialog");
+        const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
+        fireEvent.change(modelIdInput, { target: { value: "ss75_15" } });
+
+        const addButton = screen.getByRole("button", { name: /Add Controller to Database/i });
+        expect(addButton).toBeDisabled();
+        expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
+    });
 });
