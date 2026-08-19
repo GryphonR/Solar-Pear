@@ -107,15 +107,15 @@ export default function ArrayOverviewTab({
                                 <p className={`text-2xl font-light ${controller && coldVoc > controller.maxV ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{coldVoc.toFixed(1)} <span className="text-sm">V</span></p>
                                 {controller ? <p className="text-xs text-slate-400 mt-1">Controller Limit: {controller.maxV}V</p> : <p className="text-xs text-slate-400 mt-1">Select a controller to compare limits</p>}
                             </div>
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title="Maximum power point voltage of the string at 65°C. Must stay above your MPPT's minimum startup voltage.">
+                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title="Maximum power point voltage of the string at 65°C. If below startup the controller will not track during peak heat, causing temporary harvest loss — not hardware damage.">
                                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Hot Vmp (65°C)</p>
-                                <p className={`text-2xl font-light ${controller && effectiveStartupV != null && hotVmp < effectiveStartupV ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{hotVmp.toFixed(1)} <span className="text-sm">V</span></p>
+                                <p className={`text-2xl font-light ${controller && effectiveStartupV != null && hotVmp < effectiveStartupV ? 'text-orange-500 font-bold' : 'text-slate-800'}`}>{hotVmp.toFixed(1)} <span className="text-sm">V</span></p>
                                 {controller && effectiveStartupV != null ? <p className="text-xs text-slate-400 mt-1">Required to Start: {effectiveStartupV}V</p> : <p className="text-xs text-slate-400 mt-1">Select a controller to compare limits</p>}
                             </div>
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title="Short-circuit current at 65°C (hot). Must not exceed the MPPT's max Isc.">
+                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title="Short-circuit current at 65°C (hot). Exceeding the controller rating causes clipping (reduced efficiency), not hardware damage.">
                                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Array Isc (Hot 65°C)</p>
-                                <p className={`text-2xl font-light ${controller && arrayIscHot > controller.maxIsc ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{arrayIscHot.toFixed(2)} <span className="text-sm">A</span></p>
-                                {controller ? <p className="text-xs text-slate-400 mt-1">Controller Limit: {controller.maxIsc}A</p> : <p className="text-xs text-slate-400 mt-1">Select a controller to compare limits</p>}
+                                <p className={`text-2xl font-light ${controller && arrayIscHot > (controller.maxOperatingI > 0 ? controller.maxOperatingI : controller.maxIsc) ? 'text-orange-500 font-bold' : 'text-slate-800'}`}>{arrayIscHot.toFixed(2)} <span className="text-sm">A</span></p>
+                                {controller ? <p className="text-xs text-slate-400 mt-1">Controller Rating: {controller.maxOperatingI > 0 ? controller.maxOperatingI : controller.maxIsc}A</p> : <p className="text-xs text-slate-400 mt-1">Select a controller to compare limits</p>}
                             </div>
                         </div>
                     )}

@@ -359,11 +359,11 @@ export default function ControllersGuideView() {
                         </p>
                         <p className="mt-1">
                             Datasheets often quote both a maximum short-circuit current and a lower
-                            maximum operating current. The first is the fault current the input can
-                            survive; the second is what it will actually convert continuously.
-                            Wiring an array whose current sits between the two will not damage
-                            anything, but the controller will clip the excess and you will have paid
-                            for panels you cannot use.
+                            maximum operating current. The first is the absolute input ceiling; the
+                            second is what the tracker will actually convert continuously. Exceeding
+                            either does not damage the controller — the MPPT shifts off the maximum
+                            power point to cap output current, so you simply lose efficiency and pay
+                            for panel capacity the tracker will not use.
                         </p>
                         {currentHeadroom.length > 0 && (
                             <div className="mt-2">

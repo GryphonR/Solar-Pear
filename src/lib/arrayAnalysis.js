@@ -66,23 +66,31 @@ export function isValidWiring(count, parallelStrings) {
 }
 
 /**
- * Whether the array wiring (series strings × panel electricals) stays within controller Voc/Vmp/Isc limits.
+ * Current clip limit: prefer maxOperatingI when available and positive, else maxIsc.
+ * Returns the threshold above which the MPPT will clip (not a safety limit).
+ */
+export function getCurrentClipLimit(controller) {
+    if (!controller) return Infinity;
+    const opI = Number(controller.maxOperatingI);
+    if (opI > 0 && Number.isFinite(opI)) return opI;
+    return controller.maxIsc ?? Infinity;
+}
+
+/**
+ * Whether the array wiring (series strings × panel electricals) stays within controller
+ * hard electrical limits. Only Voc is a true safety gate (over-voltage can destroy the
+ * controller). Vmp below startup and Isc overage are operational concerns (harvest loss /
+ * clipping) and are excluded from this hard-compatibility check.
  */
 export function panelPassesControllerLimits(array, panel, controller, systemVoltage) {
     if (!controller || !array || !panel) return true;
     const pStrings = array.parallelStrings || 1;
-    // Fail closed when count is not divisible by parallelStrings (fractional series length).
     if (!isValidWiring(array.count, pStrings)) return false;
     const panelsPerSeriesString = array.count / pStrings;
     const pStringVocSTC = panel.voc * panelsPerSeriesString;
     const pColdVoc = pStringVocSTC * coldVocFactor(panel);
-    const pStringVmpSTC = panel.vmp * panelsPerSeriesString;
-    const pHotVmp = pStringVmpSTC * hotVmpFactor(panel);
-    const pArrayIscHot = panel.isc * pStrings * hotIscFactor(panel);
     const isVocOk = pColdVoc <= controller.maxV;
-    const isVmpOk = pHotVmp >= getEffectiveStartupV(controller, systemVoltage);
-    const isIscOk = pArrayIscHot <= controller.maxIsc;
-    return isVocOk && isVmpOk && isIscOk;
+    return isVocOk;
 }
 
 /** Positive divisors of n (valid `parallelStrings` values for that panel count). */
@@ -332,6 +340,8 @@ export const analyzeArray = (
             coldVoc,
             hotVmp,
             arrayIscHot,
+            currentClipLimit: null,
+            isIscClipping: false,
         };
     }
 
@@ -351,8 +361,9 @@ export const analyzeArray = (
     const isWiringError = !wiringValid;
     const isVocError = wiringValid && coldVoc > controller.maxV;
     const isVocWarn = wiringValid && coldVoc > controller.maxV * VOC_WARN_FRACTION && !isVocError;
-    const isVmpError = wiringValid && hotVmp < effectiveStartupV;
-    const isIscError = wiringValid && arrayIscHot > controller.maxIsc;
+    const isVmpBelowStartup = wiringValid && hotVmp < effectiveStartupV;
+    const currentClipLimit = getCurrentClipLimit(controller);
+    const isIscClipping = wiringValid && arrayIscHot > currentClipLimit;
     const isFormatError = !isCompatibleFormat(array, panel);
 
     let status = "valid";
@@ -421,21 +432,21 @@ export const analyzeArray = (
         );
     }
 
-    if (isVmpError) {
-        status = "error";
+    if (isVmpBelowStartup) {
+        if (status !== "error") status = "warning";
         messages.push(
-            `FATAL: Hot Vmp (${hotVmp.toFixed(
+            `Hot Vmp (${hotVmp.toFixed(
                 1
-            )}V) is below PV controller startup threshold (${effectiveStartupV}V). Will not start on hot days.`
+            )}V) is below the controller startup threshold (${effectiveStartupV}V). The MPPT will not start during peak heat, causing temporary harvest loss — it is not a hardware risk.`
         );
     }
 
-    if (isIscError) {
-        status = "error";
+    if (isIscClipping) {
+        if (status !== "error") status = "warning";
         messages.push(
-            `FATAL: Array Isc at 65°C (${arrayIscHot.toFixed(
+            `Array Isc at 65°C (${arrayIscHot.toFixed(
                 2
-            )}A) exceeds PV controller tracker limit (${controller.maxIsc}A).`
+            )}A) exceeds the controller current rating (${currentClipLimit}A). The MPPT will leave the maximum power point or otherwise cap current, so you pay for panel capacity the tracker will not convert.`
         );
     }
 
@@ -458,6 +469,9 @@ export const analyzeArray = (
         coldVoc,
         hotVmp,
         arrayIscHot,
+        currentClipLimit,
+        isIscClipping,
+        isVmpBelowStartup,
         effectiveStartupV,
     };
 };

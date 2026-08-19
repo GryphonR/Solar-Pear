@@ -30,7 +30,7 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `power` | number | Nominal power in watts (e.g. 430). |
 | `voc` | number | Open-circuit voltage (V). Used for string voltage and cold-temperature checks. |
 | `vmp` | number | Voltage at max power (V). Used for MPPT range and hot-temperature checks. |
-| `isc` | number | Short-circuit current (A). Checked against controller `maxIsc` / `maxOperatingI`. |
+| `isc` | number | Short-circuit current (A). Compared to controller current rating to flag clipping (efficiency loss, not a hard incompatibility). |
 | `imp` | number | Current at max power (A). |
 | `price` | number | Estimated unit price (user can override in app). |
 | `priceCheckedAt` | string | ISO date (`YYYY-MM-DD`) the `price`/`buyLinks` were last verified by `verification_scripts/panel-pricing-scan.js`. Blank (`""`) if never checked. |

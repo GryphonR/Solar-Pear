@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { AlertTriangle, CheckCircle } from '../components/Icons';
-import { getEffectiveStartupV } from '../lib/arrayAnalysis';
+import { getEffectiveStartupV, getCurrentClipLimit } from '../lib/arrayAnalysis';
 import { useAppState } from '../context/AppStateContext';
 import { useValidPanels } from './arraySelector/useValidPanels';
 import ParallelStringsSelect from './arraySelector/ParallelStringsSelect';
@@ -92,8 +92,8 @@ export default function ArraySelectorView({ arrayId }) {
             availableChargers.map((c) => {
                 const isVoltageOk = !panel || coldVoc <= c.maxV;
                 const isStartupOk = !panel || hotVmp >= getEffectiveStartupV(c, areaSystemVoltage);
-                const isCurrentOk = !panel || arrayIscHot <= c.maxIsc;
-                const isFullyCompatible = isVoltageOk && isStartupOk && isCurrentOk;
+                const isCurrentOk = !panel || arrayIscHot <= getCurrentClipLimit(c);
+                const isFullyCompatible = isVoltageOk;
                 return { ...c, isVoltageOk, isStartupOk, isCurrentOk, isFullyCompatible };
             }),
         [availableChargers, panel, coldVoc, hotVmp, arrayIscHot, areaSystemVoltage]

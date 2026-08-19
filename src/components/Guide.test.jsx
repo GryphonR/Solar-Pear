@@ -12,16 +12,18 @@ import { describe, it, expect } from 'vitest';
 import { EXAMPLE_WIRINGS, EXAMPLE_CONTROLLER } from './Guide';
 
 describe('Guide worked example', () => {
-    it('offers exactly one wiring that clears every limit', () => {
-        expect(EXAMPLE_WIRINGS.filter((w) => w.passes)).toHaveLength(1);
+    it('two wirings pass (voltage is the only hard limit; current overage just clips)', () => {
+        expect(EXAMPLE_WIRINGS.filter((w) => w.passes)).toHaveLength(2);
     });
 
-    it('fails once on voltage and once on current, so both limits are demonstrated', () => {
+    it('fails once on voltage; one row clips on current (passes but with warning)', () => {
         const failures = EXAMPLE_WIRINGS.filter((w) => !w.passes);
+        const clippers = EXAMPLE_WIRINGS.filter((w) => w.passes && w.clips);
 
-        expect(failures).toHaveLength(2);
+        expect(failures).toHaveLength(1);
         expect(failures.filter((w) => !w.vocOk)).toHaveLength(1);
-        expect(failures.filter((w) => !w.iscOk)).toHaveLength(1);
+        expect(clippers).toHaveLength(1);
+        expect(clippers[0].iscOk).toBe(false);
     });
 
     it('keeps hot Vmp below the controller max PV input in every row', () => {
@@ -32,9 +34,10 @@ describe('Guide worked example', () => {
         }
     });
 
-    it('keeps hot Vmp above the startup threshold in every row', () => {
-        // The example is about the voltage ceiling and the current ceiling; a startup failure
-        // mixed in would give the reader a third variable to track.
+    it('keeps hot Vmp above the startup threshold in every row (example simplicity)', () => {
+        // The example is about the voltage ceiling and current clipping; a startup warning
+        // mixed in would give the reader a third variable to track. This is a property of the
+        // chosen example, not a hard requirement — lowStartup is just a warning anyway.
         for (const w of EXAMPLE_WIRINGS) {
             expect(w.vmpOk).toBe(true);
         }
@@ -48,12 +51,12 @@ describe('Guide worked example', () => {
         expect(voltageFailure.coldVoc).toBeGreaterThan(EXAMPLE_CONTROLLER.maxV);
     });
 
-    it('breaks each limit by a narrow enough margin to be non-obvious', () => {
+    it('exceeds each threshold by a narrow enough margin to be non-obvious', () => {
         const voltageFailure = EXAMPLE_WIRINGS.find((w) => !w.vocOk);
-        const currentFailure = EXAMPLE_WIRINGS.find((w) => !w.iscOk);
+        const currentClipper = EXAMPLE_WIRINGS.find((w) => w.clips);
 
         // A wiring that overshoots by miles makes the correction look incidental.
         expect(voltageFailure.coldVoc).toBeLessThan(EXAMPLE_CONTROLLER.maxV * 1.1);
-        expect(currentFailure.hotIsc).toBeLessThan(EXAMPLE_CONTROLLER.maxIsc * 1.5);
+        expect(currentClipper.hotIsc).toBeLessThan(EXAMPLE_CONTROLLER.maxIsc * 1.5);
     });
 });

@@ -88,11 +88,8 @@ export default function ControllerSection({
                             const model = chargersData.find((c) => c.id === sc.modelId);
                             if (!model) return null;
                             let isElectricalValid = true;
-                            if (panel && coldVoc != null && hotVmp != null && arrayIscHot != null) {
-                                isElectricalValid =
-                                    coldVoc <= model.maxV &&
-                                    hotVmp >= getEffectiveStartupV(model, systemVoltage) &&
-                                    arrayIscHot <= model.maxIsc;
+                            if (panel && coldVoc != null) {
+                                isElectricalValid = coldVoc <= model.maxV;
                             }
                             const assignments = {};
                             for (let i = 1; i <= model.trackers; i++) {
@@ -450,7 +447,7 @@ export default function ControllerSection({
                                                     range={col.maxIsc}
                                                     incompatible={inc}
                                                     formatter={(v) => `${v} A`}
-                                                    className={!c.isCurrentOk ? 'font-bold text-red-600' : 'text-slate-700'}
+                                                    className={!c.isCurrentOk ? 'font-bold text-orange-500' : 'text-slate-700'}
                                                 />
                                                 <td
                                                     className={`py-2 px-3 text-slate-700 border-r border-slate-200/70 ${

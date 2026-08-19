@@ -7,6 +7,7 @@ import {
     getEffectiveStartupV,
     getEffectiveMaxPanelWeightKg,
     panelMeetsWeightCap,
+    getCurrentClipLimit,
 } from '../../lib/arrayAnalysis';
 
 /**
@@ -68,7 +69,7 @@ export function useValidPanels(arrayId, options) {
                 const isVocOk = !controller || pColdVoc <= controller.maxV;
                 const isVmpOk =
                     !controller || pHotVmp >= getEffectiveStartupV(controller, systemVoltage);
-                const isIscOk = !controller || pArrayIscHot <= controller.maxIsc;
+                const isIscOk = !controller || pArrayIscHot <= getCurrentClipLimit(controller);
                 const effectiveMaxWeight = getEffectiveMaxPanelWeightKg(array, hideHeavyPanels);
                 const isWeightOk = panelMeetsWeightCap(p, effectiveMaxWeight);
                 const isHeightOk =
@@ -82,8 +83,6 @@ export function useValidPanels(arrayId, options) {
                     p.active !== false &&
                     isPhysicallyOk &&
                     isVocOk &&
-                    isVmpOk &&
-                    isIscOk &&
                     isWeightOk &&
                     isSizeOk &&
                     isMarginalOk;

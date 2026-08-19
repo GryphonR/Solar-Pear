@@ -115,8 +115,10 @@ function evaluateExampleWiring(parallelStrings) {
         vmpOk,
         hotIsc,
         iscOk,
-        // All three inequalities must hold, exactly as the analysis engine requires.
-        passes: vocOk && vmpOk && iscOk,
+        // Voc is the only hard safety gate; Vmp below startup and Isc overage are operational warnings.
+        passes: vocOk,
+        lowStartup: !vmpOk,
+        clips: !iscOk,
     };
 }
 
@@ -407,27 +409,31 @@ const Guide = () => {
 
                     <div className="rounded-lg border border-slate-200 p-4">
                         <p className="text-sm font-bold text-slate-800">
-                            2. Hot voltage must stay above the startup threshold
+                            2. Hot voltage and the startup threshold
                         </p>
                         <p className="text-sm text-slate-600 leading-relaxed mt-1">
                             Voltage <span className="font-semibold">falls</span> as panels heat up, so
-                            the danger point is a hot afternoon. If the string&apos;s working voltage
+                            the concern is a hot afternoon. If the string&apos;s working voltage
                             (Vmp) at {HOT_TEMP_C}&nbsp;°C drops below what the controller needs to wake
-                            up, the array simply stops producing in exactly the weather you wanted it
-                            most. Note that many controllers need battery voltage plus a margin, so the
-                            threshold moves with your battery bank.
+                            up, the MPPT will not start during peak heat — causing temporary harvest
+                            loss. This is not a hardware risk: the controller simply waits until the
+                            panels cool enough to exceed its startup threshold again. Note that many
+                            controllers need battery voltage plus a margin, so the threshold moves with
+                            your battery bank.
                         </p>
                     </div>
 
                     <div className="rounded-lg border border-slate-200 p-4">
                         <p className="text-sm font-bold text-slate-800">
-                            3. Hot current must stay under the tracker limit
+                            3. Hot current and clipping
                         </p>
                         <p className="text-sm text-slate-600 leading-relaxed mt-1">
                             Current rises slightly with heat, and adding strings in{' '}
-                            <span className="font-semibold">parallel</span> multiplies it. The combined
-                            short-circuit current (Isc) at {HOT_TEMP_C}&nbsp;°C must stay within the
-                            controller&apos;s rating.
+                            <span className="font-semibold">parallel</span> multiplies it. If the
+                            combined short-circuit current (Isc) at {HOT_TEMP_C}&nbsp;°C exceeds the
+                            controller&apos;s current rating, the MPPT shifts off the maximum power
+                            point to cap output current. This wastes panel capacity but does not damage
+                            hardware — unlike a voltage overage.
                         </p>
                     </div>
 
@@ -481,15 +487,20 @@ const Guide = () => {
                                         <tr key={w.label} className="border-t border-blue-200/70">
                                             <td className="py-2 pr-3">
                                                 <span className="flex items-center gap-1.5 font-mono font-bold text-slate-800">
-                                                    {w.passes ? (
-                                                        <CheckCircle
-                                                            size={14}
-                                                            className="text-green-600 flex-shrink-0"
-                                                        />
-                                                    ) : (
+                                                    {!w.passes ? (
                                                         <AlertTriangle
                                                             size={14}
                                                             className="text-red-500 flex-shrink-0"
+                                                        />
+                                                    ) : (w.lowStartup || w.clips) ? (
+                                                        <AlertTriangle
+                                                            size={14}
+                                                            className="text-orange-500 flex-shrink-0"
+                                                        />
+                                                    ) : (
+                                                        <CheckCircle
+                                                            size={14}
+                                                            className="text-green-600 flex-shrink-0"
                                                         />
                                                     )}
                                                     {w.label}
@@ -507,14 +518,14 @@ const Guide = () => {
                                             </td>
                                             <td
                                                 className={`py-2 pr-3 tabular-nums ${
-                                                    w.vmpOk ? 'text-slate-700' : 'text-red-600 font-bold'
+                                                    w.vmpOk ? 'text-slate-700' : 'text-orange-500 font-bold'
                                                 }`}
                                             >
                                                 {w.hotVmp.toFixed(1)} V
                                             </td>
                                             <td
                                                 className={`py-2 tabular-nums ${
-                                                    w.iscOk ? 'text-slate-700' : 'text-red-600 font-bold'
+                                                    w.iscOk ? 'text-slate-700' : 'text-orange-500 font-bold'
                                                 }`}
                                             >
                                                 {w.hotIsc.toFixed(1)} A
@@ -550,9 +561,10 @@ const Guide = () => {
                             <span className="font-mono font-semibold text-slate-800">
                                 {EXAMPLE_TOO_PARALLEL.label}
                             </span>{' '}
-                            breaks that instead, at {EXAMPLE_TOO_PARALLEL.hotIsc.toFixed(1)}&nbsp;A. The
-                            two limits squeeze from opposite ends, and here only one wiring survives
-                            between them - which is what the Parallel Strings selector is choosing.
+                            exceeds that at {EXAMPLE_TOO_PARALLEL.hotIsc.toFixed(1)}&nbsp;A — the
+                            controller will clip, wasting the extra capacity. Voltage limits are hard
+                            (hardware destruction); current limits cost efficiency. The Parallel Strings
+                            selector picks the wiring that avoids both.
                         </p>
                     </div>
                 </div>

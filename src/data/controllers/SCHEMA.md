@@ -25,12 +25,12 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `systemType` | string | e.g. `dc-charger`, `grid-connected`, `off-grid`, `grid-interactive`. |
 | `systemVoltages` | number[] | Supported battery voltages (e.g. `[12, 24, 48]`). Used for battery voltage compatibility. |
 | `maxV` | number | Max PV input voltage (V). String cold Voc must not exceed this. Use `0` if N/A (e.g. AC-coupled). |
-| `maxIsc` | number | Max short-circuit current per input (A). Panel Isc is checked against this. |
-| `maxOperatingI` | number | Max operating current (A). Used for compatibility with panel current. |
+| `maxIsc` | number | Max short-circuit current per input (A). Exceeding this causes clipping (efficiency loss), not a hard incompatibility. |
+| `maxOperatingI` | number | Max operating current (A). The preferred clipping threshold when positive; falls back to maxIsc. |
 | `mpptRangeMin` | number | Min MPPT voltage (V). String Vmp (hot) must stay above this. |
 | `mpptRangeMax` | number | Max MPPT voltage (V). |
 | `vNominal` | number | Nominal PV voltage (V). Use `0` if N/A. |
-| `startupV` | number | Minimum voltage to start MPPT (V). String cold Voc must meet or exceed this for RS-type units. |
+| `startupV` | number | Minimum voltage to start MPPT (V). If hot Vmp falls below this the controller will not track during peak heat (harvest loss warning, not hard incompatibility). |
 | `v_start_vbat_dependent` | boolean | If `true`, startup voltage is relative to battery (e.g. Vbat + 5V). |
 | `trackers` | number | Number of MPPT trackers. Used in UI and compatibility. |
 | `price` | number | Estimated unit price (user can override in app). |

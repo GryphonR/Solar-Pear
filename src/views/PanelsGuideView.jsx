@@ -910,10 +910,12 @@ export default function PanelsGuideView() {
                     set how far voltage climbs on a freezing morning, which caps your series string
                     length.{' '}
                     <span className="font-semibold text-slate-800">Vmp and the Pmax coefficient</span>{' '}
-                    set how far it sags on a hot afternoon, which decides whether the controller
-                    still starts.{' '}
+                    set how far it sags on a hot afternoon — if it drops below the controller&apos;s
+                    startup threshold, the MPPT won&apos;t track during peak heat (temporary harvest
+                    loss, not hardware damage).{' '}
                     <span className="font-semibold text-slate-800">Isc</span> multiplied by your
-                    parallel strings has to stay inside the tracker&apos;s current rating. And{' '}
+                    parallel strings ideally stays inside the tracker&apos;s current rating —
+                    exceeding it causes clipping (lost efficiency) rather than damage. And{' '}
                     <span className="font-semibold text-slate-800">physical size and weight per
                     square metre</span>{' '}
                     decide what fits the roof and the mounting system.

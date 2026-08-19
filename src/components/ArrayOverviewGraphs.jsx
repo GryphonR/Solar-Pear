@@ -13,9 +13,12 @@ function getSplinePath() {
 const CHART_HEIGHT = 220;
 const CHART_WIDTH_DEFAULT = 520;
 const MIN_CHART_WIDTH = 200;
-/** Opaque fill for controller limit violation zones */
+/** Opaque fill for hard limit violation zones (Voc) */
 const LIMIT_FILL = '#f87171';
 const LIMIT_STROKE = '#dc2626';
+/** Amber fill/stroke for clipping zones (Isc) */
+const CLIP_FILL = '#fbbf24';
+const CLIP_STROKE = '#d97706';
 
 const commonAxisStyle = {
     stroke: '#475569',
@@ -63,10 +66,11 @@ function yAxisSplitsIncludeLimits(u, axisIdx, scaleMin, scaleMax) {
 }
 
 /**
- * Paint opaque red fill for limit zones behind the series.
+ * Paint opaque fill for limit zones behind the series.
  * @param {{ y: number, side: 'above' | 'below' }[]} limits
+ * @param {string} [color] Fill colour override (defaults to red LIMIT_FILL).
  */
-function makeLimitFillHook(limits) {
+function makeLimitFillHook(limits, color) {
     return (u) => {
         const { ctx, bbox } = u;
         if (!bbox || bbox.width <= 0 || bbox.height <= 0 || !limits?.length) return;
@@ -75,7 +79,7 @@ function makeLimitFillHook(limits) {
         ctx.beginPath();
         ctx.rect(bbox.left, bbox.top, bbox.width, bbox.height);
         ctx.clip();
-        ctx.fillStyle = LIMIT_FILL;
+        ctx.fillStyle = color || LIMIT_FILL;
 
         for (const lim of limits) {
             if (lim.y == null || !Number.isFinite(lim.y)) continue;
@@ -121,7 +125,7 @@ function buildVocOptions(data, controllerMaxV, effectiveStartupV, width = CHART_
         series.push({
             label: 'Startup V',
             scale: 'y',
-            stroke: '#16a34a',
+            stroke: CLIP_STROKE,
             width: 1.5,
             dash: [6, 4],
             value: (u, v) => (v != null ? `${v.toFixed(0)} V` : ''),
@@ -138,9 +142,10 @@ function buildVocOptions(data, controllerMaxV, effectiveStartupV, width = CHART_
     rangeMin -= rangePad;
     rangeMax += rangePad;
 
-    const fillLimits = [];
-    if (controllerMaxV != null) fillLimits.push({ y: controllerMaxV, side: 'above' });
-    if (effectiveStartupV != null) fillLimits.push({ y: effectiveStartupV, side: 'below' });
+    const vocFillLimits = [];
+    if (controllerMaxV != null) vocFillLimits.push({ y: controllerMaxV, side: 'above' });
+    const startupFillLimits = [];
+    if (effectiveStartupV != null) startupFillLimits.push({ y: effectiveStartupV, side: 'below' });
 
     return {
         width,
@@ -174,7 +179,10 @@ function buildVocOptions(data, controllerMaxV, effectiveStartupV, width = CHART_
         cursor: commonCursor,
         legend: { show: true, live: true },
         hooks: {
-            drawClear: [makeLimitFillHook(fillLimits)],
+            drawClear: [
+                makeLimitFillHook(vocFillLimits),
+                makeLimitFillHook(startupFillLimits, CLIP_FILL),
+            ],
         },
     };
 }
@@ -194,9 +202,9 @@ function buildIscOptions(data, controllerMaxIsc, width = CHART_WIDTH_DEFAULT) {
     const dataCols = [data.temps, data.iscSeries];
     if (controllerMaxIsc != null) {
         series.push({
-            label: 'Controller max Isc',
+            label: 'Current clip limit',
             scale: 'y',
-            stroke: LIMIT_STROKE,
+            stroke: CLIP_STROKE,
             width: 1.5,
             dash: [6, 4],
             value: (u, v) => (v != null ? `${v.toFixed(2)} A` : ''),
@@ -247,7 +255,7 @@ function buildIscOptions(data, controllerMaxIsc, width = CHART_WIDTH_DEFAULT) {
         cursor: commonCursor,
         legend: { show: true, live: true },
         hooks: {
-            drawClear: [makeLimitFillHook(fillLimits)],
+            drawClear: [makeLimitFillHook(fillLimits, CLIP_FILL)],
         },
     };
 }
@@ -443,8 +451,8 @@ export default function ArrayOverviewGraphs({ panel, array, controller, effectiv
             </h3>
             <p className="text-xs text-slate-600 mb-4 max-w-4xl">
                 Curves use this panel’s temperature coefficients (from its datasheet) to show string Voc, array Isc, and
-                array power from −40°C to 85°C. They help you confirm cold Voc stays under the controller limit, hot Vmp
-                stays above startup voltage, array Isc under max Isc, and how much power is lost at high temperatures.
+                array power from −40°C to 85°C. They help you confirm cold Voc stays under the controller limit, see
+                whether hot Vmp drops below the startup threshold (harvest loss, not damage), check Isc clipping, and how much power is lost at high temperatures.
             </p>
             <div className="space-y-6 w-full">
                 {hasVoc && (

@@ -425,14 +425,14 @@ export default function PanelTable({
                                                     range={col.hotVmp}
                                                     incompatible={inc}
                                                     formatter={(v) => `${Number(v).toFixed(1)} V`}
-                                                    className={!p.isVmpOk ? 'font-bold text-red-600' : 'text-slate-700'}
+                                                    className={!p.isVmpOk ? 'font-bold text-orange-500' : 'text-slate-700'}
                                                 />
                                                 <BarCell
                                                     value={p.arrayIscHot}
                                                     range={col.arrayIscHot}
                                                     incompatible={inc}
                                                     formatter={(v) => `${Number(v).toFixed(2)} A`}
-                                                    className={!p.isIscOk ? 'font-bold text-red-600' : 'text-slate-700'}
+                                                    className={!p.isIscOk ? 'font-bold text-orange-500' : 'text-slate-700'}
                                                 />
                                                 <BarCell
                                                     value={p.width}

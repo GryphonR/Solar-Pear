@@ -12,7 +12,7 @@ Solar Pear is a browser-based tool for designing solar PV setups: define your ro
 
 - **Arrays** — Model multiple roof areas (orientation, panel count, format, mounting). One place for your whole site.
 - **Panels** — Browse a multi-brand panel database, filter by size/weight and in-roof (GSE) compatibility, and see peak power and cost per kWp per array.
-- **PV controllers** — Pick controllers that match your strings. Voc, Vmp, and Isc are validated; system voltage and type (grid / off-grid / DC charger) are respected.
+- **PV controllers** — Pick controllers that match your strings. Voc is validated as a hard limit (hardware safety); Vmp below startup and Isc overage are flagged as warnings (harvest loss / clipping, not damage). System voltage and type (grid / off-grid / DC charger) are respected.
 - **Summary & BoM** — Overview of your system and a bill of materials (panels and controllers; harnesses and mounting are on you).
 - **Backup & restore** — Export your full configuration to a JSON file and import it elsewhere. Your data lives in the browser—the download button is the closest thing to a “save” button.
 
@@ -77,7 +77,7 @@ npm run preview
 - **BoM scope:** The bill of materials covers panels and PV controllers only. No cables, connectors, or mounting; treat it as a component list, not a full quote.
 - **Prices:** Pre-loaded prices are estimates. Override them with your own for a more realistic BoM.
 - **AI-generated notes:** Panel and controller notes are AI-derived and may be imperfect. Use them as a starting point, not the final word.
-- **Compatibility only:** The app checks electrical compatibility (Voc, Vmp, Isc, format). It does not produce wiring diagrams or installation instructions.
+- **Compatibility only:** The app checks electrical compatibility (Voc hard limit; Vmp startup and Isc clipping warnings; format). It does not produce wiring diagrams or installation instructions.
 
 ---
 

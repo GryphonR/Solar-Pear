@@ -160,7 +160,8 @@ export default function App() {
                             </li>
                             <li>
                                 Check that a panel and controller pairing is safe: voltage on a freezing
-                                morning, startup voltage on a hot afternoon, and current limits.
+                                morning, startup voltage on a hot afternoon, and whether current
+                                will be clipped.
                             </li>
                             <li>
                                 Get a costed summary across every roof area, and export the project as a

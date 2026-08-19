@@ -87,6 +87,11 @@ describe("panelPassesControllerLimits", () => {
     it("returns true when panel is within limits for a small string", () => {
         expect(panelPassesControllerLimits(array, panel, controller, 48)).toBe(true);
     });
+
+    it("returns true when only Vmp is below startup (not a hard gate)", () => {
+        const highStartup = { maxV: 200, maxIsc: 30, startupV: 500, v_start_vbat_dependent: false };
+        expect(panelPassesControllerLimits(array, panel, highStartup, 48)).toBe(true);
+    });
 });
 
 describe("divisorsOf / formatWiringLabel", () => {
@@ -362,7 +367,7 @@ describe("analyzeArray", () => {
         ).toBe(true);
     });
 
-    it("flags Vmp too low as fatal", () => {
+    it("flags Vmp below startup as a warning, not an error", () => {
         const selections = {
             A1: {
                 panel: "PANEL_OK",
@@ -397,15 +402,16 @@ describe("analyzeArray", () => {
             selections,
         });
 
-        expect(result.status).toBe("error");
+        expect(result.status).toBe("warning");
+        expect(result.isVmpBelowStartup).toBe(true);
         expect(
             result.messages.some((m) =>
-                m.includes("below PV controller startup threshold")
+                m.includes("below the controller startup threshold")
             )
         ).toBe(true);
     });
 
-    it("flags Isc over current as fatal", () => {
+    it("flags Isc over current as a clipping warning, not an error", () => {
         const selections = {
             A1: {
                 panel: "PANEL_OK",
@@ -440,12 +446,53 @@ describe("analyzeArray", () => {
             selections,
         });
 
-        expect(result.status).toBe("error");
+        expect(result.status).toBe("warning");
         expect(
             result.messages.some((m) =>
-                m.includes("exceeds PV controller tracker limit")
+                m.includes("exceeds the controller current rating")
             )
         ).toBe(true);
+        expect(result.isIscClipping).toBe(true);
+    });
+
+    it("uses maxOperatingI as the clip threshold when positive", () => {
+        const selections = {
+            A1: {
+                panel: "PANEL_OK",
+                controllerInstanceId: "INST_OP",
+                controllerMppt: 1,
+            },
+        };
+        const opControllers = [
+            ...chargersData,
+            {
+                id: "CHG_OP",
+                name: "Operating I Controller",
+                maxV: 200,
+                maxIsc: 30,
+                maxOperatingI: 8, // below array Isc of 10A
+                startupV: 10,
+            },
+        ];
+        const siteControllersOp = [
+            {
+                id: "INST_OP",
+                modelId: "CHG_OP",
+                area: "House",
+                name: "OP Controller Instance",
+            },
+        ];
+
+        const result = analyzeArray("A1", {
+            arraysData,
+            panelsData,
+            chargersData: opControllers,
+            siteControllers: siteControllersOp,
+            selections,
+        });
+
+        expect(result.status).toBe("warning");
+        expect(result.currentClipLimit).toBe(8);
     });
 
     it("flags physical size violations as fatal", () => {
