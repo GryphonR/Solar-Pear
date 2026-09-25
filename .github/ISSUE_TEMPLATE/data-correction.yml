@@ -1,0 +1,34 @@
+name: Data correction
+description: A panel or controller spec, price or buy link is wrong
+title: "[Data] <manufacturer> <model>: "
+labels: ["data"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Product type
+      options: [Panel, Controller / inverter]
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Manufacturer and model
+      description: As shown in the app, e.g. "Trina Vertex S+ 430W" or "SmartSolar MPPT 150/70".
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What's wrong?
+      description: Which field(s), the current value, and the correct value.
+      placeholder: "Voc shows 38.2 V, datasheet says 39.1 V"
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: Link to the manufacturer datasheet or product page that confirms the correct value.
+    validations:
+      required: true

@@ -21,7 +21,7 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `name` | string | Display name (e.g. "SmartSolar MPPT 75/10"). |
 | `manufacturer` | string | Manufacturer name (e.g. "Victron Energy"). Used for grouping in the UI. |
 | `modelNumber` | string | Official model/order code. Shown in Summary BoM as model reference. |
-| `type` | string | One of: `charger`, `hybrid_inverter`, `ac_coupled_inverter`, `microinverter`, `string_inverter`. |
+| `type` | string | One of: `charger`, `hybrid_inverter`, `ac_coupled_inverter`, `microinverter`, `string_inverter`, `inverter_charger`, `dc-dc-charger` (see `CONTROLLER_TYPE` in `src/lib/controllerTypes.js`). Note that `dc-dc-charger` uses hyphens, unlike the other values. |
 | `systemType` | string | e.g. `dc-charger`, `grid-connected`, `off-grid`, `grid-interactive`. |
 | `systemVoltages` | number[] | Supported battery voltages (e.g. `[12, 24, 48]`). Used for battery voltage compatibility. |
 | `maxV` | number | Max PV input voltage (V). String cold Voc must not exceed this. Use `0` if N/A (e.g. AC-coupled). |
@@ -40,8 +40,8 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `islanding` | boolean | Whether unit supports islanding / backup. |
 | `notes` | string | Engineering or selection notes. |
 | `datasheetUrl` | string | URL to datasheet. |
-| `buyLinks` | object | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
-| `availableUK` | boolean | True if controlleris readily available in the UK|
+| `buyLinks` | array | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
+| `availableUK` | boolean | True if the controller is readily available in the UK|
 | `g98_cert` | boolean | UK G98 certified. |
 | `g99_cert` | boolean | UK G99 certified. |
 | `g100_cert` | boolean | UK G100 certified. |

@@ -1,8 +1,20 @@
 {
   "name": "solar-selector",
   "version": "1.0.0",
-  "description": "",
+  "description": "Solar Pear: pair the right solar panels with your roof and the right PV controller with your panels.",
+  "homepage": "https://solarpear.echook.uk/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GryphonR/Solar-Pear.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GryphonR/Solar-Pear/issues"
+  },
+  "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -15,9 +27,17 @@
     "verify:panels:pricing": "node verification_scripts/panel-pricing-scan.js",
     "verify:controllers:pricing": "node verification_scripts/controller-pricing-scan.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "solar",
+    "pv",
+    "mppt",
+    "solar-panels",
+    "charge-controller",
+    "inverter",
+    "off-grid"
+  ],
+  "author": "Rowan",
+  "license": "GPL-3.0-only",
   "dependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
