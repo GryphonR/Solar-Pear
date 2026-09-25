@@ -36,7 +36,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "huawei_sun2000_50",
@@ -76,7 +79,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "huawei_sun2000_5",
@@ -115,6 +121,9 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     }
 ]

@@ -36,7 +36,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "elios_g99_3k",
@@ -73,7 +76,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "elios_g99_5k",
@@ -110,7 +116,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "conversol_ultra_max_11k",
@@ -149,7 +158,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "conversol_v5_5k",
@@ -188,6 +200,9 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     }
 ]

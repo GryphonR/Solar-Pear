@@ -49,7 +49,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "easysolar_24_1600_40",
@@ -101,7 +104,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "easysolar_ii_24_3000_70_gx",
@@ -147,7 +153,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "easysolar_ii_48_3000_35_gx",
@@ -193,7 +202,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "easysolar_ii_48_5000_70_gx",
@@ -239,7 +251,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "victron_orion_xs",
@@ -297,7 +312,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss75_10",
@@ -356,7 +374,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss75_15",
@@ -415,7 +436,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss100_20",
@@ -475,7 +499,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss100_30",
@@ -534,7 +561,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss100_50",
@@ -593,7 +623,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss150_35",
@@ -654,7 +687,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss150_45",
@@ -715,7 +751,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss150_70",
@@ -757,7 +796,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss150_85_can",
@@ -818,7 +860,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss150_100",
@@ -867,7 +912,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss250_70_can",
@@ -909,7 +957,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss250_85_can",
@@ -964,7 +1015,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "ss250_100_can",
@@ -1006,7 +1060,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "rs450_100",
@@ -1058,7 +1115,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "rs450_200",
@@ -1116,6 +1176,9 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     }
 ]

@@ -36,7 +36,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "fox_h1_5.0",
@@ -75,7 +78,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "fox_h1_6.0",
@@ -114,7 +120,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "fox_h3_pro_15",
@@ -153,7 +162,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "fox_h3_pro_25",
@@ -192,7 +204,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "fox_r_50",
@@ -231,6 +246,9 @@
         "eps": false,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     }
 ]

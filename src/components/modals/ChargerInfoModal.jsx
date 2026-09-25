@@ -1,4 +1,5 @@
 import React from 'react';
+import { VerificationBadge, NotesSourceLabel } from '../DataProvenance';
 import PriceTag from '../PriceTag';
 import Modal from '../Modal';
 import { CheckCircle, ExternalLink, Info, XIcon } from '../Icons';
@@ -21,6 +22,7 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                     {controllerTypeLabel(c.type)}
                 </span>
                 <PriceTag item={c} />
+                <VerificationBadge item={c} />
                 {safeDatasheet && (
                     <a href={safeDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors">
                         <ExternalLink size={12} className="mr-1" /> Datasheet
@@ -65,6 +67,7 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                 </div>
                 <div className="bg-slate-50 p-5 rounded-lg border border-slate-200">
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center"><Info size={14} className="mr-2" /> Engineering Design Notes</h3>
+                    <NotesSourceLabel item={c} />
                     <p className="text-sm text-slate-700 leading-relaxed">{c.notes || 'No specific architectural notes for this controller. Refer to manufacturer specifications.'}</p>
                 </div>
                 <div>
