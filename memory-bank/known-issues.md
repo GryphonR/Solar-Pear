@@ -25,4 +25,4 @@ Status key: OPEN / FIXED. Update this file as issues are resolved.
 14. **FIXED** – `availability_check_log_1773331249255.txt` is tracked despite `.gitignore`. Several `*_processing_log_*.txt` files and `.cursor/debug-*.log` sit untracked in the root.
 15. **FIXED** – `package.json` has an empty description/author and a licence of `ISC` that conflicts with the GPL-3.0 `LICENSE`.
 16. **OPEN** – `index.html` has a generic meta description and no OG/Twitter tags, canonical, sitemap, or analytics. The SPA has no routes, so there is nothing indexable per panel or controller.
-17. **OPEN** – Merged remote branches `cursor/mobile-*-963b` and the local branches `cursor/add-missing-uk-panels-61fc` and `wip/preserved-pre-main-reset` can be pruned.
+17. **FIXED** – Merged remote branches `cursor/mobile-*-963b` and the local branches `cursor/add-missing-uk-panels-61fc` and `wip/preserved-pre-main-reset` can be pruned.

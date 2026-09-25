@@ -31,7 +31,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 
 | Phase | Theme | Priority | Done / Total |
 | ----- | ----- | -------- | ------------ |
-| 0 | Housekeeping | P0 | 6 / 8 |
+| 0 | Housekeeping | P0 | 7 / 8 |
 | 1 | Calculation correctness & safety | P0 | 0 / 12 |
 | 2 | State, persistence & pricing integrity | P0 | 0 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 0 / 12 |
@@ -44,7 +44,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 10 | Internationalisation | P2 | 0 / 8 |
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
-| **Total** | | | **6 / 138** |
+| **Total** | | | **7 / 138** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -61,8 +61,8 @@ Quick wins that clean the repo before bigger work starts.
 - [x] **0.1 Untrack stray logs** – Run `git rm --cached availability_check_log_*.txt` and delete the root `*_processing_log_*.txt` files and `.cursor/debug-*.log`. Check that `.gitignore` covers `.cursor/*.log`. *(KI-14)*
   - Acceptance: `git ls-files | grep -i log` shows only `logs/.gitkeep` and the intentional agent audit logs.
 - [x] **0.2 Fix package metadata** – Set `description`, `author`, `homepage` and `repository` in `package.json`, and set `license` to `GPL-3.0-or-later` to match `LICENSE`. *(KI-15)*
-- [ ] 🚧 **0.3 Prune merged branches** – Delete the remote `cursor/mobile-viewport-gate-963b` and `cursor/mobile-vertical-scroll-963b`, and the local `cursor/add-missing-uk-panels-61fc`. Decide whether `wip/preserved-pre-main-reset` still holds anything worth keeping. *(KI-17)*
-  - Progress: the local `cursor/add-missing-uk-panels-61fc` is deleted. Remote deletion and the `wip/…` branch (unmerged ILP planner work from March 2026) are waiting on the owner.
+- [x] **0.3 Prune merged branches** – Delete the remote `cursor/mobile-viewport-gate-963b` and `cursor/mobile-vertical-scroll-963b`, and the local `cursor/add-missing-uk-panels-61fc`. Decide whether `wip/preserved-pre-main-reset` still holds anything worth keeping. *(KI-17)*
+  - Done 2026-09-25: all four branches deleted. `wip/preserved-pre-main-reset` was at `fc968c7` and can be restored with `git branch wip/preserved-pre-main-reset fc968c7` while the reflog lasts.
 - [x] **0.4 Commit the memory bank** – Commit `memory-bank/` and `CLAUDE.md`, or decide to gitignore them.
 - [x] **0.5 Remove dead code** – Remove the no-op ternary `pStrings = wiringValid ? pStringsRaw : pStringsRaw` and the unused `systemVoltage` param in `panelPassesControllerLimits` (`src/lib/arrayAnalysis.js`). *(KI-8)*
   - Note: the `systemVoltage` param is kept as `_systemVoltage` rather than removed, because task 1.5 will need it.
