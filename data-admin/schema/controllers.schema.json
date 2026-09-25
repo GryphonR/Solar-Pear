@@ -10,6 +10,7 @@
     "maxV",
     "maxIsc",
     "maxOperatingI",
+    "maxChargeCurrent",
     "mpptRangeMin",
     "mpptRangeMax",
     "vNominal",
@@ -37,6 +38,7 @@
   ],
   "defaults": {
     "notes": "",
+    "maxChargeCurrent": 0,
     "priceCheckedAt": "",
     "reviewed": false,
     "availableUK": true,
@@ -62,6 +64,26 @@
       {
         "field": "MaxACPower",
         "when": { "field": "type", "equals": "charger" }
+      },
+      {
+        "field": "maxOperatingI",
+        "when": { "field": "type", "equals": "charger" }
+      },
+      {
+        "field": "maxChargeCurrent",
+        "when": { "field": "type", "equals": "hybrid_inverter" }
+      },
+      {
+        "field": "maxChargeCurrent",
+        "when": { "field": "type", "equals": "string_inverter" }
+      },
+      {
+        "field": "maxChargeCurrent",
+        "when": { "field": "type", "equals": "microinverter" }
+      },
+      {
+        "field": "maxChargeCurrent",
+        "when": { "field": "type", "equals": "ac_coupled_inverter" }
       }
     ],
     "typeAssertions": [
@@ -82,6 +104,7 @@
     "maxV": "number",
     "maxIsc": "number",
     "maxOperatingI": "number",
+    "maxChargeCurrent": "number",
     "mpptRangeMin": "number",
     "mpptRangeMax": "number",
     "vNominal": "number",

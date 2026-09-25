@@ -12,6 +12,7 @@
         "maxV": 500,
         "maxIsc": 22,
         "maxOperatingI": 18,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 90,
         "mpptRangeMax": 450,
         "vNominal": 360,
@@ -19,6 +20,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 1150,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 8000,
         "MaxDCPower": 8000,
         "islanding": true,
@@ -34,8 +36,7 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "elios_g99_3k",
@@ -48,6 +49,7 @@
         "maxV": 550,
         "maxIsc": 11,
         "maxOperatingI": 11,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 80,
         "mpptRangeMax": 550,
         "vNominal": 360,
@@ -55,6 +57,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 1,
         "price": 550,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 3000,
         "MaxDCPower": 3450,
         "islanding": false,
@@ -70,8 +73,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "elios_g99_5k",
@@ -84,6 +86,7 @@
         "maxV": 550,
         "maxIsc": 11,
         "maxOperatingI": 11,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 80,
         "mpptRangeMax": 550,
         "vNominal": 360,
@@ -91,6 +94,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 699,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 5000,
         "MaxDCPower": 5750,
         "islanding": false,
@@ -106,8 +110,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "conversol_ultra_max_11k",
@@ -122,6 +125,7 @@
         "maxV": 500,
         "maxIsc": 40,
         "maxOperatingI": 27,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 90,
         "mpptRangeMax": 450,
         "vNominal": 360,
@@ -129,6 +133,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 1490,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 11000,
         "MaxDCPower": 12000,
         "islanding": true,
@@ -144,8 +149,7 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "conversol_v5_5k",
@@ -160,6 +164,7 @@
         "maxV": 145,
         "maxIsc": 80,
         "maxOperatingI": 80,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 60,
         "mpptRangeMax": 115,
         "vNominal": 48,
@@ -167,6 +172,7 @@
         "v_start_vbat_dependent": true,
         "trackers": 1,
         "price": 720,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 5000,
         "MaxDCPower": 4000,
         "islanding": true,
@@ -182,7 +188,6 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     }
 ]

@@ -12,6 +12,7 @@
         "maxV": 60,
         "maxIsc": 25,
         "maxOperatingI": 14,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 28,
         "mpptRangeMax": 45,
         "vNominal": 37,
@@ -19,6 +20,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 1,
         "price": 120.27,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 366,
         "MaxDCPower": 530,
         "islanding": true,
@@ -53,8 +55,7 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "enphase_iq8hc",
@@ -69,6 +70,7 @@
         "maxV": 60,
         "maxIsc": 25,
         "maxOperatingI": 14,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 29.5,
         "mpptRangeMax": 45,
         "vNominal": 37,
@@ -76,6 +78,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 1,
         "price": 127,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 384,
         "MaxDCPower": 560,
         "islanding": true,
@@ -110,8 +113,7 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "enphase_iq8m",
@@ -126,6 +128,7 @@
         "maxV": 60,
         "maxIsc": 20,
         "maxOperatingI": 12,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 33,
         "mpptRangeMax": 45,
         "vNominal": 40,
@@ -133,6 +136,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 1,
         "price": 140,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 330,
         "MaxDCPower": 480,
         "islanding": true,
@@ -148,8 +152,7 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "enphase_iq8mc",
@@ -164,6 +167,7 @@
         "maxV": 60,
         "maxIsc": 25,
         "maxOperatingI": 14,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 25,
         "mpptRangeMax": 45,
         "vNominal": 35,
@@ -171,6 +175,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 1,
         "price": 154.03,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 330,
         "MaxDCPower": 480,
         "islanding": true,
@@ -193,8 +198,7 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "enphase_iq8plus",
@@ -209,6 +213,7 @@
         "maxV": 60,
         "maxIsc": 20,
         "maxOperatingI": 12,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 29,
         "mpptRangeMax": 45,
         "vNominal": 38,
@@ -216,6 +221,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 1,
         "price": 130,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 300,
         "MaxDCPower": 440,
         "islanding": true,
@@ -231,8 +237,7 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "enphase_iq8x",
@@ -247,6 +252,7 @@
         "maxV": 79.5,
         "maxIsc": 16,
         "maxOperatingI": 10,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 43,
         "mpptRangeMax": 60,
         "vNominal": 52,
@@ -254,6 +260,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 1,
         "price": 124.87,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 384,
         "MaxDCPower": 505,
         "islanding": true,
@@ -276,7 +283,6 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     }
 ]

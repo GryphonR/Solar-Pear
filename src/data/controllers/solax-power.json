@@ -12,6 +12,7 @@
         "maxV": 600,
         "maxIsc": 16,
         "maxOperatingI": 16,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 70,
         "mpptRangeMax": 550,
         "vNominal": 360,
@@ -19,6 +20,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 880,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 3680,
         "MaxDCPower": 5500,
         "islanding": true,
@@ -34,8 +36,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "solax_x1_hybrid_g4_5",
@@ -50,6 +51,7 @@
         "maxV": 600,
         "maxIsc": 16,
         "maxOperatingI": 16,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 70,
         "mpptRangeMax": 550,
         "vNominal": 360,
@@ -57,6 +59,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 950,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 5000,
         "MaxDCPower": 7500,
         "islanding": true,
@@ -72,8 +75,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "solax_x1_hybrid_g4_7.5",
@@ -88,6 +90,7 @@
         "maxV": 600,
         "maxIsc": 16,
         "maxOperatingI": 16,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 70,
         "mpptRangeMax": 550,
         "vNominal": 360,
@@ -95,6 +98,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 1150,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 7500,
         "MaxDCPower": 11250,
         "islanding": true,
@@ -110,8 +114,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "solax_x3_forth_80",
@@ -126,6 +129,7 @@
         "maxV": 1100,
         "maxIsc": 46,
         "maxOperatingI": 32,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 160,
         "mpptRangeMax": 980,
         "vNominal": 600,
@@ -133,6 +137,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 9,
         "price": 2293.63,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 80000,
         "MaxDCPower": 120000,
         "islanding": false,
@@ -173,8 +178,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "solax_x3_hybrid_g4_10",
@@ -189,6 +193,7 @@
         "maxV": 1000,
         "maxIsc": 30,
         "maxOperatingI": 26,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 180,
         "mpptRangeMax": 950,
         "vNominal": 640,
@@ -196,6 +201,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 1450,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 10000,
         "MaxDCPower": 15000,
         "islanding": true,
@@ -211,8 +217,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "solax_x3_hybrid_g4_15",
@@ -227,6 +232,7 @@
         "maxV": 1000,
         "maxIsc": 30,
         "maxOperatingI": 26,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 180,
         "mpptRangeMax": 950,
         "vNominal": 640,
@@ -234,6 +240,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 1850,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 15000,
         "MaxDCPower": 22500,
         "islanding": true,
@@ -249,7 +256,6 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     }
 ]

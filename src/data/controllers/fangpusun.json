@@ -15,7 +15,8 @@
         ],
         "maxV": 150,
         "maxIsc": 48,
-        "maxOperatingI": 60,
+        "maxOperatingI": 0,
+        "maxChargeCurrent": 60,
         "mpptRangeMin": 15,
         "mpptRangeMax": 145,
         "vNominal": 48,
@@ -23,6 +24,7 @@
         "v_start_vbat_dependent": true,
         "trackers": 1,
         "price": 240,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 0,
         "MaxDCPower": 4500,
         "islanding": false,
@@ -38,8 +40,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "fangpusun_flexmax_80",
@@ -57,7 +58,8 @@
         ],
         "maxV": 150,
         "maxIsc": 48,
-        "maxOperatingI": 80,
+        "maxOperatingI": 0,
+        "maxChargeCurrent": 80,
         "mpptRangeMin": 15,
         "mpptRangeMax": 145,
         "vNominal": 48,
@@ -65,6 +67,7 @@
         "v_start_vbat_dependent": true,
         "trackers": 1,
         "price": 280,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 0,
         "MaxDCPower": 7500,
         "islanding": false,
@@ -80,8 +83,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "fangpusun_flexmax_100_300",
@@ -98,6 +100,7 @@
         "maxV": 300,
         "maxIsc": 64,
         "maxOperatingI": 100,
+        "maxChargeCurrent": 100,
         "mpptRangeMin": 30,
         "mpptRangeMax": 290,
         "vNominal": 48,
@@ -105,6 +108,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 1,
         "price": 600,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 0,
         "MaxDCPower": 6000,
         "islanding": false,
@@ -120,8 +124,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "fangpusun_vt_65",
@@ -137,7 +140,8 @@
         ],
         "maxV": 150,
         "maxIsc": 0,
-        "maxOperatingI": 65,
+        "maxOperatingI": 0,
+        "maxChargeCurrent": 65,
         "mpptRangeMin": 15,
         "mpptRangeMax": 145,
         "vNominal": 48,
@@ -145,6 +149,7 @@
         "v_start_vbat_dependent": true,
         "trackers": 1,
         "price": 350,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 0,
         "MaxDCPower": 4000,
         "islanding": false,
@@ -160,8 +165,7 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "fangpusun_vt_80",
@@ -177,7 +181,8 @@
         ],
         "maxV": 150,
         "maxIsc": 0,
-        "maxOperatingI": 80,
+        "maxOperatingI": 0,
+        "maxChargeCurrent": 80,
         "mpptRangeMin": 15,
         "mpptRangeMax": 145,
         "vNominal": 48,
@@ -185,6 +190,7 @@
         "v_start_vbat_dependent": true,
         "trackers": 1,
         "price": 400,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 0,
         "MaxDCPower": 5000,
         "islanding": false,
@@ -200,7 +206,6 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     }
 ]
