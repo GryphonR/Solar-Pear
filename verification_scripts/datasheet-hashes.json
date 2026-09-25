@@ -1,0 +1,1089 @@
+{
+  "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://ar.risen.com/uploads/20240806/RSM108-11-490-515BNDG%20IEC1500V-30mm%202024H2-1-EN-Black%20frame.pdf": {
+    "sha256": "20d8ee0d5bb3ec83ffedd00ba56c9363fb7f696900a38998e9763e023e02225b",
+    "bytes": 581592,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "RSM108-11-490BNDG",
+      "RSM108-11-505BNDG",
+      "RSM108-11-515BNDG"
+    ]
+  },
+  "https://assets.publishing.service.gov.uk/media/67d7f69f9dc953ac3bfe92da/Qcells_Data_sheet_Q.TRON_BLK_S-G3R.12+-BFG_435-445_2024-05_Rev01_EN_checked.pdf": {
+    "sha256": "cd9083469035ab174eba176f5918a8e36d9a36185e7389b341b449164fbbe71e",
+    "bytes": 343601,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "Q.TRON BLK S-G3R.12+ 435",
+      "Q.TRON BLK S-G3R.12+ 440",
+      "Q.TRON BLK S-G3R.12+ 445"
+    ]
+  },
+  "https://cdn.elite-solar.com/uploads/20260309/6c5c550956b03cc92c9245153b4c3865.pdf": {
+    "sha256": "2b5a6ab70462273a56790019de9a1e7cff1430615c6b30f7892bb583252dbd8c",
+    "bytes": 8986807,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "ET-NR48TBH440GB",
+      "ET-NR48TBH460GB"
+    ]
+  },
+  "https://cdn.elite-solar.com/uploads/20260309/f331f25e8ff9ef284de461fd0e89a041.pdf": {
+    "sha256": "624a9b030af8f090125b4c7b70376d2eefdfd10cfd454b5864a20d371e13647e",
+    "bytes": 8442750,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "ET-N754TBH430GB"
+    ]
+  },
+  "https://cdn.enfsolar.com/z/pp/2024/11/0qr40juk7u3cwt6/rs41-430-450nxg-e3-1722-1134-30.pdf": {
+    "sha256": "ff9b61f2df2b5499a7c4fc595ed55e084c4722bf79d3cb46a26a61c6990461a0",
+    "bytes": 1507188,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "RS41-425NXG-E3"
+    ]
+  },
+  "https://cdn.enfsolar.com/z/pp/2025/2/n1rf13qqmo6/ds-meyer-burger-glass-en.pdf": {
+    "sha256": "d45987d26d6dbb2dc381a97957cffdf527d1ae04c5df5d94628aa6dea4962fd9",
+    "bytes": 1078904,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "MB_TG120ByB_370",
+      "MB_TG120ByB_380",
+      "MB_TG120ByB_390"
+    ]
+  },
+  "https://cdn.enfsolar.com/z/pp/2026/3/tj3j6sje47oa/jam66d50-gb.pdf": {
+    "sha256": "e243ed9891e2ad87514f0cdfec7e9300ed34071b9ab443c3fee0801545917d46",
+    "bytes": 7692714,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM66D50-645/GB",
+      "JAM66D50-650/GB",
+      "JAM66D50-655/GB",
+      "JAM66D50-660/GB",
+      "JAM66D50-665/GB",
+      "JAM66D50-670/GB"
+    ]
+  },
+  "https://cdn.enfsolar.com/z/pp/2026/5/imx30t8b4g8k1a9/87bcb9f330b37.pdf": {
+    "sha256": "ddb6f1bb55432411cade0ac66b4f2a9df55cd6f6dc4d8715a8a9fc323e4c7ecd",
+    "bytes": 6037825,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM54D51-515/GR",
+      "JAM54D51-520/GR",
+      "JAM54D51-525/GR",
+      "JAM54D51-530/GR",
+      "JAM54D51-535/GR",
+      "JAM54D51-540/GR"
+    ]
+  },
+  "https://cdn.estg.eu/p/1/e/3/5/1e351733df2b105dffddaf4816f7891c21a44a6e_25_yr_Warranty_JAM54D40_440_465_LB_Black_Frame_Global_EN_20250530A.pdf": {
+    "sha256": "afdc7319a6726dfaf0f24a34eac8ae1c4591a811519dfac3e0d5731c18794b7c",
+    "bytes": 1214289,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM54D40-460/LB",
+      "JAM54D40-465/LB"
+    ]
+  },
+  "https://cdn.shopify.com/s/files/1/0796/3698/8238/files/Conversol-V5-Manual.pdf?v=1701963410": {
+    "sha256": "69dd6c3cc2a11582033fc0f753727848848ce434011a5ff18d7c0f1b68cdead3",
+    "bytes": 5743464,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "conversol_v5_5k"
+    ]
+  },
+  "https://cdn.shopify.com/s/files/1/0796/3698/8238/files/PH5000_On_Grid.pdf?v=1717423249": {
+    "sha256": "460ab53b185404766c84e68df587a5476f7129e9a4e2064aa5fa03383f1ad77b",
+    "bytes": 957437,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "elios_g99_3k",
+      "elios_g99_5k"
+    ]
+  },
+  "https://couleenergy.com/wp-content/uploads/2025/09/Neostar-2P_188-AIKO-A-MAH54Mw_450-485W_1757x1134x30mm_V2.1_202508_DsDr_EN.pdf": {
+    "sha256": "e6bd2e2128d7f005188032ebccc8326b9d08ba8a414f0302fcf35ce1d5250f50",
+    "bytes": 333973,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "AIKO-A450-MAH54Mw",
+      "AIKO-A465-MAH54Mw",
+      "AIKO-A475-MAH54Mw",
+      "AIKO-A485-MAH54Mw"
+    ]
+  },
+  "https://dam.cityplumbing.co.uk/private/oyy21rj/GPID_1500104215_TECH_00.pdf": {
+    "sha256": "1cd97e18ef92111ad45d73b01bee128e8f27e4b335789c1966e9d3c21d22a4b4",
+    "bytes": 1805437,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "AIKO-A475-MCE54Mb"
+    ]
+  },
+  "https://dam.cityplumbing.co.uk/private/xkg302j/GPID_1500084942_TECH_00.pdf": {
+    "sha256": "1ea4873f226fe8ef95ae5db724230b6c40f7970eadaa843ba38f6f128d1c27e5",
+    "bytes": 1231053,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "UKS-S108/M10N-440"
+    ]
+  },
+  "https://dam.cityplumbing.co.uk/private/xp81p4g/GPID_1500080454_TECH_00.pdf": {
+    "sha256": "57c4317413f21be77aade064b0b62e0d49737d6e76f91a0686f8e7e598aca010",
+    "bytes": 6684739,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "LR7-60HTB-505M"
+    ]
+  },
+  "https://enphase.com/en-ie/download/iq8-series-microinverters-data-sheet": {
+    "sha256": "84156674e91ac8db5b39e53619793570221447aefa9ad090576593e1a0be0dbb",
+    "bytes": 871021,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "enphase_iq8ac",
+      "enphase_iq8hc",
+      "enphase_iq8m",
+      "enphase_iq8mc",
+      "enphase_iq8plus",
+      "enphase_iq8x"
+    ]
+  },
+  "https://g7solar.com/wp-content/uploads/2025/05/Datasheet-CANADIAN-600W-630W-TOPBiHiKu6-CS6.2-66TB-600-630.pdf": {
+    "sha256": "b26ff9678782830ab70eb3a49631ed5dfc1b17e6eb5c035b2e530f6d401fafa7",
+    "bytes": 1602543,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "CS6.2-66TB-600",
+      "CS6.2-66TB-610",
+      "CS6.2-66TB-620",
+      "CS6.2-66TB-630"
+    ]
+  },
+  "https://givenergy.co.uk/hardware/ac-coupled-inverter/": {
+    "sha256": "4b4ad468f37dc091a0d9c1fc1395f4195bc967046f28b15e76aa41a1c38df6ed",
+    "bytes": 334378,
+    "contentType": "text/html; charset=UTF-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "giv_ac3.0"
+    ]
+  },
+  "https://givenergy.co.uk/hardware/hybrid-inverter-low-voltage-gen-3/": {
+    "sha256": "e5bc9f177252b7a1ed99f8f4f749a5538ff821c2432282d812ec01facbb2d08c",
+    "bytes": 338573,
+    "contentType": "text/html; charset=UTF-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "giv_hy10.0_g3"
+    ]
+  },
+  "https://givenergy.co.uk/wp-content/uploads/UK-Datasheet-3-Phase-Hybrid-Gen-3-11kW.pdf": {
+    "sha256": "7e5a4b4bd9e31a946c442975eb43642d6a15f1abd1e86b425ce45c89b4ed852a",
+    "bytes": 790061,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "giv_hy11.0_3ph"
+    ]
+  },
+  "https://givenergy.co.uk/wp-content/uploads/UK-Datasheet-Hybrid-Gen-3-5.0.pdf": {
+    "sha256": "9e683a014fbe819b667317a69c4cd47b53632dc3d0da5960f4b3db04226dcb41",
+    "bytes": 164826,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "giv_hy3.6_g3",
+      "giv_hy5.0_g3"
+    ]
+  },
+  "https://givenergy.com/hardware/all-in-one-2-standalone/": {
+    "sha256": "4a951aa24eb52e76e0cbef8e7cdef9f9954327cc5005a86a9569ed78d2f6aff5",
+    "bytes": 339307,
+    "contentType": "text/html; charset=UTF-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "giv_aio_2"
+    ]
+  },
+  "https://grismzgqep82cpmz.public.blob.vercel-storage.com/datasheets/panels/longi/hi-mo-9-lr8-66hyd-635-670m.pdf": {
+    "sha256": "7885e9dffe4cd513947f95e3911b509e7ac45f1adcb83e784fa647609022ee20",
+    "bytes": 2011372,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "LR8-66HYD-635M",
+      "LR8-66HYD-650M",
+      "LR8-66HYD-660M",
+      "LR8-66HYD-670M"
+    ]
+  },
+  "https://jinkosolar.com.au/wp-content/uploads/2023/10/Datasheet-JKMxxxN-54HL4R-V-440111.pdf": {
+    "sha256": "f186d9a1829582c6c19bf034fc84a274b9905d46487dac8442a47689f03541cc",
+    "bytes": 703373,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JKM440N-54HL4-V"
+    ]
+  },
+  "https://jinkosolar.com.au/wp-content/uploads/2024/11/Datasheet-JKM490-510N-60HL4-V-Z1C1-OC.pdf": {
+    "sha256": "e27df1df088aa07f762bbc676efdc6c10134c7fb3e9358af9ab8fb4a2fbf8148",
+    "bytes": 487512,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JKM510N-60HL4-V"
+    ]
+  },
+  "https://jinkosolar.eu/wp-content/uploads/2025/09/JKM460-485N-48QL6-DV-F2-EU.pdf": {
+    "sha256": "511102378ef1ae5afb8d0b635f2dd68951e77c8a1d905fec6bf5dfac03541f72",
+    "bytes": 437503,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JKM460N-48QL6-DV",
+      "JKM465N-48QL6-DV",
+      "JKM470N-48QL6-DV",
+      "JKM475N-48QL6-DV",
+      "JKM480N-48QL6-DV",
+      "JKM485N-48QL6-DV"
+    ]
+  },
+  "https://jinkosolar.eu/wp-content/uploads/2026/01/JKM460-485N-48QL6-BDV-F3-EU.pdf": {
+    "sha256": "45ca388f75f961d4c7fb4227bf2aa7c26ea1f6ce9741ba71bbeda90e0f01cd8b",
+    "bytes": 678324,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JKM460N-48QL6-BDV",
+      "JKM465N-48QL6-BDV",
+      "JKM470N-48QL6-BDV",
+      "JKM475N-48QL6-BDV",
+      "JKM480N-48QL6-BDV",
+      "JKM485N-48QL6-BDV"
+    ]
+  },
+  "https://jinkosolarcdn.shwebspace.com/uploads/639a8f70/JKM410-430N-54HL4-(V)-F3-EN.pdf": {
+    "sha256": "12e3d0d74f62f04d3d032039e6c7eedd60d77a713e70ec46671ed6d4fc4b4203",
+    "bytes": 387364,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JKM430N-54HL4-V"
+    ]
+  },
+  "https://jinkosolarcdn.shwebspace.com/uploads/JKM560-580N-72HL4-BDV-F4-EN.pdf": {
+    "sha256": "aa5e6bb6b2f0a6491e99ce384797570f19c2ef2c8c4352535c9110f95910d2cb",
+    "bytes": 427445,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JKM580N-72HL4-V"
+    ]
+  },
+  "https://jinkosolarcdn.shwebspace.com/uploads/JKM605-630N-66HL4M-(V)-F1-EN.pdf": {
+    "sha256": "0d37a449c6da48f5a3e3a2debd9fe45ab4185904ec57814d3cc9ee8e83e1a305",
+    "bytes": 463954,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JKM630N-66HL4-V"
+    ]
+  },
+  "https://makeskyblue.com/products/60a-mppt-solar-charge-controller": {
+    "sha256": "45f5cfdd33959cb76d2d2d05e5b538fb9db916d80e705725831b6245c06931f1",
+    "bytes": 484208,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "makeskyblue_v118_60"
+    ]
+  },
+  "https://maxeon-production.squarespace.com/s/Maxeon-6-DC-425-440-W.pdf": {
+    "sha256": "8e3ef932365ef2e241e0526ad0d2108246d37e589f736e70e3624c119e8ed55b",
+    "bytes": 714799,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "SPR-MAX6-425-BLK",
+      "SPR-MAX6-440"
+    ]
+  },
+  "https://media.qcells.com/v/oTlFyugh/": {
+    "sha256": "df121b9e3f30e0a6d1f4fd17d435d1a58222dc2a6b65016b12c3194b4d071bce",
+    "bytes": 1984154,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "Q.PEAK DUO M-G11S+ 400",
+      "Q.PEAK DUO M-G11S+ 405",
+      "Q.PEAK DUO M-G11S+ 410",
+      "Q.PEAK DUO M-G11S+ 415",
+      "Q.PEAK DUO M-G11S+ 420"
+    ]
+  },
+  "https://midsummerwholesale.co.uk/pdfs/l-gi-le-pm-t-pmd-059-f129-lr-5-54-htb-440-450-m-v1-30-30-and-15-frame-scientist-v19-black-en-pdf-d066cc073b.pdf": {
+    "sha256": "d7b06d13a5a404683fee2e0f484ad21b917c3b82e37fbd6870ba799d294b63e9",
+    "bytes": 13997319,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "LR5-54HTB-440M",
+      "LR5-54HTB-445M"
+    ]
+  },
+  "https://nastechsolar.com/content/SOLAR%20PANELS/LONGI/Datasheet%20Longi%20Hi-MO%207%20LR8-66HGD%20595-625M.pdf": {
+    "sha256": "822c0915714b810d08bf8474f7e78ea7d5788043ee4b6b3083086c90482f41e0",
+    "bytes": 4909587,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "LR8-66HGD-595M",
+      "LR8-66HGD-605M",
+      "LR8-66HGD-615M",
+      "LR8-66HGD-625M"
+    ]
+  },
+  "https://outbackpower.com/downloads/documents/flexmax_100/fm100_datasheet.pdf": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://portal.segensolar.de/reseller/docs/Neostar_3SPlus_54_AIKO-A-MCE54Db_1762_1134_30_460-485W_DSDr_EN_2405_V1.5.pdf": {
+    "sha256": "3f6ef93a975d3e1270e1825f693c8a8d1399298431110ecabd6d7b32ed1d2a81",
+    "bytes": 2340450,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "AIKO-A460-MCE54Db",
+      "AIKO-A465-MCE54Db",
+      "AIKO-A470-MCE54Db",
+      "AIKO-A475-MCE54Db",
+      "AIKO-A480-MCE54Db",
+      "AIKO-A485-MCE54Db"
+    ]
+  },
+  "https://powmr.com/products/mppt-solar-charge-controller-60a": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://pub-493f128c789642909ff4ab27a5f41128.r2.dev/product-datasheets/uk/UK_Maxeon_Solar_Panels_Maxeon_3_DC_Black_410_420_W__Product_Datasheets.pdf": {
+    "sha256": "14cac4de84eac6d125d887e254d8f48dcb2c32c6e8553f7a64dd8da52e903537",
+    "bytes": 699695,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "SPR-MAX3-410-BLK",
+      "SPR-MAX3-415-BLK",
+      "SPR-MAX3-420-BLK"
+    ]
+  },
+  "https://pure-electric.com.au/sites/default/files/2024-04/SunPower%20Maxeon%207%20445W%20Datasheet%20Jan%202024.pdf": {
+    "sha256": "6b5837c374bf6007a9792af5c5fbd66fceed12b79a5f23f8e4aa3d410b2cfeeb",
+    "bytes": 973818,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "SPR-MAX7-435-PT",
+      "SPR-MAX7-440-PT",
+      "SPR-MAX7-445-PT"
+    ]
+  },
+  "https://solar-distribution.baywa-re.pl/out/media/1_-_Meyer_Burger_White_380-400_EN_Meyer_Burger_White_380_400_Datasheet.pdf": {
+    "sha256": "1a4bc3664f344e200c69f490dae364596cd79cbfb6fae25f86a20d446cd5c984",
+    "bytes": 718120,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "MB_W120AyB_380",
+      "MB_W120AyB_390",
+      "MB_W120AyB_400"
+    ]
+  },
+  "https://solar.huawei.com/download?p=%2F-%2Fmedia%2FSolar%2Fpdf%2Feu%2Fdatasheet%2FSUN2000-2-6KTL-L1.pdf": {
+    "lastError": "HTTP 500",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://solar.huawei.com/en-GB/download?p=%2F-%2Fmedia%2FSolar%2Fpdf%2Feu%2Fdatasheet%2FSUN2000-30-36-40KTL-M3.pdf": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0,
+    "contentType": "text/html",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "huawei_sun2000_50"
+    ]
+  },
+  "https://static.csisolar.com/wp-content/uploads/2022/09/12122532/CS-Datasheet-TOPHiKu6-TOPCon_CS6R-T_v1.6_EN.pdf": {
+    "sha256": "60f8c00770bdecc354e40305b020482ccee26883e9db1e625edce66370be3dfb",
+    "bytes": 901874,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "CS6R-430T"
+    ]
+  },
+  "https://static.csisolar.com/wp-content/uploads/sites/3/2023/10/24083838/CS-Datasheet-TOPHiKu6_CS6R-T_v1.0C21_F23_P1_NA-US-EN-425-450W.pdf": {
+    "lastError": "HTTP 403",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://static.csisolar.com/wp-content/uploads/sites/3/2024/01/25141819/CS-Datasheet-TOPHiKu6-All-Black_CS6.1-54TM-H_v1.1C25_F23_P1_NA-US-445-470W.pdf": {
+    "sha256": "d49074e6b88a71346b2377ee26918dcb286ecf32520fad4432d2900f57b1d46c",
+    "bytes": 1219869,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "CS6.1-54TM-460",
+      "CS6.1-54TM-465",
+      "CS6.1-54TM-470"
+    ]
+  },
+  "https://static.longi.com/18_L_Gi_LE_PM_T_PMD_059_F128_LR_5_54_HTB_410_430_M_30_30_and_15_Frame_Explorer_DG_V17_073ef4ba26.pdf": {
+    "sha256": "3f822b65454f17b17869f46a58e5358c6aced78fcfe273b0a7cf8d5a53f098d5",
+    "bytes": 2386048,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "LR5-54HTB-430M"
+    ]
+  },
+  "https://static.longi.com/Hi_MO_6_Scientist_LR_5_54_HTH_435_450_M_V03_DG_21637b209b.pdf": {
+    "sha256": "ed82fc7ac7af8f059c8646b45bc6417008028d3843ae3af09123e5ceb1b48006",
+    "bytes": 8262132,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "LR5-54HTB-450M"
+    ]
+  },
+  "https://static.trinasolar.com/sites/default/files/DT-M-0042_NEG21C.20_EN_2025_A.pdf": {
+    "sha256": "a419654129329145eb1d73044c05a875b25928931701357c5dd53ac9a8b4a277",
+    "bytes": 1161476,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "TSM-700NEG21C.20",
+      "TSM-710NEG21C.20",
+      "TSM-720NEG21C.20",
+      "TSM-725NEG21C.20"
+    ]
+  },
+  "https://sunpower.maxeon.com/int/sites/default/files/2022-02/SPR-MAX3-430%20SPR-MAX3-425%20SPR-MAX3-415_0.pdf": {
+    "lastError": "fetch failed",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://usercontent.one/wp/www.gingroup.it/wp-content/uploads/2026/05/Longi-LR7-54HVB-Datasheet-EN.pdf": {
+    "sha256": "2315a2107c432802aeaadecb16544ad401d82289961018847ef49733ffe33192",
+    "bytes": 359525,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "LR7-54HVB-475M",
+      "LR7-54HVB-480M",
+      "LR7-54HVB-485M",
+      "LR7-54HVB-490M",
+      "LR7-54HVB-495M",
+      "LR7-54HVB-500M"
+    ]
+  },
+  "https://vertexsplus.trinasolar.com/wp-content/uploads/2024/09/240831_Datasheet_Vertex-S_NEG9R.28_EN_2024_C_web.pdf": {
+    "sha256": "f4d280f9a0d89475cf575fbb99906e2b091da27f08b848fc51877cc1d24e8e22",
+    "bytes": 488969,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "TSM-430NEG9R.28",
+      "TSM-435NEG9R.28",
+      "TSM-440NEG9R.28",
+      "TSM-445NEG9R.28",
+      "TSM-450NEG9R.28",
+      "TSM-455NEG9R.28"
+    ]
+  },
+  "https://vertexsplus.trinasolar.com/wp-content/uploads/2025/01/Datasheet_Vertex-S_NEG18R.28_EN_2024_C_web.pdf": {
+    "sha256": "df37dd2bcd7aba03324f5549f1b5f4a9913b11069b671b5593dba03527af186e",
+    "bytes": 302959,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "TSM-500NEG18R.28",
+      "TSM-505NEG18R.28",
+      "TSM-510NEG18R.28"
+    ]
+  },
+  "https://voltaconsolar.com/products/420w-solar-panel-black-frame-half-cut-cell": {
+    "sha256": "0b1f89ac4d142e5ebeba96e8c245e5e251d1b00c1407558c14744cd2c3c1fa25",
+    "bytes": 2017496,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "SPV-450W-B-HC"
+    ]
+  },
+  "https://voltaconsolar.com/products/conversol-11kw-ultra-max-off-grid-inverter-dual-ac-output": {
+    "sha256": "3239917f7761078c15c4f4ffd665af3a6b50cc754b396b0e7d26e5b0ae531d68",
+    "bytes": 1986258,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "conversol_ultra_max_11k"
+    ]
+  },
+  "https://voltaconsolar.com/products/conversol-max-ii-8kw-offgrid-inverter-charger": {
+    "sha256": "e98eb89bb0d23be1521ba063b10e7afa3b81df773a14295060ab4324bdc59d6e",
+    "bytes": 1999052,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "conversol_max_8k"
+    ]
+  },
+  "https://voltaconsolar.com/products/flexible-solar-panel-195w": {
+    "sha256": "1f2e3ace8b3227029dae01256f54e609861b4a1baff4b0dd31b6c36c9520ffb5",
+    "bytes": 1997060,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "VS-FL-200-M36-E"
+    ]
+  },
+  "https://www.cityplumbing.co.uk/p/dmegc-465w-g12-all-black-solar-panel/p/231059": {
+    "sha256": "f903971062e10ed5385cc9f9bea6f3075d1660f66330a8b3aa0665519d2f6174",
+    "bytes": 524623,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "DM465G12RT-G48HBB"
+    ]
+  },
+  "https://www.cityplumbing.co.uk/p/longi-solar-hi-mo-5m-410wp-full-black-pv-module-lr5-54hpb-410m/p/787545": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://www.dmegcsolar.com/upload/img/2024-08/66b9d7c1aba04.pdf": {
+    "sha256": "f1139d6464a5e990a9c49d457ac65a673021c4b8034d662ce41db750045d42d7",
+    "bytes": 3665109,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "DM450M10RT-B54HBT-L",
+      "DM455M10RT-B54HBT-L",
+      "DM460M10RT-B54HBT-L",
+      "DM465M10RT-B54HBT-L",
+      "DM515G12RT-B54HBT"
+    ]
+  },
+  "https://www.energymatters.com.au/wp-content/uploads/2025/07/AIKO-Neostar-3S54_465W-495W.pdf": {
+    "sha256": "620853d18a10824bc3d0e851b4ffff9cdbd91463ae32de23c6eeb8e49d7f7b85",
+    "bytes": 1174282,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "AIKO-A465-MCE54Mb",
+      "AIKO-A470-MCE54Mb",
+      "AIKO-A480-MCE54Mb",
+      "AIKO-A485-MCE54Mb",
+      "AIKO-A490-MCE54Mb",
+      "AIKO-A495-MCE54Mb"
+    ]
+  },
+  "https://www.fangpusun.com/flexmax-mppt1": {
+    "sha256": "e3e1690df38f494a7518aaeb0216658364d2aede819b7534bfe1ab22ef79acf3",
+    "bytes": 52338,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "fangpusun_flexmax_60",
+      "fangpusun_flexmax_80"
+    ]
+  },
+  "https://www.fangpusun.com/manufacture-fangpusun-flexmax-mppt-100a-solar": {
+    "sha256": "b32054fc1848d3f9b558ad962e1f80511d9f11b4bc69bbb24ad9214d6aa858b1",
+    "bytes": 36168,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "fangpusun_flexmax_100_300"
+    ]
+  },
+  "https://www.fangpusun.com/vt-65-vt-80-mppt-solar-charge-controller": {
+    "sha256": "d46e4bb20298341454ae00ffcfe4f5a0acff26a700dbaa02f6c0939928a004a9",
+    "bytes": 38457,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "fangpusun_vt_65",
+      "fangpusun_vt_80"
+    ]
+  },
+  "https://www.fox-ess.com/products/h3-pro": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://www.fox-ess.com/products/hybrid-inverter": {
+    "sha256": "3e07e6a4e8d21cc4a31ecf49f2aae637353f5e0b16fc518ec9e538f5fc7d76c2",
+    "bytes": 244681,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "fox_h1_3.6",
+      "fox_h1_5.0",
+      "fox_h1_6.0"
+    ]
+  },
+  "https://www.fox-ess.com/products/r-series": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://www.jasolar.com/uploadfile/2022/0928/20220928044113690.pdf": {
+    "sha256": "aa047296f7bc9d2b13ca11e7a6f6015c9f4d01b7772d275bcaf1c01e62276252",
+    "bytes": 2720656,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM66S30-505/MR"
+    ]
+  },
+  "https://www.jasolar.com/uploadfile/fujian/2024/0328/a85bf0dfe569316.pdf": {
+    "sha256": "225fecda05581eadca80ad0b3d3a71b870d4a29283b15343631ba357fb1ec787",
+    "bytes": 1970817,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM54D41-450/LB"
+    ]
+  },
+  "https://www.jasolar.com/uploadfile/fujian/2024/0807/57de8d106c8d247.pdf": {
+    "sha256": "8931c5904b419a72302c78bdca1a90b5ed8b9f4e01594c11482ef1ab6f849d50",
+    "bytes": 1051739,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM66S30-510/MR"
+    ]
+  },
+  "https://www.jasolar.eu/en/product/deepblue-3-0-pro": {
+    "sha256": "d9cf87b3cc4c093cc11e64c54c97c9982d4d62817bc9b7a77b6346484b2cb0c9",
+    "bytes": 116358,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM66S30-500/MR"
+    ]
+  },
+  "https://www.jasolar.eu/fileadmin/data/3.0/JAM54S31_MR/2024/JAM54S31_395-420_MR_Global_EN_20240522A.pdf": {
+    "sha256": "6d6b3fe48deba463c61ccd9320c44d02ce34369f3039848d8f8947c475fdfa0b",
+    "bytes": 1893594,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM54S31-420/MR"
+    ]
+  },
+  "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54D40_MB.pdf": {
+    "sha256": "0b898d0f915d34f9f74d5b7a5acc933e14d62937312c06959285500edc77302a",
+    "bytes": 1211851,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM54D40-435/MB",
+      "JAM54D40-440/MB",
+      "JAM54D40-445/MB"
+    ]
+  },
+  "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM54S31_LR.pdf": {
+    "sha256": "1e1e2af395ce898f6cc42dddf955e0c57b664861832ee51cdf60c4e794d53a88",
+    "bytes": 1922395,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM54S31-430/LR",
+      "JAM54S31-435/LR"
+    ]
+  },
+  "https://www.jasolar.eu/fileadmin/data/products/4.0/JAM72D40_MB.pdf": {
+    "sha256": "9e4a5c2efdc3fea96cee391dc2a0266198c9c0aeea8119691dcacd2a4e01dedf",
+    "bytes": 1063271,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JAM72D40-600/MB"
+    ]
+  },
+  "https://www.jinkosolar.com/uploads/JKM460-480N-60HL4-(V)-F1-EN.pdf": {
+    "sha256": "ac1ace5685a715abd734ae1e331481d6b82656f785507ba2e805d638cff63efd",
+    "bytes": 476159,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "JKM475N-60HL4-V"
+    ]
+  },
+  "https://www.longi.com/en/products/modules/hi-mo-5/": {
+    "sha256": "4d05fb04d325c8abf060e3f512545ba20decee7484a2403287905ebb92526fbf",
+    "bytes": 182949,
+    "contentType": "text/html",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "LR5-66HPH-500M",
+      "LR5-66HPH-505M",
+      "LR5-66HPH-510M"
+    ]
+  },
+  "https://www.lowcarbonhub.org/wp-content/uploads/2021/04/5.1-Panels-GB-Sol-Custom-Panel.pdf": {
+    "sha256": "1162a3d19f57ec8251bd60618dadf105130f2dba10f07caf765bb77df14d874e",
+    "bytes": 319568,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "GBS-Custom-350"
+    ]
+  },
+  "https://www.recgroup.com/sites/default/files/2025-01/Web_DS_REC_Alpha_Pure-R_EN.pdf": {
+    "sha256": "de74dad76ff072c502fd830cb9550b7339d5524a0cb8f629f664f176ed1aebc6",
+    "bytes": 1263236,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "REC400AA Pure-R",
+      "REC410AA Pure-R",
+      "REC420AA Pure-R",
+      "REC430AA Pure-R"
+    ]
+  },
+  "https://www.recgroup.com/sites/default/files/2025-11/DS_Alpha_Pure-RX_IEC_EN_AUCEC_101125.pdf": {
+    "sha256": "b9b4e3dc6db10f350ef70e8e7122893f04dd8a9eb6d28290e637210fd3a6f3cd",
+    "bytes": 1020515,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "REC450AA Pure-RX",
+      "REC455AA Pure-RX",
+      "REC460AA Pure-RX",
+      "REC465AA Pure-RX",
+      "REC470AA Pure-RX",
+      "REC475AA Pure-RX"
+    ]
+  },
+  "https://www.renogy.com/content/Manual/Rover%2060%20Manual.pdf": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://www.solarmarkt.ch/herstimg/10-Solarmodule/Longi_Solar/DB_EN_LONGi_HiMOS10_EcoLife_LR7-54HJBB-490-505M.pdf": {
+    "sha256": "511e4c130b7fc3bd86972f73b4f9bf8ce2565459287254a50b26ecf3d68e70f9",
+    "bytes": 2333699,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "LR7-54HJBB-490M",
+      "LR7-54HJBB-495M",
+      "LR7-54HJBB-500M",
+      "LR7-54HJBB-505M"
+    ]
+  },
+  "https://www.solaxpower.com/uploads/file/solax-x1-hybrid-g4-datasheet-en.pdf": {
+    "sha256": "da3cef4b383b8cf8ef7fd836a7c33cf67dc944a5a531c173f6d614400579b6d9",
+    "bytes": 933874,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "solax_x1_hybrid_g4_3.7",
+      "solax_x1_hybrid_g4_5",
+      "solax_x1_hybrid_g4_7.5"
+    ]
+  },
+  "https://www.solaxpower.com/uploads/file/solax-x3-forth-datasheet-en.pdf": {
+    "sha256": "da939748f4a92a422393308120dc254c6e6f5b624db836e68551174961852920",
+    "bytes": 182239,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "solax_x3_forth_80"
+    ]
+  },
+  "https://www.solaxpower.com/uploads/file/solax-x3-hybrid-g4-datasheet-en.pdf": {
+    "sha256": "61e243763ffac52068d79b006a4939af5dffbe4ed32884ff0ff3b18c1700c713",
+    "bytes": 397547,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "solax_x3_hybrid_g4_10",
+      "solax_x3_hybrid_g4_15"
+    ]
+  },
+  "https://www.solisinverters.com/uk/energy_storage_inverters1/10_100kw_s6_series.html": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://www.solisinverters.com/uk/energy_storage_inverters1/3_6kw_s6_series.html": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://www.solisinverters.com/uk/string_inverters1/25_50kw_s6_series.html": {
+    "lastError": "HTTP 404",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://www.srnesolar.com/userfiles/files/2023/07/18/Shiner_User%20Manual_V1.05.pdf": {
+    "sha256": "eb1fde6a86d01f80c23e9f0566cfac7f2fb415e052e142b351f304e0e00f6e5d",
+    "bytes": 1514879,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "srne_mc2460"
+    ]
+  },
+  "https://www.sungoldsolar.com/wp-content/uploads/2024/01/SGM2-180W.pdf": {
+    "sha256": "b6b319b466491fa833733fb8d0e45d69ccb384be3e4bac3be677e7b79e02b574",
+    "bytes": 386186,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "SGM2-180W"
+    ]
+  },
+  "https://www.vicoexport.com/wp-content/uploads/2024/07/AIKO-A-MAH72Mw-600-620W-350mm-Vico-Export-Solar-Energy.pdf": {
+    "sha256": "f79222436182f351b9cff7e550c0b3ba63708806df21492eabafac28e3e30d37",
+    "bytes": 1468212,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "AIKO-A600-MAH72Mw",
+      "AIKO-A610-MAH72Mw",
+      "AIKO-A620-MAH72Mw"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-BlueSolar-Monocrystalline-Panels-EN.pdf": {
+    "sha256": "ad32cb7fe0ec45ceb325b3b61ba71e60b9d9a53c6a7808404a632cb0d727e191",
+    "bytes": 161445,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "SPM041851200"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-EasySolar-1600VA-EN.pdf": {
+    "sha256": "a7b08a2a4b3ef4e3d75c00cb26d2118fae5403131ad3065e28c4d4f96dcb0837",
+    "bytes": 338489,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "easysolar_12_1600_70",
+      "easysolar_24_1600_40"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-EasySolar-II-24V-48V-3kVA-48V-5kVA-MPPT-250-70-100-GX-EN.pdf": {
+    "sha256": "6651315ae343728ed5e5a7915526f5aa160b708ddbb5c24d5994afc53d6a46c9",
+    "bytes": 338319,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "easysolar_ii_24_3000_70_gx",
+      "easysolar_ii_48_3000_35_gx",
+      "easysolar_ii_48_5000_70_gx"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-Orion-XS-DC-DC-battery-charger-EN-.pdf": {
+    "sha256": "54da4dd97ec05986038099731d322e7614af755075b1e75e916a5889120de544",
+    "bytes": 354052,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "victron_orion_xs"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-100-30-&-100-50-EN.pdf": {
+    "sha256": "6c00f0c090771c9d9e7648723e976af7d421eac31188abadbde4a2e451cbc6f2",
+    "bytes": 227555,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "ss100_30",
+      "ss100_50"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-150-35-&-150-45-EN.pdf": {
+    "sha256": "818f8cf0728017b537cf573b4995991c46b809c6c636248ab66cd88b716cef00",
+    "bytes": 225049,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "ss150_35",
+      "ss150_45"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-150-70-up-to-150-100-VE.Can-EN.pdf": {
+    "sha256": "dba10c1ddb1325c0a585d4ef4c031e67b41fff1e2ec5140c45fce313a41e863d",
+    "bytes": 410508,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "ss150_70",
+      "ss150_85_can",
+      "ss150_100"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-250-70-up-to-250-100-VE.Can-EN.pdf": {
+    "sha256": "88085164a50ce51f74ce67745fca2d852e80d14a036794c1a2de9b57b4271248",
+    "bytes": 384245,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "ss250_70_can",
+      "ss250_85_can",
+      "ss250_100_can"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-charge-controller-MPPT-75-10,-75-15,-100-15,-100-20-EN.pdf": {
+    "sha256": "fe69a63cf5966133e7fe70d8b73d9282f8a8908c6347c52b5e13c66632306507",
+    "bytes": 285373,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "ss75_10",
+      "ss75_15",
+      "ss100_20"
+    ]
+  },
+  "https://www.victronenergy.com/upload/documents/Datasheet-SmartSolar-MPPT-RS-EN-.pdf": {
+    "sha256": "d2bc68f624bbb803ab618125b6d84bc665cc8fd5a0718e143aefc15128c54585",
+    "bytes": 400830,
+    "contentType": "application/pdf",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "rs450_100",
+      "rs450_200"
+    ]
+  },
+  "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-445AG-M10-Data-Sheet.pdf": {
+    "lastError": "fetch failed",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-G1-Data-Sheet.pdf": {
+    "lastError": "fetch failed",
+    "lastCheckedAt": "2026-09-25"
+  },
+  "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-M10-Data-Sheet.pdf": {
+    "sha256": "e9636abbbf193370252957e1ae7c97025c31fdcc838b3c8469c7707f763fc789",
+    "bytes": 218355,
+    "contentType": "text/html; charset=UTF-8",
+    "firstSeenAt": "2026-09-25",
+    "lastCheckedAt": "2026-09-25",
+    "products": [
+      "PV16-405-MP10"
+    ]
+  }
+}
