@@ -32,7 +32,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | Phase | Theme | Priority | Done / Total |
 | ----- | ----- | -------- | ------------ |
 | 0 | Housekeeping | P0 | 7 / 8 |
-| 1 | Calculation correctness & safety | P0 | 0 / 12 |
+| 1 | Calculation correctness & safety | P0 | 10 / 12 |
 | 2 | State, persistence & pricing integrity | P0 | 0 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 0 / 12 |
 | 4 | Affiliate infrastructure | P1 | 0 / 13 |
@@ -44,7 +44,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 10 | Internationalisation | P2 | 0 / 8 |
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
-| **Total** | | | **7 / 138** |
+| **Total** | | | **17 / 138** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -78,27 +78,31 @@ Quick wins that clean the repo before bigger work starts.
 The app's value and credibility, and liability, rest on these checks. Each task must add or extend unit tests in `src/lib/arrayAnalysis.test.js`.
 
 ### 1A. Single source of truth
-- [ ] **1.1 Unify the compatibility maths** – Extract one pure function, e.g. `evaluatePanelOnController(array, panel, controller, opts)`, that returns every metric and flag. Use it from both `analyzeArray` and `useValidPanels.js`. Remove the hard-coded `0.94` in favour of `VOC_WARN_FRACTION`. *(KI-7)*
+- [x] **1.1 Unify the compatibility maths** – Extract one pure function, e.g. `evaluatePanelOnController(array, panel, controller, opts)`, that returns every metric and flag. Use it from both `analyzeArray` and `useValidPanels.js`. Remove the hard-coded `0.94` in favour of `VOC_WARN_FRACTION`. *(KI-7)*
   - Acceptance: `useValidPanels.js` contains no temperature or Voc arithmetic. A test asserts that both paths produce the same flags for a matrix of fixtures.
-- [ ] **1.2 Guard against invalid wiring in the ranking** – When `count % parallelStrings !== 0`, the panel list must not compute fractional series lengths. Mark those rows as a wiring error instead.
+  - Done: `evaluateElectrical` in `arrayAnalysis.js`, used by the analysis, the panel ranking, the controller list, the area-controller cards and the planner. The Vmp temperature model also changed from √P to a linear Pmax-coefficient proxy, which is more conservative when hot.
+- [x] **1.2 Guard against invalid wiring in the ranking** – When `count % parallelStrings !== 0`, the panel list must not compute fractional series lengths. Mark those rows as a wiring error instead.
 
 ### 1B. Controller model fixes
-- [ ] **1.3 Separate PV current from charge current** – Split the fields so that:
+- [x] **1.3 Separate PV current from charge current** – Split the fields so that:
   - `maxIsc` is the maximum PV short-circuit current per tracker (a hard limit);
   - `maxPvOperatingI` is the maximum PV input current per tracker (the clipping threshold);
   - `maxChargeCurrent` is the battery-side current for chargers.
 
   Migrate the data, starting with the 12 records where `maxOperatingI > maxIsc`: Victron `ss150_*` and `ss250_*_can`, Renogy Rover 60, and Fangpusun FlexMax/VT. Fix Fangpusun VT-65/80, which have `maxIsc: 0`. *(KI-2)*
   - Acceptance: the review script flags any record where the PV operating current is greater than `maxIsc`. `getCurrentClipLimit` uses `maxPvOperatingI`.
-- [ ] **1.4 Restore Isc as a hard check** – Make array Isc (hot, × parallel strings) above `maxIsc` an **error**, unless the datasheet says the input self-limits. Keep Imp above `maxPvOperatingI` as a clipping **warning**. Add an optional per-controller `iscSelfLimiting` flag for units that genuinely tolerate over-Isc. Record the decision in the Decision log. *(KI-5)*
-- [ ] **1.5 Add a charger power check** – For `charger` and `dc-dc-charger` types, compute `maxChargeCurrent × systemVoltage` (using the charging voltage, about 1.2 × nominal, as the conservative case). Warn when array Wp is above it:
+  - Done differently: `maxOperatingI` was kept (it already meant PV input current per the schema) and a new `maxChargeCurrent` field was added. 28 records were migrated; the charge currents come from the model names. A zero or unknown `maxIsc` no longer produces a 0 A clip limit. A review-script rule for PV current > Isc is still to add (move to 3.2). Fangpusun VT and EasySolar-II data issues are logged as KI-18 and KI-19.
+- [ ] 🚧 **1.4 Restore Isc as a hard check** – Make array Isc (hot, × parallel strings) above `maxIsc` an **error**, unless the datasheet says the input self-limits. Keep Imp above `maxPvOperatingI` as a clipping **warning**. Add an optional per-controller `iscSelfLimiting` flag for units that genuinely tolerate over-Isc. Record the decision in the Decision log. *(KI-5)*
+  - Progress: the checks are split (`iscRating` for Isc > maxIsc, `currentClip` for Imp > operating current). Severity is one constant, `ISC_OVER_RATING_SEVERITY`, left as `warning` pending D1. `iscSelfLimiting` is not added yet.
+- [x] **1.5 Add a charger power check** – For `charger` and `dc-dc-charger` types, compute `maxChargeCurrent × systemVoltage` (using the charging voltage, about 1.2 × nominal, as the conservative case). Warn when array Wp is above it:
   - moderate overpanelling (for example up to 130%) is an info message;
   - beyond that it is a warning.
 
   For inverters, compare with `MaxDCPower`. *(KI-3)*
   - Acceptance: a 1 kW array on a 100/30 at 12 V shows "about 440 W max, about 56% of array power will be clipped".
-- [ ] **1.6 Check the MPPT window** – Flag hot Vmp below `mpptRangeMin` (the tracker leaves the MPP) and cold Vmp above `mpptRangeMax`. Both are warnings. *(KI-4)*
-- [ ] **1.7 Model microinverters properly** – Handle microinverters separately:
+  - Done: `evaluateControllerPower` sums every array on the controller instance. A 1 kW array on a 100/30 at 12 V gives 432 W and 57%. Verified in the browser.
+- [x] **1.6 Check the MPPT window** – Flag hot Vmp below `mpptRangeMin` (the tracker leaves the MPP) and cold Vmp above `mpptRangeMax`. Both are warnings. *(KI-4)*
+- [x] **1.7 Model microinverters properly** – Handle microinverters separately:
   - one unit per N panels (add `panelsPerUnit`: 1 for the IQ8, 2 or 4 for dual and quad micros);
   - per-panel Voc/Isc checks against the micro;
   - BoM quantity = ceil(panels ÷ panelsPerUnit);
@@ -107,13 +111,16 @@ The app's value and credibility, and liability, rest on these checks. Each task 
 
   *(KI-1)*
   - Acceptance: 10 × 430 W panels on an IQ8M shows 10 micros in the BoM, per-panel checks, and a clipping note.
-- [ ] **1.8 Check panel system voltage** – Error when string cold Voc is above the panel's `maxSystemVoltage` (1000 V or 1500 V).
-- [ ] **1.9 Check string fusing** – With 3 or more parallel strings, warn that string fuses are required, and check `maxSeriesFuse` against (parallel − 1) × Isc × 1.25.
+  - Done and verified in the browser: 10 × IQ8M in the BoM (£1,400), with the wiring selector replaced by a one-panel-per-input note.
+- [x] **1.8 Check panel system voltage** – Error when string cold Voc is above the panel's `maxSystemVoltage` (1000 V or 1500 V).
+- [x] **1.9 Check string fusing** – With 3 or more parallel strings, warn that string fuses are required, and check `maxSeriesFuse` against (parallel − 1) × Isc × 1.25.
 
 ### 1C. Environmental assumptions
-- [ ] **1.10 Make design temperatures configurable** – Add per-site "design low" and "design high" settings (defaults −10 °C / 65 °C cell) to the project settings, and show them in every message ("at −10 °C"). Tighten the fallback cold-Voc factor from 1.084 to a conservative value (for example −0.30 %/°C ⇒ 1.105) and flag panels that have no coefficient. *(KI-6)*
-- [ ] **1.11 Add location-based temperature presets** – Offer a postcode or country picker that fills in the design low and high from a small bundled table (UK regions first). Later, use an open climate dataset. See 10.4.
-- [ ] **1.12 Add an irradiance safety factor** – Offer an optional 1.25 × Isc factor (NEC/IEC practice for edge-of-cloud irradiance) as a "strict mode" toggle. Document it on the methodology page (6.5).
+- [x] **1.10 Make design temperatures configurable** – Add per-site "design low" and "design high" settings (defaults −10 °C / 65 °C cell) to the project settings, and show them in every message ("at −10 °C"). Tighten the fallback cold-Voc factor from 1.084 to a conservative value (for example −0.30 %/°C ⇒ 1.105) and flag panels that have no coefficient. *(KI-6)*
+  - Done as per-area settings (`designLowC`, `designHighC`, `strictCurrent`) on the Controller Selector tab, covered by backup/restore through area settings. All catalogue panels have `tempCoefVoc`, so no flag is shown; the fallback applies only to user-added panels.
+- [ ] ⏸ **1.11 Add location-based temperature presets** – Offer a postcode or country picker that fills in the design low and high from a small bundled table (UK regions first). Later, use an open climate dataset. See 10.4.
+  - Parked: shipping regional presets needs a sourced dataset (e.g. Met Office extremes or ASHRAE). Users can set the design low manually per area for now.
+- [x] **1.12 Add an irradiance safety factor** – Offer an optional 1.25 × Isc factor (NEC/IEC practice for edge-of-cloud irradiance) as a "strict mode" toggle. Document it on the methodology page (6.5).
 
 ---
 
@@ -366,7 +373,7 @@ Record direction-changing decisions here, newest first.
 | Date | ID | Decision | Rationale | Related tasks |
 | ---- | -- | -------- | --------- | ------------- |
 | 2026-09-25 | D0 | Roadmap created from the full project review | Baseline for launch and monetisation planning | all |
-| | D1 | *Pending:* Isc above maxIsc severity (error vs warning) | | 1.4 |
+| | D1 | *Pending:* Isc above maxIsc severity (error vs warning). The code is ready: set `ISC_OVER_RATING_SEVERITY` in `arrayAnalysis.js`. Commit 5507f6a chose warning; Victron and others treat max PV Isc as a hardware limit | | 1.4, KI-20 |
 | | D2 | *Pending:* Hosting platform (Cloudflare Pages / Netlify / GitHub Pages + Worker) | | 5.1, 4.10 |
 | | D3 | *Pending:* Retailer ordering policy (cheapest-first vs affiliate-first) | | 4.2, 6.7 |
 | | D4 | *Pending:* Licence strategy for code vs catalogue data | | 6.8 |
