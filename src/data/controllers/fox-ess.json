@@ -12,6 +12,7 @@
         "maxV": 600,
         "maxIsc": 20,
         "maxOperatingI": 16,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 80,
         "mpptRangeMax": 550,
         "vNominal": 360,
@@ -19,6 +20,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 850,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 3680,
         "MaxDCPower": 5500,
         "islanding": true,
@@ -34,8 +36,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "fox_h1_5.0",
@@ -50,6 +51,7 @@
         "maxV": 600,
         "maxIsc": 20,
         "maxOperatingI": 14,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 75,
         "mpptRangeMax": 550,
         "vNominal": 360,
@@ -57,6 +59,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 1050,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 5000,
         "MaxDCPower": 7500,
         "islanding": true,
@@ -72,8 +75,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "fox_h1_6.0",
@@ -88,6 +90,7 @@
         "maxV": 600,
         "maxIsc": 20,
         "maxOperatingI": 16,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 80,
         "mpptRangeMax": 550,
         "vNominal": 360,
@@ -95,6 +98,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 1150,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 6000,
         "MaxDCPower": 9000,
         "islanding": true,
@@ -110,8 +114,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "fox_h3_pro_15",
@@ -126,6 +129,7 @@
         "maxV": 1000,
         "maxIsc": 32,
         "maxOperatingI": 26,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 160,
         "mpptRangeMax": 950,
         "vNominal": 600,
@@ -133,6 +137,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 3,
         "price": 1700,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 15000,
         "MaxDCPower": 22500,
         "islanding": true,
@@ -148,8 +153,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "fox_h3_pro_25",
@@ -164,6 +168,7 @@
         "maxV": 1000,
         "maxIsc": 32,
         "maxOperatingI": 26,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 160,
         "mpptRangeMax": 950,
         "vNominal": 600,
@@ -171,6 +176,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 3,
         "price": 2150,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 25000,
         "MaxDCPower": 37500,
         "islanding": true,
@@ -186,8 +192,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "fox_r_50",
@@ -202,6 +207,7 @@
         "maxV": 1100,
         "maxIsc": 40,
         "maxOperatingI": 26,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 160,
         "mpptRangeMax": 1000,
         "vNominal": 600,
@@ -209,6 +215,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 4,
         "price": 2100,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 50000,
         "MaxDCPower": 75000,
         "islanding": false,
@@ -224,7 +231,6 @@
         "eps": false,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     }
 ]

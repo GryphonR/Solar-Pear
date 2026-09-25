@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertTriangle } from '../components/Icons';
 import { useAppState } from '../context/AppStateContext';
-import { checkVictronRsSharedTrackerLimits } from '../lib/arrayAnalysis';
+import { checkVictronRsSharedTrackerLimits, controllerUnitsForArray } from '../lib/arrayAnalysis';
 
 export default function SummaryView() {
     const {
@@ -90,21 +90,30 @@ export default function SummaryView() {
         if (activeInstanceIds.has(sc.id)) {
             const model = chargersData.find((c) => c.id === sc.modelId);
             if (model) {
-                if (!bomControllers[model.id]) {
-                    bomControllers[model.id] = { item: model, qty: 0 };
-                }
-                bomControllers[model.id].qty += 1;
-                totalCost += model.price || 0;
-                activeModelIds.push(model.id);
                 const arraysUsingThis = arraysData.filter(
                     (a) => selections[a.id]?.controllerInstanceId === sc.id
                 );
+                // One unit per instance, except microinverters: one per panel (or per panelsPerUnit).
+                const qty =
+                    model.type === 'microinverter'
+                        ? Math.max(
+                              1,
+                              arraysUsingThis.reduce((n, a) => n + controllerUnitsForArray(model, a.count), 0)
+                          )
+                        : 1;
+                const instanceCost = (model.price || 0) * qty;
+                if (!bomControllers[model.id]) {
+                    bomControllers[model.id] = { item: model, qty: 0 };
+                }
+                bomControllers[model.id].qty += qty;
+                totalCost += instanceCost;
+                activeModelIds.push(model.id);
                 controllerSummaryRows.push({
                     key: sc.id,
-                    name: sc.name,
+                    name: qty > 1 ? `${sc.name} (${qty}×)` : sc.name,
                     modelRef: model.modelNumber ?? model.id,
                     arrayNames: arraysUsingThis.map((a) => a.name).join(', ') || '-',
-                    cost: model.price || 0,
+                    cost: instanceCost,
                 });
                 const assignedArrayId = Object.entries(selections).find(
                     ([_, sel]) => sel.controllerInstanceId === sc.id
@@ -112,7 +121,7 @@ export default function SummaryView() {
                 if (assignedArrayId) {
                     const arr = arraysData.find((a) => a.id === assignedArrayId);
                     if (arr && areaTotals[arr.area || 'House']) {
-                        areaTotals[arr.area || 'House'].cost += model.price || 0;
+                        areaTotals[arr.area || 'House'].cost += instanceCost;
                     }
                 }
             }

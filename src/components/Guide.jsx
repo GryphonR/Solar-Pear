@@ -430,10 +430,12 @@ const Guide = () => {
                         <p className="text-sm text-slate-600 leading-relaxed mt-1">
                             Current rises slightly with heat, and adding strings in{' '}
                             <span className="font-semibold">parallel</span> multiplies it. If the
-                            combined short-circuit current (Isc) at {HOT_TEMP_C}&nbsp;°C exceeds the
-                            controller&apos;s current rating, the MPPT shifts off the maximum power
-                            point to cap output current. This wastes panel capacity but does not damage
-                            hardware — unlike a voltage overage.
+                            working current exceeds the controller&apos;s operating rating, the MPPT
+                            shifts off the maximum power point to cap output current, which wastes panel
+                            capacity. The short-circuit current (Isc) at {HOT_TEMP_C}&nbsp;°C is checked
+                            separately against the controller&apos;s maximum PV short-circuit rating.
+                            Manufacturers such as Victron treat that as a hardware limit, so exceeding
+                            it is fatal, like a voltage overage.
                         </p>
                     </div>
 

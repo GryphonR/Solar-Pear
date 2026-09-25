@@ -12,7 +12,8 @@
         ],
         "maxV": 150,
         "maxIsc": 60,
-        "maxOperatingI": 60,
+        "maxOperatingI": 0,
+        "maxChargeCurrent": 60,
         "mpptRangeMin": 15,
         "mpptRangeMax": 145,
         "vNominal": 24,
@@ -20,6 +21,7 @@
         "v_start_vbat_dependent": true,
         "trackers": 1,
         "price": 110,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 0,
         "MaxDCPower": 1600,
         "islanding": false,
@@ -35,7 +37,6 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     }
 ]

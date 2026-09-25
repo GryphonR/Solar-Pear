@@ -12,6 +12,7 @@ import { computePlannerLayouts, dropSmallestPanelsByFootprint } from '../../lib/
 import { useAppState } from '../../context/AppStateContext';
 import {
     bestParallelStringsForController,
+    conditionsFromAreaSettings,
     clampParallelStrings,
     formatWiringLabel,
     getEffectiveMaxPanelWeightKg,
@@ -74,7 +75,8 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         chargersData,
         siteControllers,
         selections,
-        systemVoltage,
+        systemVoltage: legacySystemVoltage,
+        getAreaSettings,
         setArraysData,
         updateArray,
         hideHeavyPanels,
@@ -84,6 +86,14 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
     } = useAppState();
 
     const array = useMemo(() => arraysData?.find((a) => a.id === arrayId) || null, [arraysData, arrayId]);
+    // Electrical filtering uses the array's area settings (battery voltage, design temperatures).
+    const areaSettings = getAreaSettings ? getAreaSettings(array?.area || 'House') : null;
+    const systemVoltage = areaSettings ? areaSettings.systemVoltage : legacySystemVoltage;
+    const { designLowC, designHighC, strictCurrent } = areaSettings || {};
+    const designConditions = useMemo(
+        () => conditionsFromAreaSettings({ designLowC, designHighC, strictCurrent }),
+        [designLowC, designHighC, strictCurrent]
+    );
     const basePlanner = useMemo(() => {
         const raw = array?.planner || draftArrayData?.planner;
         if (raw && typeof raw === 'object') {
@@ -311,7 +321,8 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
                 panel,
                 r.count,
                 controllerForArray,
-                systemVoltage
+                systemVoltage,
+                designConditions
             );
             if (bestPs == null) continue;
             out.push({ ...r, controllerBestParallelStrings: bestPs });
@@ -324,6 +335,7 @@ const ArrayPlanner = forwardRef(function ArrayPlanner(
         panelByModel,
         controllerForArray,
         systemVoltage,
+        designConditions,
     ]);
 
     useClampResultIndex(visibleRanked, setActiveResultIndex);

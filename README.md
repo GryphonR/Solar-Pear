@@ -45,14 +45,20 @@ npm run preview
 
 ## How the checks work
 
-Each array is checked against its assigned MPPT input using worst-case temperatures:
+Each array is checked against its assigned MPPT input using worst-case cell temperatures. These default to −10 °C and 65 °C and can be changed per area on the Controller Selector tab:
 
 | Check | Condition | Severity |
 | ----- | --------- | -------- |
-| Cold Voc | String Voc at −10 °C exceeds the controller's max PV voltage | Error (can destroy hardware) |
+| Cold Voc | String Voc at the design low exceeds the controller's max PV voltage | Error (can destroy hardware) |
+| Panel system voltage | String Voc at the design low exceeds the panel's rated system voltage | Error |
 | Voc margin | Cold Voc is above 94% of the controller limit | Warning |
-| Hot Vmp | String Vmp at 65 °C cell temperature is below the controller's startup voltage | Warning (harvest loss) |
-| Current | Array Isc at 65 °C exceeds the controller's current rating | Warning (clipping) |
+| Startup | String Vmp at the design high is below the controller's startup voltage | Warning (harvest loss) |
+| MPPT window | Hot Vmp is below, or cold Vmp above, the controller's MPPT range | Warning (harvest loss) |
+| Short-circuit current | Array Isc at the design high exceeds the controller's max PV Isc (optionally × 1.25 in strict mode) | Error (can damage hardware) |
+| Operating current | Array Imp exceeds the controller's PV input current | Warning (clipping) |
+| Charger / inverter power | Total array watts on a controller exceed what it can deliver (charge current × battery voltage) or its max PV input | Info or warning |
+| String fuses | Three or more parallel strings whose reverse current can exceed the panel's fuse rating | Info or warning |
+| Microinverters | Each panel is checked on its own micro input; one micro per panel in the BoM | Per-panel checks |
 | Wiring | Panel count is not divisible by the number of parallel strings | Error |
 | Physical | Panel is too large or heavy for the array, or doesn't fit the in-roof (GSE) tray orientation | Error |
 

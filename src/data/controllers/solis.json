@@ -12,6 +12,7 @@
         "maxV": 500,
         "maxIsc": 20,
         "maxOperatingI": 16,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 90,
         "mpptRangeMax": 435,
         "vNominal": 330,
@@ -19,6 +20,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 750,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 3600,
         "MaxDCPower": 5400,
         "islanding": true,
@@ -34,8 +36,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "solis_s6_6.0",
@@ -50,6 +51,7 @@
         "maxV": 500,
         "maxIsc": 20,
         "maxOperatingI": 16,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 90,
         "mpptRangeMax": 435,
         "vNominal": 330,
@@ -57,6 +59,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 2,
         "price": 950,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 6000,
         "MaxDCPower": 9000,
         "islanding": true,
@@ -72,8 +75,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "solis_s6_3ph_10k",
@@ -88,6 +90,7 @@
         "maxV": 1000,
         "maxIsc": 16,
         "maxOperatingI": 16,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 200,
         "mpptRangeMax": 850,
         "vNominal": 600,
@@ -95,6 +98,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 4,
         "price": 1165,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 10000,
         "MaxDCPower": 16000,
         "islanding": true,
@@ -110,8 +114,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "solis_s6_3ph_30k",
@@ -126,6 +129,7 @@
         "maxV": 1000,
         "maxIsc": 20,
         "maxOperatingI": 20,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 200,
         "mpptRangeMax": 850,
         "vNominal": 600,
@@ -133,6 +137,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 4,
         "price": 4260,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 30000,
         "MaxDCPower": 45000,
         "islanding": true,
@@ -148,8 +153,7 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     },
     {
         "id": "solis_s6_gu50",
@@ -164,6 +168,7 @@
         "maxV": 1100,
         "maxIsc": 40,
         "maxOperatingI": 32,
+        "maxChargeCurrent": 0,
         "mpptRangeMin": 200,
         "mpptRangeMax": 1000,
         "vNominal": 600,
@@ -171,6 +176,7 @@
         "v_start_vbat_dependent": false,
         "trackers": 5,
         "price": 2400,
+        "priceCheckedAt": "2026-08-08",
         "MaxACPower": 50000,
         "MaxDCPower": 75000,
         "islanding": false,
@@ -186,7 +192,6 @@
         "eps": false,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false,
-        "priceCheckedAt": "2026-08-08"
+        "reviewed": false
     }
 ]

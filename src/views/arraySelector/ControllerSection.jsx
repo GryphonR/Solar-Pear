@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { AlertTriangle, CheckCircle, Info, ExternalLink, Trash2 } from '../../components/Icons';
 import BarCell from '../../components/BarCell';
-import { getEffectiveStartupV } from '../../lib/arrayAnalysis';
+import { COLD_TEMP_C, HOT_TEMP_C, STRICT_CURRENT_FACTOR } from '../../lib/arrayAnalysis';
 import { safeHttpUrl } from '../../lib/safeUrl';
 
 export default function ControllerSection({
@@ -12,9 +12,7 @@ export default function ControllerSection({
     arrayId,
     array,
     panel,
-    coldVoc,
-    hotVmp,
-    arrayIscHot,
+    evaluateController,
     systemVoltage,
     areaSettings,
     updateAreaSettings,
@@ -87,10 +85,7 @@ export default function ControllerSection({
                         {areaControllers.map((sc) => {
                             const model = chargersData.find((c) => c.id === sc.modelId);
                             if (!model) return null;
-                            let isElectricalValid = true;
-                            if (panel && coldVoc != null) {
-                                isElectricalValid = coldVoc <= model.maxV;
-                            }
+                            const isElectricalValid = !panel || evaluateController(model)?.hardOk !== false;
                             const assignments = {};
                             for (let i = 1; i <= model.trackers; i++) {
                                 assignments[i] = Object.entries(selections).find(
@@ -209,6 +204,58 @@ export default function ControllerSection({
                     </label>
                 </div>
                 <div className="space-y-4 pb-4 mb-4 border-b border-slate-200">
+                    <div className="flex flex-wrap items-center gap-3" data-testid="design-conditions">
+                        <span
+                            className="text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                            title="Worst-case cell temperatures for this area. Cold sets the maximum string voltage; hot sets the minimum voltage and maximum current."
+                        >
+                            Design Temperatures
+                        </span>
+                        <label className="flex items-center gap-1 text-sm text-slate-700">
+                            Coldest
+                            <input
+                                type="number"
+                                min={-50}
+                                max={15}
+                                step={1}
+                                aria-label="Coldest cell temperature in °C"
+                                className="w-16 px-2 py-1 border border-slate-300 rounded text-sm"
+                                value={areaSettings.designLowC ?? COLD_TEMP_C}
+                                onChange={(e) =>
+                                    updateAreaSettings?.(array.area, { designLowC: e.target.value === '' ? COLD_TEMP_C : Number(e.target.value) })
+                                }
+                            />
+                            °C
+                        </label>
+                        <label className="flex items-center gap-1 text-sm text-slate-700">
+                            Hottest cell
+                            <input
+                                type="number"
+                                min={30}
+                                max={95}
+                                step={1}
+                                aria-label="Hottest cell temperature in °C"
+                                className="w-16 px-2 py-1 border border-slate-300 rounded text-sm"
+                                value={areaSettings.designHighC ?? HOT_TEMP_C}
+                                onChange={(e) =>
+                                    updateAreaSettings?.(array.area, { designHighC: e.target.value === '' ? HOT_TEMP_C : Number(e.target.value) })
+                                }
+                            />
+                            °C
+                        </label>
+                        <label
+                            className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer"
+                            title={`Apply a ${STRICT_CURRENT_FACTOR}× irradiance safety factor to short-circuit current (NEC / IEC practice for edge-of-cloud conditions).`}
+                        >
+                            <input
+                                type="checkbox"
+                                className="w-3.5 h-3.5 text-blue-600 rounded cursor-pointer"
+                                checked={!!areaSettings.strictCurrent}
+                                onChange={(e) => updateAreaSettings?.(array.area, { strictCurrent: e.target.checked })}
+                            />
+                            Strict current check ({STRICT_CURRENT_FACTOR}× Isc)
+                        </label>
+                    </div>
                     <div className="flex items-center gap-3">
                         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             DC Bus Voltage

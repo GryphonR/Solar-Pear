@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { AlertTriangle, CheckCircle } from '../components/Icons';
-import { getEffectiveStartupV, getCurrentClipLimit } from '../lib/arrayAnalysis';
+import { evaluateElectrical, conditionsFromAreaSettings, isMicroinverter } from '../lib/arrayAnalysis';
 import { useAppState } from '../context/AppStateContext';
 import { useValidPanels } from './arraySelector/useValidPanels';
 import ParallelStringsSelect from './arraySelector/ParallelStringsSelect';
@@ -60,10 +60,13 @@ export default function ArraySelectorView({ arrayId }) {
 
     const areaSettings = getAreaSettings(array?.area || 'House');
     const areaSystemVoltage = areaSettings.systemVoltage;
+    const { designLowC, designHighC, strictCurrent } = areaSettings;
+    const conditions = useMemo(
+        () => conditionsFromAreaSettings({ designLowC, designHighC, strictCurrent }),
+        [designLowC, designHighC, strictCurrent]
+    );
 
-    const effectiveStartupV = controller
-        ? getEffectiveStartupV(controller, areaSystemVoltage)
-        : null;
+    const effectiveStartupV = analysis?.effectiveStartupV ?? null;
 
     const { validPanels, togglePanelSort } = useValidPanels(arrayId, {
         panelsData,
@@ -72,6 +75,7 @@ export default function ArraySelectorView({ arrayId }) {
         siteControllers,
         selections,
         systemVoltage: areaSystemVoltage,
+        conditions,
         hideHeavyPanels,
         hideMarginalPanels,
         hideIncompatiblePanels,
@@ -87,16 +91,34 @@ export default function ArraySelectorView({ arrayId }) {
             dir: prev.key === key && prev.dir === 'desc' ? 'asc' : 'desc',
         }));
 
+    // Each candidate controller is evaluated with the same engine as the array analysis, so
+    // controller-specific wiring rules (e.g. one panel per microinverter input) are respected.
+    const arrayCount = array?.count;
+    const arrayParallelStrings = array?.parallelStrings;
+    const evaluateController = useMemo(() => {
+        if (!panel) return () => null;
+        return (c) =>
+            evaluateElectrical(panel, c, {
+                count: arrayCount,
+                parallelStrings: arrayParallelStrings || 1,
+                systemVoltage: areaSystemVoltage,
+                conditions,
+            });
+    }, [panel, arrayCount, arrayParallelStrings, areaSystemVoltage, conditions]);
+
     const controllersWithFlags = useMemo(
         () =>
             availableChargers.map((c) => {
-                const isVoltageOk = !panel || coldVoc <= c.maxV;
-                const isStartupOk = !panel || hotVmp >= getEffectiveStartupV(c, areaSystemVoltage);
-                const isCurrentOk = !panel || arrayIscHot <= getCurrentClipLimit(c);
-                const isFullyCompatible = isVoltageOk;
-                return { ...c, isVoltageOk, isStartupOk, isCurrentOk, isFullyCompatible };
+                const e = evaluateController(c);
+                if (!e) {
+                    return { ...c, isVoltageOk: true, isStartupOk: true, isCurrentOk: true, isFullyCompatible: true };
+                }
+                const isVoltageOk = e.flags.isVocOk && e.flags.isPanelSystemVoltageOk;
+                const isStartupOk = e.flags.isVmpOk && !e.flags.isBelowMpptMin;
+                const isCurrentOk = !e.flags.isIscOverRating && !e.flags.isCurrentClipping;
+                return { ...c, isVoltageOk, isStartupOk, isCurrentOk, isFullyCompatible: e.hardOk };
             }),
-        [availableChargers, panel, coldVoc, hotVmp, arrayIscHot, areaSystemVoltage]
+        [availableChargers, evaluateController]
     );
 
     const controllersForAreaType = useMemo(
@@ -162,7 +184,13 @@ export default function ArraySelectorView({ arrayId }) {
                         {array.count} Panels •{' '}
                         {array.mounting === 'In-Roof (GSE)' ? `${array.format} Orientation (GSE)` : array.mounting}
                     </p>
-                    <ParallelStringsSelect array={array} arrayId={arrayId} updateArray={updateArray} />
+                    {isMicroinverter(controller) ? (
+                        <p className="text-sm text-slate-500 font-medium">
+                            Wiring: one panel per microinverter input ({analysis.controllerUnits} × {controller.name})
+                        </p>
+                    ) : (
+                        <ParallelStringsSelect array={array} arrayId={arrayId} updateArray={updateArray} />
+                    )}
                 </div>
                 <div className="flex space-x-8 text-right">
                     <div>
@@ -219,6 +247,9 @@ export default function ArraySelectorView({ arrayId }) {
                     hotVmp={hotVmp}
                     arrayIscHot={arrayIscHot}
                     effectiveStartupV={effectiveStartupV}
+                    issues={analysis.issues}
+                    flags={analysis.flags}
+                    conditions={analysis.conditions}
                     panelsData={panelsData}
                     userNotes={userNotes}
                     setActiveArrayContentTab={setActiveArrayContentTab}
@@ -254,9 +285,7 @@ export default function ArraySelectorView({ arrayId }) {
                     arrayId={arrayId}
                     array={array}
                     panel={panel}
-                    coldVoc={coldVoc}
-                    hotVmp={hotVmp}
-                    arrayIscHot={arrayIscHot}
+                    evaluateController={evaluateController}
                     systemVoltage={areaSystemVoltage}
                     areaSettings={areaSettings}
                     updateAreaSettings={updateAreaSettings}
