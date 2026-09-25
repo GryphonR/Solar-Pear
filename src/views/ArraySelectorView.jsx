@@ -113,10 +113,10 @@ export default function ArraySelectorView({ arrayId }) {
                 if (!e) {
                     return { ...c, isVoltageOk: true, isStartupOk: true, isCurrentOk: true, isFullyCompatible: true };
                 }
-                const isVoltageOk = e.hardOk;
+                const isVoltageOk = e.flags.isVocOk && e.flags.isPanelSystemVoltageOk;
                 const isStartupOk = e.flags.isVmpOk && !e.flags.isBelowMpptMin;
                 const isCurrentOk = !e.flags.isIscOverRating && !e.flags.isCurrentClipping;
-                return { ...c, isVoltageOk, isStartupOk, isCurrentOk, isFullyCompatible: isVoltageOk };
+                return { ...c, isVoltageOk, isStartupOk, isCurrentOk, isFullyCompatible: e.hardOk };
             }),
         [availableChargers, evaluateController]
     );

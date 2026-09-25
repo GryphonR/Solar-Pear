@@ -412,7 +412,7 @@ describe("analyzeArray", () => {
         ).toBe(true);
     });
 
-    it("flags Isc over current as a clipping warning, not an error", () => {
+    it("flags Isc over the controller's short-circuit rating as an error", () => {
         const selections = {
             A1: {
                 panel: "PANEL_OK",
@@ -447,7 +447,7 @@ describe("analyzeArray", () => {
             selections,
         });
 
-        expect(result.status).toBe("warning");
+        expect(result.status).toBe("error");
         expect(
             result.messages.some((m) =>
                 m.includes("exceeds the controller current rating")

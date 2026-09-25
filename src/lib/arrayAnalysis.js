@@ -31,10 +31,11 @@ export const CHARGE_VOLTAGE_FACTOR = 1.2;
  */
 export const CHARGER_OVERPANEL_TOLERANCE = 1.3;
 /**
- * Severity when array Isc exceeds the controller's max PV short-circuit rating. Many manufacturers
- * treat this as a hardware limit; it is a warning while roadmap decision D1 is open.
+ * Severity when array Isc exceeds the controller's max PV short-circuit rating. Manufacturers such as
+ * Victron treat this as a hardware limit (roadmap decision D1). Controllers whose datasheet states the
+ * input self-limits can set `iscSelfLimiting: true` to downgrade it to a warning.
  */
-export const ISC_OVER_RATING_SEVERITY = 'warning';
+export const ISC_OVER_RATING_SEVERITY = 'error';
 
 export const DEFAULT_DESIGN_CONDITIONS = Object.freeze({
     coldTempC: COLD_TEMP_C,
@@ -319,10 +320,13 @@ export function evaluateElectrical(panel, controller, opts = {}) {
         const strictNote = strictCurrent ? ` including the ${STRICT_CURRENT_FACTOR}× irradiance factor` : '';
         if (maxIsc > 0 && iscForLimit > maxIsc) {
             flags.isIscOverRating = true;
+            const selfLimiting = controller.iscSelfLimiting === true;
             add(
                 'iscRating',
-                ISC_OVER_RATING_SEVERITY,
-                `Array Isc at ${hotTempC}°C${strictNote} (${fmt(iscForLimit, 2)}A) exceeds the controller current rating (${maxIsc}A maximum PV short-circuit current). Many manufacturers treat this as a hardware limit: check the datasheet, or use fewer parallel strings.`
+                selfLimiting ? 'warning' : ISC_OVER_RATING_SEVERITY,
+                selfLimiting
+                    ? `Array Isc at ${hotTempC}°C${strictNote} (${fmt(iscForLimit, 2)}A) exceeds the controller current rating (${maxIsc}A maximum PV short-circuit current). This input self-limits, so the excess is clipped rather than harmful.`
+                    : `FATAL: Array Isc at ${hotTempC}°C${strictNote} (${fmt(iscForLimit, 2)}A) exceeds the controller current rating (${maxIsc}A maximum PV short-circuit current). This can damage the controller: use fewer parallel strings or a controller with a higher PV current rating.`
             );
         }
         currentClipLimit = getCurrentClipLimit(controller);
@@ -440,8 +444,8 @@ export function evaluateControllerPower(controller, totalWp, opts = {}) {
 
 /**
  * Whether the array wiring stays within hard electrical limits (anything that can damage
- * hardware): controller max PV voltage and panel max system voltage. Vmp/MPPT window, current
- * and power are operational concerns reported as warnings and excluded here.
+ * hardware): controller max PV voltage, max PV short-circuit current, and panel max system
+ * voltage. Vmp/MPPT window, clipping and power are operational concerns reported as warnings.
  */
 export function panelPassesControllerLimits(array, panel, controller, systemVoltage, conditions) {
     if (!controller || !array || !panel) return true;

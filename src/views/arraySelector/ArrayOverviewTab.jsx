@@ -127,7 +127,7 @@ export default function ArrayOverviewTab({
                             </div>
                             <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title={`Short-circuit current per input at ${hotTempC}°C. Compare with the controller's maximum PV short-circuit current, which many manufacturers treat as a hardware limit.`}>
                                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Array Isc (Hot {hotTempC}°C)</p>
-                                <p className={`text-2xl font-light ${controller && flags && (flags.isIscOverRating || flags.isCurrentClipping) ? 'text-orange-500 font-bold' : 'text-slate-800'}`}>{arrayIscHot.toFixed(2)} <span className="text-sm">A</span></p>
+                                <p className={`text-2xl font-light ${controller && flags && flags.isIscOverRating ? 'text-red-600 font-bold' : controller && flags && flags.isCurrentClipping ? 'text-orange-500 font-bold' : 'text-slate-800'}`}>{arrayIscHot.toFixed(2)} <span className="text-sm">A</span></p>
                                 {controller ? <p className="text-xs text-slate-400 mt-1">Controller Rating: {controller.maxIsc > 0 ? `${controller.maxIsc}A Isc` : 'Isc not published'}{controller.maxOperatingI > 0 ? ` / ${controller.maxOperatingI}A operating` : ''}</p> : <p className="text-xs text-slate-400 mt-1">Select a controller to compare limits</p>}
                             </div>
                         </div>

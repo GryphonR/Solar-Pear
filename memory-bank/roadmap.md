@@ -32,7 +32,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | Phase | Theme | Priority | Done / Total |
 | ----- | ----- | -------- | ------------ |
 | 0 | Housekeeping | P0 | 7 / 8 |
-| 1 | Calculation correctness & safety | P0 | 10 / 12 |
+| 1 | Calculation correctness & safety | P0 | 11 / 12 |
 | 2 | State, persistence & pricing integrity | P0 | 0 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 0 / 12 |
 | 4 | Affiliate infrastructure | P1 | 0 / 13 |
@@ -44,7 +44,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 10 | Internationalisation | P2 | 0 / 8 |
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
-| **Total** | | | **17 / 138** |
+| **Total** | | | **18 / 138** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -92,8 +92,8 @@ The app's value and credibility, and liability, rest on these checks. Each task 
   Migrate the data, starting with the 12 records where `maxOperatingI > maxIsc`: Victron `ss150_*` and `ss250_*_can`, Renogy Rover 60, and Fangpusun FlexMax/VT. Fix Fangpusun VT-65/80, which have `maxIsc: 0`. *(KI-2)*
   - Acceptance: the review script flags any record where the PV operating current is greater than `maxIsc`. `getCurrentClipLimit` uses `maxPvOperatingI`.
   - Done differently: `maxOperatingI` was kept (it already meant PV input current per the schema) and a new `maxChargeCurrent` field was added. 28 records were migrated; the charge currents come from the model names. A zero or unknown `maxIsc` no longer produces a 0 A clip limit. A review-script rule for PV current > Isc is still to add (move to 3.2). Fangpusun VT and EasySolar-II data issues are logged as KI-18 and KI-19.
-- [ ] 🚧 **1.4 Restore Isc as a hard check** – Make array Isc (hot, × parallel strings) above `maxIsc` an **error**, unless the datasheet says the input self-limits. Keep Imp above `maxPvOperatingI` as a clipping **warning**. Add an optional per-controller `iscSelfLimiting` flag for units that genuinely tolerate over-Isc. Record the decision in the Decision log. *(KI-5)*
-  - Progress: the checks are split (`iscRating` for Isc > maxIsc, `currentClip` for Imp > operating current). Severity is one constant, `ISC_OVER_RATING_SEVERITY`, left as `warning` pending D1. `iscSelfLimiting` is not added yet.
+- [x] **1.4 Restore Isc as a hard check** – Make array Isc (hot, × parallel strings) above `maxIsc` an **error**, unless the datasheet says the input self-limits. Keep Imp above `maxPvOperatingI` as a clipping **warning**. Add an optional per-controller `iscSelfLimiting` flag for units that genuinely tolerate over-Isc. Record the decision in the Decision log. *(KI-5)*
+  - Done: `iscRating` (Isc > maxIsc) is an error and `currentClip` (Imp > operating current) a warning. The optional `iscSelfLimiting` controller flag downgrades `iscRating` to a warning. The ControllersGuideView wording is still to fix (KI-20).
 - [x] **1.5 Add a charger power check** – For `charger` and `dc-dc-charger` types, compute `maxChargeCurrent × systemVoltage` (using the charging voltage, about 1.2 × nominal, as the conservative case). Warn when array Wp is above it:
   - moderate overpanelling (for example up to 130%) is an info message;
   - beyond that it is a warning.
@@ -372,8 +372,8 @@ Record direction-changing decisions here, newest first.
 
 | Date | ID | Decision | Rationale | Related tasks |
 | ---- | -- | -------- | --------- | ------------- |
+| 2026-09-25 | D1 | Isc above a controller's max PV short-circuit rating is an **error**, reversing 5507f6a. Controllers can opt out with `iscSelfLimiting` | Victron and other manufacturers treat max PV Isc as a hardware limit; clipping (Imp over operating current) stays a warning | 1.4, KI-5, KI-20 |
 | 2026-09-25 | D0 | Roadmap created from the full project review | Baseline for launch and monetisation planning | all |
-| | D1 | *Pending:* Isc above maxIsc severity (error vs warning). The code is ready: set `ISC_OVER_RATING_SEVERITY` in `arrayAnalysis.js`. Commit 5507f6a chose warning; Victron and others treat max PV Isc as a hardware limit | | 1.4, KI-20 |
 | | D2 | *Pending:* Hosting platform (Cloudflare Pages / Netlify / GitHub Pages + Worker) | | 5.1, 4.10 |
 | | D3 | *Pending:* Retailer ordering policy (cheapest-first vs affiliate-first) | | 4.2, 6.7 |
 | | D4 | *Pending:* Licence strategy for code vs catalogue data | | 6.8 |

@@ -16,7 +16,7 @@ These are per-area settings: `designLowC` (default −10 °C), `designHighC` (de
 | `STRICT_CURRENT_FACTOR` | 1.25 | Isc irradiance factor in strict mode (NEC 690.8 / IEC 62548) |
 | `CHARGE_VOLTAGE_FACTOR` | 1.2 | Charger output W = charge A × Vbat × 1.2 (so a 100/30 at 12 V gives 432 W) |
 | `CHARGER_OVERPANEL_TOLERANCE` | 1.3 | Chargers: up to 130% of the limit is info, above that it's a warning |
-| `ISC_OVER_RATING_SEVERITY` | `'warning'` | **Pending decision D1.** Switch to `'error'` to make Isc > maxIsc a hard failure |
+| `ISC_OVER_RATING_SEVERITY` | `'error'` | Decision D1 (2026-09-25): Isc > maxIsc is a hardware limit. A controller with `iscSelfLimiting: true` gets a warning instead |
 
 ## Checks
 | Code | Condition | Severity |
@@ -30,7 +30,7 @@ These are per-area settings: `designLowC` (default −10 °C), `designHighC` (de
 | `vmpStartup` | hot Vmp < effective startup (Vbat + startupV when `v_start_vbat_dependent`) | warning |
 | `mpptMin` | hot Vmp < `mpptRangeMin` (skipped for Vbat-referenced chargers) | warning |
 | `mpptMax` | cold Vmp > `mpptRangeMax` | warning |
-| `iscRating` | hot Isc (× 1.25 in strict mode) > `maxIsc` | `ISC_OVER_RATING_SEVERITY` |
+| `iscRating` | hot Isc (× 1.25 in strict mode) > `maxIsc` | error (warning if `iscSelfLimiting`) |
 | `currentClip` | hot Imp > clip limit (`maxOperatingI` > 0, else `maxIsc`, else unknown) | warning (suppressed when `iscRating` fires) |
 | `stringFuses` | ≥ 3 parallel strings and (P−1) × 1.25 × Isc > `maxSeriesFuse` | info (warning if no fuse fits between 1.5 × Isc and `maxSeriesFuse`) |
 | `chargerPower` | Σ Wp on the instance > `maxChargeCurrent` × Vbat × 1.2 | info up to 130%, then warning |
@@ -40,6 +40,8 @@ These are per-area settings: `designLowC` (default −10 °C), `designHighC` (de
 Status: any error gives `error`, else any warning gives `warning`, else `valid`. Info messages never change the status.
 
 ## Controller current fields
+`hardOk` (used by `panelPassesControllerLimits`, auto-wiring and "fully compatible" filters) is false for any error, including Isc over the rating. So auto-wiring picks a series/parallel split that keeps current in range.
+
 - `maxIsc`: max PV short-circuit current per tracker.
 - `maxOperatingI`: max PV **input** operating current per tracker, or 0 if unpublished. **Never the battery charge current.**
 - `maxChargeCurrent`: battery-side charge current for chargers (e.g. 30 for a Victron 100/30), or 0 for inverters.

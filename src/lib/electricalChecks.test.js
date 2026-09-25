@@ -169,9 +169,23 @@ describe("evaluateElectrical: reference designs", () => {
         const r = evaluateElectrical(PANEL_400, HYBRID, { count: 20, parallelStrings: 2 });
         expect(r.flags.isIscOverRating).toBe(true);
         const issue = r.issues.find((i) => i.code === "iscRating");
-        expect(issue.severity).toBe("warning"); // pending roadmap decision D1
+        expect(issue.severity).toBe("error"); // roadmap decision D1
+        expect(r.hardOk).toBe(false);
         expect(issue.message).toContain("short-circuit");
         expect(codes(r)).not.toContain("currentClip");
+    });
+
+    it("downgrades the Isc rating check to a warning for self-limiting inputs", () => {
+        const r = evaluateElectrical(PANEL_400, { ...HYBRID, iscSelfLimiting: true }, { count: 20, parallelStrings: 2 });
+        expect(r.issues.find((i) => i.code === "iscRating").severity).toBe("warning");
+        expect(r.hardOk).toBe(true);
+    });
+
+    it("picks the parallel wiring that keeps Isc within the rating", () => {
+        // 2 panels on a 20 A input: 1S2P puts ~27.9 A in; 2S1P is the only passing wiring.
+        const ctrl = { ...HYBRID, maxV: 600 };
+        expect(panelPassesControllerLimits({ count: 2, parallelStrings: 2 }, PANEL_400, ctrl)).toBe(false);
+        expect(panelPassesControllerLimits({ count: 2, parallelStrings: 1 }, PANEL_400, ctrl)).toBe(true);
     });
 
     it("strict-current mode applies the 1.25 irradiance factor to the Isc rating check", () => {

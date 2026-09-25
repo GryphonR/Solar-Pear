@@ -27,6 +27,7 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `maxV` | number | Max PV input voltage (V). String cold Voc must not exceed this. Use `0` if N/A (e.g. AC-coupled). |
 | `maxIsc` | number | Max PV short-circuit current per tracker (A), as quoted on the datasheet. Use `0` if not published. |
 | `maxOperatingI` | number | Max PV **input** operating current per tracker (A). This is the clipping threshold when positive; otherwise `maxIsc` is used. Use `0` when the datasheet doesn't publish a separate PV input current. **Never put the battery charge current here** (e.g. the "30" in a Victron 100/30). That goes in `maxChargeCurrent`. |
+| `iscSelfLimiting` | boolean | *Optional.* Set `true` only when the datasheet says the PV input safely limits current above `maxIsc`. Array Isc above `maxIsc` is then a warning rather than an error. |
 | `maxChargeCurrent` | number | Max battery charge current (A) for battery-side MPPT chargers and DC-DC chargers, e.g. `30` for a Victron 100/30. Used with the battery voltage to work out the charger's real power limit. Use `0` for inverters or if unknown. |
 | `mpptRangeMin` | number | Min MPPT voltage (V). String Vmp (hot) must stay above this. |
 | `mpptRangeMax` | number | Max MPPT voltage (V). |

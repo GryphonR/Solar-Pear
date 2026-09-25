@@ -54,7 +54,7 @@ Each array is checked against its assigned MPPT input using worst-case cell temp
 | Voc margin | Cold Voc is above 94% of the controller limit | Warning |
 | Startup | String Vmp at the design high is below the controller's startup voltage | Warning (harvest loss) |
 | MPPT window | Hot Vmp is below, or cold Vmp above, the controller's MPPT range | Warning (harvest loss) |
-| Short-circuit current | Array Isc at the design high exceeds the controller's max PV Isc (optionally × 1.25 in strict mode) | Warning |
+| Short-circuit current | Array Isc at the design high exceeds the controller's max PV Isc (optionally × 1.25 in strict mode) | Error (can damage hardware) |
 | Operating current | Array Imp exceeds the controller's PV input current | Warning (clipping) |
 | Charger / inverter power | Total array watts on a controller exceed what it can deliver (charge current × battery voltage) or its max PV input | Info or warning |
 | String fuses | Three or more parallel strings whose reverse current can exceed the panel's fuse rating | Info or warning |

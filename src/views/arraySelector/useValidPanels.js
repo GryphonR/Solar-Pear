@@ -58,14 +58,14 @@ export function useValidPanels(arrayId, options) {
                     conditions,
                 });
                 const fit = evaluatePhysicalFit(array, p, hideHeavyPanels);
-                const isVocOk = e.hardOk;
+                const isVocOk = e.wiringValid && e.flags.isVocOk && e.flags.isPanelSystemVoltageOk;
                 const isVocWarn = !!controller && isVocOk && e.flags.isVocWarn;
                 const isMarginalOk = !hideMarginalPanels || !isVocWarn;
                 const isFullyCompatible =
                     p.active !== false &&
                     e.wiringValid &&
                     fit.isFormatOk &&
-                    isVocOk &&
+                    e.hardOk &&
                     fit.isWeightOk &&
                     fit.isHeightOk &&
                     fit.isWidthOk &&
