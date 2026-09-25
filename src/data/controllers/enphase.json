@@ -55,7 +55,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "enphase_iq8hc",
@@ -113,7 +116,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "enphase_iq8m",
@@ -152,7 +158,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "enphase_iq8mc",
@@ -198,7 +207,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "enphase_iq8plus",
@@ -237,7 +249,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "enphase_iq8x",
@@ -283,6 +298,9 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     }
 ]

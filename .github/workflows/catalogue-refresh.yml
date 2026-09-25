@@ -1,0 +1,97 @@
+name: Weekly catalogue refresh
+
+# Roadmap 3.12. Every Monday (or on demand) this job:
+#   1. optionally refreshes prices and buy links (Serper, costs API credits; opt-in, see below),
+#   2. fingerprints every datasheet to spot silent revisions and dead links,
+#   3. runs the catalogue sanity rules,
+# and opens (or updates) a pull request with any data changes and a report.
+#
+# Price refresh runs only when BOTH are set in the repository settings:
+#   - secret   SERPER_API_KEY
+#   - variable ENABLE_PRICE_REFRESH = true
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: catalogue-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
+      PRICE_REFRESH: ${{ vars.ENABLE_PRICE_REFRESH == 'true' && secrets.SERPER_API_KEY != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh panel prices
+        if: env.PRICE_REFRESH == 'true'
+        continue-on-error: true
+        run: npm run verify:panels:pricing 2>&1 | tail -n 40 | tee price-panels.txt
+
+      - name: Refresh controller prices
+        if: env.PRICE_REFRESH == 'true'
+        continue-on-error: true
+        run: npm run verify:controllers:pricing 2>&1 | tail -n 40 | tee price-controllers.txt
+
+      - name: Fingerprint datasheets
+        id: datasheets
+        continue-on-error: true
+        run: node verification_scripts/datasheet-hashes.js 2>&1 | tee datasheets.txt
+
+      - name: Catalogue sanity check
+        id: sanity
+        continue-on-error: true
+        run: npm run verify:sanity 2>&1 | tee sanity.txt
+
+      - name: Build report
+        run: |
+          {
+            echo "Automated weekly catalogue refresh."
+            echo
+            if [ "$PRICE_REFRESH" = "true" ]; then
+              echo "### Prices"
+              echo '```'; cat price-panels.txt price-controllers.txt 2>/dev/null; echo '```'
+            else
+              echo "_Price refresh skipped (set secret SERPER_API_KEY and variable ENABLE_PRICE_REFRESH=true to enable)._"
+            fi
+            echo
+            echo "### Datasheets"
+            echo "CHANGED datasheets need their products re-checked; FAILED ones need a new URL."
+            echo '```'; tail -n 60 datasheets.txt; echo '```'
+            echo
+            echo "### Sanity"
+            echo '```'; tail -n 60 sanity.txt; echo '```'
+          } > report.md
+          rm -f price-panels.txt price-controllers.txt datasheets.txt sanity.txt
+
+      - name: Open or update pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: bot/catalogue-refresh
+          delete-branch: true
+          commit-message: "chore(data): weekly catalogue refresh"
+          title: "Weekly catalogue refresh"
+          body-path: report.md
+          add-paths: |
+            src/data/**/*.json
+            verification_scripts/datasheet-hashes.json
+          labels: data

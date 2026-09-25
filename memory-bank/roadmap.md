@@ -34,7 +34,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 0 | Housekeeping | P0 | 7 / 8 |
 | 1 | Calculation correctness & safety | P0 | 11 / 12 |
 | 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
-| 3 | Catalogue quality & coverage | P0/P1 | 0 / 12 |
+| 3 | Catalogue quality & coverage | P0/P1 | 5 / 12 |
 | 4 | Affiliate infrastructure | P1 | 0 / 13 |
 | 5 | Hosting, routing & SEO | P1 | 0 / 13 |
 | 6 | Trust, legal & compliance | P0 | 0 / 11 |
@@ -44,7 +44,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 10 | Internationalisation | P2 | 0 / 8 |
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
-| **Total** | | | **24 / 138** |
+| **Total** | | | **29 / 138** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -147,12 +147,13 @@ The app's value and credibility, and liability, rest on these checks. Each task 
 Data accuracy is the product. Affiliate revenue depends on coverage and live links.
 
 ### 3A. Accuracy
-- [ ] **3.1 Fix the known data errors** – *(KI-11, KI-12)*
+- [x] **3.1 Fix the known data errors** – *(KI-11, KI-12)*
   - [ ] Replace the Trina `dev.cclcomponents.com` category link with a product URL, or remove it.
   - [ ] Fix `VS-FL-200-M36-E` and `SGM2-180W` efficiency (stated about 22.5% against a calculated 19.2–19.5%).
   - [ ] Check the Viridian `PV16-*` efficiencies (about 0.8 pp high; possibly aperture area rather than module area).
   - [ ] Fix `GBS-Custom-350` (weight 0, price 0, custom product; consider `active: false`).
-- [ ] **3.2 Add automated sanity rules** to `verification_scripts/lib/reviewCore.js`, and fail CI on errors:
+  - Done: Trina dev link removed; SGM2-180W and VS-FL efficiency corrected to module values (they quoted cell efficiency); VS-FL no longer GSE-compatible; FLEXmax 100-300 `maxOperatingI` cleared (it held the 100 A charge current). GBS-Custom-350's datasheet has no weight, so it stays unknown. Viridian PV16 still open (KI-12).
+- [x] **3.2 Add automated sanity rules** to `verification_scripts/lib/reviewCore.js`, and fail CI on errors:
   - Voc > Vmp and Isc > Imp;
   - |Vmp × Imp − P| / P < 3%;
   - |P / area − efficiency| < 0.6 pp;
@@ -160,10 +161,14 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
   - weight between 5 and 40 kg;
   - controller PV operating current ≤ `maxIsc`, `mpptRangeMax` ≤ `maxV`, and startup voltage ≤ MPPT maximum;
   - no `dev.`, `staging.` or category-page URLs.
-- [ ] **3.3 Build a human review programme** – Only 2 of 245 records are `reviewed`. Add `reviewedAt` and `reviewedBy`, and review the top sellers first: the 30 most-viewed panels and all Victron, Renogy, GivEnergy and Solis controllers. Show a "Verified against datasheet" badge in the UI.
+  - Done: `verification_scripts/lib/sanityRules.js` + `npm run verify:sanity`; `verification_scripts/sanityRules.test.mjs` fails CI on any error in the shipped catalogue. It covers the PV current ≤ Isc rule deferred from 1.3.
+- [ ] 🚧 **3.3 Build a human review programme** – Only 2 of 245 records are `reviewed`. Add `reviewedAt` and `reviewedBy`, and review the top sellers first: the 30 most-viewed panels and all Victron, Renogy, GivEnergy and Solis controllers. Review status is tracked internally only (not shown in the UI).
   - Target for launch: ≥ 80% of products that have buy links are reviewed.
-- [ ] **3.4 Archive datasheets** – Store a hash, or an archived copy, of each datasheet PDF, so spec disputes can be resolved and silent manufacturer revisions detected.
-- [ ] **3.5 Replace AI notes where possible** – Rewrite the design notes for reviewed series, or mark AI notes clearly in the UI. The README already says they are AI-derived.
+  - Infrastructure done: `reviewedAt`, `reviewedBy` and `notesReviewed` added to every record and to both schemas; `npm run verify:review-queue`. A public "Verified against datasheet" badge was built and then removed at the owner's request: review status is internal. **The reviewing itself is human work**: coverage is 2 of 66 sellable products (3%) against the 80% launch target.
+- [x] **3.4 Archive datasheets** – Store a hash, or an archived copy, of each datasheet PDF, so spec disputes can be resolved and silent manufacturer revisions detected.
+  - Done as SHA-256 fingerprints rather than archived copies (licensing): `npm run verify:datasheets`; baseline recorded for 105 URLs; 15 failing links logged as KI-21.
+- [x] **3.5 Replace AI notes where possible** – Rewrite the design notes for reviewed series, or mark AI notes clearly in the UI. The README already says they are AI-derived.
+  - Done for labelling: notes show "AI generated, may not be accurate" in the overview and both info modals unless `notesReviewed` is true. Rewriting notes happens as part of reviews (3.3).
 
 ### 3B. Coverage (driven by affiliate availability and search demand)
 - [ ] **3.6 Add off-grid and leisure products**, where the affiliate conversion is highest:
@@ -174,7 +179,8 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
 - [ ] **3.9 Add balance-of-system items** – Add MC4 connectors, PV cable, isolators, fuses and mounting as optional BoM line items with default quantities. The README currently says "harnesses and mounting are on you", which is lost revenue.
 - [ ] **3.10 Add all-in-one kits and portable power stations** – EcoFlow, Anker, Jackery and Bluetti. These are high-ticket items with generous affiliate programmes, and they suit "simple mode" (7.2).
 - [ ] **3.11 Add missing mainstream inverters** – Sunsynk, Growatt, Lux Power, SolarEdge, Fronius, SMA, Sigenergy, Tesla Powerwall 3 and the Hypontech micro.
-- [ ] **3.12 Keep the catalogue fresh** – Run a scheduled GitHub Action weekly: the pricing scan plus a link check, which opens a PR with the diff (needs a `SERPER_API_KEY` repository secret). Dead links and price moves above 15% show up in the PR body.
+- [x] **3.12 Keep the catalogue fresh** – Run a scheduled GitHub Action weekly: the pricing scan plus a link check, which opens a PR with the diff (needs a `SERPER_API_KEY` repository secret). Dead links and price moves above 15% show up in the PR body.
+  - Done: `.github/workflows/catalogue-refresh.yml` (Mondays 06:00 UTC plus manual). Datasheets and sanity always run; prices run only with the `SERPER_API_KEY` secret and `ENABLE_PRICE_REFRESH=true` variable. Opens a `bot/catalogue-refresh` PR with a report.
 
 ---
 

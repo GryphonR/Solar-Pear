@@ -37,6 +37,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -57,14 +60,14 @@
         "imp": 10,
         "price": 165,
         "priceCheckedAt": "2026-08-08",
-        "efficiency": 22.42,
+        "efficiency": 19.18,
         "tempCoefPmax": -0.43,
         "tempCoefVoc": -0.34,
         "tempCoefIsc": 0.05,
         "maxSeriesFuse": 15,
         "maxSystemVoltage": 200,
         "cells": "36-Cell Monocrystalline",
-        "gseCompatibility": "Both",
+        "gseCompatibility": "None",
         "datasheetUrl": "https://voltaconsolar.com/products/flexible-solar-panel-195w",
         "notes": "Technology: monocrystalline cells, 36-cell, monofacial, ETFE-coated laminate (no glass). A single 195W entry. Pros: ultra-lightweight and flexible for curved surfaces (RVs, boats) where a rigid glass panel can't be fitted or the roof can't take the load. Cons: ETFE laminates have a shorter service life and a face that scratches and hazes faster than glass (see the Guide's glass section); low power output rules it out for a grid-tied rooftop string.",
         "buyLinks": [
@@ -77,6 +80,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -97,7 +103,7 @@
         "imp": 8.62,
         "price": 99,
         "priceCheckedAt": "2026-08-08",
-        "efficiency": 22.7,
+        "efficiency": 19.48,
         "tempCoefPmax": -0.35,
         "tempCoefVoc": -0.275,
         "tempCoefIsc": 0.045,
@@ -117,6 +123,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     }
 ]

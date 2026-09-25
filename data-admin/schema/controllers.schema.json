@@ -34,13 +34,19 @@
     "eps",
     "house_backup",
     "three_phase",
-    "reviewed"
+    "reviewed",
+    "reviewedAt",
+    "reviewedBy",
+    "notesReviewed"
   ],
   "defaults": {
     "notes": "",
     "maxChargeCurrent": 0,
     "priceCheckedAt": "",
     "reviewed": false,
+    "reviewedAt": "",
+    "reviewedBy": "",
+    "notesReviewed": false,
     "availableUK": true,
     "g98_cert": false,
     "g99_cert": false,
@@ -55,7 +61,7 @@
     "buyLinks": []
   },
   "rules": {
-    "allowedEmptyStrings": ["notes", "priceCheckedAt"],
+    "allowedEmptyStrings": ["notes", "priceCheckedAt", "reviewedAt", "reviewedBy"],
     "zeroValueSkips": [
       {
         "field": "price",
@@ -128,6 +134,9 @@
     "eps": "boolean",
     "house_backup": "boolean",
     "three_phase": "boolean",
-    "reviewed": "boolean"
+    "reviewed": "boolean",
+    "reviewedAt": "string",
+    "reviewedBy": "string",
+    "notesReviewed": "boolean"
   }
 }

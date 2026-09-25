@@ -1,4 +1,5 @@
 import React from 'react';
+import { NotesSourceLabel } from '../DataProvenance';
 import PriceTag from '../PriceTag';
 import Modal from '../Modal';
 import { CheckCircle, ExternalLink, Info, XIcon } from '../Icons';
@@ -65,6 +66,7 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                 </div>
                 <div className="bg-slate-50 p-5 rounded-lg border border-slate-200">
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center"><Info size={14} className="mr-2" /> Engineering Design Notes</h3>
+                    <NotesSourceLabel item={c} />
                     <p className="text-sm text-slate-700 leading-relaxed">{c.notes || 'No specific architectural notes for this controller. Refer to manufacturer specifications.'}</p>
                 </div>
                 <div>

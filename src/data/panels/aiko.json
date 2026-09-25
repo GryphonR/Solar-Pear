@@ -30,6 +30,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -63,6 +66,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -96,6 +102,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -129,6 +138,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -162,6 +174,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -195,6 +210,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -241,6 +259,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -281,6 +302,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -314,6 +338,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -360,6 +387,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -393,6 +423,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -426,6 +459,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -459,6 +495,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -492,6 +531,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -525,6 +567,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -558,6 +603,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -591,6 +639,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -624,6 +675,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -657,6 +711,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -690,6 +747,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -723,6 +783,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -756,6 +819,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -789,6 +855,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -829,6 +898,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -862,6 +934,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -895,6 +970,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     }
 ]

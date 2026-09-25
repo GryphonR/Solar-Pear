@@ -1,4 +1,5 @@
 import React from 'react';
+import { NotesSourceLabel } from '../DataProvenance';
 import PriceTag from '../PriceTag';
 import Modal from '../Modal';
 import DesignNotes from '../DesignNotes';
@@ -71,6 +72,7 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
                 </div>
                 <div className="bg-slate-50 p-5 rounded-lg border border-slate-200">
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center"><Info size={14} className="mr-2" /> Design Notes</h3>
+                    <NotesSourceLabel item={p} />
                     <DesignNotes notes={p.notes} fallback="No specific design notes for this module. Refer to standard datasheets." className="text-sm text-slate-700 leading-relaxed" />
                 </div>
                 <div>

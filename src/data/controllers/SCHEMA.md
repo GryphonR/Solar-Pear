@@ -52,6 +52,9 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `eps` | boolean | Emergency power supply / backup capable. |
 | `house_backup` | boolean | Whole-house backup capable. |
 | `three_phase` | boolean | Three-phase unit. |
-| `reviewed` | boolean | Data reviewed flag. |
+| `reviewed` | boolean | `true` once a person has checked every spec against the manufacturer datasheet. Internal only: review status is not shown in the app. |
+| `reviewedAt` | string | ISO date (`YYYY-MM-DD`) of that review, or `""`. |
+| `reviewedBy` | string | Who reviewed it, or `""`. |
+| `notesReviewed` | boolean | `true` once a person has checked or rewritten the `notes`. Otherwise notes are labelled as AI-generated. |
 
 All fields listed above are required for the app to function properly. When adding a new controller, include every field; for units with no PV input (e.g. AC-coupled inverters), use `0` for PV-related numeric fields while keeping the same object shape as existing entries.

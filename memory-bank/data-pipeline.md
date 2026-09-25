@@ -16,4 +16,9 @@
 - `npm run verify:{panels,controllers}:pricing` scans Serper Google Shopping plus whitelisted retailers. It updates `price`, `buyLinks` (upserted by domain, tracking params stripped) and `priceCheckedAt`. It needs `SERPER_API_KEY` in `.env`.
 - **Warning:** `stripTrackingParams` removes query strings. That would also strip affiliate tags (e.g. `?tag=`, `?aff=`) if affiliate URLs are ever fed through the scanner.
 - `data-admin/` (`cd data-admin && npm run dev`) is a local browser/editor for the JSON with URL checks.
+- `npm run verify:sanity` runs read-only physical/consistency rules (`verification_scripts/lib/sanityRules.js`). **The same rules run in Vitest over the shipped catalogue, so CI fails on data errors.**
+- `npm run verify:review-queue` shows review coverage (target: 80% of products with buy links) and what to review next. A review is recorded with `reviewed`, `reviewedAt`, `reviewedBy` and `notesReviewed`. Review status is internal and is not shown in the app (owner decision, 2026-09-25). The only public effect is that notes are labelled as AI-generated unless `notesReviewed` is set.
+- `npm run verify:datasheets` fingerprints every datasheet (SHA-256 in `verification_scripts/datasheet-hashes.json`) and reports changed or dead links.
+- `.github/workflows/catalogue-refresh.yml` runs every Monday: datasheets and sanity checks, plus prices when the `SERPER_API_KEY` secret and `ENABLE_PRICE_REFRESH=true` variable are set. It opens a `bot/catalogue-refresh` PR.
+- A panel weight of 0 means "not published". It fails any weight limit with a warning rather than passing.
 - Agent workflows live in `.agent/workflows/*.md`.

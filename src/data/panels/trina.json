@@ -30,6 +30,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -63,6 +66,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -96,6 +102,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -129,6 +138,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -169,6 +181,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -221,6 +236,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -261,6 +279,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -291,16 +312,12 @@
         "gseCompatibility": "Portrait Only",
         "datasheetUrl": "https://vertexsplus.trinasolar.com/wp-content/uploads/2025/01/Datasheet_Vertex-S_NEG18R.28_EN_2024_C_web.pdf",
         "notes": "Technology: i-TOPCon cells, dual 1.6mm glass-glass construction, covering two distinct platforms under one series name. Pros: the 144-cell bins (430-455W) run high voltage (Voc 51.4-53.4V) for a wide MPPT startup safety margin, and the glass-glass build gives better long-term durability than a single-glass panel. Cons: the 108-cell bins (500-510W) pack more watts per panel with a much higher current (Isc ~15.9A vs ~10.7A for the 144-cell bins) - check controller Isc limits before choosing a 500W+ bin over the 144-cell range; despite the glass-glass build these panels are wired monofacial, not bifacial, so there's no rear-side yield.",
-        "buyLinks": [
-            {
-                "Supplier": "dev.cclcomponents.com",
-                "URL": "https://dev.cclcomponents.com/new/solar-pv-modules",
-                "isAffiliate": false,
-                "Checked": false
-            }
-        ],
+        "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -341,6 +358,9 @@
         ],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -374,6 +394,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -407,6 +430,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -440,6 +466,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     },
     {
@@ -473,6 +502,9 @@
         "buyLinks": [],
         "active": true,
         "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false,
         "availableUK": true
     }
 ]

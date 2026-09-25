@@ -1,4 +1,5 @@
 import React from 'react';
+import { NotesSourceLabel } from '../../components/DataProvenance';
 import PriceTag from '../../components/PriceTag';
 import { AlertTriangle, CheckCircle, Info, XIcon, ExternalLink } from '../../components/Icons';
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
@@ -180,7 +181,7 @@ export default function ArrayOverviewTab({
                     <div className="grid grid-cols-2 gap-8 items-stretch">
                         <div className="flex flex-col">
                             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Design Notes</p>
-                            <p className="text-xs text-slate-400 italic mb-2">AI generated, may not be accurate.</p>
+                            <NotesSourceLabel item={panel} />
                             <div className="bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">
                                 <DesignNotes notes={panel.notes} className="text-sm text-slate-700 leading-relaxed" />
                             </div>
@@ -223,7 +224,7 @@ export default function ArrayOverviewTab({
                     <div className="grid grid-cols-2 gap-8 items-stretch">
                         <div className="flex flex-col">
                             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Engineering Notes</p>
-                            <p className="text-xs text-slate-400 italic mb-2">AI generated, may not be accurate.</p>
+                            <NotesSourceLabel item={controller} />
                             <div className="text-sm text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-inner flex-1">{controller.notes || 'No specific architectural notes for this controller.'}</div>
                         </div>
                         <div className="flex flex-col">

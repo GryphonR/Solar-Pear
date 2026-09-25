@@ -18,6 +18,9 @@ Machine logs go under `logs/` (gitignored). Agent manufacturer `.log` files stay
 | `controller-review.js` | `npm run verify:controllers:review` | Schema + link report for controllers |
 | `panel-pricing-scan.js` | `npm run verify:panels:pricing` | Price / buy-link refresh for panels |
 | `controller-pricing-scan.js` | `npm run verify:controllers:pricing` | Price / buy-link refresh for controllers (searches by display `name`; relevance also accepts `modelNumber`) |
+| `catalogue-sanity.js` | `npm run verify:sanity` | Read-only physical/consistency rules (Voc > Vmp, Vmp × Imp ≈ P, module efficiency vs area, temperature coefficient ranges, PV current ≤ Isc rating, MPPT window, non-production links). Exits 1 on errors. The same rules run in Vitest over the shipped catalogue, so CI fails on data errors. |
+| `review-queue.js` | `npm run verify:review-queue` | Review coverage (launch target: 80% of sellable products) and a prioritised list of unreviewed products with datasheet links. Record a review with `reviewed`, `reviewedAt`, `reviewedBy` (and `notesReviewed`). |
+| `datasheet-hashes.js` | `npm run verify:datasheets` | Downloads every datasheet and records its SHA-256 in `datasheet-hashes.json`. Reports CHANGED (silent revision: re-check those products), FAILED (dead link) and NEW. Exits 1 on changes or failures. |
 
 Shared helpers live in `lib/` (`paths`, `buyLinks`, `urlQuality`, `priceExtract`, `serper`, `pricingScan`, `reviewCore`, plus catalog-specific relevance modules).
 
@@ -60,7 +63,7 @@ npm run verify:controllers:review -- --nourl
 npx vitest run verification_scripts/panel-pricing-scan.test.mjs verification_scripts/controller-pricing-scan.test.mjs
 ```
 
-Pricing scans are **not** wired into CI (Serper cost + secrets). Run them locally when refreshing catalog prices.
+Pricing scans are **not** part of the test/deploy CI (Serper cost + secrets). The weekly `.github/workflows/catalogue-refresh.yml` job runs the datasheet and sanity checks and opens a PR with any data changes. It runs the pricing scans too only when the repository has the `SERPER_API_KEY` secret **and** the variable `ENABLE_PRICE_REFRESH=true`.
 
 ## Agent workflows (intentional differences)
 

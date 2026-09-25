@@ -15,14 +15,15 @@ Status key: OPEN / FIXED. Update this file as issues are resolved.
 18. **OPEN** – Fangpusun VarioTrack VT-65/VT-80 have `maxIsc: 0` (unpublished in the data), so their current checks are skipped. Needs datasheet values.
 19. **OPEN** – Victron EasySolar-II records look inconsistent with their built-in MPPTs. The 24/3000/70 and 48/3000/35 have `maxIsc`/`maxOperatingI` 50/50, but `MaxDCPower` implies a 250/70 (35 A Isc). None has `maxChargeCurrent`. Verify against datasheets.
 20. **FIXED** – `ControllersGuideView.jsx` (the "maximum short-circuit current vs operating current" card) still says exceeding either rating "does not damage the controller". That contradicts decision D1 (Isc over the rating is an error). It was left alone in the phase 1 PR because the file had concurrent uncommitted edits.
+21. **OPEN** – Dead or blocked datasheet links (from `npm run verify:datasheets`, 2026-09-25). 404s: AIKO A-MAH54Mb (6 panels), LONGi LR5-54HPB-410M (City Plumbing page), Fox H3 PRO and R series, PowMr Keeper 60, Solis S6 (3 pages), Renogy Rover 60 manual, OutBack FM100. Blocked or server errors (may be transient): Canadian Solar CS6R, Maxeon MAX3, Viridian PV16 (×2), Huawei SUN2000-L1. Each needs a current manufacturer URL.
 
 ## State and persistence
 9. **FIXED – Stale prices for returning users.** `mergePanels`/`mergeChargers` (`src/lib/migration.js`) always keep the saved `price` (and charger `notes`) from localStorage. Because the full catalogue is persisted on first visit, refreshed catalogue prices never reach returning users. Only store user **overrides**, e.g. a `priceOverrides` map.
 10. **FIXED – Zero-price panels rank as cheapest.** 46 panels have `price: 0`, which gives £0/kWp in rankings and totals. Treat 0 or missing as "unknown".
 
 ## Data quality
-11. **OPEN** – A Trina buy link points to `https://dev.cclcomponents.com/new/solar-pv-modules`, which is a dev subdomain and a category page (`src/data/panels/trina.json` ~line 296).
-12. **OPEN** – Efficiency mismatches (stated vs power/area): `VS-FL-200-M36-E` (22.42 vs 19.2), `SGM2-180W` (22.7 vs 19.5), and several Viridian `PV16-*` about 0.8 pp high. `GBS-Custom-350` has weight 0 and price 0.
+11. **FIXED** – A Trina buy link points to `https://dev.cclcomponents.com/new/solar-pv-modules`, which is a dev subdomain and a category page (`src/data/panels/trina.json` ~line 296).
+12. **PARTLY FIXED** – Efficiency mismatches (stated vs power/area): `VS-FL-200-M36-E` (22.42 vs 19.2), `SGM2-180W` (22.7 vs 19.5), and several Viridian `PV16-*` about 0.8 pp high. `GBS-Custom-350` has weight 0 and price 0. *Update:* SGM2-180W and VS-FL were quoting cell efficiency and are corrected to module efficiency (VS-FL was also wrongly GSE-compatible). GBS-Custom-350's datasheet publishes no weight, so it stays 0 = unknown (weight limits now fail safe). The Viridian PV16 figures (≈0.8 pp high) still need their datasheets, which block automated download.
 13. **FIXED** – The `dc-dc-charger` type is used in data but not documented in `controllers/SCHEMA.md`. The panel `buyLinks` type is documented as "object" but is an array.
 
 ## Repo hygiene

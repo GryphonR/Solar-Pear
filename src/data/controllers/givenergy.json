@@ -43,7 +43,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "giv_aio_2",
@@ -82,7 +85,10 @@
         "eps": true,
         "house_backup": true,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "giv_hy10.0_g3",
@@ -121,7 +127,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "giv_hy11.0_3ph",
@@ -160,7 +169,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": true,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "giv_hy3.6_g3",
@@ -199,7 +211,10 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "giv_hy5.0_g3",
@@ -238,6 +253,9 @@
         "eps": true,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     }
 ]
