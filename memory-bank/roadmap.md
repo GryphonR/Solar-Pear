@@ -162,9 +162,9 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
   - controller PV operating current ≤ `maxIsc`, `mpptRangeMax` ≤ `maxV`, and startup voltage ≤ MPPT maximum;
   - no `dev.`, `staging.` or category-page URLs.
   - Done: `verification_scripts/lib/sanityRules.js` + `npm run verify:sanity`; `verification_scripts/sanityRules.test.mjs` fails CI on any error in the shipped catalogue. It covers the PV current ≤ Isc rule deferred from 1.3.
-- [ ] 🚧 **3.3 Build a human review programme** – Only 2 of 245 records are `reviewed`. Add `reviewedAt` and `reviewedBy`, and review the top sellers first: the 30 most-viewed panels and all Victron, Renogy, GivEnergy and Solis controllers. Show a "Verified against datasheet" badge in the UI.
+- [ ] 🚧 **3.3 Build a human review programme** – Only 2 of 245 records are `reviewed`. Add `reviewedAt` and `reviewedBy`, and review the top sellers first: the 30 most-viewed panels and all Victron, Renogy, GivEnergy and Solis controllers. Review status is tracked internally only (not shown in the UI).
   - Target for launch: ≥ 80% of products that have buy links are reviewed.
-  - Infrastructure done: `reviewedAt`, `reviewedBy` and `notesReviewed` added to every record and to both schemas; UI badges; `npm run verify:review-queue`. **The reviewing itself is human work**: coverage is 2 of 66 sellable products (3%) against the 80% launch target.
+  - Infrastructure done: `reviewedAt`, `reviewedBy` and `notesReviewed` added to every record and to both schemas; `npm run verify:review-queue`. A public "Verified against datasheet" badge was built and then removed at the owner's request: review status is internal. **The reviewing itself is human work**: coverage is 2 of 66 sellable products (3%) against the 80% launch target.
 - [x] **3.4 Archive datasheets** – Store a hash, or an archived copy, of each datasheet PDF, so spec disputes can be resolved and silent manufacturer revisions detected.
   - Done as SHA-256 fingerprints rather than archived copies (licensing): `npm run verify:datasheets`; baseline recorded for 105 URLs; 15 failing links logged as KI-21.
 - [x] **3.5 Replace AI notes where possible** – Rewrite the design notes for reviewed series, or mark AI notes clearly in the UI. The README already says they are AI-derived.

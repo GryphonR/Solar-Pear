@@ -1,5 +1,5 @@
 import React from 'react';
-import { VerificationBadge, NotesSourceLabel } from '../DataProvenance';
+import { NotesSourceLabel } from '../DataProvenance';
 import PriceTag from '../PriceTag';
 import Modal from '../Modal';
 import { CheckCircle, ExternalLink, Info, XIcon } from '../Icons';
@@ -22,7 +22,6 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                     {controllerTypeLabel(c.type)}
                 </span>
                 <PriceTag item={c} />
-                <VerificationBadge item={c} />
                 {safeDatasheet && (
                     <a href={safeDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors">
                         <ExternalLink size={12} className="mr-1" /> Datasheet

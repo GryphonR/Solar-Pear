@@ -1,5 +1,5 @@
 import React from 'react';
-import { VerificationBadge, NotesSourceLabel } from '../DataProvenance';
+import { NotesSourceLabel } from '../DataProvenance';
 import PriceTag from '../PriceTag';
 import Modal from '../Modal';
 import DesignNotes from '../DesignNotes';
@@ -20,7 +20,6 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
             <div className="flex items-center flex-wrap gap-2 mt-2">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{p.power} Watts</span>
                 <PriceTag item={p} />
-                <VerificationBadge item={p} />
                 {gseCompatibility === GSE_COMPATIBILITY.BOTH && <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">Portrait & Landscape</span>}
                 {gseCompatibility === GSE_COMPATIBILITY.NONE && <span className="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-bold">Not GSE Compatible</span>}
                 {gseCompatibility === GSE_COMPATIBILITY.PORTRAIT_ONLY && <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Portrait GSE Only</span>}

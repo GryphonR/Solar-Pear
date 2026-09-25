@@ -48,7 +48,7 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `buyLinks` | array | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
 | `active` | boolean | If `true`, panel appears in selectors. |
 | `availableUK` | boolean | True if panel is readily available in the UK|
-| `reviewed` | bool | `true` once a person has checked every spec against the manufacturer datasheet. Shown to users as "Verified against datasheet". |
+| `reviewed` | bool | `true` once a person has checked every spec against the manufacturer datasheet. Internal only: review status is not shown in the app. |
 | `reviewedAt` | string | ISO date (`YYYY-MM-DD`) of that review, or `""`. |
 | `reviewedBy` | string | Who reviewed it (name or handle), or `""`. |
 | `notesReviewed` | bool | `true` once a person has checked or rewritten the design `notes`. Otherwise notes are labelled as AI-generated. |

@@ -1,5 +1,5 @@
 import React from 'react';
-import { VerificationBadge, NotesSourceLabel } from '../../components/DataProvenance';
+import { NotesSourceLabel } from '../../components/DataProvenance';
 import PriceTag from '../../components/PriceTag';
 import { AlertTriangle, CheckCircle, Info, XIcon, ExternalLink } from '../../components/Icons';
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
@@ -142,7 +142,6 @@ export default function ArrayOverviewTab({
                     <div className="flex flex-wrap items-center gap-2 mb-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{panel.power} W</span>
                         <PriceTag item={panel} />
-                        <VerificationBadge item={panel} />
                         {safePanelDatasheet && <a href={safePanelDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"><ExternalLink size={12} className="mr-1" /> Datasheet</a>}
                     </div>
                     <div className="grid grid-cols-2 gap-6 mb-6">
@@ -200,7 +199,6 @@ export default function ArrayOverviewTab({
                     <div className="flex flex-wrap items-center gap-2 mb-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${controllerTypeBadgeClass(controller.type)}`}>{controllerTypeLabel(controller.type)}</span>
                         <PriceTag item={controller} />
-                        <VerificationBadge item={controller} />
                         {safeControllerDatasheet && <a href={safeControllerDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"><ExternalLink size={12} className="mr-1" /> Datasheet</a>}
                     </div>
                     <div className="grid grid-cols-2 gap-6 mb-4">

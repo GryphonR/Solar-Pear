@@ -11,7 +11,7 @@ The owner wants a **public launch monetised by affiliate links**. Priorities agr
 1. Fix correctness issues that could cost users money or hardware (known-issues 1–5, 9–10) before driving traffic.
 2. Affiliate plumbing: an affiliate-network-aware link model, disclosure, click tracking, and making sure the pricing scanner doesn't strip affiliate params.
 3. Discoverability: URL routing, per-product SEO pages, meta/OG tags, and a custom domain.
-4. Trust: reviewed-data badges, datasheet links, "prices checked on" dates, and a disclaimer/T&Cs.
+4. Trust: datasheet links, "prices checked on" dates, a methodology page, and a disclaimer/T&Cs. Review status stays internal and is not shown to users.
 
 ## Open decisions
 - Keep the UK-only focus, or add region/currency support (EU/US retailers and design temperatures)?
