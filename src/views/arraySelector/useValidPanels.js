@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { evaluateElectrical, evaluatePhysicalFit } from '../../lib/arrayAnalysis';
+import { knownPrice, compareMissingLast } from '../../lib/pricing';
 
 /**
  * Computes the list of panels valid for the given array (physical + optional electrical compatibility),
@@ -50,7 +51,8 @@ export function useValidPanels(arrayId, options) {
         const list = panelsData
             .map((p) => {
                 const peakPower = p.power * array.count;
-                const panelCost = p.price * array.count;
+                const unitPrice = knownPrice(p);
+                const panelCost = unitPrice == null ? null : unitPrice * array.count;
                 const e = evaluateElectrical(p, controller, {
                     count: array.count,
                     parallelStrings: array.parallelStrings || 1,
@@ -74,7 +76,7 @@ export function useValidPanels(arrayId, options) {
                     ...p,
                     peakPower,
                     panelCost,
-                    costPerKWp: peakPower > 0 ? panelCost / (peakPower / 1000) : 0,
+                    costPerKWp: panelCost == null ? null : peakPower > 0 ? panelCost / (peakPower / 1000) : 0,
                     coldVoc: e.coldVoc,
                     hotVmp: e.hotVmp,
                     arrayIscHot: e.arrayIscHot,
@@ -102,6 +104,9 @@ export function useValidPanels(arrayId, options) {
         const sorted = [...list].sort((a, b) => {
             const valA = a[panelSort.key];
             const valB = b[panelSort.key];
+            // Unknown values (e.g. no price) always sort last, whichever direction is chosen.
+            const missing = compareMissingLast(valA, valB);
+            if (missing !== null) return missing;
             if (valA < valB) return panelSort.dir === 'asc' ? -1 : 1;
             if (valA > valB) return panelSort.dir === 'asc' ? 1 : -1;
             return 0;

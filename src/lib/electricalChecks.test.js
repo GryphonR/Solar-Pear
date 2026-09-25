@@ -367,3 +367,37 @@ describe("single source of truth", () => {
         expect(fit.issues.map((i) => i.code)).toEqual(["format", "size", "weight"]);
     });
 });
+
+describe("unknown prices (roadmap 2.2)", () => {
+    const setup = (panelPrice, controllerPrice) =>
+        analyzeArray("A1", {
+            arraysData: [{ id: "A1", name: "Roof", area: "House", count: 2, parallelStrings: 1, mounting: "On Roof" }],
+            panelsData: [{ ...PANEL_400, price: panelPrice }],
+            chargersData: [{ ...CHARGER_100_30, price: controllerPrice }],
+            siteControllers: [{ id: "I1", modelId: "ss100_30", area: "House", name: "C" }],
+            selections: { A1: { panel: "P400", controllerInstanceId: "I1", controllerMppt: 1 } },
+            systemVoltage: 24,
+        });
+
+    it("prices everything when all prices are known", () => {
+        const r = setup(100, 150);
+        expect(r.costIncomplete).toBe(false);
+        expect(r.cost).toBe(350);
+        expect(r.costPerKWp).toBeCloseTo(350 / 0.8);
+    });
+
+    it("a £0 panel is unknown, not free: no panel cost and no £/kWp", () => {
+        const r = setup(0, 150);
+        expect(r.panelCost).toBeNull();
+        expect(r.cost).toBe(150);
+        expect(r.costIncomplete).toBe(true);
+        expect(r.costPerKWp).toBeNull();
+    });
+
+    it("a missing controller price marks the total incomplete", () => {
+        const r = setup(100, undefined);
+        expect(r.cost).toBe(200);
+        expect(r.controllerPriceKnown).toBe(false);
+        expect(r.costPerKWp).toBeNull();
+    });
+});

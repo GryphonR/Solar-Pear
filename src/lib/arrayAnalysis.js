@@ -1,4 +1,5 @@
 import { GSE_COMPATIBILITY, getPanelGseCompatibility } from './gseCompatibility';
+import { hasKnownPrice, knownPrice } from './pricing';
 
 /** Default worst-case cold cell temperature (°C) for the Voc headroom check. Overridable per area. */
 export const COLD_TEMP_C = -10;
@@ -702,7 +703,7 @@ export const analyzeArray = (
     // Microinverters are bought per panel, so the array carries the cost of all its units.
     const getControllerCostShare = () => {
         if (!controller) return 0;
-        const price = controller.price || 0;
+        const price = knownPrice(controller) ?? 0;
         if (isMicroinverter(controller)) return price * controllerUnits;
         if (controllerInstance) {
             return arraysOnInstance.length > 0 ? price / arraysOnInstance.length : 0;
@@ -720,14 +721,22 @@ export const analyzeArray = (
         : null;
     const cond = resolveDesignConditions(conditions);
 
+    // A price of 0 or blank means unknown: it is left out of totals and makes £/kWp unavailable
+    // rather than making the array look free.
     const peakPower = panel ? panel.power * array.count : 0;
-    const panelCost = panel ? panel.price * array.count : 0;
-    const cost = panelCost + getControllerCostShare();
+    const panelPriceKnown = !panel || hasKnownPrice(panel);
+    const controllerPriceKnown = !controller || hasKnownPrice(controller);
+    const panelCost = panel && panelPriceKnown ? knownPrice(panel) * array.count : panel ? null : 0;
+    const cost = (panelCost ?? 0) + getControllerCostShare();
+    const costIncomplete = !panelPriceKnown || !controllerPriceKnown;
     const metrics = {
         peakPower,
         panelCost,
         cost,
-        costPerKWp: peakPower > 0 ? cost / (peakPower / 1000) : 0,
+        costIncomplete,
+        panelPriceKnown,
+        controllerPriceKnown,
+        costPerKWp: costIncomplete ? null : peakPower > 0 ? cost / (peakPower / 1000) : 0,
         coldVoc: electrical?.coldVoc ?? 0,
         coldVmp: electrical?.coldVmp ?? 0,
         hotVmp: electrical?.hotVmp ?? 0,

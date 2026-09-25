@@ -318,7 +318,9 @@ describe("analyzeArray", () => {
         expect(result.status).toBe("valid");
         expect(result.peakPower).toBe(400 * 4);
         expect(result.cost).toBe(100 * 4);
-        expect(result.costPerKWp).toBeCloseTo(result.cost / (result.peakPower / 1000));
+        // The fixture controller has no price, so the total is incomplete and £/kWp is unknown.
+        expect(result.costIncomplete).toBe(true);
+        expect(result.costPerKWp).toBeNull();
         // 4 panels in series; no coefficients on the fixture, so the conservative defaults apply:
         // Voc -0.30 %/°C at -10 °C => 1.105, Vmp via Pmax -0.35 %/°C at 65 °C => 0.86.
         const expectedColdVoc = 40 * 4 * 1.105;

@@ -100,7 +100,7 @@ Temperature coefficients come from each panel's datasheet. The full rules, const
 
 - **Storage:** All configuration is stored in your browser (localStorage). Clearing site data or switching devices means starting fresh—unless you’ve exported a backup. We recommend downloading a backup if the setup matters.
 - **BoM scope:** The bill of materials covers panels and PV controllers only. No cables, connectors, or mounting; treat it as a component list, not a full quote.
-- **Prices:** Pre-loaded prices are estimates. Override them with your own for a more realistic BoM.
+- **Prices:** Pre-loaded prices are estimates, shown with the month they were last checked. Products with no known price show "—" and are left out of totals rather than counted as free. Your own price edits are kept when the catalogue is refreshed; prices you haven't edited update automatically.
 - **AI-generated notes:** Panel and controller notes are AI-derived and may be imperfect. Use them as a starting point, not the final word.
 - **Compatibility only:** The app checks electrical compatibility (Voc hard limit; Vmp startup and Isc clipping warnings; format). It does not produce wiring diagrams or installation instructions.
 

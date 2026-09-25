@@ -3,6 +3,7 @@ import { AlertTriangle, CheckCircle, Info, ExternalLink } from '../../components
 import BuyButton from '../../components/BuyButton';
 import BarCell from '../../components/BarCell';
 import { safeHttpUrl } from '../../lib/safeUrl';
+import { formatMoney } from '../../lib/pricing';
 import {
     groupPanelsBySeries,
     manufacturerSeriesFilterValue,
@@ -137,8 +138,9 @@ export default function PanelTable({
         const coldVocVals = filteredPanels.map((p) => p.coldVoc);
         const hotVmpVals = filteredPanels.map((p) => p.hotVmp);
         const arrayIscHotVals = filteredPanels.map((p) => p.arrayIscHot);
-        const costPerKWpVals = filteredPanels.map((p) => p.costPerKWp);
-        const panelCostVals = filteredPanels.map((p) => p.panelCost);
+        // Unknown prices (null) are excluded from the bar ranges.
+        const costPerKWpVals = filteredPanels.map((p) => p.costPerKWp).filter((v) => v != null);
+        const panelCostVals = filteredPanels.map((p) => p.panelCost).filter((v) => v != null);
         const widthVals = filteredPanels.map((p) => p.width).filter((v) => v != null);
         const heightVals = filteredPanels.map((p) => p.height).filter((v) => v != null);
         const weightVals = filteredPanels.map((p) => p.weight).filter((v) => v != null);
@@ -459,13 +461,13 @@ export default function PanelTable({
                                                     value={p.costPerKWp}
                                                     range={col.costPerKWp}
                                                     incompatible={inc}
-                                                    formatter={(v) => `£${Number(v).toFixed(2)}`}
+                                                    formatter={(v) => (v == null ? '—' : `£${Number(v).toFixed(2)}`)}
                                                 />
                                                 <BarCell
                                                     value={p.panelCost}
                                                     range={col.panelCost}
                                                     incompatible={inc}
-                                                    formatter={(v) => `£${Number(v).toLocaleString()}`}
+                                                    formatter={(v) => (v == null ? '—' : formatMoney(v))}
                                                 />
                                                 <td
                                                     className={`py-2 px-3 text-right ${

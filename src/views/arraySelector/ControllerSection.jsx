@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { AlertTriangle, CheckCircle, Info, ExternalLink, Trash2 } from '../../components/Icons';
 import BarCell from '../../components/BarCell';
 import { COLD_TEMP_C, HOT_TEMP_C, STRICT_CURRENT_FACTOR } from '../../lib/arrayAnalysis';
+import { formatMoney, knownPrice } from '../../lib/pricing';
 import { safeHttpUrl } from '../../lib/safeUrl';
 
 export default function ControllerSection({
@@ -59,7 +60,7 @@ export default function ControllerSection({
         const list = filteredControllers;
         const maxVVals = list.map((c) => c.maxV);
         const maxIscVals = list.map((c) => c.maxIsc);
-        const priceVals = list.map((c) => c.price ?? 0);
+        const priceVals = list.map((c) => knownPrice(c)).filter((v) => v != null);
         const min = (arr) => (arr.length ? Math.min(...arr) : 0);
         const max = (arr) => (arr.length ? Math.max(...arr) : 0);
         return {
@@ -504,10 +505,10 @@ export default function ControllerSection({
                                                     {c.trackers ?? '-'}
                                                 </td>
                                                 <BarCell
-                                                    value={c.price}
+                                                    value={knownPrice(c)}
                                                     range={col.price}
                                                     incompatible={inc}
-                                                    formatter={(v) => `£${v}`}
+                                                    formatter={(v) => (v == null ? '—' : formatMoney(v))}
                                                     className="py-2 px-3 font-medium text-blue-700"
                                                 />
                                                 <td className={`py-2 px-3 text-right ${inc ? 'bg-red-100' : ''}`}>
