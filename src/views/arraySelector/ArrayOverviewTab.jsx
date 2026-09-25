@@ -2,7 +2,7 @@ import React from 'react';
 import { AlertTriangle, CheckCircle, Info, XIcon, ExternalLink } from '../../components/Icons';
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
 import DesignNotes from '../../components/DesignNotes';
-import { isCompatibleFormat } from '../../lib/arrayAnalysis';
+import { isCompatibleFormat, COLD_TEMP_C, HOT_TEMP_C } from '../../lib/arrayAnalysis';
 import { controllerTypeBadgeClass, controllerTypeLabel } from '../../lib/controllerTypes';
 import { safeHttpUrl } from '../../lib/safeUrl';
 
@@ -17,6 +17,9 @@ export default function ArrayOverviewTab({
     hotVmp,
     arrayIscHot,
     effectiveStartupV,
+    issues = [],
+    flags,
+    conditions,
     panelsData,
     userNotes,
     setActiveArrayContentTab,
@@ -25,6 +28,16 @@ export default function ArrayOverviewTab({
 }) {
     const safePanelDatasheet = safeHttpUrl(panel?.datasheetUrl);
     const safeControllerDatasheet = safeHttpUrl(controller?.datasheetUrl);
+    const coldTempC = conditions?.coldTempC ?? COLD_TEMP_C;
+    const hotTempC = conditions?.hotTempC ?? HOT_TEMP_C;
+    const severityClass = { error: 'text-red-700', warning: 'text-orange-700', info: 'text-slate-600' };
+    // Issue-level severity when available; otherwise fall back to the overall status colour.
+    const messageItems = issues.length
+        ? issues.map((i) => ({ text: i.message, className: severityClass[i.severity] }))
+        : messages.map((text) => ({
+              text,
+              className: status === 'error' ? 'text-red-700' : status === 'warning' ? 'text-orange-700' : 'text-green-700',
+          }));
 
     return (
         <>
@@ -93,8 +106,8 @@ export default function ArrayOverviewTab({
                                     {status === 'error' ? 'System Failure Detected' : status === 'warning' ? 'Warning' : 'System Compatible '}
                                 </h4>
                                 <ul className="mt-1 space-y-1">
-                                    {messages.map((msg, i) => (
-                                        <li key={i} className={`text-sm ${status === 'error' ? 'text-red-700' : status === 'warning' ? 'text-orange-700' : 'text-green-700'}`}>{msg}</li>
+                                    {messageItems.map((m, i) => (
+                                        <li key={i} className={`text-sm ${m.className}`}>{m.text}</li>
                                     ))}
                                 </ul>
                             </div>
@@ -102,20 +115,20 @@ export default function ArrayOverviewTab({
                     </div>
                     {panel && (
                         <div className="grid grid-cols-3 gap-4">
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title="Open-circuit voltage of the string at −10°C. Must stay below your MPPT's maximum PV input.">
-                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Cold Voc (-10°C)</p>
-                                <p className={`text-2xl font-light ${controller && coldVoc > controller.maxV ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{coldVoc.toFixed(1)} <span className="text-sm">V</span></p>
+                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title={`Open-circuit voltage of the string at ${coldTempC}°C. Must stay below your MPPT's maximum PV input.`}>
+                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Cold Voc ({coldTempC}°C)</p>
+                                <p className={`text-2xl font-light ${controller && flags && !flags.isVocOk ? 'text-red-600 font-bold' : 'text-slate-800'}`}>{coldVoc.toFixed(1)} <span className="text-sm">V</span></p>
                                 {controller ? <p className="text-xs text-slate-400 mt-1">Controller Limit: {controller.maxV}V</p> : <p className="text-xs text-slate-400 mt-1">Select a controller to compare limits</p>}
                             </div>
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title="Maximum power point voltage of the string at 65°C. If below startup the controller will not track during peak heat, causing temporary harvest loss — not hardware damage.">
-                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Hot Vmp (65°C)</p>
-                                <p className={`text-2xl font-light ${controller && effectiveStartupV != null && hotVmp < effectiveStartupV ? 'text-orange-500 font-bold' : 'text-slate-800'}`}>{hotVmp.toFixed(1)} <span className="text-sm">V</span></p>
+                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title={`Maximum power point voltage of the string at ${hotTempC}°C. Below startup or the MPPT range, the controller loses output in peak heat — not hardware damage.`}>
+                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Hot Vmp ({hotTempC}°C)</p>
+                                <p className={`text-2xl font-light ${controller && flags && (!flags.isVmpOk || flags.isBelowMpptMin) ? 'text-orange-500 font-bold' : 'text-slate-800'}`}>{hotVmp.toFixed(1)} <span className="text-sm">V</span></p>
                                 {controller && effectiveStartupV != null ? <p className="text-xs text-slate-400 mt-1">Required to Start: {effectiveStartupV}V</p> : <p className="text-xs text-slate-400 mt-1">Select a controller to compare limits</p>}
                             </div>
-                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title="Short-circuit current at 65°C (hot). Exceeding the controller rating causes clipping (reduced efficiency), not hardware damage.">
-                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Array Isc (Hot 65°C)</p>
-                                <p className={`text-2xl font-light ${controller && arrayIscHot > (controller.maxOperatingI > 0 ? controller.maxOperatingI : controller.maxIsc) ? 'text-orange-500 font-bold' : 'text-slate-800'}`}>{arrayIscHot.toFixed(2)} <span className="text-sm">A</span></p>
-                                {controller ? <p className="text-xs text-slate-400 mt-1">Controller Rating: {controller.maxOperatingI > 0 ? controller.maxOperatingI : controller.maxIsc}A</p> : <p className="text-xs text-slate-400 mt-1">Select a controller to compare limits</p>}
+                            <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title={`Short-circuit current per input at ${hotTempC}°C. Compare with the controller's maximum PV short-circuit current, which many manufacturers treat as a hardware limit.`}>
+                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Array Isc (Hot {hotTempC}°C)</p>
+                                <p className={`text-2xl font-light ${controller && flags && (flags.isIscOverRating || flags.isCurrentClipping) ? 'text-orange-500 font-bold' : 'text-slate-800'}`}>{arrayIscHot.toFixed(2)} <span className="text-sm">A</span></p>
+                                {controller ? <p className="text-xs text-slate-400 mt-1">Controller Rating: {controller.maxIsc > 0 ? `${controller.maxIsc}A Isc` : 'Isc not published'}{controller.maxOperatingI > 0 ? ` / ${controller.maxOperatingI}A operating` : ''}</p> : <p className="text-xs text-slate-400 mt-1">Select a controller to compare limits</p>}
                             </div>
                         </div>
                     )}

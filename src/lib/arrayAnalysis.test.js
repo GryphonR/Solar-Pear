@@ -319,9 +319,10 @@ describe("analyzeArray", () => {
         expect(result.peakPower).toBe(400 * 4);
         expect(result.cost).toBe(100 * 4);
         expect(result.costPerKWp).toBeCloseTo(result.cost / (result.peakPower / 1000));
-        // 4 panels in series
-        const expectedColdVoc = 40 * 4 * 1.084;
-        const expectedHotVmp = 32 * 4 * 0.9;
+        // 4 panels in series; no coefficients on the fixture, so the conservative defaults apply:
+        // Voc -0.30 %/°C at -10 °C => 1.105, Vmp via Pmax -0.35 %/°C at 65 °C => 0.86.
+        const expectedColdVoc = 40 * 4 * 1.105;
+        const expectedHotVmp = 32 * 4 * 0.86;
         expect(result.coldVoc).toBeCloseTo(expectedColdVoc);
         expect(result.hotVmp).toBeCloseTo(expectedHotVmp);
     });

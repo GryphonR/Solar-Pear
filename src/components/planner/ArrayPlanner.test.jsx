@@ -57,6 +57,7 @@ vi.mock('../../context/AppStateContext', () => ({
 
 vi.mock('../../lib/arrayAnalysis', () => ({
     bestParallelStringsForController: () => null,
+    conditionsFromAreaSettings: () => ({ coldTempC: -10, hotTempC: 65, strictCurrent: false }),
     formatWiringLabel: () => '',
     getEffectiveMaxPanelWeightKg: () => null,
     isCompatibleFormat: () => true,

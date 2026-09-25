@@ -1,20 +1,13 @@
 import { useMemo, useCallback } from 'react';
-import {
-    isCompatibleFormat,
-    coldVocFactor,
-    hotVmpFactor,
-    hotIscFactor,
-    getEffectiveStartupV,
-    getEffectiveMaxPanelWeightKg,
-    panelMeetsWeightCap,
-    getCurrentClipLimit,
-} from '../../lib/arrayAnalysis';
+import { evaluateElectrical, evaluatePhysicalFit } from '../../lib/arrayAnalysis';
 
 /**
  * Computes the list of panels valid for the given array (physical + optional electrical compatibility),
  * with derived metrics and sort applied.
  * @param {string} arrayId
- * @param {object} options - panelsData, arraysData, chargersData, siteControllers, selections, systemVoltage, hideHeavyPanels, hideMarginalPanels, hideIncompatiblePanels, panelSort
+ * All electrical and physical maths comes from evaluateElectrical / evaluatePhysicalFit so the
+ * table always agrees with the array analysis.
+ * @param {object} options - panelsData, arraysData, chargersData, siteControllers, selections, systemVoltage, conditions, hideHeavyPanels, hideMarginalPanels, hideIncompatiblePanels, panelSort
  */
 export function useValidPanels(arrayId, options) {
     const {
@@ -24,6 +17,7 @@ export function useValidPanels(arrayId, options) {
         siteControllers,
         selections,
         systemVoltage,
+        conditions,
         hideHeavyPanels,
         hideMarginalPanels,
         hideIncompatiblePanels,
@@ -55,53 +49,45 @@ export function useValidPanels(arrayId, options) {
         if (!array) return [];
         const list = panelsData
             .map((p) => {
-                const pPeakPower = p.power * array.count;
-                const pStrings = array.parallelStrings || 1;
-                const panelsPerSeriesString = array.count / pStrings;
-                const pStringVocSTC = p.voc * panelsPerSeriesString;
-                const pColdVoc = pStringVocSTC * coldVocFactor(p);
-                const pStringVmpSTC = p.vmp * panelsPerSeriesString;
-                const pHotVmp = pStringVmpSTC * hotVmpFactor(p);
-                const pArrayIscHot = p.isc * pStrings * hotIscFactor(p);
-                const pCost = p.price * array.count;
-                const pCostPerKWp = pPeakPower > 0 ? pCost / (pPeakPower / 1000) : 0;
-                const isPhysicallyOk = isCompatibleFormat(array, p);
-                const isVocOk = !controller || pColdVoc <= controller.maxV;
-                const isVmpOk =
-                    !controller || pHotVmp >= getEffectiveStartupV(controller, systemVoltage);
-                const isIscOk = !controller || pArrayIscHot <= getCurrentClipLimit(controller);
-                const effectiveMaxWeight = getEffectiveMaxPanelWeightKg(array, hideHeavyPanels);
-                const isWeightOk = panelMeetsWeightCap(p, effectiveMaxWeight);
-                const isHeightOk =
-                    !array.maxPanelHeight || (p.height && p.height <= array.maxPanelHeight);
-                const isWidthOk = !array.maxPanelWidth || (p.width && p.width <= array.maxPanelWidth);
-                const isSizeOk = isHeightOk && isWidthOk;
-                const isVocWarn =
-                    controller && pColdVoc > controller.maxV * 0.94 && isVocOk;
+                const peakPower = p.power * array.count;
+                const panelCost = p.price * array.count;
+                const e = evaluateElectrical(p, controller, {
+                    count: array.count,
+                    parallelStrings: array.parallelStrings || 1,
+                    systemVoltage,
+                    conditions,
+                });
+                const fit = evaluatePhysicalFit(array, p, hideHeavyPanels);
+                const isVocOk = e.hardOk;
+                const isVocWarn = !!controller && isVocOk && e.flags.isVocWarn;
                 const isMarginalOk = !hideMarginalPanels || !isVocWarn;
                 const isFullyCompatible =
                     p.active !== false &&
-                    isPhysicallyOk &&
+                    e.wiringValid &&
+                    fit.isFormatOk &&
                     isVocOk &&
-                    isWeightOk &&
-                    isSizeOk &&
+                    fit.isWeightOk &&
+                    fit.isHeightOk &&
+                    fit.isWidthOk &&
                     isMarginalOk;
                 return {
                     ...p,
-                    peakPower: pPeakPower,
-                    panelCost: pCost,
-                    costPerKWp: pCostPerKWp,
-                    coldVoc: pColdVoc,
-                    hotVmp: pHotVmp,
-                    arrayIscHot: pArrayIscHot,
+                    peakPower,
+                    panelCost,
+                    costPerKWp: peakPower > 0 ? panelCost / (peakPower / 1000) : 0,
+                    coldVoc: e.coldVoc,
+                    hotVmp: e.hotVmp,
+                    arrayIscHot: e.arrayIscHot,
                     isFullyCompatible,
                     isVocWarn,
                     isVocOk,
-                    isVmpOk,
-                    isIscOk,
-                    isWeightOk,
-                    isHeightOk,
-                    isWidthOk,
+                    isVmpOk: e.flags.isVmpOk && !e.flags.isBelowMpptMin,
+                    isIscOk: !e.flags.isIscOverRating && !e.flags.isCurrentClipping,
+                    isWeightOk: fit.isWeightOk,
+                    isHeightOk: fit.isHeightOk,
+                    isWidthOk: fit.isWidthOk,
+                    isFormatOk: fit.isFormatOk,
+                    electricalIssues: e.issues,
                 };
             })
             .filter((p) => {
@@ -110,7 +96,7 @@ export function useValidPanels(arrayId, options) {
                         ? p.active !== false && p.isFullyCompatible
                         : p.isFullyCompatible;
                 }
-                return p.active !== false && isCompatibleFormat(array, p);
+                return p.active !== false && p.isFormatOk;
             });
 
         const sorted = [...list].sort((a, b) => {
@@ -126,6 +112,7 @@ export function useValidPanels(arrayId, options) {
         panelsData,
         controller,
         systemVoltage,
+        conditions,
         hideHeavyPanels,
         hideMarginalPanels,
         hideIncompatiblePanels,

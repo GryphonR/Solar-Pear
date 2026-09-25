@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { initialPanels, initialChargers } from '../data/loadData.js';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { analyzeArray } from '../lib/arrayAnalysis';
+import { analyzeArray, conditionsFromAreaSettings, COLD_TEMP_C, HOT_TEMP_C } from '../lib/arrayAnalysis';
 import { GSE_COMPATIBILITY } from '../lib/gseCompatibility';
 import {
     migrateArrays,
@@ -36,7 +36,15 @@ const DEFAULT_AREA_SETTINGS = {
     systemType: 'any',
     filterEps: false,
     filterHouseBackup: false,
+    designLowC: COLD_TEMP_C,
+    designHighC: HOT_TEMP_C,
+    strictCurrent: false,
 };
+
+const finiteOr = (value, fallback) =>
+    value !== null && value !== '' && value !== undefined && Number.isFinite(Number(value))
+        ? Number(value)
+        : fallback;
 
 export const APP_STORAGE_KEYS = [
     'solar_arrays',
@@ -108,6 +116,12 @@ export function AppStateProvider({ children }) {
             settings?.filterHouseBackup !== undefined
                 ? !!settings.filterHouseBackup
                 : !!fallback.filterHouseBackup,
+        designLowC: finiteOr(settings?.designLowC, finiteOr(fallback.designLowC, COLD_TEMP_C)),
+        designHighC: finiteOr(settings?.designHighC, finiteOr(fallback.designHighC, HOT_TEMP_C)),
+        strictCurrent:
+            settings?.strictCurrent !== undefined
+                ? !!settings.strictCurrent
+                : !!fallback.strictCurrent,
     });
 
     const getAreaSettings = (areaName) => {
@@ -650,6 +664,7 @@ export function AppStateProvider({ children }) {
                 selections,
                 systemVoltage: areaSettings.systemVoltage,
                 hideHeavyPanels,
+                conditions: conditionsFromAreaSettings(areaSettings),
             });
         })();
 
