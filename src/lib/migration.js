@@ -1,5 +1,3 @@
-import { GSE_COMPATIBILITY } from "./gseCompatibility";
-
 export function extractUserNotes(savedNotesJson) {
     if (!savedNotesJson) return {};
     try {
@@ -185,103 +183,49 @@ export function migrateSelectionsAndSiteControllers({
     return { selections, siteControllers };
 }
 
-export function mergeChargers(initialChargers, options) {
-    const {
-        savedChargersJson = null,
-        savedMpptsJson = null,
-        savedInvertersJson = null,
-    } = options || {};
-
-    let mergedChargersMap = new Map();
-    initialChargers.forEach((c) => mergedChargersMap.set(c.id, { ...c }));
-
-    const parseArray = (json) => {
-        if (!json) return null;
-        try {
-            const parsed = JSON.parse(json);
-            return Array.isArray(parsed) ? parsed : null;
-        } catch {
-            return null;
+/**
+ * Moves saved designs off discontinued or renamed catalogue items (roadmap 2.5).
+ * `replacements` maps an old id to its successor: { panels: { oldModel: newModel }, controllers: { oldId: newId } }.
+ * Only ids missing from the current catalogue are remapped, and only to successors that exist.
+ * Chains (A → B → C) are followed.
+ *
+ * @param {{ arrays: object[], siteControllers: object[] }} design
+ * @param {{ panels?: Record<string, string>, controllers?: Record<string, string> }} replacements
+ * @param {{ panelModels: Set<string>, controllerIds: Set<string> }} catalogue
+ * @returns {{ arrays: object[], siteControllers: object[], changes: Array<{ kind: 'panel'|'controller', from: string, to: string }> }}
+ */
+export function applyReplacements(design, replacements, catalogue) {
+    const changes = [];
+    const resolve = (id, map, exists) => {
+        if (!id || exists.has(id) || !map) return null;
+        let next = id;
+        const seen = new Set();
+        while (map[next] && !seen.has(next)) {
+            seen.add(next);
+            next = map[next];
+            if (exists.has(next)) return next;
+        }
+        return null;
+    };
+    const seenChange = new Set();
+    const record = (kind, from, to) => {
+        const key = `${kind}:${from}`;
+        if (!seenChange.has(key)) {
+            seenChange.add(key);
+            changes.push({ kind, from, to });
         }
     };
-
-    if (savedChargersJson) {
-        const parsed = parseArray(savedChargersJson);
-        if (parsed) {
-            parsed.forEach((c) => {
-                if (mergedChargersMap.has(c.id)) {
-                    const initC = mergedChargersMap.get(c.id);
-                    mergedChargersMap.set(c.id, {
-                        ...initC,
-                        price: c.price,
-                        notes: c.notes,
-                        active: c.active,
-                    });
-                } else {
-                    mergedChargersMap.set(c.id, c);
-                }
-            });
-        }
-    } else if (savedMpptsJson || savedInvertersJson) {
-        const parsedMppts = parseArray(savedMpptsJson);
-        if (parsedMppts) {
-            parsedMppts.forEach((m) => {
-                if (mergedChargersMap.has(m.id)) {
-                    const initC = mergedChargersMap.get(m.id);
-                    mergedChargersMap.set(m.id, {
-                        ...initC,
-                        price: m.price,
-                        notes: m.notes,
-                    });
-                }
-            });
-        }
-        const parsedInverters = parseArray(savedInvertersJson);
-        if (parsedInverters) {
-            parsedInverters.forEach((i) => {
-                if (mergedChargersMap.has(i.id)) {
-                    const initC = mergedChargersMap.get(i.id);
-                    mergedChargersMap.set(i.id, {
-                        ...initC,
-                        price: i.price,
-                        notes: i.notes,
-                    });
-                }
-            });
-        }
-    }
-
-    return Array.from(mergedChargersMap.values());
-}
-
-export function mergePanels(initialPanels, savedPanelsJson) {
-    if (!savedPanelsJson) return initialPanels;
-    let parsed;
-    try {
-        parsed = JSON.parse(savedPanelsJson);
-    } catch {
-        return initialPanels;
-    }
-    if (!Array.isArray(parsed)) return initialPanels;
-    const initPanelsMap = new Map(initialPanels.map((p) => [p.model, p]));
-    const mergedPanels = parsed.map((savedP) => {
-        const initP = initPanelsMap.get(savedP.model);
-        if (initP) {
-            return {
-                ...initP,
-                price: savedP.price,
-                active: savedP.active,
-                gseCompatibility:
-                    savedP.gseCompatibility || initP.gseCompatibility || GSE_COMPATIBILITY.BOTH,
-            };
-        }
-        return savedP;
+    const arrays = (design.arrays || []).map((a) => {
+        const to = resolve(a.panel, replacements?.panels, catalogue.panelModels);
+        if (!to) return a;
+        record('panel', a.panel, to);
+        return { ...a, panel: to };
     });
-    initialPanels.forEach((initP) => {
-        if (!parsed.find((p) => p.model === initP.model)) {
-            mergedPanels.push(initP);
-        }
+    const siteControllers = (design.siteControllers || []).map((sc) => {
+        const to = resolve(sc.modelId, replacements?.controllers, catalogue.controllerIds);
+        if (!to) return sc;
+        record('controller', sc.modelId, to);
+        return { ...sc, modelId: to };
     });
-    return mergedPanels;
+    return { arrays, siteControllers, changes };
 }
-

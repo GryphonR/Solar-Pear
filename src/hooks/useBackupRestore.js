@@ -1,20 +1,35 @@
 import { useAppState } from '../context/AppStateContext';
 import { validateBackupPayload } from '../lib/backupValidation';
+import { initialPanels, initialChargers } from '../data/loadData.js';
+import {
+    CATALOGUE_ID_KEY,
+    applyCatalogue,
+    buildCatalogueOverrides,
+    migrateLegacyCatalogue,
+} from '../lib/catalogueOverrides';
 
-/** Backup file schema version for export/import. */
-export const BACKUP_SCHEMA_VERSION = 4;
+/**
+ * Backup file schema version for export/import.
+ * v5: the catalogue is exported as `catalogueOverrides` (user edits only) instead of full
+ * `panelsData` / `chargersData` arrays, so restoring an old backup cannot pin stale prices.
+ */
+export const BACKUP_SCHEMA_VERSION = 5;
 
 /**
  * Builds the backup payload object (for export). Pure function for testability.
  * @param {object} state - App state slice used for backup
  */
-export function buildBackupPayload(state) {
+export function buildBackupPayload(state, bundled = { panels: initialPanels, chargers: initialChargers }) {
     return {
         schemaVersion: BACKUP_SCHEMA_VERSION,
         areasData: state.areasData,
         arraysData: state.arraysData,
-        panelsData: state.panelsData,
-        chargersData: state.chargersData,
+        catalogueOverrides: buildCatalogueOverrides(
+            state.panelsData,
+            state.chargersData,
+            bundled.panels,
+            bundled.chargers
+        ),
         siteControllers: state.siteControllers,
         areaSettingsByArea: state.areaSettingsByArea,
         systemVoltage: state.systemVoltage,
@@ -30,9 +45,10 @@ export function buildBackupPayload(state) {
  * Does not call setNotification; caller handles success/error.
  * @param {object} imported - Parsed backup JSON (already validated/sanitized)
  * @param {object} setters - Map of setter functions
+ * @param {{ panels: object[], chargers: object[] }} [bundled] - Catalogue shipped with this build
  * @returns {{ warnings: string[] }}
  */
-export function applyBackupData(imported, setters) {
+export function applyBackupData(imported, setters, bundled = { panels: initialPanels, chargers: initialChargers }) {
     const {
         setAreasData,
         setArraysData,
@@ -80,8 +96,32 @@ export function applyBackupData(imported, setters) {
                 : data.arraysData;
         setArraysData(arraysMerged);
     }
-    if (data.panelsData) setPanelsData(data.panelsData);
-    if (data.chargersData) setChargersData(data.chargersData);
+    if (data.catalogueOverrides) {
+        setPanelsData(applyCatalogue(bundled.panels, data.catalogueOverrides.panels, CATALOGUE_ID_KEY.panels));
+        setChargersData(
+            applyCatalogue(bundled.chargers, data.catalogueOverrides.chargers, CATALOGUE_ID_KEY.chargers)
+        );
+    } else {
+        // Backups up to v4 hold full catalogue snapshots; keep only genuine user edits.
+        let droppedEdits = 0;
+        if (data.panelsData) {
+            const m = migrateLegacyCatalogue(data.panelsData, bundled.panels, 'panels');
+            droppedEdits += m.droppedEdits;
+            setPanelsData(applyCatalogue(bundled.panels, m.diff, CATALOGUE_ID_KEY.panels));
+        }
+        if (data.chargersData) {
+            const m = migrateLegacyCatalogue(data.chargersData, bundled.chargers, 'chargers');
+            droppedEdits += m.droppedEdits;
+            setChargersData(applyCatalogue(bundled.chargers, m.diff, CATALOGUE_ID_KEY.chargers));
+        }
+        if (droppedEdits > 0) {
+            warnings.push(
+                `This backup is from an older version: ${droppedEdits} saved price or note ${
+                    droppedEdits === 1 ? 'value was' : 'values were'
+                } replaced with current catalogue data.`
+            );
+        }
+    }
     if (data.siteControllers) setSiteControllers(data.siteControllers);
     if (data.areaSettingsByArea !== undefined) {
         setAreaSettingsByArea(data.areaSettingsByArea);

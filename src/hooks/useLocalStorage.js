@@ -1,5 +1,8 @@
 import { useState } from 'react';
 
+/** Window event dispatched when a localStorage write fails (quota exceeded, storage blocked). */
+export const STORAGE_ERROR_EVENT = 'solar-storage-error';
+
 /**
  * Persists state to localStorage and syncs on read/update.
  * Falls back to initialValue when stored JSON is corrupt or the wrong top-level type.
@@ -43,6 +46,9 @@ export function useLocalStorage(key, initialValue) {
                 return valueToStore;
             } catch (error) {
                 console.warn('Error setting localStorage', key, error);
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent(STORAGE_ERROR_EVENT, { detail: { key } }));
+                }
                 return prev;
             }
         });

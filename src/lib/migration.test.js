@@ -1,10 +1,9 @@
 import { describe, it, expect } from "vitest";
 import {
+    applyReplacements,
     extractUserNotes,
     migrateArrays,
     migrateSelectionsAndSiteControllers,
-    mergeChargers,
-    mergePanels,
 } from "./migration";
 
 describe("extractUserNotes", () => {
@@ -150,98 +149,45 @@ describe("migrateSelectionsAndSiteControllers", () => {
     });
 });
 
-describe("mergeChargers", () => {
-    const initialChargers = [
-        { id: "C1", name: "Base", price: 100, notes: "init", active: true },
-    ];
+describe("applyReplacements", () => {
+    const catalogue = { panelModels: new Set(["NEW", "C"]), controllerIds: new Set(["ctrl2"]) };
 
-    it("returns initial chargers when nothing saved", () => {
-        expect(mergeChargers(initialChargers, {})).toEqual(initialChargers);
-    });
-
-    it("merges saved chargers over initial ones", () => {
-        const savedChargersJson = JSON.stringify([
-            { id: "C1", price: 150, notes: "updated", active: false },
-        ]);
-        const merged = mergeChargers(initialChargers, { savedChargersJson });
-        expect(merged).toHaveLength(1);
-        expect(merged[0]).toMatchObject({
-            id: "C1",
-            price: 150,
-            notes: "updated",
-            active: false,
-        });
-    });
-
-    it("merges legacy mppts/inverters data to override price/notes", () => {
-        const savedMpptsJson = JSON.stringify([
-            { id: "C1", price: 200, notes: "mppt" },
-        ]);
-        const mergedFromMppts = mergeChargers(initialChargers, {
-            savedMpptsJson,
-            savedInvertersJson: null,
-            savedChargersJson: null,
-        });
-        expect(mergedFromMppts[0]).toMatchObject({
-            id: "C1",
-            price: 200,
-            notes: "mppt",
-        });
-
-        const savedInvertersJson = JSON.stringify([
-            { id: "C1", price: 220, notes: "inv" },
-        ]);
-        const mergedFromInverters = mergeChargers(initialChargers, {
-            savedMpptsJson: null,
-            savedInvertersJson,
-            savedChargersJson: null,
-        });
-        expect(mergedFromInverters[0]).toMatchObject({
-            id: "C1",
-            price: 220,
-            notes: "inv",
-        });
-    });
-});
-
-describe("mergePanels", () => {
-    const initialPanels = [
-        {
-            model: "P1",
-            name: "Panel 1",
-            price: 100,
-            gseCompatibility: "Both",
-            active: true,
-        },
-        { model: "P2", name: "Panel 2", price: 90, active: true },
-    ];
-
-    it("returns initial panels when nothing saved", () => {
-        expect(mergePanels(initialPanels, null)).toEqual(initialPanels);
-    });
-
-    it("overlays price/active/gseCompatibility for existing panels", () => {
-        const savedPanelsJson = JSON.stringify([
+    it("remaps discontinued panels and controllers to existing successors, following chains", () => {
+        const result = applyReplacements(
             {
-                model: "P1",
-                price: 150,
-                active: false,
-                gseCompatibility: "Portrait Only",
+                arrays: [
+                    { id: "A1", panel: "OLD" },
+                    { id: "A2", panel: "A" },
+                    { id: "A3", panel: "NEW" },
+                    { id: "A4", panel: "OLD" },
+                ],
+                siteControllers: [{ id: "I1", modelId: "ctrl1" }],
             },
+            { panels: { OLD: "NEW", A: "B", B: "C" }, controllers: { ctrl1: "ctrl2" } },
+            catalogue
+        );
+        expect(result.arrays.map((a) => a.panel)).toEqual(["NEW", "C", "NEW", "NEW"]);
+        expect(result.siteControllers[0].modelId).toBe("ctrl2");
+        expect(result.changes).toEqual([
+            { kind: "panel", from: "OLD", to: "NEW" },
+            { kind: "panel", from: "A", to: "C" },
+            { kind: "controller", from: "ctrl1", to: "ctrl2" },
         ]);
-        const merged = mergePanels(initialPanels, savedPanelsJson);
-        const p1 = merged.find((p) => p.model === "P1");
-        expect(p1.price).toBe(150);
-        expect(p1.active).toBe(false);
-        expect(p1.gseCompatibility).toBe("Portrait Only");
     });
 
-    it("keeps initial panels that are not in saved list", () => {
-        const savedPanelsJson = JSON.stringify([
-            { model: "P1", price: 150, active: true },
-        ]);
-        const merged = mergePanels(initialPanels, savedPanelsJson);
-        expect(merged.find((p) => p.model === "P2")).toBeDefined();
+    it("leaves ids alone when the successor does not exist or the item is still listed", () => {
+        const design = { arrays: [{ id: "A1", panel: "X" }, { id: "A2", panel: "C" }], siteControllers: [] };
+        const result = applyReplacements(design, { panels: { X: "MISSING", C: "NEW" } }, catalogue);
+        expect(result.arrays).toEqual(design.arrays);
+        expect(result.changes).toEqual([]);
+    });
+
+    it("does not loop on cycles", () => {
+        const result = applyReplacements(
+            { arrays: [{ id: "A1", panel: "P" }], siteControllers: [] },
+            { panels: { P: "Q", Q: "P" } },
+            catalogue
+        );
+        expect(result.changes).toEqual([]);
     });
 });
-

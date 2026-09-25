@@ -1,14 +1,19 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import { initialPanels, initialChargers } from '../data/loadData.js';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useLocalStorage, STORAGE_ERROR_EVENT } from '../hooks/useLocalStorage';
 import { analyzeArray, conditionsFromAreaSettings, COLD_TEMP_C, HOT_TEMP_C } from '../lib/arrayAnalysis';
 import { GSE_COMPATIBILITY } from '../lib/gseCompatibility';
+import { applyReplacements, migrateArrays, migrateSelectionsAndSiteControllers } from '../lib/migration';
+import replacements from '../data/replacements.json';
 import {
-    migrateArrays,
-    migrateSelectionsAndSiteControllers,
-    mergeChargers,
-    mergePanels,
-} from '../lib/migration';
+    CATALOGUE_OVERRIDES_KEY,
+    LEGACY_CHARGERS_KEY,
+    LEGACY_PANELS_KEY,
+    STORAGE_VERSION_KEY,
+    buildCatalogueOverrides,
+    loadCatalogueFromStorage,
+    saveCatalogueToStorage,
+} from '../lib/catalogueOverrides';
 
 const initialArrays = [
     {
@@ -48,8 +53,8 @@ const finiteOr = (value, fallback) =>
 
 export const APP_STORAGE_KEYS = [
     'solar_arrays',
-    'solar_panels',
-    'solar_chargers',
+    CATALOGUE_OVERRIDES_KEY,
+    STORAGE_VERSION_KEY,
     'solar_site_controllers',
     'solar_hide_heavy_panels',
     'solar_hide_marginal_panels',
@@ -74,8 +79,9 @@ export function AppStateProvider({ children }) {
     const [activeTab, setActiveTab] = useState('GUIDE');
 
     const [arraysData, setArraysData] = useLocalStorage('solar_arrays', initialArrays);
-    const [panelsData, setPanelsData] = useLocalStorage('solar_panels', initialPanels);
-    const [chargersData, setChargersData] = useLocalStorage('solar_chargers', initialChargers);
+    // The catalogue lives in memory; only the user's edits are persisted (see catalogueOverrides.js).
+    const [panelsData, setPanelsData] = useState(initialPanels);
+    const [chargersData, setChargersData] = useState(initialChargers);
     const [siteControllers, setSiteControllers] = useLocalStorage('solar_site_controllers', []);
     const [hideHeavyPanels, setHideHeavyPanels] = useLocalStorage('solar_hide_heavy_panels', false);
     const [hideMarginalPanels, setHideMarginalPanels] = useLocalStorage(
@@ -239,23 +245,79 @@ export function AppStateProvider({ children }) {
                 ...a,
                 ...(migratedSelections?.[a.id] || {}),
             }));
-            setArraysData(arraysWithSelections);
-            setSiteControllers(migratedSiteControllers);
 
-            const savedChargers = localStorage.getItem('solar_chargers');
-            const mergedChargers = mergeChargers(initialChargers, { savedChargersJson: savedChargers });
-            setChargersData(mergedChargers);
+            const catalogue = loadCatalogueFromStorage(initialPanels, initialChargers);
+            setPanelsData(catalogue.panels);
+            setChargersData(catalogue.chargers);
+            const notices = [];
 
-            const savedPanels = localStorage.getItem('solar_panels');
-            if (savedPanels) {
-                const mergedPanels = mergePanels(initialPanels, savedPanels);
-                setPanelsData(mergedPanels);
+            // Move saved designs off discontinued or renamed products (src/data/replacements.json).
+            const replaced = applyReplacements(
+                { arrays: arraysWithSelections, siteControllers: migratedSiteControllers },
+                replacements,
+                {
+                    panelModels: new Set(catalogue.panels.map((p) => p.model)),
+                    controllerIds: new Set(catalogue.chargers.map((c) => c.id)),
+                }
+            );
+            setArraysData(replaced.arrays);
+            setSiteControllers(replaced.siteControllers);
+            if (replaced.changes.length > 0) {
+                const byId = (list, key, id) => list.find((x) => x[key] === id)?.name || id;
+                const lines = replaced.changes.map((c) =>
+                    c.kind === 'panel'
+                        ? byId(catalogue.panels, 'model', c.to)
+                        : byId(catalogue.chargers, 'id', c.to)
+                );
+                notices.push(
+                    `Some products in your design have been discontinued or renamed, so they were switched to their replacements: ${lines.join(', ')}. Check the array results.`
+                );
+            }
+            if (catalogue.droppedEdits > 0) {
+                notices.push(
+                    `Catalogue prices have been refreshed. ${catalogue.droppedEdits} price or note ${
+                        catalogue.droppedEdits === 1 ? 'value' : 'values'
+                    } saved by an older version of Solar Pear ${
+                        catalogue.droppedEdits === 1 ? 'was' : 'were'
+                    } replaced with current data.`
+                );
+            }
+            if (notices.length > 0) {
+                setNotification(notices.join(' '), replaced.changes.length > 0 ? 'warning' : 'info');
             }
             setLoadStatus('ok');
         } catch (e) {
             console.error('Failed to migrate localStorage', e);
             setLoadStatus('error');
         }
+    }, []);
+
+    // Persist only the user's catalogue edits, once the initial load/migration has run.
+    useEffect(() => {
+        if (loadStatus !== 'ok') return;
+        try {
+            saveCatalogueToStorage(
+                buildCatalogueOverrides(panelsData, chargersData, initialPanels, initialChargers)
+            );
+        } catch (error) {
+            console.warn('Error saving catalogue overrides', error);
+            window.dispatchEvent(new CustomEvent(STORAGE_ERROR_EVENT, { detail: { key: CATALOGUE_OVERRIDES_KEY } }));
+        }
+    }, [panelsData, chargersData, loadStatus]);
+
+    // Warn once per session when the browser refuses to save (storage full, private mode, etc.).
+    const storageWarningShown = useRef(false);
+    useEffect(() => {
+        const onStorageError = () => {
+            if (storageWarningShown.current) return;
+            storageWarningShown.current = true;
+            setNotification(
+                'Your browser could not save your latest changes (storage may be full or blocked). Download a backup now so you do not lose your design.',
+                'error'
+            );
+        };
+        window.addEventListener(STORAGE_ERROR_EVENT, onStorageError);
+        return () => window.removeEventListener(STORAGE_ERROR_EVENT, onStorageError);
     }, []);
 
     useEffect(() => {
@@ -307,8 +369,10 @@ export function AppStateProvider({ children }) {
 
     const performReset = () => {
         APP_STORAGE_KEYS.forEach((k) => localStorage.removeItem(k));
-        // Legacy migration key: no longer persisted by the app, but still should be cleared on reset.
+        // Legacy keys: no longer persisted by the app, but still cleared on reset.
         localStorage.removeItem('solar_selections');
+        localStorage.removeItem(LEGACY_PANELS_KEY);
+        localStorage.removeItem(LEGACY_CHARGERS_KEY);
         setArraysData(initialArrays);
         setPanelsData(initialPanels);
         setChargersData(initialChargers);

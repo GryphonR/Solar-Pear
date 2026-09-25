@@ -241,10 +241,106 @@ describe('applyBackupData', () => {
             },
             setters
         );
-        expect(panels[0].datasheetUrl).toBe('');
-        expect(panels[0].buyLinks).toHaveLength(1);
-        expect(panels[0].buyLinks[0].URL).toMatch(/^https:\/\/example\.com/);
+        // Legacy (≤ v4) backups: a custom panel is kept, sanitised, after the bundled catalogue.
+        const p1 = panels.find((p) => p.model === 'P1');
+        expect(p1.datasheetUrl).toBe('');
+        expect(p1.buyLinks).toHaveLength(1);
+        expect(p1.buyLinks[0].URL).toMatch(/^https:\/\/example\.com/);
         expect(warnings).toEqual([]);
+    });
+
+    const captureSetters = () => {
+        const out = {};
+        const setters = {
+            setAreasData: () => {},
+            setArraysData: () => {},
+            setPanelsData: (v) => {
+                out.panels = v;
+            },
+            setChargersData: (v) => {
+                out.chargers = v;
+            },
+            setSiteControllers: () => {},
+            setAreaSettingsByArea: () => {},
+            setSystemVoltage: () => {},
+            setHiddenChargerMfr: () => {},
+            setHideHeavyPanels: () => {},
+            setHideMarginalPanels: () => {},
+            setUserNotes: () => {},
+        };
+        return { out, setters };
+    };
+    const bundled = {
+        panels: [
+            { model: 'A', price: 100, priceCheckedAt: '2026-08-01' },
+            { model: 'B', price: 120, priceCheckedAt: '2026-08-01' },
+        ],
+        chargers: [{ id: 'C', price: 90, priceCheckedAt: '2026-08-01' }],
+    };
+
+    it('v5 backups export only user edits and restore them over the current catalogue', () => {
+        const payload = buildBackupPayload(
+            {
+                areasData: ['House'],
+                arraysData: [],
+                panelsData: [{ ...bundled.panels[0], price: 95 }, bundled.panels[1], { model: 'MINE', price: 10 }],
+                chargersData: bundled.chargers,
+                siteControllers: [],
+            },
+            bundled
+        );
+        expect(payload.panelsData).toBeUndefined();
+        expect(payload.catalogueOverrides.panels).toEqual({
+            overrides: { A: { price: 95 } },
+            custom: [{ model: 'MINE', price: 10 }],
+            removed: [],
+        });
+
+        // Restore against a refreshed catalogue: the edit survives, the untouched price refreshes.
+        const refreshed = {
+            panels: [
+                { model: 'A', price: 80, priceCheckedAt: '2026-09-20' },
+                { model: 'B', price: 110, priceCheckedAt: '2026-09-20' },
+            ],
+            chargers: bundled.chargers,
+        };
+        const { out, setters } = captureSetters();
+        applyBackupData(JSON.parse(JSON.stringify(payload)), setters, refreshed);
+        expect(out.panels.map((p) => [p.model, p.price])).toEqual([
+            ['A', 95],
+            ['B', 110],
+            ['MINE', 10],
+        ]);
+    });
+
+    it('legacy backups drop stale prices and say so', () => {
+        const { out, setters } = captureSetters();
+        const { warnings } = applyBackupData(
+            { panelsData: [{ model: 'A', price: 150, priceCheckedAt: '2026-01-01' }, bundled.panels[1]] },
+            setters,
+            bundled
+        );
+        expect(out.panels[0].price).toBe(100);
+        expect(warnings.join(' ')).toMatch(/1 saved price or note value was replaced/);
+    });
+
+    it('sanitises URLs inside v5 overrides and custom items', () => {
+        const { out, setters } = captureSetters();
+        applyBackupData(
+            {
+                catalogueOverrides: {
+                    panels: {
+                        overrides: { A: { datasheetUrl: 'javascript:alert(1)' } },
+                        custom: [{ model: 'X', buyLinks: [{ Supplier: 'Bad', URL: 'javascript:evil()' }] }],
+                        removed: [],
+                    },
+                },
+            },
+            setters,
+            bundled
+        );
+        expect(out.panels.find((p) => p.model === 'A').datasheetUrl).toBe('');
+        expect(out.panels.find((p) => p.model === 'X').buyLinks).toEqual([]);
     });
 
     it('throws when root is not an object', () => {

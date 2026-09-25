@@ -1,4 +1,5 @@
 import { safeHttpUrl } from './safeUrl';
+import { sanitizeCatalogueDiff } from './catalogueOverrides';
 
 /**
  * Sanitize buyLinks (array or legacy object) to http(s) URLs only.
@@ -102,6 +103,32 @@ export function validateBackupPayload(imported) {
         data.chargersData = data.chargersData
             .map(sanitizeCatalogItem)
             .filter((c) => c && typeof c.id === 'string' && c.id);
+    }
+
+    if (data.catalogueOverrides !== undefined) {
+        const co = data.catalogueOverrides;
+        if (!co || typeof co !== 'object' || Array.isArray(co)) {
+            warnings.push('Ignored invalid catalogueOverrides.');
+            delete data.catalogueOverrides;
+        } else {
+            // Overrides and custom items can carry URLs, so sanitise them like full catalogue items.
+            const clean = (diff, idKey) => {
+                const d = sanitizeCatalogueDiff(diff) || { overrides: {}, custom: [], removed: [] };
+                const overrides = {};
+                for (const [id, fields] of Object.entries(d.overrides)) {
+                    const item = sanitizeCatalogItem(fields);
+                    if (item) overrides[id] = item;
+                }
+                const custom = d.custom
+                    .map(sanitizeCatalogItem)
+                    .filter((x) => x && typeof x[idKey] === 'string' && x[idKey]);
+                return { overrides, custom, removed: d.removed };
+            };
+            data.catalogueOverrides = {
+                panels: clean(co.panels, 'model'),
+                chargers: clean(co.chargers, 'id'),
+            };
+        }
     }
 
     if (data.siteControllers) {
