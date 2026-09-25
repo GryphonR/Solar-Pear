@@ -146,16 +146,17 @@ export default function ControllersGuideView() {
                     12 V battery.
                 </p>
                 <Takeaway>
-                    PWM only makes sense on a small system built around voltage-matched panels. Any
-                    modern 108-cell module has far too high a Vmp to waste on a PWM controller, and
-                    every controller in the database is an MPPT design for that reason.
+                    PWM only makes sense on a small system built around voltage-matched panels. A
+                    modern 108 half-cell module, with a Vmp around 31 V, wastes more than half its
+                    output on a PWM controller charging a 12 V battery, and every controller in the
+                    database is an MPPT design for that reason.
                 </Takeaway>
             </GuideSection>
 
             {/* ---------------------------------------------------------------- Device types */}
             <GuideSection
                 title="The device families"
-                subtitle="Seven things a string of panels can plug into, and what each is for."
+                subtitle="Seven device types you will meet, which of them panels can plug into, and what each is for."
             >
                 <TechCard
                     name={CONTROLLER_TYPE_LABELS[CONTROLLER_TYPE.CHARGER]}
@@ -226,8 +227,8 @@ export default function ControllersGuideView() {
                         Panels in, AC out, nothing else. String inverters were the standard
                         residential product before storage became common, and remain the norm for
                         commercial rooftops where the goal is generation rather than resilience. The
-                        units here reach far higher PV voltages than any battery-based device, which
-                        is what makes very long strings possible.
+                        units here typically accept higher PV voltages than battery-based devices,
+                        which is what makes very long strings possible.
                     </p>
                 </TechCard>
 
@@ -237,23 +238,33 @@ export default function ControllersGuideView() {
                     pros={[
                         'Per-panel tracking, so shading on one module costs you only that module',
                         'No high-voltage DC on the roof, which simplifies safety',
-                        'Add panels one at a time, in any orientation, with no string maths',
+                        'Add panels one at a time, in any orientation, with no series-string maths',
                         'Per-panel monitoring makes faults obvious',
                     ]}
                     cons={[
                         'Highest cost per watt of any option',
-                        'One unit per panel means many more devices to fail, all on the roof',
+                        'One unit per panel or small group means many more devices to fail, all on the roof',
                         'Battery storage needs a separate AC-coupled inverter',
-                        'Each unit takes one or two panels only, so nothing scales by stringing',
+                        'Each unit takes one to four panels, so large arrays mean many units',
                     ]}
                     examples={micro.chips}
                 >
                     <p>
-                        A microinverter mounts behind a single panel and converts to AC there. The
-                        low maximum PV voltages in the database reflect that: these devices expect
-                        one module, not a string, so the series-string arithmetic that dominates every
-                        other choice does not apply. They come into their own on complex or shaded
-                        roofs with several orientations.
+                        A microinverter mounts behind one panel, or a small group of two or four on
+                        multi-input models, and converts to AC there. The low maximum PV voltages in
+                        the database reflect that: each input expects one module, not a string, so
+                        the series-string arithmetic that dominates every other choice does not
+                        apply. They come into their own on complex or shaded roofs with several
+                        orientations.
+                    </p>
+                    <p>
+                        The checks still matter, just per panel rather than per string. Each
+                        panel&apos;s cold Voc must stay under the micro&apos;s input limit and its
+                        current inside the input rating, and Solar Pear checks every panel against
+                        its micro individually. The bill of materials counts one micro for each panel,
+                        or for each group of two or four on a multi-input unit. Watch the power
+                        rating too: a panel much larger than the micro&apos;s continuous AC output is
+                        clipped every sunny midday, and the array page flags it.
                     </p>
                 </TechCard>
 
@@ -281,7 +292,7 @@ export default function ControllersGuideView() {
                                 MPPT charge controller on the DC side. This is the usual backbone of
                                 a larger off-grid or backup system.
                             </p>
-                            {inverterCharger.chips}
+                            {inverterCharger.summary.count > 0 && inverterCharger.chips}
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-slate-800">
@@ -289,8 +300,10 @@ export default function ControllersGuideView() {
                             </p>
                             <p className="mt-1">
                                 Charges one battery from another, typically a vehicle&apos;s starter
-                                battery to a leisure bank, sometimes with a small PV input alongside.
-                                Its very low maximum PV voltage suits a single panel only.
+                                battery to a leisure bank. Some models add a small PV input with a
+                                low voltage ceiling, suited to a single 12 V panel; others, such as
+                                Victron&apos;s Orion range, have no PV input at all and need a
+                                separate MPPT charger for panels.
                             </p>
                             {dcdc.chips}
                         </div>
@@ -301,7 +314,7 @@ export default function ControllersGuideView() {
             {/* ------------------------------------------------------- The decisive numbers */}
             <GuideSection
                 title="The ratings that decide compatibility"
-                subtitle="Five numbers on a controller datasheet, and what each one rules out."
+                subtitle="Six numbers on a controller datasheet, and what each one rules out."
             >
                 <div className="space-y-3">
                     <div className="rounded-lg border border-red-200 bg-red-50/50 p-4">
@@ -325,7 +338,9 @@ export default function ControllersGuideView() {
                             The minimum input needed before the controller will begin converting.
                             Plenty of designs do not quote a fixed figure but need battery voltage
                             plus a margin, which means the same controller demands a different string
-                            on a 24 V bank than on a 48 V one.
+                            on a 24 V bank than on a 48 V one. Victron&apos;s chargers are a typical
+                            example: the array must exceed battery voltage by 5 V to start, then
+                            by about 1 V to keep running.
                         </p>
                         <StatRow
                             stats={[
@@ -359,11 +374,15 @@ export default function ControllersGuideView() {
                         </p>
                         <p className="mt-1">
                             Datasheets often quote both a maximum short-circuit current and a lower
-                            maximum operating current. The first is the absolute input ceiling; the
-                            second is what the tracker will actually convert continuously. Exceeding
-                            either does not damage the controller — the MPPT shifts off the maximum
-                            power point to cap output current, so you simply lose efficiency and pay
-                            for panel capacity the tracker will not use.
+                            maximum operating current, and they mean different things. The
+                            short-circuit rating is a hardware limit: the array&apos;s Isc, times its
+                            parallel strings, must stay under it, because the input stage has to
+                            survive that current if a fault or the controller shorts the array.
+                            Many manufacturers, Victron included, say plainly that exceeding it can
+                            damage the unit. The operating rating is only what the tracker will
+                            convert continuously. Above it the MPPT shifts off the maximum power
+                            point to cap the current, so you lose output and pay for panel capacity
+                            the tracker will not use, but nothing is harmed.
                         </p>
                         {currentHeadroom.length > 0 && (
                             <div className="mt-2">
@@ -372,7 +391,7 @@ export default function ControllersGuideView() {
                                     items={currentHeadroom.map((c) => ({
                                         key: c.id,
                                         name: c.manufacturer ? `${c.manufacturer} ${c.name}` : c.name,
-                                        detail: `${c.maxIsc} A fault / ${c.maxOperatingI} A working`,
+                                        detail: `${c.maxIsc} A short-circuit / ${c.maxOperatingI} A operating`,
                                     }))}
                                     onSelect={setInfoModalChargerId}
                                 />
@@ -385,21 +404,43 @@ export default function ControllersGuideView() {
                             Trackers - independent MPPT inputs
                         </p>
                         <p className="mt-1">
-                            Each tracker optimises its own string, so two trackers let you run a
+                            Each tracker optimises its own input, so two trackers let you run a
                             south roof and an east roof from one box without either dragging the
                             other down. Panels on different orientations, tilts or shading patterns
-                            should never share a tracker. You can assign one physical controller to
-                            several arrays, and the summary splits its cost between them rather than
+                            should never share a series string. Two equal-length strings on
+                            different faces can share a tracker in parallel with little loss,
+                            because string voltage depends mostly on temperature rather than on how
+                            much sun each face gets. Solar Pear keeps it simple and gives each array
+                            its own tracker. You can assign one physical controller to several
+                            arrays, and the summary splits its cost between them rather than
                             counting it twice.
+                        </p>
+                    </div>
+
+                    <div className="rounded-lg border border-slate-200 p-4">
+                        <p className="text-sm font-bold text-slate-800">
+                            Power: charge current and rated input
+                        </p>
+                        <p className="mt-1">
+                            A charge controller&apos;s name usually gives its battery-side current,
+                            not its power: a 100/30 accepts up to 100 V and delivers up to 30 A into
+                            the battery. At 12 V that is only about 440 W, however many panels are
+                            connected, while the same unit on a 24 V bank handles twice that. This is
+                            the most common off-grid sizing mistake. Inverters state the limit
+                            directly as a maximum DC input power. Some overpanelling is normal and
+                            sensible, since panels rarely reach their rated output, but beyond about
+                            130% of the controller&apos;s capacity the power you lose to clipping
+                            grows quickly.
                         </p>
                     </div>
                 </div>
 
                 <Takeaway>
-                    Voltage limits are absolute and current limits are usually just wasteful, so when
-                    a design is marginal, get the cold-voltage margin right first. Then check that
-                    your working voltage sits inside the tracking window at both temperature
-                    extremes, and only then worry about current.
+                    Voltage and short-circuit current are hard limits; operating current and power
+                    only cost you output. When a design is marginal, get the cold-voltage margin and
+                    the short-circuit current right first. Then check that your working voltage sits
+                    inside the tracking window at both temperature extremes, and finally that the
+                    controller&apos;s power rating is sensible for the array.
                 </Takeaway>
             </GuideSection>
 
@@ -425,6 +466,16 @@ export default function ControllersGuideView() {
                     again: the standard for export limitation. It works alongside G99 rather than
                     instead of it, and capping export is often how a larger system gets approved
                     quickly on a constrained part of the network.
+                </p>
+                <p>
+                    Two other rules catch DIY installers. To be paid for exported power under the{' '}
+                    <span className="font-semibold text-slate-800">Smart Export Guarantee</span>, most
+                    suppliers require the panels and inverter to be MCS certified and the system to
+                    be installed by an MCS-certified installer. And in England and Wales, adding a
+                    new circuit for a solar or battery system is notifiable electrical work under{' '}
+                    <span className="font-semibold text-slate-800">Part P</span> of the Building
+                    Regulations, so it must be done or signed off by a registered competent person,
+                    or notified to building control.
                 </p>
 
                 <StatRow
@@ -481,11 +532,11 @@ export default function ControllersGuideView() {
                 subtitle="From these specifications back to your arrays."
             >
                 <p>
-                    A workable choice comes down to four questions in order: does it suit your system
+                    A workable choice comes down to five questions in order: does it suit your system
                     type and battery voltage, will your string stay under its voltage ceiling when
-                    cold, will it still start when hot, and can its trackers take your current. The
-                    first eliminates most candidates, and the remaining three are the checks Solar
-                    Pear runs for you on every array.
+                    cold, will it still start when hot, can its trackers take your current, and is
+                    its power rating sensible for the array. The first eliminates most candidates,
+                    and Solar Pear checks the rest for you on every array.
                 </p>
                 <button
                     type="button"

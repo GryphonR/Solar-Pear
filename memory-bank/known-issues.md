@@ -14,7 +14,7 @@ Status key: OPEN / FIXED. Update this file as issues are resolved.
 
 18. **OPEN** – Fangpusun VarioTrack VT-65/VT-80 have `maxIsc: 0` (unpublished in the data), so their current checks are skipped. Needs datasheet values.
 19. **OPEN** – Victron EasySolar-II records look inconsistent with their built-in MPPTs. The 24/3000/70 and 48/3000/35 have `maxIsc`/`maxOperatingI` 50/50, but `MaxDCPower` implies a 250/70 (35 A Isc). None has `maxChargeCurrent`. Verify against datasheets.
-20. **OPEN** – `ControllersGuideView.jsx` (the "maximum short-circuit current vs operating current" card) still says exceeding either rating "does not damage the controller". That contradicts decision D1 (Isc over the rating is an error). It was left alone in the phase 1 PR because the file had concurrent uncommitted edits.
+20. **FIXED** – `ControllersGuideView.jsx` (the "maximum short-circuit current vs operating current" card) still says exceeding either rating "does not damage the controller". That contradicts decision D1 (Isc over the rating is an error). It was left alone in the phase 1 PR because the file had concurrent uncommitted edits.
 
 ## State and persistence
 9. **OPEN – Stale prices for returning users.** `mergePanels`/`mergeChargers` (`src/lib/migration.js`) always keep the saved `price` (and charger `notes`) from localStorage. Because the full catalogue is persisted on first visit, refreshed catalogue prices never reach returning users. Only store user **overrides**, e.g. a `priceOverrides` map.

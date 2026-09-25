@@ -170,7 +170,7 @@ export default function PanelsGuideView() {
                     diamond wire sawing and larger furnaces collapsed the cost of mono wafers, and
                     the reason to accept the efficiency penalty disappeared with it. Poly is no
                     longer in mainstream production, so unless you are buying second-hand or working
-                    on an array installed before about 2018, every panel you consider will be mono.
+                    on an array installed before about 2020, every panel you consider will be mono.
                     Everything below is a variation on the monocrystalline cell.
                 </p>
                 {monoGeneric.summary.count > 0 && (
@@ -198,16 +198,19 @@ export default function PanelsGuideView() {
                 </p>
                 <p>
                     Splitting the module into two electrically independent halves also helps in
-                    partial shade: shading the bottom row no longer drags down the top. Half-cut
-                    construction is universal on modern panels, so it is a baseline rather than a
-                    differentiator.
+                    partial shade: with the panel in portrait, shading along the bottom edge no
+                    longer drags down the top half. Shade running up the long side still hits both
+                    halves, so the benefit depends on orientation. Half-cut construction is
+                    universal on modern panels, so it is a baseline rather than a differentiator.
                 </p>
                 <p>
                     What does still vary is how many cells are in series, and that decides the
                     module&apos;s voltage and current profile - which in turn decides how many you
                     can put in a string. More cells in series means higher voltage per module, so
                     fewer modules fit under your controller&apos;s voltage ceiling. Larger wafers
-                    push current up instead.
+                    push current up instead. Some of the largest wafers are cut into thirds rather
+                    than halves, so a 162 or 198 &quot;half-cell&quot; module is really 54 or 66
+                    cells in series. Voc is the reliable guide to voltage, not the cell count.
                 </p>
 
                 {cellFormats.length > 0 && (
@@ -216,7 +219,6 @@ export default function PanelsGuideView() {
                             <thead>
                                 <tr className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                                     <th className="py-1.5 pr-3">Format</th>
-                                    <th className="py-1.5 pr-3">Full cells</th>
                                     <th className="py-1.5 pr-3">In the database</th>
                                     <th className="py-1.5 pr-3">Average Voc</th>
                                     <th className="py-1.5">Average Isc</th>
@@ -227,9 +229,6 @@ export default function PanelsGuideView() {
                                     <tr key={format.cellCount} className="border-t border-slate-200">
                                         <td className="py-2 pr-3 font-mono font-semibold text-slate-800">
                                             {format.cellCount} half-cell
-                                        </td>
-                                        <td className="py-2 pr-3 text-slate-500 tabular-nums">
-                                            {format.cellCount / 2}
                                         </td>
                                         <td className="py-2 pr-3 text-slate-500 tabular-nums">
                                             {format.panels.length}
@@ -248,11 +247,11 @@ export default function PanelsGuideView() {
                 )}
 
                 <Takeaway>
-                    A 144 half-cell module runs at roughly twice the voltage of a 108, so barely half
-                    as many will fit in a series string before you hit the controller&apos;s limit.
-                    Large-format modules also push current hard enough to matter: a G12-wafer panel
-                    can approach 16 A on its own, which will exhaust many trackers with a single
-                    string in parallel.
+                    A 144 half-cell module has 72 cells in series against 54 for a 108, so it runs at
+                    about a third more voltage and only around three quarters as many will fit in a
+                    series string before you hit the controller&apos;s limit. Large-format modules
+                    also push current hard enough to matter: a G12-wafer panel can exceed 18 A on
+                    its own, which will exhaust many trackers with a single string in parallel.
                 </Takeaway>
             </GuideSection>
 
@@ -273,23 +272,26 @@ export default function PanelsGuideView() {
                     Boron is the problem. In p-type silicon it pairs with residual oxygen to form
                     boron-oxygen complexes that trap charge carriers as soon as the panel first sees
                     strong light. That is light-induced degradation, and it costs a p-type module
-                    roughly 1.5–2.5% of its output in year one. N-type wafers have no boron, so they
-                    sidestep the mechanism entirely and typically lose under 1% in the first year.
-                    N-type is also far more tolerant of the metal impurities that are impossible to
-                    eliminate completely from production silicon.
+                    roughly 1.5–2.5% of its output in year one. Since about 2020 most p-type
+                    production has switched from boron to gallium doping, which largely removes this
+                    mechanism, so a recent PERC panel suffers much less of it than an older one.
+                    N-type wafers have no boron in the base at all, and typically lose around 1% in
+                    the first year. N-type is also far more tolerant of the metal impurities that
+                    are impossible to eliminate completely from production silicon.
                 </p>
                 <p>
-                    N-type cells hold their voltage better as they heat up too, which is why every
-                    modern architecture - TOPCon, HJT, back-contact - is built on an n-type wafer.
+                    N-type cells lose less power as they heat up too, which is why every modern
+                    architecture - TOPCon, HJT, back-contact - is built on an n-type wafer.
                     Long-term degradation follows the same pattern: around 0.5% a year for p-type
-                    PERC against 0.25–0.4% for n-type designs, which compounds into roughly 5–10%
+                    PERC against 0.25–0.4% for n-type designs, which compounds into roughly 4–7%
                     more output by year 25.
                 </p>
                 <Takeaway>
-                    A gentler voltage temperature coefficient cuts both ways in your design. It means
-                    less output lost on a hot day, but it also means less voltage spike on a freezing
-                    morning - so an n-type panel often lets you put one more module in a series
-                    string before the cold-voltage check fails.
+                    Do not expect an n-type panel to fit more modules in a string. Its gentler
+                    temperature coefficient cuts hot-day losses, but the difference in cold-morning
+                    voltage rise is only around 1%, and n-type cells start from a higher voltage per
+                    cell. A TOPCon module often has a higher cold Voc than a PERC module of the same
+                    format, so check the string length rather than assuming.
                 </Takeaway>
             </GuideSection>
 
@@ -300,7 +302,7 @@ export default function PanelsGuideView() {
             >
                 <TechCard
                     name="PERC"
-                    alsoCalled="Passivated Emitter and Rear Cell, or Q.ANTUM in Q-Cells branding"
+                    alsoCalled="Passivated Emitter and Rear Cell; the original Q.ANTUM in Q-Cells branding (Q.ANTUM NEO is TOPCon)"
                     stats={statsFor(perc.summary, '20–22%', '−0.34 to −0.39%/°C')}
                     pros={[
                         'Cheapest silicon technology per watt, and widely available second-hand',
@@ -309,7 +311,7 @@ export default function PanelsGuideView() {
                     ]}
                     cons={[
                         'Worst temperature coefficient of any current architecture',
-                        'Suffers boron-oxygen light-induced degradation in year one',
+                        'Older boron-doped panels suffer light-induced degradation in year one',
                         'Also prone to LeTID, a slower heat-and-current degradation mode',
                         'Being retired from production, so it is now a legacy choice',
                     ]}
@@ -330,7 +332,7 @@ export default function PanelsGuideView() {
                     alsoCalled="i-TOPCon or N-TOPCon; Tunnel Oxide Passivated Contact"
                     stats={statsFor(topcon.summary, '22–24%', '−0.28 to −0.32%/°C')}
                     pros={[
-                        'The current mainstream: around 65% of global cell production',
+                        'The current mainstream: the majority of global cell production since 2024',
                         'Noticeably better temperature behaviour and degradation than PERC',
                         'Price premium over PERC has compressed to roughly 0–10%',
                         'Strong bifaciality, typically 75–85%',
@@ -360,10 +362,10 @@ export default function PanelsGuideView() {
                         'Best temperature coefficient in mass production, so the least hot-day loss',
                         'Lowest degradation of any silicon technology, around 0.25–0.30% a year',
                         'Excellent low-light performance for early mornings and overcast days',
-                        'Highest bifaciality, typically 85–95%',
+                        'Highest bifaciality, typically 85–90%',
                     ]}
                     cons={[
-                        'Costs roughly 15–30% more per watt than TOPCon',
+                        'Usually costs more per watt than TOPCon',
                         'Needs a purpose-built production line, so supply is a fraction of TOPCon',
                         'Low-temperature processing demands more silver and specialised pastes',
                         'Historically more sensitive to moisture ingress, so encapsulation matters',
@@ -376,7 +378,9 @@ export default function PanelsGuideView() {
                         superbly while also forming the junction, which is where the name comes from:
                         two different materials meeting rather than one material doped two ways. The
                         result is the flattest temperature response of any mass-produced silicon
-                        cell, and a laboratory record of 26.7%.
+                        cell. HJT cells with contacts on both faces have reached about 26.8% in the
+                        laboratory, and combining heterojunction with back contacts has pushed past
+                        27%.
                     </p>
                 </TechCard>
 
@@ -391,9 +395,9 @@ export default function PanelsGuideView() {
                         'Better partial-shade behaviour, with far less localised overheating',
                     ]}
                     cons={[
-                        'The most expensive silicon per watt, commonly 30–50% above TOPCon',
+                        'Costs more per watt than TOPCon, from a modest premium for LONGi and Aiko to a large one for Maxeon',
                         'More complex to manufacture, with fewer suppliers to choose from',
-                        'Rarely bifacial, since the rear face is occupied by contacts',
+                        'Lower bifaciality where offered, around 60–70%, since the rear carries all the contacts',
                         'Repairs and matched replacements are harder years later',
                     ]}
                     examples={backContact.chips}
@@ -403,7 +407,7 @@ export default function PanelsGuideView() {
                         current, and that metal casts a shadow on the silicon underneath it.
                         Back-contact designs move both the positive and negative contacts to the
                         rear, interleaved in a comb pattern, leaving the front face completely free
-                        of metal. LONGi measures the resulting optical gain at 3–5%, with front
+                        of metal. LONGi quotes the resulting optical gain at 3–5%, with front
                         surface reflectance falling to about 1.5%.
                     </p>
                     <p>
@@ -438,9 +442,8 @@ export default function PanelsGuideView() {
                     <span className="font-semibold text-slate-800">multi-busbar</span> designs using
                     nine to sixteen thin round wires. Round wire matters: a 0.3 mm wire blocks less
                     than a flat ribbon of the same conductance, and its curved top scatters some
-                    light sideways into the encapsulant where it can reflect back into the cell.
-                    Effective shading from round wire is only about half to sixty percent of its
-                    geometric shading.
+                    light sideways into the encapsulant where it can reflect back into the cell, so
+                    a round wire shades noticeably less than its width suggests.
                 </p>
                 <p>
                     The current end point is{' '}
@@ -574,24 +577,26 @@ export default function PanelsGuideView() {
                     strengthened by heating it and then cooling the surfaces faster than the core, which
                     leaves the outside in compression. Do it hard and you get{' '}
                     <span className="font-semibold text-slate-800">fully tempered</span> glass, with a
-                    surface compression of 90 MPa or more. Do it gently and you get{' '}
+                    surface compression of at least 69 MPa under the ASTM C1048 standard. Do it
+                    gently and you get{' '}
                     <span className="font-semibold text-slate-800">heat-strengthened</span> glass, at
-                    roughly 24 to 69 MPa.
+                    roughly 24 to 52 MPa.
                 </p>
                 <p>
-                    The catch is that you cannot establish a steep enough temperature gradient through
-                    a pane much thinner than 3 mm. Below that, most production lines can only
-                    heat-strengthen. So the 3.2 mm front pane on a conventional module is fully
-                    tempered, while the 2.0 mm and 1.6 mm panes in a glass-glass module are only
-                    heat-strengthened - typically about half as strong. Thickness and treatment work in
-                    the same direction, and that compounds the difference.
+                    The catch is that it is hard to establish a steep enough temperature gradient
+                    through a pane much thinner than 3 mm. Below that, most production lines can only
+                    heat-strengthen, although some suppliers now offer fully tempered 2 mm glass. So
+                    the 3.2 mm front pane on a conventional module is fully tempered, while the 2.0
+                    mm and 1.6 mm panes in most glass-glass modules are only heat-strengthened -
+                    typically about half as strong. Thickness and treatment work in the same
+                    direction, and that compounds the difference.
                 </p>
                 <p>
-                    It shows up clearly under impact. Independent hail testing puts a 3.2 mm tempered
-                    front pane over a backsheet at roughly twice as resilient as a 2.0 + 2.0 mm
-                    glass-glass module, measured at the energy where half the samples break. Struck by
-                    50 mm hail, glass-glass breakage rates have reached 89% against 34% for fully
-                    tempered single glass. Tempered glass also fails more safely, shattering into small
+                    It shows up clearly under impact. Independent hail testing has found a 3.2 mm
+                    tempered front pane over a backsheet roughly twice as resilient as a 2.0 + 2.0 mm
+                    glass-glass module, measured at the energy where half the samples break, and at
+                    large hailstone sizes thin glass-glass modules have broken several times as often
+                    as tempered single glass. Tempered glass also fails more safely, shattering into small
                     blunt fragments rather than large shards. This is why manufacturers selling into
                     hail-prone parts of the United States went back to 3.2 mm front glass for those
                     markets, accepting nearly 8 kg of extra weight per module to do it.
@@ -654,7 +659,7 @@ export default function PanelsGuideView() {
                 <p>
                     Which risk dominates depends on where you are, and this is where advice written for
                     other markets misleads. The hail argument driving the American debate concerns
-                    stones of 40 mm and up, which are effectively unknown in the United Kingdom. The
+                    stones of 40 mm and up, which are rare in the United Kingdom. The
                     stresses a British roof actually applies are wind uplift, snow load and thirty years
                     of moisture - and those are precisely the three that a glass-glass laminate handles
                     better. One practical caveat pulls the other way: large thin-glass modules are
@@ -678,8 +683,8 @@ export default function PanelsGuideView() {
                 subtitle="Real on the right mounting, close to worthless on the wrong one."
             >
                 <p>
-                    A bifacial module generates from both faces, so it needs a transparent rear  - 
-                    which in practice means glass-glass construction. Its{' '}
+                    A bifacial module generates from both faces, so it needs a transparent rear  -
+                    usually a second pane of glass, occasionally a transparent backsheet. Its{' '}
                     <span className="font-semibold text-slate-800">bifaciality factor</span> is how
                     efficient the back is relative to the front: about 70% for PERC, 80% for TOPCon
                     and up to 90% for HJT. That figure caps the benefit; what you actually get
@@ -778,8 +783,9 @@ export default function PanelsGuideView() {
                     neighbours costs you output: a chimney shadow, a patch of moss, leaf litter, a
                     different roof orientation, or simply the spread in manufacturing tolerance and
                     ageing. Collectively this is called{' '}
-                    <span className="font-semibold text-slate-800">mismatch</span>, and it can account
-                    for around a tenth of a string&apos;s output.
+                    <span className="font-semibold text-slate-800">mismatch</span>. On a clean,
+                    unshaded array it typically costs 1–3% of a string&apos;s output; shading can
+                    push it far higher.
                 </p>
                 <p>
                     Before reaching for extra hardware, it is worth knowing what your panels already
@@ -824,15 +830,15 @@ export default function PanelsGuideView() {
                 </div>
 
                 <p>
-                    Those ranges are worth reading carefully. The largest study of the question
-                    monitored 542 systems and found a median shading loss of 8.3% with optimisers
-                    fitted, against 13% had the arrays relied on bypass diodes alone. In other words
-                    optimisers recovered about 36% of the shading loss, not all of it. A single system
-                    measured before and after retrofit gained 5.8% a year. Even SolarEdge&apos;s own
-                    published comparison claims 1.9%, 5.0% and 8.4% for light, medium and heavy
-                    shading. On a genuinely unshaded array the devices consume a little power of their
-                    own, and testing at the University of Southern Denmark found total output can fall
-                    slightly as a result.
+                    Those ranges are worth reading carefully. One large monitoring study of 542
+                    systems reported a median shading loss of 8.3% with optimisers fitted, against an
+                    estimated 13% had the arrays relied on bypass diodes alone. In other words
+                    optimisers recovered about a third of the shading loss, not all of it. A single
+                    system measured before and after retrofit gained 5.8% a year. Even
+                    SolarEdge&apos;s own published comparison claims 1.9%, 5.0% and 8.4% for light,
+                    medium and heavy shading. On a genuinely unshaded array the devices consume a
+                    little power of their own, and testing at the University of Southern Denmark
+                    reported that total output can fall slightly as a result.
                 </p>
 
                 <div className="rounded-lg border border-amber-200/80 bg-amber-50/60 p-4">
@@ -850,10 +856,11 @@ export default function PanelsGuideView() {
                             string at a fixed voltage, 380 V on a single-phase inverter, whatever the
                             string length, irradiance or temperature. SolarEdge state plainly that this
                             removes the temperature constraint that limits string length in
-                            conventional systems, so there is no cold-Voc sum to check. Strings are
-                            instead limited by optimiser count, at most 25 on a single-phase inverter,
-                            and by power. Size these with SolarEdge&apos;s own tool rather than the
-                            checks here.
+                            conventional systems, so there is no cold-Voc string sum to check. Each
+                            module&apos;s cold Voc must still fit its optimiser&apos;s input limit,
+                            typically 60 V for a single-module unit. Strings are instead limited by
+                            optimiser count, at most 25 on a single-phase inverter, and by power.
+                            Size these with SolarEdge&apos;s own tool rather than the checks here.
                         </li>
                         <li>
                             <span className="font-semibold text-slate-800">Tigo</span> and similar
@@ -868,7 +875,10 @@ export default function PanelsGuideView() {
                 <p>
                     Two further differences matter in practice. Tigo can be deployed selectively, on
                     just the few shaded panels, and retrofitted to an existing array, whereas
-                    SolarEdge is an all-or-nothing architecture chosen at design time. On the other
+                    SolarEdge is an all-or-nothing architecture chosen at design time. Huawei sits
+                    between the two: its optimisers can go on just some panels, but only with a
+                    Huawei inverter, and the optimised panels then no longer follow ordinary string
+                    voltage rules either. On the other
                     hand, because SolarEdge decouples each module from the string entirely, it will
                     happily run mismatched modules and several orientations on one string, and its
                     SafeDC behaviour drops each optimiser to 1 V when the inverter is off. That makes
@@ -914,16 +924,19 @@ export default function PanelsGuideView() {
                     startup threshold, the MPPT won&apos;t track during peak heat (temporary harvest
                     loss, not hardware damage).{' '}
                     <span className="font-semibold text-slate-800">Isc</span> multiplied by your
-                    parallel strings ideally stays inside the tracker&apos;s current rating —
-                    exceeding it causes clipping (lost efficiency) rather than damage. And{' '}
+                    parallel strings must stay inside the tracker&apos;s maximum short-circuit
+                    current, which most manufacturers treat as a hard limit. Operating current above
+                    the tracker&apos;s lower working rating is different: that is simply clipped,
+                    losing output rather than damaging anything. And{' '}
                     <span className="font-semibold text-slate-800">physical size and weight per
                     square metre</span>{' '}
                     decide what fits the roof and the mounting system.
                 </p>
                 <p>
-                    This is why the newer architectures are worth more than their efficiency headline
-                    suggests: a gentler voltage coefficient widens the range of workable string
-                    lengths, which often means a cheaper controller can do the job.
+                    The newer architectures earn their premium through watts per square metre,
+                    hot-day output and slower degradation. They do not usually change how many
+                    modules fit in a string, so run the checks rather than assuming a better panel
+                    also suits a smaller controller.
                 </p>
                 <button
                     type="button"
