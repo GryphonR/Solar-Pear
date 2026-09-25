@@ -33,8 +33,10 @@ export const GLASS_TYPE = {
  * goes uncited rather than being grouped as though it described a cell design.
  */
 const TECH_RULES = [
-    // ABC (Aiko), HPBC (LONGi) and IBC (Maxeon) are all rear-contact families.
-    { tech: PANEL_TECH.BACK_CONTACT, pattern: /\b(ABC|HPBC|IBC)\b/i },
+    // ABC (Aiko), HPBC and HIBC (LONGi) and IBC (Maxeon) are all rear-contact families. HIBC is a
+    // heterojunction back-contact cell, grouped with back-contact because the rear contacts are
+    // what set its trade-offs.
+    { tech: PANEL_TECH.BACK_CONTACT, pattern: /\b(ABC|HPBC|H?IBC)\b/i },
     { tech: PANEL_TECH.HJT, pattern: /\b(HJT|heterojunction)\b/i },
     { tech: PANEL_TECH.TOPCON, pattern: /TOPCon/i },
     { tech: PANEL_TECH.HJT, pattern: /\bHIT\b/ },
@@ -140,6 +142,30 @@ export function summarisePanelGroup(panels, exampleLimit = 3) {
         bifacialCount: list.filter((p) => p.bifacial === true).length,
         examples,
     };
+}
+
+/**
+ * Lists the distinct panel series in a group, gathered under their manufacturer, so the guide can
+ * say who makes each technology. Records with no series name are left out rather than listed by
+ * model number.
+ *
+ * @param {object[]} panels Panels sharing a technology or construction.
+ * @returns {{ manufacturer: string, series: string[] }[]} Alphabetical by manufacturer, then series.
+ */
+export function listSeriesByManufacturer(panels) {
+    const byManufacturer = new Map();
+    for (const panel of Array.isArray(panels) ? panels : []) {
+        const manufacturer = panel?.manufacturer?.trim();
+        const series = panel?.['panel-series']?.trim();
+        if (!manufacturer || !series) continue;
+        if (!byManufacturer.has(manufacturer)) byManufacturer.set(manufacturer, new Set());
+        byManufacturer.get(manufacturer).add(series);
+    }
+
+    const compare = (a, b) => a.localeCompare(b, 'en', { sensitivity: 'base', numeric: true });
+    return [...byManufacturer.entries()]
+        .sort(([a], [b]) => compare(a, b))
+        .map(([manufacturer, series]) => ({ manufacturer, series: [...series].sort(compare) }));
 }
 
 /**

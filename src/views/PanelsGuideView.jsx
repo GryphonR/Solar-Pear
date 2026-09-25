@@ -1,7 +1,8 @@
 /**
  * @file PanelsGuideView.jsx
  * Guide to solar panel technology: cell types, front-side metallisation, glass construction and
- * bifaciality, each with the trade-offs that matter and live examples from the panel database.
+ * bifaciality, each with the trade-offs that matter and the panel series in the database that use
+ * each technology.
  *
  * Published performance ranges quoted here are the industry consensus figures for each
  * architecture; the "in the database" figures beside them are computed from the app's own
@@ -18,13 +19,14 @@ import {
     summarisePanelGroup,
     summariseGlassBuilds,
     classifyGlassType,
+    listSeriesByManufacturer,
 } from '../lib/panelTechnology';
 import {
     GuidePageHeader,
     GuideSection,
     GuideDetails,
     TechCard,
-    ExampleChips,
+    SeriesList,
     Takeaway,
     StatRow,
 } from '../components/guide/GuideBlocks';
@@ -56,7 +58,7 @@ function formatRange(range, unit, dp = 1) {
 
 export default function PanelsGuideView() {
     const { panelsData } = useDataState();
-    const { setInfoModalPanelId, setActiveTab } = useUiState();
+    const { setActiveTab } = useUiState();
 
     const techGroups = useMemo(() => groupPanelsByTechnology(panelsData), [panelsData]);
     // Require a few panels behind each row: one unusual module says nothing about a construction.
@@ -67,27 +69,30 @@ export default function PanelsGuideView() {
         () => panelsData.filter((p) => p.bifacial === true),
         [panelsData]
     );
+    const glassGlassSeries = useMemo(
+        () =>
+            listSeriesByManufacturer(
+                panelsData.filter((p) => classifyGlassType(p) === GLASS_TYPE.DUAL)
+            ),
+        [panelsData]
+    );
 
     /**
-     * Summary plus ready-made example chips for one architecture.
+     * Summary plus the list of series, by manufacturer, that use one architecture.
      *
      * @param {string} tech A `PANEL_TECH` value.
-     * @returns {{ summary: ReturnType<typeof summarisePanelGroup>, chips: import('react').ReactElement | null }}
+     * @returns {{ summary: ReturnType<typeof summarisePanelGroup>, series: import('react').ReactElement | null }}
      */
     const groupFor = (tech) => {
-        const summary = summarisePanelGroup(techGroups[tech] || []);
-        const chips = (
-            <ExampleChips
-                items={summary.examples.map((p) => ({
-                    key: p.model,
-                    name: p.name,
-                    detail: p.efficiency ? `${p.efficiency}%` : undefined,
-                }))}
-                onSelect={setInfoModalPanelId}
+        const panels = techGroups[tech] || [];
+        const summary = summarisePanelGroup(panels);
+        const series = (
+            <SeriesList
+                groups={listSeriesByManufacturer(panels)}
                 emptyNote="No panels in the database name this architecture yet."
             />
         );
-        return { summary, chips };
+        return { summary, series };
     };
 
     /**
@@ -123,7 +128,6 @@ export default function PanelsGuideView() {
     const topcon = groupFor(PANEL_TECH.TOPCON);
     const hjt = groupFor(PANEL_TECH.HJT);
     const backContact = groupFor(PANEL_TECH.BACK_CONTACT);
-    const monoGeneric = groupFor(PANEL_TECH.MONO_GENERIC);
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 pb-12">
@@ -139,8 +143,8 @@ export default function PanelsGuideView() {
                 </p>
                 <p>
                     This page walks through the technologies you will meet on datasheets, oldest to
-                    newest, with what each one is good and bad at. Every example is a panel in the
-                    database - click one to open its full specification.
+                    newest, with what each one is good and bad at. Each section lists the panel
+                    series in the database that use that technology, grouped by manufacturer.
                 </p>
             </GuidePageHeader>
 
@@ -173,15 +177,6 @@ export default function PanelsGuideView() {
                     on an array installed before about 2020, every panel you consider will be mono.
                     Everything below is a variation on the monocrystalline cell.
                 </p>
-                {monoGeneric.summary.count > 0 && (
-                    <>
-                        <p>
-                            Some entries name only &quot;monocrystalline&quot; without saying which
-                            architecture, which usually means an older or small-format module.
-                        </p>
-                        {monoGeneric.chips}
-                    </>
-                )}
             </GuideSection>
 
             {/* -------------------------------------------------- Half-cut cells and formats */}
@@ -208,9 +203,12 @@ export default function PanelsGuideView() {
                     module&apos;s voltage and current profile - which in turn decides how many you
                     can put in a string. More cells in series means higher voltage per module, so
                     fewer modules fit under your controller&apos;s voltage ceiling. Larger wafers
-                    push current up instead. Some of the largest wafers are cut into thirds rather
-                    than halves, so a 162 or 198 &quot;half-cell&quot; module is really 54 or 66
-                    cells in series. Voc is the reliable guide to voltage, not the cell count.
+                    push current up instead. Not every module follows the usual layout, either.
+                    Some of the largest wafers are cut into thirds rather than halves, so a 162 or
+                    198 &quot;half-cell&quot; module is really 54 or 66 cells in series. REC&apos;s
+                    Alpha Pure-R and Pure-RX go the other way, wiring all 80 or 88 half-cells in
+                    one series string, which gives around 60 V and 9 A per module. Voc and Isc are
+                    the reliable guide to how a module will string, not the cell count.
                 </p>
 
                 {cellFormats.length > 0 && (
@@ -315,7 +313,7 @@ export default function PanelsGuideView() {
                         'Also prone to LeTID, a slower heat-and-current degradation mode',
                         'Being retired from production, so it is now a legacy choice',
                     ]}
-                    examples={perc.chips}
+                    examples={perc.series}
                 >
                     <p>
                         PERC adds a dielectric passivation layer to the rear of a conventional p-type
@@ -342,7 +340,7 @@ export default function PanelsGuideView() {
                         'Still beaten on temperature coefficient by HJT',
                         'Beaten on watts per square metre by back-contact designs',
                     ]}
-                    examples={topcon.chips}
+                    examples={topcon.series}
                 >
                     <p>
                         TOPCon grows an ultra-thin silicon dioxide tunnel oxide on the rear of an
@@ -370,7 +368,7 @@ export default function PanelsGuideView() {
                         'Low-temperature processing demands more silver and specialised pastes',
                         'Historically more sensitive to moisture ingress, so encapsulation matters',
                     ]}
-                    examples={hjt.chips}
+                    examples={hjt.series}
                 >
                     <p>
                         HJT sandwiches a crystalline silicon wafer between ultra-thin layers of
@@ -400,7 +398,7 @@ export default function PanelsGuideView() {
                         'Lower bifaciality where offered, around 60–70%, since the rear carries all the contacts',
                         'Repairs and matched replacements are harder years later',
                     ]}
-                    examples={backContact.chips}
+                    examples={backContact.series}
                 >
                     <p>
                         Every architecture above puts some metal on the front of the cell to collect
@@ -546,6 +544,8 @@ export default function PanelsGuideView() {
                         </table>
                     </div>
                 )}
+
+                <SeriesList label="Glass-glass series in the database" groups={glassGlassSeries} />
 
                 <p>
                     Two other coverings are worth knowing. An{' '}
@@ -749,14 +749,9 @@ export default function PanelsGuideView() {
                                 },
                             ]}
                         />
-                        <ExampleChips
-                            label="Bifacial examples"
-                            items={bifacialPanels.slice(0, 4).map((p) => ({
-                                key: p.model,
-                                name: p.name,
-                                detail: p.glass,
-                            }))}
-                            onSelect={setInfoModalPanelId}
+                        <SeriesList
+                            label="Bifacial series in the database"
+                            groups={listSeriesByManufacturer(bifacialPanels)}
                         />
                     </>
                 )}

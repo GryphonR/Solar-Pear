@@ -19,11 +19,40 @@ import {
     groupPanelsByCellCount,
     summarisePanelGroup,
     summariseGlassBuilds,
+    listSeriesByManufacturer,
 } from './panelTechnology';
+
+describe('listSeriesByManufacturer', () => {
+    it('groups distinct series under each manufacturer, sorted, skipping unnamed series', () => {
+        const groups = listSeriesByManufacturer([
+            { manufacturer: 'Longi', 'panel-series': 'Hi-MO 9' },
+            { manufacturer: 'Longi', 'panel-series': 'Hi-MO 6' },
+            { manufacturer: 'Longi', 'panel-series': 'Hi-MO 9' },
+            { manufacturer: 'AIKO', 'panel-series': 'Neostar 2P' },
+            { manufacturer: 'JA Solar', 'panel-series': '' },
+            { manufacturer: 'JA Solar' },
+        ]);
+
+        expect(groups).toEqual([
+            { manufacturer: 'AIKO', series: ['Neostar 2P'] },
+            { manufacturer: 'Longi', series: ['Hi-MO 6', 'Hi-MO 9'] },
+        ]);
+    });
+
+    it('returns an empty list for no panels', () => {
+        expect(listSeriesByManufacturer([])).toEqual([]);
+        expect(listSeriesByManufacturer(undefined)).toEqual([]);
+    });
+});
 
 describe('classifyPanelTechnology', () => {
     it('recognises each back-contact family as back-contact', () => {
-        for (const cells of ['108 Half-Cell (ABC)', '108 Half-Cell (HPBC)', '66 IBC (Maxeon 6)']) {
+        for (const cells of [
+            '108 Half-Cell (ABC)',
+            '108 Half-Cell (HPBC)',
+            '108 Half-Cell (HIBC)',
+            '66 IBC (Maxeon 6)',
+        ]) {
             expect(classifyPanelTechnology({ cells })).toBe(PANEL_TECH.BACK_CONTACT);
         }
     });

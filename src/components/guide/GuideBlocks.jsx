@@ -165,6 +165,38 @@ export const ExampleChips = ({ label = 'In the database', items, onSelect, empty
 };
 
 /**
+ * Which manufacturers' series use a technology, drawn from the database. Plain text rather than
+ * links: it answers "who makes this" at a glance, and the selectors are where individual models
+ * are compared.
+ *
+ * @param {object} props
+ * @param {string} [props.label='Series in the database'] Lead-in label.
+ * @param {{ manufacturer: string, series: string[] }[]} props.groups
+ * @param {string} [props.emptyNote] Shown when no series use the technology.
+ */
+export const SeriesList = ({ label = 'Series in the database', groups, emptyNote }) => {
+    if (!groups || groups.length === 0) {
+        return emptyNote ? <p className="text-sm text-slate-500 italic">{emptyNote}</p> : null;
+    }
+
+    return (
+        <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                {label}
+            </p>
+            <dl className="grid gap-x-6 gap-y-1 sm:grid-cols-2 text-sm">
+                {groups.map(({ manufacturer, series }) => (
+                    <div key={manufacturer} className="flex gap-2 min-w-0">
+                        <dt className="font-semibold text-slate-800 flex-shrink-0">{manufacturer}</dt>
+                        <dd className="text-slate-600 min-w-0">{series.join(', ')}</dd>
+                    </div>
+                ))}
+            </dl>
+        </div>
+    );
+};
+
+/**
  * Highlighted practical conclusion, for the "so what should I do" line that ends a section.
  *
  * @param {object} props
@@ -189,7 +221,7 @@ export const Takeaway = ({ children }) => (
  * @param {import('react').ReactNode} props.children Explanation.
  * @param {string[]} [props.pros]
  * @param {string[]} [props.cons]
- * @param {import('react').ReactNode} [props.examples] Rendered `ExampleChips`.
+ * @param {import('react').ReactNode} [props.examples] Rendered `ExampleChips` or `SeriesList`.
  */
 export const TechCard = ({ name, alsoCalled, stats, children, pros, cons, examples }) => (
     <div className="rounded-xl border border-slate-200 p-4 space-y-3">
