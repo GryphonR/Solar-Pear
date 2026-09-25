@@ -40,7 +40,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "fangpusun_flexmax_80",
@@ -83,7 +86,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "fangpusun_flexmax_100_300",
@@ -99,7 +105,7 @@
         ],
         "maxV": 300,
         "maxIsc": 64,
-        "maxOperatingI": 100,
+        "maxOperatingI": 0,
         "maxChargeCurrent": 100,
         "mpptRangeMin": 30,
         "mpptRangeMax": 290,
@@ -124,7 +130,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "fangpusun_vt_65",
@@ -165,7 +174,10 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     },
     {
         "id": "fangpusun_vt_80",
@@ -206,6 +218,9 @@
         "eps": false,
         "house_backup": false,
         "three_phase": false,
-        "reviewed": false
+        "reviewed": false,
+        "reviewedAt": "",
+        "reviewedBy": "",
+        "notesReviewed": false
     }
 ]

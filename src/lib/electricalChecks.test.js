@@ -401,3 +401,15 @@ describe("unknown prices (roadmap 2.2)", () => {
         expect(r.costPerKWp).toBeNull();
     });
 });
+
+describe("unknown panel weight", () => {
+    it("fails a weight limit with a warning rather than passing as 0 kg", () => {
+        const fit = evaluatePhysicalFit({ mounting: "On Roof", maxPanelWeight: 25 }, { ...PANEL_400, weight: 0 });
+        expect(fit.isWeightOk).toBe(false);
+        expect(fit.issues).toEqual([expect.objectContaining({ code: "weight", severity: "warning" })]);
+    });
+
+    it("is irrelevant when no limit is set", () => {
+        expect(evaluatePhysicalFit({ mounting: "On Roof" }, { ...PANEL_400, weight: 0 }).isWeightOk).toBe(true);
+    });
+});

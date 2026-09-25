@@ -556,9 +556,11 @@ export function getEffectiveMaxPanelWeightKg(array, hideHeavyPanels) {
     return hideHeavyPanels ? 25 : null;
 }
 
+/** A panel with no published weight (0/blank) cannot be shown to meet a weight limit. */
 export function panelMeetsWeightCap(panel, effectiveMaxKg) {
     if (effectiveMaxKg == null) return true;
-    return panel.weight != null && panel.weight <= effectiveMaxKg;
+    const w = Number(panel.weight);
+    return w > 0 && w <= effectiveMaxKg;
 }
 
 export const isCompatibleFormat = (array, panel) => {
@@ -606,11 +608,19 @@ export function evaluatePhysicalFit(array, panel, hideHeavyPanels = false) {
     const effectiveMaxKg = getEffectiveMaxPanelWeightKg(array, hideHeavyPanels);
     const isWeightOk = panelMeetsWeightCap(panel, effectiveMaxKg);
     if (!isWeightOk && effectiveMaxKg != null) {
-        issues.push({
-            code: 'weight',
-            severity: 'error',
-            message: `FATAL PHYSICAL: The selected panel (${panel.weight}kg) exceeds your specified maximum panel weight (${effectiveMaxKg}kg) for this array.`,
-        });
+        issues.push(
+            Number(panel.weight) > 0
+                ? {
+                      code: 'weight',
+                      severity: 'error',
+                      message: `FATAL PHYSICAL: The selected panel (${panel.weight}kg) exceeds your specified maximum panel weight (${effectiveMaxKg}kg) for this array.`,
+                  }
+                : {
+                      code: 'weight',
+                      severity: 'warning',
+                      message: `The selected panel's weight is not published, so it cannot be checked against your ${effectiveMaxKg}kg limit. Confirm it with the manufacturer.`,
+                  }
+        );
     }
     return { isFormatOk, isHeightOk, isWidthOk, isWeightOk, effectiveMaxKg, issues };
 }
