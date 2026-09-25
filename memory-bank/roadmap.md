@@ -33,7 +33,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | ----- | ----- | -------- | ------------ |
 | 0 | Housekeeping | P0 | 7 / 8 |
 | 1 | Calculation correctness & safety | P0 | 11 / 12 |
-| 2 | State, persistence & pricing integrity | P0 | 0 / 6 |
+| 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 0 / 12 |
 | 4 | Affiliate infrastructure | P1 | 0 / 13 |
 | 5 | Hosting, routing & SEO | P1 | 0 / 13 |
@@ -44,7 +44,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 10 | Internationalisation | P2 | 0 / 8 |
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
-| **Total** | | | **18 / 138** |
+| **Total** | | | **24 / 138** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -126,13 +126,19 @@ The app's value and credibility, and liability, rest on these checks. Each task 
 
 ## Phase 2 – State, persistence & pricing integrity (P0)
 
-- [ ] **2.1 Store only user overrides** – Stop persisting the whole catalogue. Keep `priceOverrides` / `panelOverrides` / `controllerOverrides` maps (by model or id) plus user-added custom items, and merge them over the bundled catalogue at load time. *(KI-9)*
+- [x] **2.1 Store only user overrides** – Stop persisting the whole catalogue. Keep `priceOverrides` / `panelOverrides` / `controllerOverrides` maps (by model or id) plus user-added custom items, and merge them over the bundled catalogue at load time. *(KI-9)*
   - Acceptance: after a catalogue price change, a returning user sees the new price unless they manually overrode it. There is a migration from the current `solar_panels`/`solar_chargers` keys that keeps a saved value as an override only where it differs from the bundled one.
-- [ ] **2.2 Handle unknown prices** – Treat `price` 0 or missing as unknown: show "—" or "Price unavailable", exclude it from £/kWp sorting (sort last), and show "incomplete" on totals. *(KI-10)*
-- [ ] **2.3 Show price age** – Show "Price checked: Aug 2026" from `priceCheckedAt` in tables, modals and the BoM. Flag prices older than 60 days.
-- [ ] **2.4 Version the saved state** – Add a `schemaVersion` to both localStorage and backups, with a single migration pipeline, so future model changes (1.3, 1.7) migrate cleanly. Update `documentation/BACKUP_SCHEMA.md` and `LOCAL_STORAGE_KEYS.md`.
-- [ ] **2.5 Handle removed and renamed products** – Add a `replacedBy` field so that a discontinued model id in a user's saved design maps to its successor, with a notice.
-- [ ] **2.6 Handle a full localStorage** – Catch quota errors, which become more likely before 2.1 lands, and show a toast that suggests exporting a backup.
+  - Done: `src/lib/catalogueOverrides.js`. The legacy migration keeps a saved price only when the bundled `priceCheckedAt` equals the snapshot's (so it must be a user edit); otherwise the refreshed price wins and the user is told how many values were replaced. Verified in the browser.
+- [x] **2.2 Handle unknown prices** – Treat `price` 0 or missing as unknown: show "—" or "Price unavailable", exclude it from £/kWp sorting (sort last), and show "incomplete" on totals. *(KI-10)*
+  - Done: `src/lib/pricing.js`. Analysis gives `panelCost: null`, `costPerKWp: null` and `costIncomplete`. Tables show "—" and sort unknowns last; Summary/BoM totals exclude unpriced items and list them. Money is formatted with pence (£2,248.80).
+- [x] **2.3 Show price age** – Show "Price checked: Aug 2026" from `priceCheckedAt` in tables, modals and the BoM. Flag prices older than 60 days.
+  - Done: `PriceTag` (overview tab, info modals) and the BoM show "checked Aug 2026", in amber with "may be out of date" after 60 days.
+- [x] **2.4 Version the saved state** – Add a `schemaVersion` to both localStorage and backups, with a single migration pipeline, so future model changes (1.3, 1.7) migrate cleanly. Update `documentation/BACKUP_SCHEMA.md` and `LOCAL_STORAGE_KEYS.md`.
+  - Done: `solar_storage_version` = 2 in localStorage; backups at v5 export `catalogueOverrides`; both docs rewritten. Arrays, selections and site controllers still use their existing migrations rather than one versioned pipeline.
+- [x] **2.5 Handle removed and renamed products** – Add a `replacedBy` field so that a discontinued model id in a user's saved design maps to its successor, with a notice.
+  - Done as a separate map, `src/data/replacements.json` (`{ panels: { old: new }, controllers: { old: new } }`), rather than a field on removed records. Chains are followed and cycles ignored. Designs are remapped on load with a notice. The map is empty today.
+- [x] **2.6 Handle a full localStorage** – Catch quota errors, which become more likely before 2.1 lands, and show a toast that suggests exporting a backup.
+  - Done: `solar-storage-error` event from `useLocalStorage` and the catalogue save; a one-off error notice suggests downloading a backup.
 
 ---
 

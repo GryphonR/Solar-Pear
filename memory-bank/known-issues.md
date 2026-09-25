@@ -17,8 +17,8 @@ Status key: OPEN / FIXED. Update this file as issues are resolved.
 20. **FIXED** – `ControllersGuideView.jsx` (the "maximum short-circuit current vs operating current" card) still says exceeding either rating "does not damage the controller". That contradicts decision D1 (Isc over the rating is an error). It was left alone in the phase 1 PR because the file had concurrent uncommitted edits.
 
 ## State and persistence
-9. **OPEN – Stale prices for returning users.** `mergePanels`/`mergeChargers` (`src/lib/migration.js`) always keep the saved `price` (and charger `notes`) from localStorage. Because the full catalogue is persisted on first visit, refreshed catalogue prices never reach returning users. Only store user **overrides**, e.g. a `priceOverrides` map.
-10. **OPEN – Zero-price panels rank as cheapest.** 46 panels have `price: 0`, which gives £0/kWp in rankings and totals. Treat 0 or missing as "unknown".
+9. **FIXED – Stale prices for returning users.** `mergePanels`/`mergeChargers` (`src/lib/migration.js`) always keep the saved `price` (and charger `notes`) from localStorage. Because the full catalogue is persisted on first visit, refreshed catalogue prices never reach returning users. Only store user **overrides**, e.g. a `priceOverrides` map.
+10. **FIXED – Zero-price panels rank as cheapest.** 46 panels have `price: 0`, which gives £0/kWp in rankings and totals. Treat 0 or missing as "unknown".
 
 ## Data quality
 11. **OPEN** – A Trina buy link points to `https://dev.cclcomponents.com/new/solar-pv-modules`, which is a dev subdomain and a category page (`src/data/panels/trina.json` ~line 296).
