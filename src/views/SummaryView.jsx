@@ -2,6 +2,7 @@ import React from 'react';
 import { AlertTriangle } from '../components/Icons';
 import { useAppState } from '../context/AppStateContext';
 import { checkVictronRsSharedTrackerLimits, controllerUnitsForArray } from '../lib/arrayAnalysis';
+import { formatMoney, knownPrice, priceAge } from '../lib/pricing';
 
 export default function SummaryView() {
     const {
@@ -24,6 +25,8 @@ export default function SummaryView() {
     const bomPanels = {};
     const bomControllers = {};
     const activeModelIds = [];
+    // Components whose price is unknown (0/blank): left out of totals, and the totals say so.
+    const unpriced = new Set();
 
     // Panel rows use panel-only cost; controllers are added once below (avoids double-count).
     const panelSummaryRows = arraysData.map((array) => {
@@ -31,6 +34,7 @@ export default function SummaryView() {
         if (!analysis) return null;
 
         const panelCost = analysis.panelCost ?? 0;
+        if (analysis.panel && analysis.panelCost == null) unpriced.add(analysis.panel.name);
         totalCost += panelCost;
         const assignedArea = array.area || 'House';
         if (!areaTotals[assignedArea]) {
@@ -47,9 +51,13 @@ export default function SummaryView() {
             bomPanels[analysis.panel.model].qty += array.count;
         }
 
-        // £/kWp for the panel column uses panel-only cost
+        // £/kWp for the panel column uses panel-only cost; unknown when the panel has no price.
         const panelCostPerKWp =
-            analysis.peakPower > 0 ? panelCost / (analysis.peakPower / 1000) : 0;
+            analysis.panelCost == null
+                ? null
+                : analysis.peakPower > 0
+                  ? panelCost / (analysis.peakPower / 1000)
+                  : 0;
 
         return (
             <tr key={array.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
@@ -73,9 +81,9 @@ export default function SummaryView() {
                         <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">OK</span>
                     )}
                 </td>
-                <td className="py-3 px-4">£{panelCostPerKWp.toFixed(2)}</td>
+                <td className="py-3 px-4">{panelCostPerKWp == null ? '—' : formatMoney(panelCostPerKWp)}</td>
                 <td className="py-3 px-4 text-right font-medium text-slate-800">
-                    £{panelCost.toLocaleString()}
+                    {analysis.panel && analysis.panelCost == null ? '—' : formatMoney(panelCost)}
                 </td>
             </tr>
         );
@@ -101,7 +109,8 @@ export default function SummaryView() {
                               arraysUsingThis.reduce((n, a) => n + controllerUnitsForArray(model, a.count), 0)
                           )
                         : 1;
-                const instanceCost = (model.price || 0) * qty;
+                if (knownPrice(model) == null) unpriced.add(model.name);
+                const instanceCost = (knownPrice(model) ?? 0) * qty;
                 if (!bomControllers[model.id]) {
                     bomControllers[model.id] = { item: model, qty: 0 };
                 }
@@ -113,7 +122,7 @@ export default function SummaryView() {
                     name: qty > 1 ? `${sc.name} (${qty}×)` : sc.name,
                     modelRef: model.modelNumber ?? model.id,
                     arrayNames: arraysUsingThis.map((a) => a.name).join(', ') || '-',
-                    cost: instanceCost,
+                    cost: knownPrice(model) == null ? null : instanceCost,
                 });
                 const assignedArrayId = Object.entries(selections).find(
                     ([_, sel]) => sel.controllerInstanceId === sc.id
@@ -156,7 +165,7 @@ export default function SummaryView() {
                                         {systemTotalPower.toLocaleString()} <span className="text-xl">W</span>
                                     </p>
                                     <p className="text-sm text-emerald-300 mt-1">
-                                        £{systemTotalCost.toLocaleString()} total
+                                        {formatMoney(systemTotalCost)} total{unpriced.size > 0 ? ' (incomplete)' : ''}
                                     </p>
                                 </div>
                                 <div className="text-right">
@@ -164,7 +173,7 @@ export default function SummaryView() {
                                         Blended Cost
                                     </p>
                                     <p className="text-xl font-medium text-emerald-100">
-                                        £{systemCostPerKWp.toFixed(2)} / kWp
+                                        {unpriced.size > 0 ? '—' : `${formatMoney(systemCostPerKWp)} / kWp`}
                                     </p>
                                 </div>
                             </div>
@@ -191,7 +200,7 @@ export default function SummaryView() {
                                     Hardware Cost
                                 </p>
                                 <p className="text-xl font-medium text-slate-300">
-                                    £{costPerKWp.toFixed(2)} / kWp
+                                    {unpriced.size > 0 ? '—' : `${formatMoney(costPerKWp)} / kWp`}
                                 </p>
                             </div>
                         </div>
@@ -280,7 +289,7 @@ export default function SummaryView() {
                                             <td className="py-3 px-4 text-slate-600">{row.modelRef}</td>
                                             <td className="py-3 px-4 text-slate-600">{row.arrayNames}</td>
                                             <td className="py-3 px-4 text-right font-medium text-slate-800">
-                                                £{row.cost.toLocaleString()}
+                                                {formatMoney(row.cost)}
                                             </td>
                                         </tr>
                                     ))
@@ -328,24 +337,30 @@ export default function SummaryView() {
                         {Object.values(bomPanels).map(({ item, qty }) => (
                             <tr key={item.model} className="border-b border-slate-100 hover:bg-slate-50">
                                 <td className="py-3 px-4 font-bold text-slate-700">{qty}</td>
-                                <td className="py-3 px-4">{item.name}</td>
+                                <td className="py-3 px-4">
+                                    {item.name}
+                                    <BomPriceAge item={item} />
+                                </td>
                                 <td className="py-3 px-4 text-right text-slate-600">
-                                    £{item.price.toLocaleString()}
+                                    {knownPrice(item) == null ? '—' : formatMoney(knownPrice(item))}
                                 </td>
                                 <td className="py-3 px-4 text-right font-medium text-slate-800">
-                                    £{(qty * item.price).toLocaleString()}
+                                    {knownPrice(item) == null ? '—' : formatMoney(qty * knownPrice(item))}
                                 </td>
                             </tr>
                         ))}
                         {Object.values(bomControllers).map(({ item, qty }) => (
                             <tr key={item.id} className="border-b border-slate-100 hover:bg-slate-50">
                                 <td className="py-3 px-4 font-bold text-slate-700">{qty}</td>
-                                <td className="py-3 px-4">{item.name}</td>
+                                <td className="py-3 px-4">
+                                    {item.name}
+                                    <BomPriceAge item={item} />
+                                </td>
                                 <td className="py-3 px-4 text-right text-slate-600">
-                                    £{item.price.toLocaleString()}
+                                    {knownPrice(item) == null ? '—' : formatMoney(knownPrice(item))}
                                 </td>
                                 <td className="py-3 px-4 text-right font-medium text-slate-800">
-                                    £{(qty * item.price).toLocaleString()}
+                                    {knownPrice(item) == null ? '—' : formatMoney(qty * knownPrice(item))}
                                 </td>
                             </tr>
                         ))}
@@ -356,12 +371,33 @@ export default function SummaryView() {
                                 Panel and Controller Cost:
                             </td>
                             <td className="py-4 px-4 text-right font-bold text-2xl text-blue-700">
-                                £{totalCost.toLocaleString()}
+                                {formatMoney(totalCost)}
                             </td>
                         </tr>
+                        {unpriced.size > 0 && (
+                            <tr className="bg-amber-50 text-amber-800">
+                                <td colSpan="4" className="py-2 px-4 text-right text-sm" data-testid="unpriced-note">
+                                    Total excludes {unpriced.size} item{unpriced.size === 1 ? '' : 's'} with no
+                                    price available ({[...unpriced].join(', ')}). Enter your own prices in the
+                                    Panels or PV Controllers database.
+                                </td>
+                            </tr>
+                        )}
                     </tfoot>
                 </table>
             </div>
         </div>
+    );
+}
+
+/** Small "checked Aug 2026" line under a BoM component, amber when the price may be out of date. */
+function BomPriceAge({ item }) {
+    const age = knownPrice(item) == null ? null : priceAge(item.priceCheckedAt);
+    if (!age) return null;
+    return (
+        <span className={`block text-xs ${age.isStale ? 'text-amber-700' : 'text-slate-400'}`}>
+            Price checked {age.label}
+            {age.isStale ? ' (may be out of date)' : ''}
+        </span>
     );
 }

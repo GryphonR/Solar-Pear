@@ -112,6 +112,7 @@ describe('SummaryView', () => {
     it('BOM footer totals panels + controllers once (no double-count)', () => {
         render(<SummaryView />);
         // 6 × £100 panels + £200 controller = £800 (not £1000)
-        expect(screen.getByText('£800')).toBeInTheDocument();
+        expect(screen.getByText('£800.00')).toBeInTheDocument();
+        expect(screen.queryByTestId('unpriced-note')).toBeNull();
     });
 });

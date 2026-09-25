@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { AlertTriangle, CheckCircle } from '../components/Icons';
 import { evaluateElectrical, conditionsFromAreaSettings, isMicroinverter } from '../lib/arrayAnalysis';
 import { useAppState } from '../context/AppStateContext';
+import { formatMoney, knownPrice, compareMissingLast } from '../lib/pricing';
 import { useValidPanels } from './arraySelector/useValidPanels';
 import ParallelStringsSelect from './arraySelector/ParallelStringsSelect';
 import PanelTable from './arraySelector/PanelTable';
@@ -56,7 +57,7 @@ export default function ArraySelectorView({ arrayId }) {
     const status = analysis?.status;
     const messages = analysis?.messages ?? [];
     const cost = analysis?.cost ?? 0;
-    const costPerKWp = analysis?.costPerKWp ?? 0;
+    const costPerKWp = analysis?.costPerKWp ?? null;
 
     const areaSettings = getAreaSettings(array?.area || 'House');
     const areaSystemVoltage = areaSettings.systemVoltage;
@@ -149,6 +150,11 @@ export default function ArraySelectorView({ arrayId }) {
     const sortedControllersList = useMemo(
         () =>
             [...controllersForTable].sort((a, b) => {
+                if (controllerSort.key === 'price') {
+                    // Unknown prices sort last in either direction.
+                    const missing = compareMissingLast(knownPrice(a), knownPrice(b));
+                    if (missing) return missing;
+                }
                 const vA = a[controllerSort.key] || 0;
                 const vB = b[controllerSort.key] || 0;
                 if (vA < vB) return controllerSort.dir === 'asc' ? -1 : 1;
@@ -199,11 +205,14 @@ export default function ArraySelectorView({ arrayId }) {
                     </div>
                     <div>
                         <p className="text-sm text-slate-500 uppercase tracking-wide font-bold">Total Cost / kWp</p>
-                        <p className="text-3xl font-light text-slate-800">£{costPerKWp.toFixed(2)}</p>
+                        <p className="text-3xl font-light text-slate-800">{costPerKWp == null ? '—' : formatMoney(costPerKWp)}</p>
                     </div>
                     <div>
                         <p className="text-sm text-slate-500 uppercase tracking-wide font-bold">Total Array Cost</p>
-                        <p className="text-3xl font-light text-slate-800">£{cost.toLocaleString()}</p>
+                        <p className="text-3xl font-light text-slate-800">{formatMoney(cost)}</p>
+                        {analysis.costIncomplete && (
+                            <p className="text-xs text-amber-700 mt-1">Some prices unavailable</p>
+                        )}
                     </div>
                 </div>
             </div>

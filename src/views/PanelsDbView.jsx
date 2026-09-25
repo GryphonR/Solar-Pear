@@ -284,7 +284,9 @@ export default function PanelsDbView() {
                                                                         className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
                                                                         type="number"
                                                                         step="1"
-                                                                        value={p.price}
+                                                                        value={p.price || ''}
+                                                                        placeholder="—"
+                                                                        title={p.price ? '' : 'Price unavailable: enter your own'}
                                                                         onChange={(e) =>
                                                                             updatePanel(p.model, 'price', parseFloat(e.target.value) || 0)
                                                                         }

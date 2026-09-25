@@ -186,7 +186,9 @@ export default function ChargersDbView() {
                                                             className="w-full p-2 bg-transparent border border-slate-300 focus:border-blue-500 rounded outline-none text-sm"
                                                             type="number"
                                                             step="1"
-                                                            value={c.price}
+                                                            value={c.price || ''}
+                                                            placeholder="—"
+                                                            title={c.price ? '' : 'Price unavailable: enter your own'}
                                                             onChange={(e) =>
                                                                 updateCharger(c.id, 'price', parseFloat(e.target.value) || 0)
                                                             }
