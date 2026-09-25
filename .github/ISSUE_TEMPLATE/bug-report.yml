@@ -1,0 +1,23 @@
+name: Bug report
+description: Something in the app doesn't work or gives a wrong result
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Include what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Panels, controller, panel count and wiring (e.g. 6S2P) help a lot. Attaching a backup JSON (Download button) is ideal.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: "Chrome 140 on Windows 11"

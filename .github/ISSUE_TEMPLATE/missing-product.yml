@@ -1,0 +1,33 @@
+name: Missing product
+description: Request a panel, controller or inverter that isn't in the catalogue
+title: "[Add] <manufacturer> <model>"
+labels: ["data", "enhancement"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Product type
+      options: [Panel, MPPT charge controller, Hybrid inverter, String inverter, Microinverter, Other]
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Manufacturer and model
+    validations:
+      required: true
+  - type: input
+    id: datasheet
+    attributes:
+      label: Datasheet link
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where can it be bought?
+      description: A UK retailer link if you have one.
+  - type: textarea
+    id: why
+    attributes:
+      label: Anything else?

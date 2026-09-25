@@ -1,7 +1,7 @@
 # Architecture
 
 ## Stack
-Vite 7, React 19, Tailwind v4 (theme in `src/index.css`), uPlot for graphs, and Vitest with Testing Library and jsdom. It runs on Node 20 in CI.
+Vite 7, React 19, Tailwind v4 (theme in `src/index.css`), uPlot for graphs, and Vitest with Testing Library and jsdom. It needs Node 20.19+ (Vite 7) and runs on Node 20 in CI.
 
 ## Layout
 | Path | Role |
@@ -25,7 +25,7 @@ Vite 7, React 19, Tailwind v4 (theme in `src/index.css`), uPlot for graphs, and 
 localStorage keys are listed in `documentation/LOCAL_STORAGE_KEYS.md`. **The whole panel and controller catalogue is persisted** (`solar_panels`, `solar_chargers`). On load it is merged with the bundled catalogue, but the user's saved `price` (and, for chargers, `notes`) wins. See `known-issues.md`.
 
 ## Build and deploy
-- `.github/workflows/deploy.yml`: on every push to `main` it runs the root tests, then data-admin install, test and build, then the root build, then deploys to **GitHub Pages** with `BASE_PATH=/`.
+- `.github/workflows/deploy.yml`: on every push to `main` it runs the root tests, then data-admin install, test and build, then the root build, then deploys to **GitHub Pages** with `BASE_PATH=/`. The live site is **https://solarpear.echook.uk/** (a custom-domain CNAME on the Pages site).
 - The bundle is a single chunk of about 870 kB (about 200 kB gzipped) because the catalogue is inlined. The build warns about the chunk size.
 - The root `vitest run` also picks up `data-admin/**` and `verification_scripts/**` tests. At the last review there were 22 files and 283 tests, all passing, taking about 40 s.
 

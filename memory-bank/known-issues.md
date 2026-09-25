@@ -10,7 +10,7 @@ Status key: OPEN / FIXED. Update this file as issues are resolved.
 5. **OPEN – Isc severity.** Since 5507f6a, Isc above `maxIsc` is only a warning. Many datasheets treat max PV Isc as a hardware limit. Consider distinguishing Isc > maxIsc (error) from Imp > operating current (clipping warning).
 6. **OPEN – Fixed −10 °C design low.** This is not suitable outside mild climates, and marginal for UK record lows. The 1.084 fallback factor is optimistic.
 7. **OPEN – Duplicated maths.** `useValidPanels.js` recomputes Voc/Vmp/Isc separately from `analyzeArray`, hard-codes 0.94, and computes fractional series lengths when wiring is invalid.
-8. **OPEN – Dead code:** `const pStrings = wiringValid ? pStringsRaw : pStringsRaw;` in `arrayAnalysis.js`. The `systemVoltage` param of `panelPassesControllerLimits` is unused.
+8. **FIXED – Dead code:** `const pStrings = wiringValid ? pStringsRaw : pStringsRaw;` in `arrayAnalysis.js`. The `systemVoltage` param of `panelPassesControllerLimits` is unused.
 
 ## State and persistence
 9. **OPEN – Stale prices for returning users.** `mergePanels`/`mergeChargers` (`src/lib/migration.js`) always keep the saved `price` (and charger `notes`) from localStorage. Because the full catalogue is persisted on first visit, refreshed catalogue prices never reach returning users. Only store user **overrides**, e.g. a `priceOverrides` map.
@@ -19,10 +19,10 @@ Status key: OPEN / FIXED. Update this file as issues are resolved.
 ## Data quality
 11. **OPEN** – A Trina buy link points to `https://dev.cclcomponents.com/new/solar-pv-modules`, which is a dev subdomain and a category page (`src/data/panels/trina.json` ~line 296).
 12. **OPEN** – Efficiency mismatches (stated vs power/area): `VS-FL-200-M36-E` (22.42 vs 19.2), `SGM2-180W` (22.7 vs 19.5), and several Viridian `PV16-*` about 0.8 pp high. `GBS-Custom-350` has weight 0 and price 0.
-13. **OPEN** – The `dc-dc-charger` type is used in data but not documented in `controllers/SCHEMA.md`. The panel `buyLinks` type is documented as "object" but is an array.
+13. **FIXED** – The `dc-dc-charger` type is used in data but not documented in `controllers/SCHEMA.md`. The panel `buyLinks` type is documented as "object" but is an array.
 
 ## Repo hygiene
-14. **OPEN** – `availability_check_log_1773331249255.txt` is tracked despite `.gitignore`. Several `*_processing_log_*.txt` files and `.cursor/debug-*.log` sit untracked in the root.
-15. **OPEN** – `package.json` has an empty description/author and a licence of `ISC` that conflicts with the GPL-3.0 `LICENSE`.
+14. **FIXED** – `availability_check_log_1773331249255.txt` is tracked despite `.gitignore`. Several `*_processing_log_*.txt` files and `.cursor/debug-*.log` sit untracked in the root.
+15. **FIXED** – `package.json` has an empty description/author and a licence of `ISC` that conflicts with the GPL-3.0 `LICENSE`.
 16. **OPEN** – `index.html` has a generic meta description and no OG/Twitter tags, canonical, sitemap, or analytics. The SPA has no routes, so there is nothing indexable per panel or controller.
 17. **OPEN** – Merged remote branches `cursor/mobile-*-963b` and the local branches `cursor/add-missing-uk-panels-61fc` and `wip/preserved-pre-main-reset` can be pruned.

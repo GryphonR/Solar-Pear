@@ -4,6 +4,8 @@
 
 Solar Pear is a browser-based tool for designing solar PV setups: define your roof arrays, choose panels that fit (physically and electrically), match them with compatible PV controllers, and get a summary plus bill of materials. All compatibility checks—Voc, Vmp, Isc, format—run in the app so you can iterate without juggling spreadsheets or manufacturer tools.
 
+**Try it:** [solarpear.echook.uk](https://solarpear.echook.uk/)
+
 *No fruit was harmed in the making of this app.*
 
 ---
@@ -20,7 +22,7 @@ Solar Pear is a browser-based tool for designing solar PV setups: define your ro
 
 ## Getting started
 
-**Prerequisites:** Node.js 18+ and npm.
+**Prerequisites:** Node.js 20.19+ (or 22.12+) and npm, as required by Vite 7.
 
 ```bash
 # Install dependencies
@@ -38,6 +40,23 @@ npm run build
 # Preview production build locally
 npm run preview
 ```
+
+---
+
+## How the checks work
+
+Each array is checked against its assigned MPPT input using worst-case temperatures:
+
+| Check | Condition | Severity |
+| ----- | --------- | -------- |
+| Cold Voc | String Voc at −10 °C exceeds the controller's max PV voltage | Error (can destroy hardware) |
+| Voc margin | Cold Voc is above 94% of the controller limit | Warning |
+| Hot Vmp | String Vmp at 65 °C cell temperature is below the controller's startup voltage | Warning (harvest loss) |
+| Current | Array Isc at 65 °C exceeds the controller's current rating | Warning (clipping) |
+| Wiring | Panel count is not divisible by the number of parallel strings | Error |
+| Physical | Panel is too large or heavy for the array, or doesn't fit the in-roof (GSE) tray orientation | Error |
+
+Temperature coefficients come from each panel's datasheet. The full rules, constants and known limitations are in [`memory-bank/domain-rules.md`](memory-bank/domain-rules.md). The implementation is in [`src/lib/arrayAnalysis.js`](src/lib/arrayAnalysis.js).
 
 ---
 
@@ -93,6 +112,15 @@ npm run preview
 | `npx vitest run`        | Run tests once (e.g. in CI)          |
 | `npm run test:coverage` | Run tests with coverage report       |
 
+
+---
+
+## Contributing
+
+- **Bad data or missing products:** open an issue using the *Data correction* or *Missing product* template, ideally with a datasheet link.
+- **Bugs:** open an issue using the *Bug report* template.
+- **Code:** see [`memory-bank/`](memory-bank/README.md) for architecture and conventions, and [`memory-bank/roadmap.md`](memory-bank/roadmap.md) for planned work. Reference roadmap task IDs in commit messages (e.g. `fix(1.3): ...`). Run `npx vitest run` before opening a PR.
+- **Catalogue editing:** the local `data-admin/` tool (`cd data-admin && npm install && npm run dev`) and the `verify:*` scripts are described in [`verification_scripts/README.md`](verification_scripts/README.md).
 
 ---
 

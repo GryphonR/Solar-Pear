@@ -81,8 +81,10 @@ export function getCurrentClipLimit(controller) {
  * hard electrical limits. Only Voc is a true safety gate (over-voltage can destroy the
  * controller). Vmp below startup and Isc overage are operational concerns (harvest loss /
  * clipping) and are excluded from this hard-compatibility check.
+ * `_systemVoltage` is currently unused; it is kept in the signature because the planned
+ * charger power check (roadmap task 1.5) depends on battery voltage.
  */
-export function panelPassesControllerLimits(array, panel, controller, systemVoltage) {
+export function panelPassesControllerLimits(array, panel, controller, _systemVoltage) {
     if (!controller || !array || !panel) return true;
     const pStrings = array.parallelStrings || 1;
     if (!isValidWiring(array.count, pStrings)) return false;
@@ -285,8 +287,8 @@ export const analyzeArray = (
 
     const pStringsRaw = array.parallelStrings || 1;
     const wiringValid = !panel || isValidWiring(array.count, pStringsRaw);
-    // Use integer series length only when wiring is valid; otherwise treat as 0 for metrics.
-    const pStrings = wiringValid ? pStringsRaw : pStringsRaw;
+    const pStrings = pStringsRaw;
+    // Series length is only meaningful when wiring is valid; otherwise 0 so string metrics stay 0.
     const panelsPerSeriesString = wiringValid ? array.count / pStrings : 0;
 
     if (!panel || !controller) {
