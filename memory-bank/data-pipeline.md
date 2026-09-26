@@ -2,7 +2,7 @@
 
 ## Catalogue snapshot (2026-09-25)
 - **Panels:** 177 across 19 manufacturers (Aiko, Canadian Solar, DMEGC, ET Solar, GB-Sol, JA, Jinko, LONGi, Maxeon, Meyer Burger, Q-Cells, REC, Renesola, Risen, Trina, UKSOL, Victron, Viridian, Voltacon). All are `active`.
-- **Controllers:** 68 across 14 manufacturers. By type: 29 hybrid, 25 charger, 6 string, 6 micro, 1 AC-coupled, 1 `dc-dc-charger` (the last type is missing from `controllers/SCHEMA.md`).
+- **Controllers:** 110 across 21 manufacturers (68 across 14 before task 3.11 added Sunsynk, Growatt, Lux Power, Fronius, SMA, Sigenergy and Tesla). Types include hybrid, charger, string, micro, AC-coupled and `dc-dc-charger`.
 - **Reviewed:** 2 of 245 records have `reviewed: true`.
 - **Prices:** 46 panels have `price: 0`. All `priceCheckedAt` dates are from 2026-08.
 - **Buy links:** 122 links in total, **0 affiliate**, and 178 products have no link. The top domains are voltaconsolar.com, tradesparky, bimblesolar, segen, cclcomponents, cityplumbing and midsummerwholesale.
