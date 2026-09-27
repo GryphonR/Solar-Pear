@@ -2,7 +2,7 @@
 
 ## Current state (2026-09-26)
 - `main` is at `adb2294` (phases 0–2 done, phase 3 mostly done; see the roadmap progress table).
-- Branch `feat/uk-inverters` adds 42 mainstream UK inverters for task 3.11 (Sunsynk, Growatt, Lux Power, Fronius, SMA, Sigenergy, Tesla Powerwall 3), plus 14 Deye and Fogstar models. SolarEdge and the Hypontech micro are still outstanding.
+- Task 3.11 merged in PR #8: 56 mainstream UK inverters (Sunsynk, Growatt, Lux Power, Fronius, SMA, Sigenergy, Tesla Powerwall 3, Deye, Fogstar). The Hypontech micro is still outstanding; SolarEdge is out of scope for now (decision D7).
 - Catalogue review (3.3) is human work and stands at 2 of 66 sellable products. Review status stays internal.
 
 ## Direction
