@@ -174,9 +174,12 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
   - Done for labelling: notes show "AI generated, may not be accurate" in the overview and both info modals unless `notesReviewed` is true. Rewriting notes happens as part of reviews (3.3).
 
 ### 3B. Coverage (driven by affiliate availability and search demand)
-- [ ] **3.6 Add off-grid and leisure products**, where the affiliate conversion is highest:
+- [ ] 🚧 **3.6 Add off-grid and leisure products**, where the affiliate conversion is highest:
   - Victron SmartSolar small units (75/10 … 100/50), the Orion-Tr Smart DC-DC range and the Victron BlueSolar range;
   - Renogy Rover/Wanderer, EPEver Tracer and Votronic (vans).
+  - Progress: 27 records added from manufacturer datasheets (unreviewed, prices unknown). Victron: SmartSolar 100/15 and 150/60 (the rest of the small SmartSolar range was already in), BlueSolar MPPT 75/10–150/45 (8 models), and Orion-Tr Smart isolated 12/12-18, 12/12-30, 12/24-15, 24/12-20 and 24/12-30. Renogy: Rover 20A/40A and the DCC30S/DCC50S (DC-DC chargers with a 25 V MPPT solar input). EPEver: Tracer 1210AN–4210AN. Votronic: MPP 165/250/350/430 Duo Digital.
+  - Not added: the Renogy **Wanderer** is a PWM controller, which the engine doesn't model (it assumes MPPT). EPEver's 50–100 A Tracer AN units are still to do.
+  - Data gaps: EPEver, Votronic and the Renogy DCC publish no PV short-circuit rating (`maxIsc` 0, a sanity warning); Votronic's PV current limit is stored as `maxOperatingI`. Renogy's Rover manual gives two Isc figures (array Isc below 20/40 A, but 25/50 A in the spec table), so the stricter one is stored.
 - [ ] **3.7 Add small, portable and flexible panels** – 100–200 W rigid and flexible panels for vans, boats and campers (Renogy, Victron, Photonic Universe, Sunbeam). This probably needs a "small panel" form factor with no GSE.
 - [ ] **3.8 Add batteries (catalogue v2)** – Add a battery category (Pylontech, Fogstar, GivEnergy, Victron, EcoFlow) with voltage and capacity. This lets the Summary propose a complete kit and multiplies the affiliate basket.
 - [ ] **3.9 Add balance-of-system items** – Add MC4 connectors, PV cable, isolators, fuses and mounting as optional BoM line items with default quantities. The README currently says "harnesses and mounting are on you", which is lost revenue.
