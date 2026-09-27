@@ -32,19 +32,19 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | Phase | Theme | Priority | Done / Total |
 | ----- | ----- | -------- | ------------ |
 | 0 | Housekeeping | P0 | 7 / 8 |
-| 1 | Calculation correctness & safety | P0 | 11 / 12 |
+| 1 | Calculation correctness & safety | P0 | 11 / 13 |
 | 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
-| 3 | Catalogue quality & coverage | P0/P1 | 5 / 12 |
+| 3 | Catalogue quality & coverage | P0/P1 | 5 / 13 |
 | 4 | Affiliate infrastructure | P1 | 0 / 13 |
 | 5 | Hosting, routing & SEO | P1 | 0 / 13 |
 | 6 | Trust, legal & compliance | P0 | 0 / 11 |
-| 7 | Product & UX improvements | P1/P2 | 0 / 15 |
+| 7 | Product & UX improvements | P1/P2 | 0 / 16 |
 | 8 | Analytics & measurement | P1 | 0 / 7 |
 | 9 | Engineering, performance & CI | P1/P2 | 0 / 11 |
 | 10 | Internationalisation | P2 | 0 / 8 |
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
-| **Total** | | | **29 / 138** |
+| **Total** | | | **29 / 141** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -114,6 +114,9 @@ The app's value and credibility, and liability, rest on these checks. Each task 
   - Done and verified in the browser: 10 × IQ8M in the BoM (£1,400), with the wiring selector replaced by a one-panel-per-input note.
 - [x] **1.8 Check panel system voltage** – Error when string cold Voc is above the panel's `maxSystemVoltage` (1000 V or 1500 V).
 - [x] **1.9 Check string fusing** – With 3 or more parallel strings, warn that string fuses are required, and check `maxSeriesFuse` against (parallel − 1) × Isc × 1.25.
+- [ ] **1.13 Per-MPPT input limits** – Let a controller define different limits for each MPPT input, e.g. an optional `mpptInputs[]` array of per-tracker `maxIsc`, `maxOperatingI`, `mpptRangeMin`/`mpptRangeMax` and max DC power, falling back to the controller-level fields when absent. `evaluateElectrical` checks an array against the limits of the port it is bound to, and the port picker in `ControllerSection.jsx` shows each port's limits. Update the schemas, data-admin, `domain-rules.md` and tests.
+  - Acceptance: an array on a controller's larger tracker is checked against that tracker's limits, and the same array on the smaller tracker is flagged. Controllers without `mpptInputs` behave exactly as before.
+  - Follow-up: update the **Fronius Primo GEN24 Plus** records (added in 3.11), which currently store only the smaller tracker's limits (12 A rather than 22 A), to use per-input limits.
 
 ### 1C. Environmental assumptions
 - [x] **1.10 Make design temperatures configurable** – Add per-site "design low" and "design high" settings (defaults −10 °C / 65 °C cell) to the project settings, and show them in every message ("at −10 °C"). Tighten the fallback cold-Voc factor from 1.084 to a conservative value (for example −0.30 %/°C ⇒ 1.105) and flag panels that have no coefficient. *(KI-6)*
@@ -178,9 +181,14 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
 - [ ] **3.8 Add batteries (catalogue v2)** – Add a battery category (Pylontech, Fogstar, GivEnergy, Victron, EcoFlow) with voltage and capacity. This lets the Summary propose a complete kit and multiplies the affiliate basket.
 - [ ] **3.9 Add balance-of-system items** – Add MC4 connectors, PV cable, isolators, fuses and mounting as optional BoM line items with default quantities. The README currently says "harnesses and mounting are on you", which is lost revenue.
 - [ ] **3.10 Add all-in-one kits and portable power stations** – EcoFlow, Anker, Jackery and Bluetti. These are high-ticket items with generous affiliate programmes, and they suit "simple mode" (7.2).
-- [ ] **3.11 Add missing mainstream inverters** – Sunsynk, Growatt, Lux Power, SolarEdge, Fronius, SMA, Sigenergy, Tesla Powerwall 3 and the Hypontech micro.
+- [ ] 🚧 **3.11 Add missing mainstream inverters** – Sunsynk, Growatt, Lux Power, SolarEdge, Fronius, SMA, Sigenergy, Tesla Powerwall 3 and the Hypontech micro.
+  - Progress: 42 records added from manufacturer datasheets (unreviewed, prices unknown): Sunsynk ECCO 3.6–8K, Growatt SPH 3000–6000TL BL-UP and MIN 2500–6000TL-XH, Lux Power LXP 3–6K, Fronius Primo GEN24 Plus 3.0–6.0, SMA Sunny Boy 3.0–6.0, Sigenergy SigenStor EC SP 3.0–6.0, and Tesla Powerwall 3. Then 14 more at the owner's request: Deye SUN-SG03LP1 (3.6–6K) and SUN-SG05LP1-EU-SM2 (3.6–8K), and Fogstar (rebadged LuxpowerTek) GEN2-LB-EU 3.6K, GEN-LB-EU 10K, TriP2-LB-3P 20K, and the SNA 6K/14K off-grid units.
+  - Still to do: **SolarEdge** needs optimiser modelling first (fixed string voltage, so the Voc-per-string checks don't apply); the **Hypontech** micro needs a datasheet; Fogstar's Gen3 3–6K, GEN PRO 8–12K and SNA PRO-EU 6.5K have no published spec sheets yet. Buy links and prices come from the pricing scan (4.7).
+  - Modelling notes: Fronius GEN24 has asymmetric trackers (22 A and 12 A), so the smaller limits are stored until per-MPPT limits land (1.13). Sigenergy's datasheet doesn't list UK grid codes; G98/G99 certificates come from UK distributors. G98 is set only for units up to 3.68 kW (Powerwall 3 is G98 in its 3.68 kW configuration). Deye and Fogstar grid codes follow each datasheet exactly: the Deye SG05LP1-EU-SM2 lists G99 only, so its 3.6K is not marked G98.
 - [x] **3.12 Keep the catalogue fresh** – Run a scheduled GitHub Action weekly: the pricing scan plus a link check, which opens a PR with the diff (needs a `SERPER_API_KEY` repository secret). Dead links and price moves above 15% show up in the PR body.
   - Done: `.github/workflows/catalogue-refresh.yml` (Mondays 06:00 UTC plus manual). Datasheets and sanity always run; prices run only with the `SERPER_API_KEY` secret and `ENABLE_PRICE_REFRESH=true` variable. Opens a `bot/catalogue-refresh` PR with a report.
+- [ ] **3.13 Record inverter technology** – Add a field for the inverter's topology to inverter records, e.g. `inverterTopology`: `transformerless` (solid state / high-frequency), `hf-transformer`, `lf-transformer` or `toroidal-transformer`. Add it to the controller schema, data-admin and the sanity rules, backfill it from datasheets, and show it in the controller table, filters and info modal.
+  - Acceptance: every inverter and inverter-charger record has a value, or an explicit `unknown`. Users can filter the controller list by topology.
 
 ---
 
@@ -293,6 +301,9 @@ The app is currently a single URL with no indexable content. Search is the main 
 - [ ] **7.13 Price-drop alerts** – "Notify me when this panel drops below £X", which drives email capture and return visits.
 - [ ] **7.14 Dark mode** – Using the Tailwind v4 theme tokens.
 - [ ] **7.15 Empty and error states** – Review every view for helpful empty states, following the patterns described in the README.
+- [ ] **7.16 Panel spider (radar) chart** – Show an at-a-glance radar chart of each panel's strengths and weaknesses in the panel info modal, and possibly in the comparison tray (7.10). Candidate axes: shading tolerance, thermal performance (Pmax temperature coefficient), efficiency, cost per kWp, weight per W, warranty and degradation. Each axis is scored from catalogue data, relative to the rest of the catalogue.
+  - **Before implementing:** confirm the final categories and how each one is scored with the owner, using questions.
+  - Acceptance: every axis is derived from a documented catalogue field or rule, and missing data is shown as unknown rather than scored as 0.
 
 ---
 

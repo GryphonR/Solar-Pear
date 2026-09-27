@@ -9,7 +9,7 @@ A client-only React single-page app for designing small solar PV systems:
 1. **Areas → Arrays**: the user models roof areas (House, Garage, …) and the arrays in each one (panel count, orientation/format, mounting type such as In-Roof GSE or On Roof, maximum panel size and weight).
 2. **Array Planner**: the user draws a roof polygon with exclusions, and an auto-fit packs panels to maximise power (`src/lib/plannerEngine.js`).
 3. **Panel selector**: filters and ranks about 177 panels by physical fit, GSE tray compatibility, Voc against the chosen controller, and cost per kWp.
-4. **Controller selector**: about 68 controllers (MPPT chargers, hybrid/string inverters, micros). Each array is bound to one MPPT port on a "site controller instance". Instances can be shared across arrays within an area.
+4. **Controller selector**: about 125 controllers (MPPT chargers, hybrid/string inverters, micros). Each array is bound to one MPPT port on a "site controller instance". Instances can be shared across arrays within an area.
 5. **Summary / BoM**: a list of panels and controllers with estimated prices and buy links.
 6. **Guides**: editorial pages explaining panel and controller choice (`Guide.jsx`, `PanelsGuideView.jsx`, `ControllersGuideView.jsx`).
 7. **Backup/restore**: the user can export and import JSON. All state lives in localStorage and there is no backend.
