@@ -10,6 +10,7 @@
         "weight": 0,
         "glass": "Single (4.0mm)",
         "bifacial": false,
+        "flexible": false,
         "power": 350,
         "voc": 47.66,
         "vmp": 40.1,

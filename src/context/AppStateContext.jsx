@@ -516,6 +516,7 @@ export function AppStateProvider({ children }) {
                 efficiency: 0,
                 glass: '',
                 bifacial: false,
+                flexible: false,
                 cells: '',
                 notes: '',
                 datasheetUrl: '',

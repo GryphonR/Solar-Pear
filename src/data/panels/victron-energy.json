@@ -10,6 +10,7 @@
         "weight": 11,
         "glass": "High-transmission tempered glass",
         "bifacial": false,
+        "flexible": false,
         "power": 185,
         "voc": 24.11,
         "vmp": 19.68,

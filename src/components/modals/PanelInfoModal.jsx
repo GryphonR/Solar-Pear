@@ -42,6 +42,7 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
                         <dl className="space-y-3 text-sm">
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Dimensions</dt><dd className="text-slate-800 font-semibold">{p.height || '-'} × {p.width || '-'} mm</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Frame depth</dt><dd className="text-slate-800 font-semibold">{p.depth != null ? `${p.depth} mm` : '-'}</dd></div>
+                            <div className="flex justify-between"><dt className="text-slate-500 font-medium">Construction</dt><dd className="text-slate-800 font-semibold">{p.flexible ? 'Flexible (no frame)' : 'Rigid (framed)'}</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Weight</dt><dd className="text-slate-800 font-semibold">{p.weight ? `${p.weight} kg` : '-'}</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Glass Type</dt><dd className="text-slate-800 font-semibold">{p.glass || '-'}</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Bifaciality</dt><dd className="text-slate-800 font-semibold">{p.bifacial ? 'Yes (Rear Yield)' : 'No (Mono-facial)'}</dd></div>

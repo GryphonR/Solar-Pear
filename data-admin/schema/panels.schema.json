@@ -10,6 +10,7 @@
     "weight",
     "glass",
     "bifacial",
+    "flexible",
     "power",
     "voc",
     "vmp",
@@ -44,6 +45,7 @@
     "notes": "",
     "active": false,
     "gseCompatibility": "None",
+    "flexible": false,
     "availableUK": true,
     "priceCheckedAt": ""
   },
@@ -68,6 +70,7 @@
     "weight": "number",
     "glass": "string",
     "bifacial": "boolean",
+    "flexible": "boolean",
     "power": "number",
     "voc": "number",
     "vmp": "number",

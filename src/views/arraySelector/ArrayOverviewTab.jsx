@@ -150,6 +150,7 @@ export default function ArrayOverviewTab({
                             <dl className="space-y-2 text-sm">
                                 <div className="flex justify-between"><dt className="text-slate-500">Dimensions</dt><dd className="text-slate-800 font-medium">{panel.height || '-'} × {panel.width || '-'} mm</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Depth</dt><dd className="text-slate-800 font-medium">{panel.depth != null ? `${panel.depth} mm` : '-'}</dd></div>
+                                <div className="flex justify-between"><dt className="text-slate-500">Construction</dt><dd className="text-slate-800 font-medium">{panel.flexible ? 'Flexible' : 'Rigid'}</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Weight</dt><dd className="text-slate-800 font-medium">{panel.weight ? `${panel.weight} kg` : '-'}</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Glass</dt><dd className="text-slate-800 font-medium">{panel.glass || '-'}</dd></div>
                                 <div className="flex justify-between"><dt className="text-slate-500">Bifacial</dt><dd className="text-slate-800 font-medium">{panel.bifacial ? 'Yes' : 'No'}</dd></div>
