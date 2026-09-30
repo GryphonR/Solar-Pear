@@ -101,7 +101,7 @@ function buildVocOptions(data, controllerMaxV, effectiveStartupV, width = CHART_
     const series = [
         { label: 'Temp', scale: 'x', value: (u, v) => (v != null ? `${v.toFixed(0)}°C` : '') },
         {
-            label: 'String Voc',
+            label: data.isMicro ? 'Panel Voc' : 'String Voc',
             scale: 'y',
             stroke: '#0ea5e9',
             width: 2,
@@ -191,7 +191,7 @@ function buildIscOptions(data, controllerMaxIsc, width = CHART_WIDTH_DEFAULT) {
     const series = [
         { label: 'Temp', scale: 'x', value: (u, v) => (v != null ? `${v.toFixed(0)}°C` : '') },
         {
-            label: 'Array Isc',
+            label: data.isMicro ? 'Panel Isc' : 'Array Isc',
             scale: 'y',
             stroke: '#0ea5e9',
             width: 2,
@@ -457,14 +457,14 @@ export default function ArrayOverviewGraphs({ panel, array, controller, effectiv
             <div className="space-y-6 w-full">
                 {hasVoc && (
                     <ChartCard
-                        title="String Voc vs temperature"
+                        title={seriesData.isMicro ? 'Panel Voc vs temperature (one panel per micro input)' : 'String Voc vs temperature'}
                         getOptions={getVocOptions}
                         data={vocData}
                     />
                 )}
                 {hasIsc && (
                     <ChartCard
-                        title="Array Isc vs temperature"
+                        title={seriesData.isMicro ? 'Panel Isc vs temperature (one panel per micro input)' : 'Array Isc vs temperature'}
                         getOptions={getIscOptions}
                         data={iscData}
                     />

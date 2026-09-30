@@ -1,4 +1,5 @@
 import React from 'react';
+import DiscontinuedBadge, { DiscontinuedNotice } from '../DiscontinuedBadge';
 import { NotesSourceLabel } from '../DataProvenance';
 import PriceTag from '../PriceTag';
 import Modal from '../Modal';
@@ -6,6 +7,7 @@ import DesignNotes from '../DesignNotes';
 import { ExternalLink, Info } from '../Icons';
 import { GSE_COMPATIBILITY, getPanelGseCompatibility } from '../../lib/gseCompatibility';
 import { safeHttpUrl } from '../../lib/safeUrl';
+import { dataCorrectionIssueUrl } from '../../lib/siteInfo';
 
 export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdateNote }) {
     if (!panel) return null;
@@ -19,6 +21,7 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
             <h2 className="text-2xl font-bold text-slate-800">{p.name}</h2>
             <div className="flex items-center flex-wrap gap-2 mt-2">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{p.power} Watts</span>
+                <DiscontinuedBadge item={p} />
                 <PriceTag item={p} />
                 {gseCompatibility === GSE_COMPATIBILITY.BOTH && <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">Portrait & Landscape</span>}
                 {gseCompatibility === GSE_COMPATIBILITY.NONE && <span className="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-bold">Not GSE Compatible</span>}
@@ -29,7 +32,11 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
                         <ExternalLink size={12} className="mr-1" /> Datasheet
                     </a>
                 )}
+                <a href={dataCorrectionIssueUrl('panel', p)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-slate-500 hover:text-slate-800 hover:underline">
+                    Report a data error
+                </a>
             </div>
+            <DiscontinuedNotice item={p} />
         </div>
     );
 

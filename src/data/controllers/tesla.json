@@ -26,6 +26,8 @@
         "datasheetUrl": "https://energylibrary.tesla.com/docs/Public/EnergyStorage/Powerwall/3/Datasheet/en-uk/Powerwall-3-Datasheet-EN.pdf",
         "buyLinks": [],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": true,
         "g99_cert": true,
         "g100_cert": true,

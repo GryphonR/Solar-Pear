@@ -30,6 +30,8 @@
         "datasheetUrl": "https://outbackpower.com/downloads/documents/flexmax_100/fm100_datasheet.pdf",
         "buyLinks": [],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": false,
         "g99_cert": false,
         "g100_cert": false,

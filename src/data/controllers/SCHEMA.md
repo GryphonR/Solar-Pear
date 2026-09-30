@@ -44,6 +44,8 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `datasheetUrl` | string | URL to datasheet. |
 | `buyLinks` | array | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
 | `availableUK` | boolean | True if the controller is readily available in the UK|
+| `discontinued` | boolean | `true` when the manufacturer no longer makes the controller or has stopped trading. Discontinued products stay selectable, so people designing around existing or second-hand kit can still check it; the app labels them "Discontinued". Use `src/data/replacements.json` instead when a product is renamed or has a direct successor that saved designs should move to. |
+| `discontinuedNote` | string | Why it was discontinued, shown to users (e.g. warranty no longer honoured), or `""`. Only set when `discontinued` is `true`. |
 | `g98_cert` | boolean | UK G98 certified. |
 | `g99_cert` | boolean | UK G99 certified. |
 | `g100_cert` | boolean | UK G100 certified. |

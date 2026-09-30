@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import DiscontinuedBadge from '../components/DiscontinuedBadge';
 import { Plus, Info, ExternalLink } from '../components/Icons';
 import Modal from '../components/Modal';
 import DesignNotes from '../components/DesignNotes';
@@ -231,7 +232,8 @@ export default function PanelsDbView() {
                                                                     </label>
                                                                 </td>
                                                                 <td className="p-1 px-2">
-                                                                    <span className="text-sm text-slate-800">{p.name}</span>
+                                                                    <span className="text-sm text-slate-800">{p.name}</span>{' '}
+                                                                    <DiscontinuedBadge item={p} />
                                                                 </td>
                                                                 <td className="p-1 px-2">
                                                                     <span className="text-xs text-slate-400 font-mono whitespace-nowrap">

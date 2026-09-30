@@ -1,6 +1,8 @@
 import React from 'react';
+import DiscontinuedBadge from '../components/DiscontinuedBadge';
 import { Plus, Info, ExternalLink } from '../components/Icons';
 import BuyButton from '../components/BuyButton';
+import { AffiliateNotice } from '../components/TrustNotices';
 import { useAppState } from '../context/AppStateContext';
 import { controllerTypeBadgeClass, controllerTypeLabel } from '../lib/controllerTypes';
 import { safeHttpUrl } from '../lib/safeUrl';
@@ -30,6 +32,7 @@ export default function ChargersDbView() {
                     <div>
                         <h2 className="text-2xl font-bold text-slate-800">PV Controllers Database</h2>
                         <p className="text-slate-500">Standalone MPPT chargers and hybrid inverters.</p>
+                        <AffiliateNotice className="mt-1" />
                     </div>
                     <button
                         onClick={addCharger}
@@ -131,7 +134,8 @@ export default function ChargersDbView() {
                                                         </label>
                                                     </td>
                                                     <td className="p-1 px-4">
-                                                        <span className="text-sm text-slate-800">{c.name}</span>
+                                                        <span className="text-sm text-slate-800">{c.name}</span>{' '}
+                                                        <DiscontinuedBadge item={c} />
                                                     </td>
                                                     <td className="p-1 px-4">
                                                         <span className="text-xs text-slate-400 font-mono whitespace-nowrap">

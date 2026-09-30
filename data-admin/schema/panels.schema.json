@@ -30,6 +30,8 @@
     "notes",
     "buyLinks",
     "active",
+    "discontinued",
+    "discontinuedNote",
     "reviewed",
     "reviewedAt",
     "reviewedBy",
@@ -47,10 +49,12 @@
     "gseCompatibility": "None",
     "flexible": false,
     "availableUK": true,
-    "priceCheckedAt": ""
+    "priceCheckedAt": "",
+    "discontinued": false,
+    "discontinuedNote": ""
   },
   "rules": {
-    "allowedEmptyStrings": ["notes", "priceCheckedAt", "reviewedAt", "reviewedBy"],
+    "allowedEmptyStrings": ["notes", "priceCheckedAt", "reviewedAt", "reviewedBy", "discontinuedNote"],
     "zeroValueSkips": [
       {
         "field": "price",
@@ -90,6 +94,8 @@
     "notes": "string",
     "buyLinks": "array",
     "active": "boolean",
+    "discontinued": "boolean",
+    "discontinuedNote": "string",
     "reviewed": "boolean",
     "reviewedAt": "string",
     "reviewedBy": "string",

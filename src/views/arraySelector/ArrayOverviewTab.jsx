@@ -1,9 +1,11 @@
 import React from 'react';
+import DiscontinuedBadge from '../../components/DiscontinuedBadge';
 import { NotesSourceLabel } from '../../components/DataProvenance';
 import PriceTag from '../../components/PriceTag';
 import { AlertTriangle, CheckCircle, Info, XIcon, ExternalLink } from '../../components/Icons';
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
 import DesignNotes from '../../components/DesignNotes';
+import { ResultsDisclaimer } from '../../components/TrustNotices';
 import { isCompatibleFormat, COLD_TEMP_C, HOT_TEMP_C } from '../../lib/arrayAnalysis';
 import { controllerTypeBadgeClass, controllerTypeLabel } from '../../lib/controllerTypes';
 import { safeHttpUrl } from '../../lib/safeUrl';
@@ -57,7 +59,7 @@ export default function ArrayOverviewTab({
                             <div>
                                 <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Panel</span>
                                 {panel ? (
-                                    <span className="text-sm font-bold text-slate-800">{panel.name} ({panel.power}W)</span>
+                                    <><span className="text-sm font-bold text-slate-800">{panel.name} ({panel.power}W)</span> <DiscontinuedBadge item={panel} /></>
                                 ) : (
                                     <span className="text-sm font-bold text-blue-600">Select Panel</span>
                                 )}
@@ -86,7 +88,7 @@ export default function ArrayOverviewTab({
                             <div>
                                 <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Controller</span>
                                 {controller ? (
-                                    <span className="text-sm font-bold text-slate-800">{controller.manufacturer ? `${controller.manufacturer} ${controller.name}` : controller.name}</span>
+                                    <><span className="text-sm font-bold text-slate-800">{controller.manufacturer ? `${controller.manufacturer} ${controller.name}` : controller.name}</span> <DiscontinuedBadge item={controller} /></>
                                 ) : (
                                     <span className="text-sm font-bold text-blue-600">Select Controller</span>
                                 )}
@@ -115,6 +117,7 @@ export default function ArrayOverviewTab({
                             </div>
                         </div>
                     </div>
+                    <ResultsDisclaimer className="-mt-2 px-1" />
                     {panel && (
                         <div className="grid grid-cols-3 gap-4">
                             <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title={`Open-circuit voltage of the string at ${coldTempC}°C. Must stay below your MPPT's maximum PV input.`}>

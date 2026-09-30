@@ -1,5 +1,7 @@
 import React from 'react';
+import DiscontinuedBadge from '../components/DiscontinuedBadge';
 import { AlertTriangle } from '../components/Icons';
+import { ResultsDisclaimer } from '../components/TrustNotices';
 import { useAppState } from '../context/AppStateContext';
 import { checkVictronRsSharedTrackerLimits, controllerUnitsForArray } from '../lib/arrayAnalysis';
 import { formatMoney, knownPrice, priceAge } from '../lib/pricing';
@@ -145,6 +147,7 @@ export default function SummaryView() {
                 <div>
                     <h2 className="text-2xl font-bold text-slate-800">System Summary</h2>
                     <p className="text-slate-500">Overview of all configured arrays and total hardware cost.</p>
+                    <ResultsDisclaimer className="mt-1" />
                 </div>
             </div>
 
@@ -338,7 +341,7 @@ export default function SummaryView() {
                             <tr key={item.model} className="border-b border-slate-100 hover:bg-slate-50">
                                 <td className="py-3 px-4 font-bold text-slate-700">{qty}</td>
                                 <td className="py-3 px-4">
-                                    {item.name}
+                                    {item.name} <DiscontinuedBadge item={item} />
                                     <BomPriceAge item={item} />
                                 </td>
                                 <td className="py-3 px-4 text-right text-slate-600">
@@ -353,7 +356,7 @@ export default function SummaryView() {
                             <tr key={item.id} className="border-b border-slate-100 hover:bg-slate-50">
                                 <td className="py-3 px-4 font-bold text-slate-700">{qty}</td>
                                 <td className="py-3 px-4">
-                                    {item.name}
+                                    {item.name} <DiscontinuedBadge item={item} />
                                     <BomPriceAge item={item} />
                                 </td>
                                 <td className="py-3 px-4 text-right text-slate-600">

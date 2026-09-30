@@ -35,9 +35,9 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 1 | Calculation correctness & safety | P0 | 11 / 13 |
 | 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 5 / 14 |
-| 4 | Affiliate infrastructure | P1 | 0 / 13 |
+| 4 | Affiliate infrastructure | P1 | 0 / 14 |
 | 5 | Hosting, routing & SEO | P1 | 0 / 13 |
-| 6 | Trust, legal & compliance | P0 | 0 / 11 |
+| 6 | Trust, legal & compliance | P0 | 7 / 11 |
 | 7 | Product & UX improvements | P1/P2 | 0 / 17 |
 | 8 | Analytics & measurement | P1 | 0 / 7 |
 | 9 | Engineering, performance & CI | P1/P2 | 0 / 11 |
@@ -45,7 +45,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
 | 13 | UX overhaul | P1 | 0 / 9 |
-| **Total** | | | **29 / 152** |
+| **Total** | | | **36 / 153** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -207,20 +207,37 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
 Currently 0 of 122 links are affiliate links, and 178 products have no link at all.
 
 ### 4A. Programmes
+- [ ] 🚧 **4.14 Research consumer-facing suppliers and their affiliate programmes** – Do this before 4.1. Most current buy links go to trade wholesalers (Segen, CCL, Waxman, Tradesparky), which DIY buyers often can't use and which rarely run affiliate schemes. Build a shortlist of UK retailers that sell panels, charge controllers and inverters to the public, covering the grid-tied/hybrid, off-grid and leisure (van/boat) segments. For each one, record:
+  - what it sells, whether it sells to consumers, and roughly how much of the catalogue it stocks;
+  - whether it runs an affiliate programme, and on which network (Awin, CJ, Impact, Webgains, in-house, Amazon);
+  - commission rate, cookie length, payment threshold and terms;
+  - restrictions that affect the app: price display rules, deep-linking, brand-keyword or PPC bans, and whether price feeds or product data are offered;
+  - trust signals (reviews, returns, warranty handling).
+
+  Also cover brand-direct stores (Renogy UK, EcoFlow, Victron via its dealers) and marketplaces.
+  - Acceptance: findings in `memory-bank/affiliate-research.md` with sources and the date checked, a ranked list of retailers to apply to first, and the 4.1 table filled in from it.
+  - Progress (2026-09-30): desk research done in [affiliate-research.md](affiliate-research.md), with a ranked list and the 4.1 table below filled in. Off-grid and leisure are well covered (Renogy, Bimble, Voltacon, Sunstore, Butler Technik); grid-tied and hybrid gear mostly isn't, because it sells through trade distributors and TradeSparky, none of which has a programme. Still to do: trust signals per retailer, Bimble's full T&Cs, Voltacon's current rate (1% or 3%), stock overlap for the new retailers, and direct emails to TradeSparky, Fogstar and 12 Volt Planet.
 - [ ] **4.1 Apply to affiliate programmes** and record the status in the table below. Networks to check: Awin, CJ, Impact, Webgains, Amazon Associates UK, and direct/in-house schemes.
 
   | Retailer / brand | Network | Applied | Approved | Commission | Cookie | Notes |
   | ---------------- | ------- | ------- | -------- | ---------- | ------ | ----- |
-  | Amazon UK | Associates | | | | 24 h | Strict price-display rules (see 6.4) |
-  | Bimble Solar | ? | | | | | Off-grid specialist |
-  | Midsummer Energy | ? | | | | | |
-  | Tradesparky | ? | | | | | |
-  | City Plumbing | ? | | | | | |
-  | Segen / CCL / Waxman | trade | | | | | Trade only; possibly not affiliate-able |
-  | Voltacon | ? | | | | | |
-  | Renogy UK | ? | | | | | |
-  | EcoFlow / Anker / Jackery | Awin / Impact | | | | | High ticket |
-  | Victron (via retailers) | – | | | | | Victron has no direct sales |
+  | Renogy UK | Awin | | | ≈6% (reported) | 30 d | Rank 1. Brand-direct for 9 products; no brand PPC; only Awin voucher codes count |
+  | Bimble Solar | In-house | | | 2% | ? | Rank 2. Off-grid specialist, Victron dealer, 14 links already |
+  | Voltacon Solar | Paid On Results | | | 1% (3% in 2021 blog) | 60 d | Rank 3. Most-linked retailer (24); auto-accept; no brand PPC |
+  | Sunstore Solar | In-house | | | 5% | 30 d | Rank 4. Off-grid and Victron kits; paid monthly |
+  | Butler Technik | Awin | | | 2–5% | 30 d | Rank 5. Victron dealer (36 Victron records); product feeds; Google Ads only with permission |
+  | City Plumbing | Rakuten / Partnerize | | | ≈1.5% (reported) | ≤ 30 d | Rank 6. Consumer route for grid-tied and plug-in kits; 8 links |
+  | Sunshine Solar | In-house | | | 6%+ | ? | Rank 7. Check stock overlap first |
+  | TradeSparky | none found | | | | | Sells to the public; 21 links. Email to ask |
+  | Fogstar | none found | | | | | Own-brand Lux inverters and batteries. Email to ask |
+  | Segen / CCL / Waxman / Midsummer Wholesale | trade | | | | | Trade only; keep as price references |
+  | EcoFlow UK | Awin / CJ | | | 5% | 7 d | After 3.10/7.12; AOV ≈ £1,000 |
+  | Anker SOLIX UK | In-house / Webgains | | | 8% (reported) | 30 d | After 3.10/7.12 |
+  | Jackery UK | Awin | | | 6% | 30 d | After 3.10; no TM bidding |
+  | Bluetti UK | In-house | | | 5–10% (reported) | 30 d | After 3.10; £100 min payout |
+  | Amazon UK | Associates | | | 3–5% by category | 24 h | Defer until 6.4 is decided; price-display rules |
+  | Screwfix | – | | | 1% | 14 d | Closed to new applicants |
+  | Victron (via retailers) | – | | | | | No direct sales; use Butler Technik, Bimble, Sunstore |
 
 - [ ] **4.2 Choose a retailer strategy** – Decide the order in which buy options appear: best price, affiliate first, or a mix. Record it in the Decision log. **Recommendation:** show the cheapest option honestly, and mark which links earn commission. Trust drives long-term revenue.
 
@@ -275,13 +292,20 @@ The app is currently a single URL with no indexable content. Search is the main 
 
 ## Phase 6 – Trust, legal & compliance (P0 before launch)
 
-- [ ] **6.1 Disclaimer** – Show a persistent footer and first-run notice: the app is a component-compatibility aid, not an installation design; the user must follow the datasheets, BS 7671 and the manufacturer's instructions; a grid connection needs a G98/G99 notification by a competent person (MCS for SEG).
-- [ ] **6.2 Affiliate disclosure** – A clear disclosure near the buy buttons and on a dedicated page, per ASA CAP Code and CMA guidance. Include the Amazon Associates wording if Amazon is used: "As an Amazon Associate I earn from qualifying purchases."
-- [ ] **6.3 Privacy policy and cookies** – Required once analytics or affiliate cookies are involved (UK GDPR and PECR). Prefer cookieless analytics (8.1) to avoid a consent banner. Affiliate network cookies are set on the retailer's side, but still disclose them.
+- [x] **6.1 Disclaimer** – Show a persistent footer and first-run notice: the app is a component-compatibility aid, not an installation design; the user must follow the datasheets, BS 7671 and the manufacturer's instructions; a grid connection needs a G98/G99 notification by a competent person (MCS for SEG).
+  - Done without a first-run notice: the owner found a "Before you start" banner too intrusive. Instead a footer line, plus a one-line `ResultsDisclaimer` (`src/components/TrustNotices.jsx`) under each array's compatibility verdict and on the System Summary, where users rely on the advice. Full text on the new About & legal page (`src/views/AboutView.jsx`).
+- [x] **6.2 Affiliate disclosure** – A clear disclosure near the buy buttons and on a dedicated page, per ASA CAP Code and CMA guidance. Include the Amazon Associates wording if Amazon is used: "As an Amazon Associate I earn from qualifying purchases."
+  - Done: `AffiliateNotice` above the panel table and the controller database, plus the "Affiliate links" section of About & legal. There are no Amazon links yet, so the Amazon wording is not shown; add it when Amazon links go in.
+- [x] **6.3 Privacy policy and cookies** – Required once analytics or affiliate cookies are involved (UK GDPR and PECR). Prefer cookieless analytics (8.1) to avoid a consent banner. Affiliate network cookies are set on the retailer's side, but still disclose them.
+  - Done for the current app (no cookies, no analytics, localStorage only, GitHub Pages logs, retailer/affiliate cookies). **Update it before 8.1 or 8.6 ship.** It gives GitHub as the only contact route; a private contact address is still needed.
 - [ ] **6.4 Amazon price rules** – Amazon's Operating Agreement restricts showing Amazon prices unless they come from the Product Advertising API and are refreshed within 24 hours. Either use the PA-API or show no Amazon price, just a "Check price on Amazon" link.
-- [ ] **6.5 Methodology page** – Publish a public "How we check compatibility" page covering every rule, temperature assumption and severity, generated from, or kept in sync with, `domain-rules.md`. This is key for credibility with the expert forum audience.
-- [ ] **6.6 Data sources and corrections** – Show a datasheet link on every spec view, a "Report a data error" link (GitHub issue template or form), and a public changelog of data corrections (the empty `changelogs/` folder could hold it).
-- [ ] **6.7 Pricing and editorial independence statement** – Explain how prices are collected, how often, and that rankings are not influenced by commission, which should be true by design (4.2).
+  - Not yet relevant: the catalogue has no Amazon links. Decide as part of 4.14.
+- [x] **6.5 Methodology page** – Publish a public "How we check compatibility" page covering every rule, temperature assumption and severity, generated from, or kept in sync with, `domain-rules.md`. This is key for credibility with the expert forum audience.
+  - Done: the "How We Check" page (`src/views/MethodologyView.jsx`). Its content lives in `src/lib/methodology.js` and reads thresholds from the engine constants. `methodology.test.js` fails if the engine emits a check code the page doesn't document, or if the page documents one that no longer exists.
+- [x] **6.6 Data sources and corrections** – Show a datasheet link on every spec view, a "Report a data error" link (GitHub issue template or form), and a public changelog of data corrections (the empty `changelogs/` folder could hold it).
+  - Done: the info modals already linked datasheets. They now also have "Report a data error", which opens the GitHub data-correction form prefilled with the product. The public log is `changelogs/data-corrections.md`; add a row whenever a correction changes figures users may have relied on.
+- [x] **6.7 Pricing and editorial independence statement** – Explain how prices are collected, how often, and that rankings are not influenced by commission, which should be true by design (4.2).
+  - Done: the "Prices and independence" section of About & legal. It says prices may be ex- or inc-VAT, because the scanner prefers the ex-VAT figure on trade sites; consider normalising them.
 - [ ] **6.8 Licence strategy review** – The code is GPL-3.0, so anyone can fork and re-host it with their own affiliate tags. Options:
   - keep the GPL and compete on brand and data freshness;
   - license the **catalogue data** separately (e.g. CC BY-NC or proprietary) and treat it as the moat;
@@ -289,7 +313,8 @@ The app is currently a single URL with no indexable content. Search is the main 
 
   Record the choice in the Decision log.
 - [ ] **6.9 Trademark check** – Check that "Solar Pear" is clear to use in the UK and EU (UK IPO search), and consider registering it once there is traction.
-- [ ] **6.10 Terms of use** – Add a limitation-of-liability clause. Consider product liability for electrical advice, and get a professional review if revenue becomes material.
+- [x] **6.10 Terms of use** – Add a limitation-of-liability clause. Consider product liability for electrical advice, and get a professional review if revenue becomes material.
+  - Done: the "Terms of use" section of About & legal (as-is, no professional advice, limitation of liability that keeps the non-excludable UK liabilities, retailer responsibility, GPL, England and Wales law). This is a draft written without legal advice; get it professionally reviewed before revenue becomes material.
 - [ ] **6.11 Accessibility** – Aim for WCAG 2.2 AA: keyboard navigation of tables and modals, colour contrast on status pills, and screen-reader labels on the icon-only buttons (BuyButton).
 
 ---
@@ -446,7 +471,9 @@ Record direction-changing decisions here, newest first.
 | 2026-09-27 | D7 | SolarEdge (and other optimiser-based systems) are **out of scope for now** | Optimisers fix the string voltage, so the engine's per-string Voc/Vmp checks don't apply; supporting them needs a new controller type, per-optimiser checks and optimiser BoM lines. Revisit if demand justifies it | 3.11 |
 | 2026-09-25 | D1 | Isc above a controller's max PV short-circuit rating is an **error**, reversing 5507f6a. Controllers can opt out with `iscSelfLimiting` | Victron and other manufacturers treat max PV Isc as a hardware limit; clipping (Imp over operating current) stays a warning | 1.4, KI-5, KI-20 |
 | 2026-09-25 | D0 | Roadmap created from the full project review | Baseline for launch and monetisation planning | all |
-| | D2 | *Pending:* Hosting platform (Cloudflare Pages / Netlify / GitHub Pages + Worker) | | 5.1, 4.10 |
+| 2026-09-30 | D10 | The app moves from client-only to **optional accounts on Cloudflare** (Worker plus D1 database, site on Cloudflare hosting). Local-only mode stays a fully free, first-class mode. Sign-in is email magic link plus Google, with no passwords. Sharing is read-only with "Copy to my projects". The local-only build must work with no backend (GPL self-hosting). Recommended, awaiting confirmation: deletion on request after a 7-day undo window, inactive accounts deleted after 24 months with warning emails, and a cap of 25 synced projects of 1 MB each. Accounts are **free forever**, funded by affiliate links. The account email may also be the newsletter and price-alert channel, with separate opt-in consent. Resolves D2 | Users want designs on several devices and shareable; the owner wants no paywall. Cloudflare gives the `/go/` redirects and cookieless analytics at the same edge | 5.1, 4.10, 7.11, 12.5, 8.1; design in `documentation/UX_OVERHAUL_BRIEF.md` |
+| 2026-09-30 | D9 | The UI says **System** where the code says "area". A System is one complete electrical installation: all its controllers are in one place and its arrays can share them. Two controller locations means two systems. Arrays are roof sections inside a system. Projects hold one or more systems | Matches how installers think and how the engine already works (controllers, voltage and conditions are per area) | 7.1, 7.5; `documentation/UX_OVERHAUL_BRIEF.md` |
+| 2026-09-30 | D2 | ~~Pending:~~ Resolved by D10 (Cloudflare) | | 5.1, 4.10 |
 | | D3 | *Pending:* Retailer ordering policy (cheapest-first vs affiliate-first) | | 4.2, 6.7 |
 | | D4 | *Pending:* Licence strategy for code vs catalogue data | | 6.8 |
 | | D5 | *Pending:* Stay a Vite SPA with pre-rendering vs migrate to Astro/Next | | 5.5 |

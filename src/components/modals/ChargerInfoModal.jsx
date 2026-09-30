@@ -1,4 +1,5 @@
 import React from 'react';
+import DiscontinuedBadge, { DiscontinuedNotice } from '../DiscontinuedBadge';
 import { NotesSourceLabel } from '../DataProvenance';
 import PriceTag from '../PriceTag';
 import Modal from '../Modal';
@@ -6,6 +7,7 @@ import { CheckCircle, ExternalLink, Info, XIcon } from '../Icons';
 import { getEffectiveStartupV } from '../../lib/arrayAnalysis';
 import { controllerTypeBadgeClass, controllerTypeLabel } from '../../lib/controllerTypes';
 import { safeHttpUrl } from '../../lib/safeUrl';
+import { dataCorrectionIssueUrl } from '../../lib/siteInfo';
 
 export default function ChargerInfoModal({ open, charger, systemVoltage, userNote, onClose, onUpdateNote }) {
     if (!charger) return null;
@@ -21,13 +23,18 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${controllerTypeBadgeClass(c.type)}`}>
                     {controllerTypeLabel(c.type)}
                 </span>
+                <DiscontinuedBadge item={c} />
                 <PriceTag item={c} />
                 {safeDatasheet && (
                     <a href={safeDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors">
                         <ExternalLink size={12} className="mr-1" /> Datasheet
                     </a>
                 )}
+                <a href={dataCorrectionIssueUrl('controller', c)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-slate-500 hover:text-slate-800 hover:underline">
+                    Report a data error
+                </a>
             </div>
+            <DiscontinuedNotice item={c} />
         </div>
     );
 

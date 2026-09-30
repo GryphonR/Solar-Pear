@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
+import DiscontinuedBadge from '../../components/DiscontinuedBadge';
 import { AlertTriangle, CheckCircle, Info, ExternalLink } from '../../components/Icons';
 import BuyButton from '../../components/BuyButton';
+import { AffiliateNotice } from '../../components/TrustNotices';
 import BarCell from '../../components/BarCell';
 import { safeHttpUrl } from '../../lib/safeUrl';
 import { formatMoney } from '../../lib/pricing';
@@ -245,6 +247,7 @@ export default function PanelTable({
                 </div>
             </div>
 
+            <AffiliateNotice className="-mt-2 mb-2 px-1" />
             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                 <div className="max-h-[600px] overflow-y-auto">
                     <table className="w-full text-left border-collapse relative text-xs">
@@ -378,6 +381,7 @@ export default function PanelTable({
                                                 >
                                                     <div className="flex items-center gap-1.5 flex-wrap">
                                                         <span>{p.name}</span>
+                                                        <DiscontinuedBadge item={p} />
                                                         <button
                                                             onClick={() => onOpenInfo(p.model)}
                                                             className="text-slate-400 hover:text-blue-600 transition-colors"
