@@ -25,7 +25,10 @@ import {
 import { computeTrueDimsM } from '../../components/planner/domain/plannerGeometry';
 import { getAssignedControllerModel } from '../../components/planner/domain/plannerSelectors';
 import {
+    ASSUMED_PITCH_DEG,
     ROOF_SHAPES,
+    estimatedRidge,
+    knownPitch,
     layoutChangeSummary,
     layoutCostPerKWp,
     layoutPatch,
@@ -117,9 +120,9 @@ function RoofInspector({ geo, change, onDrawObstacle, selectedObstacleId, onSele
     const { trueX_m, trueY_m } = computeTrueDimsM(input);
     const regenerate = (nextInput, shape = geo.roofShape) => {
         const dims = computeTrueDimsM(nextInput);
-        return shape === 'draw' ? {} : { roofPolygon: roofPolygonFor(shape, dims.trueX_m, dims.trueY_m, geo.ridge_m), roofPolygonAuto: shape === 'rectangle' };
+        return shape === 'draw' ? {} : { roofPolygon: roofPolygonFor(shape, dims.trueX_m, dims.trueY_m, geo.ridge_m, knownPitch(nextInput)), roofPolygonAuto: shape === 'rectangle' };
     };
-    const setRidge = (ridge_m) => change({ ridge_m, roofShape: 'hipped', roofPolygon: roofPolygonFor('hipped', trueX_m, trueY_m, ridge_m), roofPolygonAuto: false }, { final: true });
+    const setRidge = (ridge_m) => change({ ridge_m, roofShape: 'hipped', roofPolygon: roofPolygonFor('hipped', trueX_m, trueY_m, ridge_m, knownPitch(input)), roofPolygonAuto: false }, { final: true });
     const setInput = (patch) => {
         const next = { ...input, ...patch };
         change({ roofInput: next, ...regenerate(next) }, { final: true });
@@ -181,7 +184,14 @@ function RoofInspector({ geo, change, onDrawObstacle, selectedObstacleId, onSele
                     </div>
                 )}
                 {geo.roofShape === 'hipped' ? (
-                    <CommitField label="Ridge length" unit="m" value={geo.ridge_m ?? Math.max(0, trueX_m - 2 * trueY_m).toFixed(2)} onCommit={setRidge} aria="Ridge length in metres" />
+                    <>
+                        <CommitField label="Ridge length" unit="m" value={geo.ridge_m ?? estimatedRidge(trueX_m, trueY_m, knownPitch(input)).toFixed(2)} onCommit={setRidge} aria="Ridge length in metres" />
+                        {geo.ridge_m == null ? (
+                            <p className="text-xs text-muted">
+                                {map ? 'Estimated from the pitch, assuming every face has the same pitch.' : `Estimated for a ${ASSUMED_PITCH_DEG}° pitch. Measure the ridge, or measure from a map with the pitch, for a better fit.`}
+                            </p>
+                        ) : null}
+                    </>
                 ) : null}
                 <p className="text-xs leading-[18px] text-muted">
                     {map ? `Along the slope: ${slopeLengthFromPlan(input.projectedY_m, input.tilt_deg).toFixed(2)} m. ` : 'Measured from a map? Switch to "From a map" and add the pitch '}

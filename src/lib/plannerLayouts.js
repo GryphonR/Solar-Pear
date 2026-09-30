@@ -29,15 +29,28 @@ export function slopeLengthFromPlan(depth_m, pitch_deg) {
     return num(depth_m) / Math.cos((pitch * Math.PI) / 180);
 }
 
+/** Pitch assumed for a hipped roof's ridge estimate when only tape measurements are known (typical UK tiled roof). */
+export const ASSUMED_PITCH_DEG = 35;
+
+/**
+ * Estimated ridge length of a hipped face. When every face has the same pitch (the usual case), each hip
+ * runs inwards by the face's depth seen from above, slope × cos(pitch), so the ridge is the eaves width
+ * less twice that. 0 means the face is a triangle (a pyramid roof).
+ */
+export function estimatedRidge(width_m, slope_m, pitch_deg) {
+    const pitch = num(pitch_deg) > 0 && num(pitch_deg) < 90 ? num(pitch_deg) : ASSUMED_PITCH_DEG;
+    return Math.max(0, num(width_m) - 2 * num(slope_m) * Math.cos((pitch * Math.PI) / 180));
+}
+
 /**
  * Roof face outline in metres, y down from the ridge. A hipped face is a trapezoid: the ridge is shorter
- * than the eaves by the hip on each side (default: a 45° hip in plan, so the ridge is width − 2 × depth).
+ * than the eaves by the hip on each side (default: `estimatedRidge`, from the pitch when it is known).
  */
-export function roofPolygonFor(shape, width_m, slope_m, ridge_m) {
+export function roofPolygonFor(shape, width_m, slope_m, ridge_m, pitch_deg) {
     const w = Math.max(0.1, num(width_m));
     const h = Math.max(0.1, num(slope_m));
     if (shape === 'hipped') {
-        const ridge = ridge_m == null || ridge_m === '' ? Math.max(0, w - 2 * h) : Math.min(w, Math.max(0, num(ridge_m)));
+        const ridge = ridge_m == null || ridge_m === '' ? estimatedRidge(w, h, pitch_deg) : Math.min(w, Math.max(0, num(ridge_m)));
         const inset = (w - ridge) / 2;
         return [
             { x: inset, y: 0 },
@@ -53,6 +66,9 @@ export function roofPolygonFor(shape, width_m, slope_m, ridge_m) {
         { x: 0, y: h },
     ];
 }
+
+/** The pitch the user gave, if any: only a map measurement asks for it. */
+export const knownPitch = (roofInput) => (roofInput?.mode === 'projected' ? roofInput.tilt_deg : null);
 
 /**
  * Planner state from the first-use card. Returns null while something needed is missing (e.g. the pitch
@@ -70,7 +86,7 @@ export function plannerFromStart(start) {
     return {
         roofInput,
         roofShape: start.shape === 'hipped' ? 'hipped' : start.shape === 'draw' ? 'draw' : 'rectangle',
-        roofPolygon: roofPolygonFor(start.shape, width, slope, start.ridge),
+        roofPolygon: roofPolygonFor(start.shape, width, slope, start.ridge, start.measure === 'map' ? start.pitch : null),
         roofPolygonAuto: start.shape !== 'hipped' && start.shape !== 'draw',
         ridge_m: start.shape === 'hipped' && start.ridge !== '' && start.ridge != null ? num(start.ridge) : null,
         exclusions: [],

@@ -8,6 +8,8 @@ import {
     layoutPatch,
     plannerFromStart,
     roofPolygonFor,
+    estimatedRidge,
+    ASSUMED_PITCH_DEG,
     samePanelArrays,
     slopeLengthFromPlan,
     slotKey,
@@ -30,14 +32,17 @@ describe('roof from the first-use card (roadmap 13.8)', () => {
         expect(p.roofPolygonAuto).toBe(true);
     });
 
-    it('draws a hipped face as a trapezoid with a 45° hip by default', () => {
-        expect(roofPolygonFor('hipped', 10, 3)).toEqual([
-            { x: 3, y: 0 },
-            { x: 7, y: 0 },
-            { x: 10, y: 3 },
-            { x: 0, y: 3 },
-        ]);
+    it('draws a hipped face as a trapezoid, estimating the ridge from the pitch', () => {
+        // Same pitch on every face: each hip runs in by slope × cos(pitch).
+        expect(estimatedRidge(10, 3, 60)).toBeCloseTo(7, 6);
+        expect(estimatedRidge(10, 3)).toBeCloseTo(10 - 6 * Math.cos((ASSUMED_PITCH_DEG * Math.PI) / 180), 6);
+        expect(estimatedRidge(4, 3, 10)).toBe(0); // a pyramid
+        const hip = roofPolygonFor('hipped', 10, 3, null, 60);
+        expect(hip.map((p) => [+p.x.toFixed(6), p.y])).toEqual([[1.5, 0], [8.5, 0], [10, 3], [0, 3]]);
         expect(roofPolygonFor('hipped', 10, 3, 6)[0]).toEqual({ x: 2, y: 0 });
+        // A map measurement gives the pitch; a tape one assumes it.
+        const fromMap = plannerFromStart({ shape: 'hipped', measure: 'map', width: 10, depth: 1.5, pitch: 60 });
+        expect(fromMap.roofPolygon[1].x - fromMap.roofPolygon[0].x).toBeCloseTo(7, 6);
         expect(plannerFromStart({ shape: 'hipped', measure: 'tape', width: 10, length: 3 }).roofPolygonAuto).toBe(false);
     });
 });

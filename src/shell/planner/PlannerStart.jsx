@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from 'react';
-import { ROOF_SHAPES, plannerFromStart, slopeLengthFromPlan } from '../../lib/plannerLayouts';
+import { ASSUMED_PITCH_DEG, ROOF_SHAPES, estimatedRidge, plannerFromStart, slopeLengthFromPlan } from '../../lib/plannerLayouts';
 import { NumberField, ShapeIcon, SOLARWIZARD } from './plannerUi';
 
 export default function PlannerStart({ arrayName, onStart, onSkip }) {
@@ -13,6 +13,8 @@ export default function PlannerStart({ arrayName, onStart, onSkip }) {
     const set = (patch) => setStart((s) => ({ ...s, ...patch }));
     const planner = plannerFromStart(start);
     const map = start.measure === 'map';
+    const slope = map ? slopeLengthFromPlan(start.depth, start.pitch) : Number(start.length);
+    const ridgeEstimate = Number(start.width) > 0 && slope > 0 ? `≈ ${estimatedRidge(start.width, slope, map ? start.pitch : null).toFixed(2)}` : undefined;
     const missing = !(Number(start.width) > 0)
         ? 'Add the width to continue'
         : map && !(Number(start.depth) > 0)
@@ -83,7 +85,7 @@ export default function PlannerStart({ arrayName, onStart, onSkip }) {
                         <NumberField label="Length up the slope" unit="m" value={start.length} onChange={(v) => set({ length: v })} aria="Length up the slope in metres" />
                     )}
                     {start.shape === 'hipped' ? (
-                        <NumberField label="Ridge length (optional)" unit="m" value={start.ridge} onChange={(v) => set({ ridge: v })} aria="Ridge length in metres" />
+                        <NumberField label="Ridge length (optional)" unit="m" value={start.ridge} placeholder={ridgeEstimate} onChange={(v) => set({ ridge: v })} aria="Ridge length in metres" />
                     ) : null}
                 </div>
                 {map ? (
@@ -93,6 +95,11 @@ export default function PlannerStart({ arrayName, onStart, onSkip }) {
                             SolarWizard
                         </a>{' '}
                         to find it. A wrong pitch changes how many rows fit.
+                    </p>
+                ) : null}
+                {start.shape === 'hipped' && !start.ridge ? (
+                    <p className="text-[13px] text-subtle">
+                        Leave the ridge blank and we&apos;ll estimate it{map ? ' from the pitch' : ` for a ${ASSUMED_PITCH_DEG}° pitch`}. You can change it on the next screen.
                     </p>
                 ) : null}
                 {start.shape === 'draw' ? <p className="text-[13px] text-subtle">We&apos;ll start from a rectangle this size. Add and drag corners on the drawing to match your roof.</p> : null}
