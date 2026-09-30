@@ -5,6 +5,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
 import Guide from './components/Guide';
 import SolarPearLogo from './components/SolarPearLogo';
 import AppSidebar from './components/AppSidebar';
@@ -77,6 +78,13 @@ export default function App() {
             window.visualViewport?.removeEventListener('scroll', handleResize);
         };
     }, []);
+
+    // Scroll to an in-page section (e.g. /about#privacy) once the page has mounted.
+    const { pathname, hash } = useLocation();
+    useEffect(() => {
+        if (!hash || typeof document === 'undefined') return;
+        document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView?.({ block: 'start' });
+    }, [pathname, hash]);
 
     const {
         arraysData,

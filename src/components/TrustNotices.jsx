@@ -9,20 +9,13 @@ import { useUiState } from '../context/AppStateContext';
 import { ABOUT_SECTIONS, ABOUT_TAB } from '../lib/siteInfo';
 
 /**
- * Opens the About & legal page at a section. The main pane re-mounts on tab change, so the scroll
- * waits a frame for the section to exist.
+ * Opens the About & legal page at a section, as a `/about#section` URL. App scrolls to the hash.
  *
- * @param {(tab: string) => void} setActiveTab
+ * @param {(tab: string, options?: { hash?: string }) => void} setActiveTab
  * @param {string} [sectionId]
  */
 export function openAboutSection(setActiveTab, sectionId) {
-    setActiveTab(ABOUT_TAB);
-    if (!sectionId || typeof window === 'undefined') return;
-    window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-            document.getElementById(sectionId)?.scrollIntoView({ block: 'start' });
-        });
-    });
+    setActiveTab(ABOUT_TAB, sectionId ? { hash: sectionId } : undefined);
 }
 
 /** One-line disclaimer shown next to compatibility results (roadmap 6.1). */

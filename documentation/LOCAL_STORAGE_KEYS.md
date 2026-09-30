@@ -34,7 +34,7 @@ The legacy arrays can't tell a user's price edit from a price that was stale whe
 | `user_notes` | `{ [panel.model \| charger.id \| array_<id>]: string }` | hook | No |
 | `solar_hide_heavy_panels`, `solar_hide_marginal_panels`, `solar_hide_incompatible_panels`, `solar_hide_incompatible_controllers` | boolean | hook | No |
 | `solar_system_voltage`, `solar_system_type`, `solar_filter_eps`, `solar_filter_house_backup` | legacy global settings, used as the fallback for area settings | hook | No |
-| `solar_active_array_content_tab` | `{ [arrayId]: tab }` | hook | No |
+| `solar_active_array_content_tab` | `{ [arrayId]: tab }`: the last tab used on each array, so reopening an array returns to it. The open page itself lives in the URL (`src/lib/routes.js`) | hook | No |
 
 ### Legacy keys (read once, never written)
 - `solar_panels` / `solar_chargers`: full catalogue arrays (storage v1). Migrated to `solar_catalogue_overrides`, then removed.

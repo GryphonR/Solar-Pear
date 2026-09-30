@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
+import { MemoryRouter, useInRouterContext, useLocation, useNavigate } from 'react-router';
 import { initialPanels, initialChargers } from '../data/loadData.js';
 import { useLocalStorage, STORAGE_ERROR_EVENT } from '../hooks/useLocalStorage';
 import { analyzeArray, conditionsFromAreaSettings, COLD_TEMP_C, HOT_TEMP_C } from '../lib/arrayAnalysis';
@@ -14,6 +15,7 @@ import {
     loadCatalogueFromStorage,
     saveCatalogueToStorage,
 } from '../lib/catalogueOverrides';
+import { arrayPath, isSamePath, resolvePath, tabToPath } from '../lib/routes';
 
 const initialArrays = [
     {
@@ -75,8 +77,26 @@ const DataStateContext = createContext(null);
 const UiStateContext = createContext(null);
 const PlannerStateContext = createContext(null);
 
+/**
+ * App state. View state (which page, which array tab) lives in the URL, so the provider must sit
+ * inside a router; `main.jsx` supplies a `BrowserRouter`. Without one (tests, isolated renders) it
+ * falls back to an in-memory router starting at `/`.
+ */
 export function AppStateProvider({ children }) {
-    const [activeTab, setActiveTab] = useState('GUIDE');
+    const inRouter = useInRouterContext();
+    if (!inRouter) {
+        return (
+            <MemoryRouter>
+                <AppStateProviderInner>{children}</AppStateProviderInner>
+            </MemoryRouter>
+        );
+    }
+    return <AppStateProviderInner>{children}</AppStateProviderInner>;
+}
+
+function AppStateProviderInner({ children }) {
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const [arraysData, setArraysData] = useLocalStorage('solar_arrays', initialArrays);
     // The catalogue lives in memory; only the user's edits are persisted (see catalogueOverrides.js).
@@ -179,10 +199,59 @@ export function AppStateProvider({ children }) {
     const [panelSort, setPanelSort] = useState({ key: 'peakPower', dir: 'desc' });
     const [controllerSort, setControllerSort] = useState({ key: 'price', dir: 'asc' });
     const [activeSelectorTabs, setActiveSelectorTabs] = useState({});
-    const [activeArrayContentTab, setActiveArrayContentTab] = useLocalStorage(
-        'solar_active_array_content_tab',
-        {}
+    // Last content tab per array, so reopening an array from the sidebar returns to that tab.
+    const [arrayTabMemory, setArrayTabMemory] = useLocalStorage('solar_active_array_content_tab', {});
+    const arrayTabMemoryRef = useRef(arrayTabMemory);
+
+    // The URL is the source of truth for the view (src/lib/routes.js, roadmap 13.3).
+    const route = useMemo(
+        () => resolvePath(location.pathname, arraysData),
+        [location.pathname, arraysData]
     );
+    const activeTab = route.tab;
+    const activeArrayContentTab = useMemo(
+        () => (route.contentTab ? { ...arrayTabMemory, [route.tab]: route.contentTab } : arrayTabMemory),
+        [arrayTabMemory, route.tab, route.contentTab]
+    );
+    const locationRef = useRef(location);
+    locationRef.current = location;
+
+    // Remember the tab when the user arrives by URL, Back or Forward.
+    useEffect(() => {
+        if (!route.contentTab || arrayTabMemoryRef.current[route.tab] === route.contentTab) return;
+        const next = { ...arrayTabMemoryRef.current, [route.tab]: route.contentTab };
+        arrayTabMemoryRef.current = next;
+        setArrayTabMemory(next);
+    }, [route.tab, route.contentTab]);
+
+    /**
+     * Navigates to a view. Any tab that isn't a fixed view is an array id.
+     *
+     * @param {string} tab
+     * @param {{ hash?: string, replace?: boolean }} [options] - `hash` scrolls to an in-page section
+     */
+    const setActiveTab = (tab, { hash, replace = false } = {}) => {
+        const path = tabToPath(tab, { arraysData, contentTab: arrayTabMemoryRef.current[tab] });
+        const target = hash ? `${path}#${hash}` : path;
+        const current = locationRef.current;
+        if (isSamePath(path, current.pathname) && (hash || '') === current.hash.replace(/^#/, '')) {
+            // Already there: a repeat click on a section link should still scroll to it.
+            if (hash) document.getElementById(hash)?.scrollIntoView?.({ block: 'start' });
+            return;
+        }
+        navigate(target, { replace });
+    };
+
+    /** Same API as a state setter over `{ [arrayId]: contentTab }`; navigates when the open array's tab changes. */
+    const setActiveArrayContentTab = (update) => {
+        const next = typeof update === 'function' ? update(activeArrayContentTab) : update;
+        arrayTabMemoryRef.current = next;
+        setArrayTabMemory(next);
+        const array = route.contentTab ? arraysData.find((a) => a.id === route.tab) : null;
+        if (array && next[array.id] && next[array.id] !== route.contentTab) {
+            navigate(arrayPath(array, next[array.id]));
+        }
+    };
     const [infoModalPanelId, setInfoModalPanelId] = useState(null);
     const [infoModalChargerId, setInfoModalChargerId] = useState(null);
     const [addPanelModal, setAddPanelModal] = useState({ open: false, data: {} });
@@ -291,6 +360,13 @@ export function AppStateProvider({ children }) {
             setLoadStatus('error');
         }
     }, []);
+
+    // Replace aliases, stale area names and unknown or deleted targets with the canonical URL.
+    // Waits for the initial load so a link to a saved array isn't redirected before it exists.
+    useEffect(() => {
+        if (loadStatus !== 'ok' || isSamePath(route.canonicalPath, location.pathname)) return;
+        navigate(`${route.canonicalPath}${location.hash}`, { replace: true });
+    }, [loadStatus, route.canonicalPath, location.pathname, location.hash, navigate]);
 
     // Persist only the user's catalogue edits, once the initial load/migration has run.
     useEffect(() => {

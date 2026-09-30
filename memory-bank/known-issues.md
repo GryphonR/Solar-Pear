@@ -32,5 +32,5 @@ Status key: OPEN / FIXED. Update this file as issues are resolved.
 ## Repo hygiene
 14. **FIXED** – `availability_check_log_1773331249255.txt` is tracked despite `.gitignore`. Several `*_processing_log_*.txt` files and `.cursor/debug-*.log` sit untracked in the root.
 15. **FIXED** – `package.json` has an empty description/author and a licence of `ISC` that conflicts with the GPL-3.0 `LICENSE`.
-16. **OPEN** – `index.html` has a generic meta description and no OG/Twitter tags, canonical, sitemap, or analytics. The SPA has no routes, so there is nothing indexable per panel or controller.
+16. **OPEN** – `index.html` has a generic meta description and no OG/Twitter tags, canonical, sitemap, or analytics. The SPA now has history URLs per view (13.3), but there are still no per-product pages or pre-rendering, so nothing is indexable per panel or controller (5.5).
 17. **FIXED** – Merged remote branches `cursor/mobile-*-963b` and the local branches `cursor/add-missing-uk-panels-61fc` and `wip/preserved-pre-main-reset` can be pruned.

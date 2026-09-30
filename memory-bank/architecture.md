@@ -6,7 +6,8 @@ Vite 7, React 19, Tailwind v4 (theme in `src/index.css`), uPlot for graphs, and 
 ## Layout
 | Path | Role |
 | ---- | ---- |
-| `src/App.jsx` | Shell, sidebar, tab switching (state-driven, **no router / no URLs per view**) |
+| `src/App.jsx` | Shell, sidebar, view switching on `activeTab` |
+| `src/lib/routes.js` | URL scheme (13.3). React Router with history URLs; `AppStateContext` derives `activeTab` and the array tab from the location, and `setActiveTab` navigates. One implicit project `local` and area names as the system segment until 13.2 adds ids. The build copies `index.html` to `404.html` so GitHub Pages deep links work |
 | `src/context/AppStateContext.jsx` (~1000 lines) | All app state, localStorage load/migrate, CRUD for areas/arrays/controllers, `getArrayAnalysis` |
 | `src/lib/arrayAnalysis.js` | Core compatibility maths (`analyzeArray`, temp factors, wiring helpers) |
 | `src/views/arraySelector/useValidPanels.js` | Per-panel ranking. **Re-implements** parts of `analyzeArray` (drift risk) |
