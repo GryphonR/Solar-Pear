@@ -148,6 +148,50 @@ Ranked by catalogue overlap × commission × ease of joining.
 9. **Later, with 3.10 / 7.12:** EcoFlow, Anker SOLIX, Jackery, Bluetti.
 10. **Defer:** Amazon Associates (only once 6.4 is decided), eBay Partner Network, Skimlinks as a fallback.
 
+## Retailers to scan for products (regardless of affiliate schemes)
+
+The pricing scanner finds buy links by searching only the domains in `data-admin/config/serper-sites.json` (a `panels` list and a `controllers` list). Checked 2026-09-30, by looking at each site's own category pages.
+
+### Added to the scanner whitelist
+
+| Domain | List | Public prices? | Catalogue brands seen |
+| ------ | ---- | -------------- | --------------------- |
+| powerland.co.uk | panels, controllers | Yes (retail, plus an optional trade portal) | Panels: JA, AIKO, DMEGC, Jinko, Canadian Solar, REC, Viridian, LONGi. Inverters: Solis, Fox ESS, GivEnergy, SolaX, Growatt, Huawei, Sigenergy, Sunsynk, Victron. Victron SmartSolar/BlueSolar MPPT |
+| shop4electrical.co.uk | panels, controllers | Yes, inc/ex VAT toggle | Fox ESS, Growatt, SolaX, Solis, Sunsynk; Canadian Solar panels |
+| eco-angels.uk | panels | Yes, inc/ex VAT toggle | DMEGC panels, Solis inverters |
+| lampsltd.co.uk | controllers | Yes, inc/ex VAT toggle | Growatt, Fox ESS, SolaX, Sunsynk (also Sync Energy, myenergi) |
+| fogstar.co.uk | controllers | Yes, inc VAT | Fogstar × LuxpowerTek inverters (brand-direct) |
+| butlertechnik.com | controllers | Yes (ex VAT shown) | Victron (authorised dealer) |
+| wiredcampers.co.uk | controllers | Yes | Victron SmartSolar 75/10–150/45, Orion DC-DC |
+| 12voltplanet.co.uk | controllers | Yes | Victron (282 lines, mostly chargers and PWM seen), Votronic |
+| bmstechnologies.co.uk | controllers | Not confirmed (site blocks fetches) | Victron SmartSolar MPPT. Already linked once in the catalogue |
+
+Powerland is the most valuable addition: it's a consumer-facing shop with public prices that covers most of the grid-tied panel and hybrid inverter catalogue, the segment where the existing whitelist leans on trade-only distributors.
+
+### Checked and not added
+
+| Retailer | Why not |
+| -------- | ------- |
+| **Screwfix** | Sells to the public with prices, but its 41 solar lines are V-TAC, Sync Energy, Osda, Pramac, EcoFlow and Anker SOLIX: no catalogue brands today. Add it when those brands go in (3.10, 7.12, or if V-TAC/Sync are added as mainstream DIY kit). |
+| **CEF** | Guest checkout exists, but solar inverters and panels are "Contact Branch to Order" with no price online. Only accessories are priced. |
+| **YESSS Electrical** | Trade login needed to see prices (Sofar, SolaX, Sunsynk, Hanchu, Enphase). |
+| **Rexel / Denmans** | Login needed for prices; the Rexel inverter category was empty. |
+| **Edmundson / Electric Center** | Trade counter; Electric Center blocks automated checks. Worth a manual look. |
+| **Triple Solar, Power Warehouse, Deco Group, Solar Trading UK** | Trade only, no public prices. |
+| **B&Q (diy.com)** | Marketplace listings of portable kits (Bluetti, small 12 V kits); no catalogue overlap. |
+| **Toolstation** | No solar range found. |
+| **Amazon UK, eBay** | Carry Renogy, EPEver and Victron via third-party sellers, but listings are volatile and Amazon prices can't be shown without its product API (6.4). Keep out of the scanner. |
+
+### Still worth a manual check
+- **Sunstore Solar**: an off-grid specialist with an affiliate scheme; its homepage names Victron controllers and inverters but not its panel brands.
+- **Leisureshopdirect, Van Junkies, Callidus**: Victron leisure shops that blocked or truncated automated checks.
+- **HDM Solar**: Sunsynk stockist; page didn't render for the check.
+- **Plug In Solar (pluginsolar.co.uk)**: DIY grid-tied kits including AIKO panels and Sunsynk, Solis and SolaX inverters; prices didn't render for the check.
+- **Catalogue domains not in the whitelist**: gb-sol.co.uk, solareon.co.uk, electricalsonline.co.uk, countysolarsupplies.co.uk and midsummerenergy.co.uk each hold one existing link.
+
+### Scanner limit
+`searchDistributorLink` (`verification_scripts/lib/serper.js`) puts every whitelisted domain into **one** query as OR'd `site:` filters. After these additions the lists hold 17 (panels) and 22 (controllers) domains. Google caps queries at about 32 words and returns about 10 organic results, so much further growth risks truncated queries and crowded-out retailers. Before adding more, change the scanner to split the whitelist into batches of about 10 domains per query (roughly doubling Serper usage).
+
 ## Still to check
 
 - Bimble's affiliate T&Cs (cookie length, payment threshold), which need an account to read.
