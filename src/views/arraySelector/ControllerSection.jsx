@@ -27,6 +27,8 @@ export default function ControllerSection({
     createControllerInstance,
     deleteControllerInstance,
     setInfoModalChargerId,
+    // New shell (13.5): system-wide settings are edited in System Setup, so the array page only shows them.
+    systemSettingsSummary = null,
 }) {
     const [manufacturerFilter, setManufacturerFilter] = useState('');
 
@@ -208,178 +210,182 @@ export default function ControllerSection({
                         <span>Hide incompatible options</span>
                     </label>
                 </div>
-                <div className="space-y-4 pb-4 mb-4 border-b border-slate-200">
-                    <div className="flex flex-wrap items-center gap-3" data-testid="design-conditions">
-                        <span
-                            className="text-xs font-semibold text-slate-500 uppercase tracking-wider"
-                            title="Worst-case cell temperatures for this area. Cold sets the maximum string voltage; hot sets the minimum voltage and maximum current."
-                        >
-                            Design Temperatures
-                        </span>
-                        <label className="flex items-center gap-1 text-sm text-slate-700">
-                            Coldest
-                            <input
-                                type="number"
-                                min={-50}
-                                max={15}
-                                step={1}
-                                aria-label="Coldest cell temperature in °C"
-                                className="w-16 px-2 py-1 border border-slate-300 rounded text-sm"
-                                value={areaSettings.designLowC ?? COLD_TEMP_C}
-                                onChange={(e) =>
-                                    updateAreaSettings?.(array.area, { designLowC: e.target.value === '' ? COLD_TEMP_C : Number(e.target.value) })
-                                }
-                            />
-                            °C
-                        </label>
-                        <label className="flex items-center gap-1 text-sm text-slate-700">
-                            Hottest cell
-                            <input
-                                type="number"
-                                min={30}
-                                max={95}
-                                step={1}
-                                aria-label="Hottest cell temperature in °C"
-                                className="w-16 px-2 py-1 border border-slate-300 rounded text-sm"
-                                value={areaSettings.designHighC ?? HOT_TEMP_C}
-                                onChange={(e) =>
-                                    updateAreaSettings?.(array.area, { designHighC: e.target.value === '' ? HOT_TEMP_C : Number(e.target.value) })
-                                }
-                            />
-                            °C
-                        </label>
-                        <label
-                            className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer"
-                            title={`Apply a ${STRICT_CURRENT_FACTOR}× irradiance safety factor to short-circuit current (NEC / IEC practice for edge-of-cloud conditions).`}
-                        >
-                            <input
-                                type="checkbox"
-                                className="w-3.5 h-3.5 text-blue-600 rounded cursor-pointer"
-                                checked={!!areaSettings.strictCurrent}
-                                onChange={(e) => updateAreaSettings?.(array.area, { strictCurrent: e.target.checked })}
-                            />
-                            Strict current check ({STRICT_CURRENT_FACTOR}× Isc)
-                        </label>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                            DC Bus Voltage
-                        </span>
-                        <div className="flex gap-1">
-                            <button
-                                onClick={() => setAreaSystemVoltage(null)}
-                                className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${
-                                    areaSettings.systemVoltage === null
-                                        ? 'bg-slate-600 text-white'
-                                        : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                                }`}
+                {systemSettingsSummary ? (
+                    <div className="mb-4 border-b border-slate-200 pb-4">{systemSettingsSummary}</div>
+                ) : (
+                    <div className="space-y-4 pb-4 mb-4 border-b border-slate-200">
+                        <div className="flex flex-wrap items-center gap-3" data-testid="design-conditions">
+                            <span
+                                className="text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                                title="Worst-case cell temperatures for this area. Cold sets the maximum string voltage; hot sets the minimum voltage and maximum current."
                             >
-                                Any
-                            </button>
-                            {[12, 24, 36, 48, 96].map((v) => (
+                                Design Temperatures
+                            </span>
+                            <label className="flex items-center gap-1 text-sm text-slate-700">
+                                Coldest
+                                <input
+                                    type="number"
+                                    min={-50}
+                                    max={15}
+                                    step={1}
+                                    aria-label="Coldest cell temperature in °C"
+                                    className="w-16 px-2 py-1 border border-slate-300 rounded text-sm"
+                                    value={areaSettings.designLowC ?? COLD_TEMP_C}
+                                    onChange={(e) =>
+                                        updateAreaSettings?.(array.area, { designLowC: e.target.value === '' ? COLD_TEMP_C : Number(e.target.value) })
+                                    }
+                                />
+                                °C
+                            </label>
+                            <label className="flex items-center gap-1 text-sm text-slate-700">
+                                Hottest cell
+                                <input
+                                    type="number"
+                                    min={30}
+                                    max={95}
+                                    step={1}
+                                    aria-label="Hottest cell temperature in °C"
+                                    className="w-16 px-2 py-1 border border-slate-300 rounded text-sm"
+                                    value={areaSettings.designHighC ?? HOT_TEMP_C}
+                                    onChange={(e) =>
+                                        updateAreaSettings?.(array.area, { designHighC: e.target.value === '' ? HOT_TEMP_C : Number(e.target.value) })
+                                    }
+                                />
+                                °C
+                            </label>
+                            <label
+                                className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer"
+                                title={`Apply a ${STRICT_CURRENT_FACTOR}× irradiance safety factor to short-circuit current (NEC / IEC practice for edge-of-cloud conditions).`}
+                            >
+                                <input
+                                    type="checkbox"
+                                    className="w-3.5 h-3.5 text-blue-600 rounded cursor-pointer"
+                                    checked={!!areaSettings.strictCurrent}
+                                    onChange={(e) => updateAreaSettings?.(array.area, { strictCurrent: e.target.checked })}
+                                />
+                                Strict current check ({STRICT_CURRENT_FACTOR}× Isc)
+                            </label>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                DC Bus Voltage
+                            </span>
+                            <div className="flex gap-1">
                                 <button
-                                    key={v}
-                                    onClick={() => setAreaSystemVoltage(v)}
+                                    onClick={() => setAreaSystemVoltage(null)}
                                     className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${
-                                        areaSettings.systemVoltage === v
-                                            ? 'bg-blue-600 text-white'
-                                            : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                                    }`}
-                                >
-                                    {v}V
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-6">
-                        <div className="flex items-center gap-3">
-                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Manufacturer
-                            </span>
-                            <select
-                                className="min-w-[10rem] px-3 py-1.5 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white"
-                                value={manufacturerFilter}
-                                onChange={(e) => setManufacturerFilter(e.target.value)}
-                            >
-                                <option value="">All</option>
-                                {manufacturers.map((mfr) => (
-                                    <option key={mfr} value={mfr}>
-                                        {mfr}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Controller Type
-                            </span>
-                            <div className="flex rounded-lg overflow-hidden border border-slate-300 shadow-sm text-sm font-medium">
-                                <button
-                                    onClick={() => setAreaSystemType('any')}
-                                    className={`px-3 py-1.5 transition-colors ${
-                                        areaSettings.systemType === 'any'
+                                        areaSettings.systemVoltage === null
                                             ? 'bg-slate-600 text-white'
-                                            : 'bg-white text-slate-600 hover:bg-slate-50'
+                                            : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
                                     }`}
                                 >
                                     Any
                                 </button>
-                                <button
-                                    onClick={() => setAreaSystemType('dc-charger')}
-                                    className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
-                                        areaSettings.systemType === 'dc-charger'
-                                            ? 'bg-amber-500 text-white'
-                                            : 'bg-white text-slate-600 hover:bg-slate-50'
-                                    }`}
-                                >
-                                    DC Charger
-                                </button>
-                                <button
-                                    onClick={() => setAreaSystemType('grid-connected')}
-                                    className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
-                                        areaSettings.systemType === 'grid-connected'
-                                            ? 'bg-blue-600 text-white'
-                                            : 'bg-white text-slate-600 hover:bg-slate-50'
-                                    }`}
-                                >
-                                    Grid-Connected AC
-                                </button>
-                                <button
-                                    onClick={() => setAreaSystemType('off-grid-ac')}
-                                    className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
-                                        areaSettings.systemType === 'off-grid-ac'
-                                            ? 'bg-emerald-600 text-white'
-                                            : 'bg-white text-slate-600 hover:bg-slate-50'
-                                    }`}
-                                >
-                                    Off-Grid AC
-                                </button>
+                                {[12, 24, 36, 48, 96].map((v) => (
+                                    <button
+                                        key={v}
+                                        onClick={() => setAreaSystemVoltage(v)}
+                                        className={`px-4 py-1.5 rounded text-sm font-bold transition-colors ${
+                                            areaSettings.systemVoltage === v
+                                                ? 'bg-blue-600 text-white'
+                                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                        }`}
+                                    >
+                                        {v}V
+                                    </button>
+                                ))}
                             </div>
                         </div>
-                        {areaSettings.systemType === 'grid-connected' && (
-                            <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
-                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
-                                        checked={areaSettings.filterEps}
-                                        onChange={toggleAreaEps}
-                                    />
-                                    Emergency Power (EPS)
-                                </label>
-                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
-                                        checked={areaSettings.filterHouseBackup}
-                                        onChange={toggleAreaHouseBackup}
-                                    />
-                                    House Blackout protection
-                                </label>
+                        <div className="flex flex-wrap items-center gap-6">
+                            <div className="flex items-center gap-3">
+                                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    Manufacturer
+                                </span>
+                                <select
+                                    className="min-w-[10rem] px-3 py-1.5 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white"
+                                    value={manufacturerFilter}
+                                    onChange={(e) => setManufacturerFilter(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    {manufacturers.map((mfr) => (
+                                        <option key={mfr} value={mfr}>
+                                            {mfr}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
-                        )}
+                            <div className="flex items-center gap-3">
+                                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    Controller Type
+                                </span>
+                                <div className="flex rounded-lg overflow-hidden border border-slate-300 shadow-sm text-sm font-medium">
+                                    <button
+                                        onClick={() => setAreaSystemType('any')}
+                                        className={`px-3 py-1.5 transition-colors ${
+                                            areaSettings.systemType === 'any'
+                                                ? 'bg-slate-600 text-white'
+                                                : 'bg-white text-slate-600 hover:bg-slate-50'
+                                        }`}
+                                    >
+                                        Any
+                                    </button>
+                                    <button
+                                        onClick={() => setAreaSystemType('dc-charger')}
+                                        className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
+                                            areaSettings.systemType === 'dc-charger'
+                                                ? 'bg-amber-500 text-white'
+                                                : 'bg-white text-slate-600 hover:bg-slate-50'
+                                        }`}
+                                    >
+                                        DC Charger
+                                    </button>
+                                    <button
+                                        onClick={() => setAreaSystemType('grid-connected')}
+                                        className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
+                                            areaSettings.systemType === 'grid-connected'
+                                                ? 'bg-blue-600 text-white'
+                                                : 'bg-white text-slate-600 hover:bg-slate-50'
+                                        }`}
+                                    >
+                                        Grid-Connected AC
+                                    </button>
+                                    <button
+                                        onClick={() => setAreaSystemType('off-grid-ac')}
+                                        className={`px-3 py-1.5 transition-colors border-l border-slate-300 ${
+                                            areaSettings.systemType === 'off-grid-ac'
+                                                ? 'bg-emerald-600 text-white'
+                                                : 'bg-white text-slate-600 hover:bg-slate-50'
+                                        }`}
+                                    >
+                                        Off-Grid AC
+                                    </button>
+                                </div>
+                            </div>
+                            {areaSettings.systemType === 'grid-connected' && (
+                                <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
+                                    <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
+                                        <input
+                                            type="checkbox"
+                                            className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                            checked={areaSettings.filterEps}
+                                            onChange={toggleAreaEps}
+                                        />
+                                        Emergency Power (EPS)
+                                    </label>
+                                    <label className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer select-none">
+                                        <input
+                                            type="checkbox"
+                                            className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                                            checked={areaSettings.filterHouseBackup}
+                                            onChange={toggleAreaHouseBackup}
+                                        />
+                                        House Blackout protection
+                                    </label>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
+                )}
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                     <div className="max-h-[600px] overflow-y-auto">
                         <table className="w-full text-left border-collapse relative text-xs">

@@ -9,6 +9,7 @@ describe("routes (roadmap 13.3)", () => {
     it("round-trips every route shape through buildPath and parsePath", () => {
         const routes = [
             { view: "about" },
+            { view: "new" },
             { view: "learn", slug: null },
             { view: "learn", slug: "methodology" },
             { view: "library", section: "controllers" },

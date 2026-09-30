@@ -33,6 +33,9 @@ describe("designStatus (roadmap 13.4)", () => {
     it("describes a system", () => {
         expect(systemMeta({ systemType: "grid-connected", systemVoltage: 48 }, 3)).toBe("Grid-connected · 48 V · 3 arrays");
         expect(systemMeta({ systemType: "any", systemVoltage: null }, 1)).toBe("1 array");
+        expect(systemMeta({ installType: "static", gridMode: "hybrid", systemType: "grid-connected", systemVoltage: 48 }, 2)).toBe(
+            "Static · Hybrid · 48 V · 2 arrays"
+        );
     });
 
     it("totals power and known cost", () => {

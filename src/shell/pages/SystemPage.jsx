@@ -1,7 +1,7 @@
 /**
  * @file SystemPage.jsx
- * System page (roadmap 13.4). For now a header and a card per array; the Setup (13.5), Controllers (13.6)
- * and diagram (13.7) tabs build on it.
+ * System page: header, tabs and the tab's content. Overview is a card per array until the diagram (13.7);
+ * Setup is 13.5; Controllers arrives in 13.6.
  */
 
 import React from 'react';
@@ -10,6 +10,12 @@ import { StatusPill } from '../../components/ui';
 import { Plus } from '../../components/Icons';
 import { buildPath } from '../../lib/routes';
 import { Cost, kWp } from './ProjectOverview';
+import SystemSetup from './SystemSetup';
+
+const TABS = [
+    ['overview', 'Overview'],
+    ['setup', 'Setup'],
+];
 
 function slotText(array) {
     const a = array.analysis;
@@ -18,8 +24,9 @@ function slotText(array) {
     return { panel, controller };
 }
 
-export default function SystemPage({ design, system, onAddArray, onEditSystem }) {
+export default function SystemPage({ design, system, tab = 'overview', onAddArray, onEditSystem }) {
     const projectId = design.project.id;
+    const current = TABS.some(([key]) => key === tab) ? tab : 'overview';
 
     return (
         <div className="flex flex-col gap-6">
@@ -30,7 +37,7 @@ export default function SystemPage({ design, system, onAddArray, onEditSystem })
                         <span>{system.meta}</span>
                         <StatusPill status={system.summary.status}>{system.summary.label}</StatusPill>
                         <button type="button" onClick={() => onEditSystem(system.name)} className="font-semibold text-secondary underline-offset-2 hover:underline">
-                            Rename or delete
+                            Rename
                         </button>
                     </div>
                 </div>
@@ -48,35 +55,53 @@ export default function SystemPage({ design, system, onAddArray, onEditSystem })
                 </dl>
             </div>
 
-            <section aria-label="Arrays" className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                {system.arrays.map((array) => {
-                    const { panel, controller } = slotText(array);
-                    return (
-                        <Link
-                            key={array.id}
-                            to={buildPath({ view: 'array', projectId, systemId: system.id, arrayId: array.id, tab: 'overview' })}
-                            className="flex flex-col gap-2.5 rounded-[10px] border border-line bg-white p-[18px] text-body hover:border-line-strong"
-                        >
-                            <span className="flex items-center justify-between gap-2">
-                                <span className="truncate text-base font-semibold">{array.name}</span>
-                                <StatusPill status={array.status}>{array.status === 'unset' ? `${array.progress.done} of 3 done` : undefined}</StatusPill>
-                            </span>
-                            <span className={`text-[13px] ${array.progress.panel ? 'text-subtle' : 'text-muted'}`}>{panel}</span>
-                            <span className={`text-[13px] ${array.progress.controller ? 'text-subtle' : 'text-muted'}`}>{controller}</span>
-                            <span className="font-plex-mono text-sm">{kWp(array.analysis?.peakPower || 0)}</span>
-                        </Link>
-                    );
-                })}
-                <button
-                    type="button"
-                    onClick={() => onAddArray(system.name)}
-                    className="flex min-h-[140px] flex-col items-center justify-center gap-1.5 rounded-[10px] border-[1.5px] border-dashed border-placeholder p-[18px] text-[15px] font-semibold text-body hover:bg-white"
-                >
-                    <Plus size={22} />
-                    Add an array
-                    <span className="max-w-[240px] text-center text-[13px] font-normal text-muted">A roof section or ground frame with one panel type.</span>
-                </button>
-            </section>
+            <div role="tablist" aria-label={`${system.name} sections`} className="flex gap-1 border-b border-line">
+                {TABS.map(([key, label]) => (
+                    <Link
+                        key={key}
+                        role="tab"
+                        aria-selected={current === key}
+                        to={buildPath({ view: 'system', projectId, systemId: system.id, tab: key })}
+                        className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold ${current === key ? 'border-brand text-body' : 'border-transparent text-muted hover:text-body'}`}
+                    >
+                        {label}
+                    </Link>
+                ))}
+            </div>
+
+            {current === 'setup' ? (
+                <SystemSetup design={design} system={system} />
+            ) : (
+                <section aria-label="Arrays" className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                    {system.arrays.map((array) => {
+                        const { panel, controller } = slotText(array);
+                        return (
+                            <Link
+                                key={array.id}
+                                to={buildPath({ view: 'array', projectId, systemId: system.id, arrayId: array.id, tab: 'overview' })}
+                                className="flex flex-col gap-2.5 rounded-[10px] border border-line bg-white p-[18px] text-body hover:border-line-strong"
+                            >
+                                <span className="flex items-center justify-between gap-2">
+                                    <span className="truncate text-base font-semibold">{array.name}</span>
+                                    <StatusPill status={array.status}>{array.status === 'unset' ? `${array.progress.done} of 3 done` : undefined}</StatusPill>
+                                </span>
+                                <span className={`text-[13px] ${array.progress.panel ? 'text-subtle' : 'text-muted'}`}>{panel}</span>
+                                <span className={`text-[13px] ${array.progress.controller ? 'text-subtle' : 'text-muted'}`}>{controller}</span>
+                                <span className="font-plex-mono text-sm">{kWp(array.analysis?.peakPower || 0)}</span>
+                            </Link>
+                        );
+                    })}
+                    <button
+                        type="button"
+                        onClick={() => onAddArray(system.name)}
+                        className="flex min-h-[140px] flex-col items-center justify-center gap-1.5 rounded-[10px] border-[1.5px] border-dashed border-placeholder p-[18px] text-[15px] font-semibold text-body hover:bg-white"
+                    >
+                        <Plus size={22} />
+                        Add an array
+                        <span className="max-w-[240px] text-center text-[13px] font-normal text-muted">A roof section or ground frame with one panel type.</span>
+                    </button>
+                </section>
+            )}
         </div>
     );
 }

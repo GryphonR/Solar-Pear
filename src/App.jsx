@@ -21,6 +21,7 @@ import AppShell from './shell/AppShell';
 import { openAboutSection } from './components/TrustNotices';
 import { ABOUT_SECTIONS, ABOUT_TAB, METHODOLOGY_TAB, OPERATOR_NAME } from './lib/siteInfo';
 import { getUiMode } from './lib/uiFlag';
+import { UiModeContext } from './context/UiModeContext';
 import { useDataState, useUiState } from './context/AppStateContext';
 import { useBackupRestore } from './hooks/useBackupRestore';
 import { useIsSmallScreen } from './hooks/useIsSmallScreen';
@@ -38,7 +39,9 @@ export default function App() {
     }, [pathname, hash]);
 
     if (isSmallScreen) return <SmallScreenGate />;
-    return uiMode === 'next' ? <AppShell /> : <ClassicApp />;
+    return (
+        <UiModeContext.Provider value={uiMode}>{uiMode === 'next' ? <AppShell /> : <ClassicApp />}</UiModeContext.Provider>
+    );
 }
 
 /** The current UI: sidebar of areas and arrays, and one view at a time. */

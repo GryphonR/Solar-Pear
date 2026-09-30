@@ -9,6 +9,9 @@ import PanelTable from './arraySelector/PanelTable';
 import ControllerSection from './arraySelector/ControllerSection';
 import ArrayOverviewTab from './arraySelector/ArrayOverviewTab';
 import ArrayPlanner from '../components/planner/ArrayPlanner';
+import SystemSettingsSummary from '../shell/SystemSettingsSummary';
+import { useUiMode } from '../context/UiModeContext';
+import { buildPath } from '../lib/routes';
 
 export default function ArraySelectorView({ arrayId }) {
     const {
@@ -43,7 +46,9 @@ export default function ArraySelectorView({ arrayId }) {
         createControllerInstance,
         getAreaSettings,
         updateAreaSettings,
+        activeProject,
     } = useAppState();
+    const uiMode = useUiMode();
 
     // Resolve analysis first, but do not early-return before hooks (Rules of Hooks).
     const analysis = getArrayAnalysis(arrayId);
@@ -60,6 +65,15 @@ export default function ArraySelectorView({ arrayId }) {
     const costPerKWp = analysis?.costPerKWp ?? null;
 
     const areaSettings = getAreaSettings(array?.area || 'House');
+    const system = activeProject?.systems.find((s) => s.name === (array?.area || 'House'));
+    const systemSettingsSummary =
+        uiMode === 'next' && system ? (
+            <SystemSettingsSummary
+                systemName={system.name}
+                settings={areaSettings}
+                setupTo={buildPath({ view: 'system', projectId: activeProject.id, systemId: system.id, tab: 'setup' })}
+            />
+        ) : null;
     const areaSystemVoltage = areaSettings.systemVoltage;
     const { designLowC, designHighC, strictCurrent } = areaSettings;
     const conditions = useMemo(
@@ -307,6 +321,7 @@ export default function ArraySelectorView({ arrayId }) {
                     createControllerInstance={createControllerInstance}
                     deleteControllerInstance={deleteControllerInstance}
                     setInfoModalChargerId={setInfoModalChargerId}
+                    systemSettingsSummary={systemSettingsSummary}
                 />
             )}
 

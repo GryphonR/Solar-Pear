@@ -38,14 +38,14 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 4 | Affiliate infrastructure | P1 | 0 / 14 |
 | 5 | Hosting, routing & SEO | P1 | 0 / 13 |
 | 6 | Trust, legal & compliance | P0 | 7 / 11 |
-| 7 | Product & UX improvements | P1/P2 | 0 / 17 |
+| 7 | Product & UX improvements | P1/P2 | 1 / 17 |
 | 8 | Analytics & measurement | P1 | 0 / 7 |
 | 9 | Engineering, performance & CI | P1/P2 | 0 / 11 |
 | 10 | Internationalisation | P2 | 0 / 8 |
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
-| 13 | UX overhaul | P1 | 4 / 9 |
-| **Total** | | | **40 / 153** |
+| 13 | UX overhaul | P1 | 5 / 9 |
+| **Total** | | | **42 / 153** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -321,7 +321,7 @@ The app is currently a single URL with no indexable content. Search is the main 
 
 ## Phase 7 – Product & UX improvements (P1/P2)
 
-- [ ] **7.1 Onboarding redesign** – Start from a "What are you building?" chooser: house roof (grid-tied), house with battery (hybrid), off-grid cabin, van/boat/leisure, or balcony/plug-in. Each preset sets the system type, voltage and sensible filters.
+- [x] **7.1 Onboarding redesign** – *Delivered by 13.5 (new shell, four tiles, no plug-in tile per D11).* Start from a "What are you building?" chooser: house roof (grid-tied), house with battery (hybrid), off-grid cabin, van/boat/leisure, or balcony/plug-in. Each preset sets the system type, voltage and sensible filters.
 - [ ] **7.2 Simple mode, or kit recommender** – Ask three to five questions (space available, battery voltage, budget, use case) and return 3 recommended complete kits (good, better, best) with buy buttons. This is the highest-converting flow for non-experts. Advanced users keep the current designer.
 - [ ] **7.3 Yield estimate** – Estimate annual kWh per array from orientation, tilt and location. PVGIS has a free API, or bundle a simplified model. Show a payback estimate (with the SEG rate and electricity price as inputs), £/kWh over 25 years, and CO₂ saved. Users care about savings far more than Voc.
 - [ ] **7.4 Shading and clipping visualisation** – Extend `ArrayOverviewGraphs.jsx` to show the daily clipping expected from overpanelling (1.5) and micro AC limits (1.7).
@@ -451,8 +451,9 @@ How to deliver it:
 - [x] **13.4 New app shell behind the flag** – The sidebar tree (Project → Systems → Arrays, with status and progress dots), top bar, project switcher (new, duplicate, rename, delete) and save-state indicator. At first, mount the existing views inside the shell: the panel and controller tables as Library, the guides as Learn.
   - Acceptance: with the flag on, a user can reach every existing feature through the new navigation; with it off, nothing has changed.
   - Done: `src/shell/` (`AppShell`, `ShellSidebar`, `TopBar`, pages `ProjectOverview`, `SystemPage`, `LearnHome`), shown with `?ui=next`. Sidebar tree with per-system status and per-array progress dots, all real links; top bar with the project switcher (new, duplicate, rename, delete), save state (turns into a warning with a backup button when a write fails), Library, Learn and a ⋯ menu (backup, restore, methodology, about, switch back to the classic layout, reset). Project overview with totals, system cards and a "To resolve" list. The system page is a header plus array cards until 13.5–13.7 add its tabs. Existing views are mounted inside: array pages, summary, Library tables, the guides and methodology under Learn, About. Status roll-ups are in `src/lib/designStatus.js`; an unfinished array shows as "not set", never OK or warning. Shared pieces moved out of `App.jsx`: `AppModals` (the modals say "System" in the new shell, D9), `SmallScreenGate`, `useIsSmallScreen`. New UI primitives: `Menu`, `NameDialog`. Not in this task: sign-in (accounts track) and the phone layout (13.9).
-- [ ] **13.5 System Setup, presets and the "What are you building?" chooser** – Move install type, grid mode, battery voltage, design temperatures and strict current off the array's Controller Selector tab into System Setup, with project-level defaults. First run opens the chooser (four tiles; no plug-in tile, D11); returning users open their last project. This delivers 7.1.
+- [x] **13.5 System Setup, presets and the "What are you building?" chooser** – Move install type, grid mode, battery voltage, design temperatures and strict current off the array's Controller Selector tab into System Setup, with project-level defaults. First run opens the chooser (four tiles; no plug-in tile, D11); returning users open their last project. This delivers 7.1.
   - Acceptance: system-wide settings can't be edited from inside an array page, and a change shows how many arrays were re-checked.
+  - Done (new shell): System Setup tab (`src/shell/pages/SystemSetup.jsx`) with install type, grid mode, controller filter, battery voltage, design temperatures and strict current; each change re-runs the checks and a toast says how many arrays were re-checked and whether any got worse, with Undo. The array page's controller tab shows these read-only with an "Edit in System Setup" link (`SystemSettingsSummary`); the classic UI still edits them there. Project defaults (design low/high, on the project overview) are copied into new systems; Setup marks a system's value as OVERRIDDEN with a reset. First run opens the chooser at `/`; returning users go to their last project; New project opens it at `/new`. Presets are in `src/lib/presets.js`. **Mapping note:** the canvas's install type and grid mode are new descriptive fields (`installType`, `gridMode`) that don't filter anything themselves. The controller list is still filtered by the existing `systemType` (shown as "Controllers shown"), which the grid mode sets to a default (grid-tied and hybrid → grid-connected, off-grid → all) and the user can change. Hybrid doesn't yet narrow the list to hybrid inverters; that would be a new filter rule for the owner to decide.
 - [ ] **13.6 Array hub and the Controllers tab** – The array Overview hub with Layout, Panel and Controller slot cards and the slim controller slot; the system Controllers tab with unit cards, ports, load meter and the controller picker side panel; Library "Use in…" actions.
   - Acceptance: the old Controller Selector tab is gone, and a user can add, replace and remove controllers and assign free ports from the system page.
 - [ ] **13.7 Single line diagram** – Write a pure layout function (e.g. `src/lib/sldLayout.js`) that turns the design and `evaluateElectrical` results into positioned nodes and edges, with unit tests. Render the System Overview diagram and the accessible list view from the same output, plus the issue list with why and fix text (7.5). Include placeholders, empty states, the microinverter collapse and templates for every controller type (brief section 7).

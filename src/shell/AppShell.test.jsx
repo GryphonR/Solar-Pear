@@ -82,10 +82,11 @@ describe("new app shell behind ?ui=next (roadmap 13.4)", () => {
         const switcher = await screen.findByRole("button", { name: /Hawthorn Cottage/ });
         await userEvent.click(switcher);
         await userEvent.click(screen.getByRole("menuitem", { name: "New project" }));
-        const dialog = screen.getByRole("dialog", { name: "New project" });
-        await userEvent.clear(within(dialog).getByRole("textbox"));
-        await userEvent.type(within(dialog).getByRole("textbox"), "Shed");
-        await userEvent.click(within(dialog).getByRole("button", { name: "Create project" }));
+        // New project opens the chooser (13.5); a blank start keeps the typed name.
+        const name = await screen.findByRole("textbox", { name: "Project name" });
+        await userEvent.clear(name);
+        await userEvent.type(name, "Shed");
+        await userEvent.click(screen.getByRole("button", { name: "Start with a blank system" }));
         expect(await screen.findByRole("heading", { level: 1, name: "Shed" })).toBeInTheDocument();
 
         await userEvent.click(screen.getByRole("button", { name: /Shed/ }));

@@ -6,12 +6,13 @@
  */
 
 import React, { useState } from 'react';
-import { Link, Navigate } from 'react-router';
+import { Link, Navigate, useNavigate } from 'react-router';
 import ShellSidebar from './ShellSidebar';
 import TopBar from './TopBar';
 import ProjectOverview from './pages/ProjectOverview';
 import SystemPage from './pages/SystemPage';
 import LearnHome from './pages/LearnHome';
+import Chooser from './pages/Chooser';
 import { useDesignSummary } from './useDesignSummary';
 import AppModals from '../components/AppModals';
 import NameDialog from '../components/ui/NameDialog';
@@ -73,7 +74,7 @@ function LibraryTabs({ section }) {
     );
 }
 
-function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, onEditSystem }) {
+function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, onEditSystem, updateProjectDefaults }) {
     const projectId = design.project.id;
     const projectCrumb = { label: design.project.name, to: buildPath({ view: 'project', projectId }) };
     const learnCrumb = { label: 'Learn', to: '/learn' };
@@ -83,10 +84,10 @@ function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, on
         case 'pending':
             return null;
         case 'home':
-            // Returning users open their project (13.5 adds the first-run chooser).
+            // Returning users open their last project.
             return <Navigate to={buildPath({ view: 'project', projectId })} replace />;
         case 'project':
-            return <ProjectOverview design={design} onAddSystem={onAddSystem} />;
+            return <ProjectOverview design={design} onAddSystem={onAddSystem} onSaveDefaults={updateProjectDefaults} />;
         case 'summary':
             return (
                 <>
@@ -99,7 +100,7 @@ function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, on
             return (
                 <>
                     <Breadcrumb items={[projectCrumb, { label: system.name }]} />
-                    <SystemPage design={design} system={system} onAddArray={onAddArray} onEditSystem={onEditSystem} />
+                    <SystemPage design={design} system={system} tab={route.tab} onAddArray={onAddArray} onEditSystem={onEditSystem} />
                 </>
             );
         case 'array': {
@@ -153,15 +154,56 @@ function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, on
 
 export default function AppShell() {
     const design = useDesignSummary();
-    const { projectsStore, activeProject, createProject, duplicateProject, renameProject, switchProject, deleteProject } =
-        useDataState();
-    const { route, setActiveTab, openAddAreaModal, openAddArrayModal, openEditAreaModal, openEditArrayModal, openConfirm } =
-        useUiState();
+    const {
+        projectsStore,
+        activeProject,
+        createProject,
+        duplicateProject,
+        renameProject,
+        switchProject,
+        deleteProject,
+        startProjectFromPreset,
+        updateProjectDefaults,
+    } = useDataState();
+    const {
+        route,
+        setActiveTab,
+        openAddAreaModal,
+        openAddArrayModal,
+        openEditAreaModal,
+        openEditArrayModal,
+        openConfirm,
+        isFirstRun,
+    } = useUiState();
     const { handleDownload, handleUploadClick, handleResetClick } = useBackupRestore();
-    const [nameDialog, setNameDialog] = useState(null); // { mode: 'new' | 'rename' }
+    const navigate = useNavigate();
+    const [nameDialog, setNameDialog] = useState(null); // { mode: 'rename' }
 
     const onAddSystem = () => openAddAreaModal('');
     const onAddArray = (systemName) => openAddArrayModal({ area: systemName });
+    const projectPath = buildPath({ view: 'project', projectId: activeProject.id });
+
+    // First run opens the chooser at /; New project opens it at /new (13.5).
+    if (route.view === 'new' || (route.view === 'home' && isFirstRun)) {
+        return (
+            <>
+                <Chooser
+                    firstRun={isFirstRun}
+                    backTo={isFirstRun ? null : { label: activeProject.name, to: projectPath }}
+                    onChoose={startProjectFromPreset}
+                    onSkip={(name) => {
+                        if (!isFirstRun) {
+                            createProject(name);
+                            return;
+                        }
+                        if (name !== activeProject.name) renameProject(activeProject.id, name);
+                        navigate(projectPath);
+                    }}
+                />
+                <AppModals systemNoun="System" />
+            </>
+        );
+    }
 
     return (
         <div className="flex h-screen bg-paper font-plex text-body">
@@ -179,7 +221,7 @@ export default function AppShell() {
                     projectsStore={projectsStore}
                     activeProject={activeProject}
                     onSwitchProject={switchProject}
-                    onNewProject={() => setNameDialog({ mode: 'new' })}
+                    onNewProject={() => navigate('/new')}
                     onDuplicateProject={() => duplicateProject(activeProject.id)}
                     onRenameProject={() => setNameDialog({ mode: 'rename' })}
                     onDeleteProject={() =>
@@ -202,6 +244,7 @@ export default function AppShell() {
                             onAddSystem={onAddSystem}
                             onAddArray={onAddArray}
                             onEditSystem={openEditAreaModal}
+                            updateProjectDefaults={updateProjectDefaults}
                         />
                     </div>
                 </main>
@@ -210,14 +253,13 @@ export default function AppShell() {
             <AppModals systemNoun="System" />
             <NameDialog
                 open={!!nameDialog}
-                title={nameDialog?.mode === 'rename' ? 'Rename project' : 'New project'}
+                title="Rename project"
                 label="Project name"
-                initialValue={nameDialog?.mode === 'rename' ? activeProject.name : 'My design'}
-                confirmLabel={nameDialog?.mode === 'rename' ? 'Rename' : 'Create project'}
+                initialValue={activeProject.name}
+                confirmLabel="Rename"
                 onCancel={() => setNameDialog(null)}
                 onConfirm={(name) => {
-                    if (nameDialog?.mode === 'rename') renameProject(activeProject.id, name);
-                    else createProject(name);
+                    renameProject(activeProject.id, name);
                     setNameDialog(null);
                 }}
             />

@@ -67,6 +67,7 @@ export default function AppModals({ systemNoun = 'Area' }) {
                     key={`${notification.variant}:${notification.message}`}
                     message={notification.message}
                     variant={notification.variant}
+                    action={notification.action || undefined}
                     onClose={clearNotification}
                 />
             )}

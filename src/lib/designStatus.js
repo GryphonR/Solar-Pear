@@ -7,6 +7,8 @@
  * "not set" instead, because nothing has been checked yet, and "not set" is never green.
  */
 
+import { GRID_MODES, INSTALL_TYPES, labelOf } from './presets';
+
 /** Labels for a system's `settings.systemType`. */
 export const SYSTEM_TYPE_LABELS = Object.freeze({
     any: 'Any type',
@@ -47,10 +49,14 @@ export function summariseStatuses(statuses) {
     return { status: 'valid', errors, warnings, unset, label: 'OK' };
 }
 
-/** One-line description of a system, e.g. "Grid-connected · 48 V · 3 arrays". */
+/** One-line description of a system, e.g. "Static · Hybrid · 48 V · 3 arrays". */
 export function systemMeta(settings = {}, arrayCount = 0) {
     const parts = [];
-    if (settings.systemType && settings.systemType !== 'any') {
+    const install = labelOf(INSTALL_TYPES, settings.installType);
+    const grid = GRID_MODES.find((m) => m.id === settings.gridMode);
+    if (install) parts.push(install);
+    if (grid) parts.push(grid.id === 'hybrid' ? 'Hybrid' : grid.label);
+    else if (settings.systemType && settings.systemType !== 'any') {
         parts.push(SYSTEM_TYPE_LABELS[settings.systemType] || settings.systemType);
     }
     if (Number.isFinite(Number(settings.systemVoltage)) && settings.systemVoltage !== null && settings.systemVoltage !== '') {

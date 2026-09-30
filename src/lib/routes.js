@@ -6,7 +6,8 @@
  *
  * | Path | Route `view` |
  * | ---- | ------------ |
- * | `/` | `home`: the Guide in the old UI; the last project (or the chooser) in the new shell |
+ * | `/` | `home`: the Guide in the old UI; the last project (or the chooser on first run) in the new shell |
+ * | `/new` | `new`: "What are you building?" chooser (new shell; the Guide in the old UI) |
  * | `/learn`, `/learn/:slug` | `learn` (`guide`, `panels`, `controllers`, `methodology`) |
  * | `/about` | `about` (sections are `#hash` anchors) |
  * | `/library/panels`, `/library/controllers` | `library` |
@@ -77,6 +78,7 @@ export function parsePath(pathname) {
     const [a, b, c, d, e, f, g, ...rest] = parts;
     if (parts.length === 0) return { view: 'home' };
     if (a === 'about' && parts.length === 1) return { view: 'about' };
+    if (a === 'new' && parts.length === 1) return { view: 'new' };
     if (a === 'learn' && parts.length <= 2) {
         if (b === undefined) return { view: 'learn', slug: null };
         return LEARN_SLUGS.includes(b) ? { view: 'learn', slug: b } : null;
@@ -104,6 +106,8 @@ export function buildPath(route) {
             return route.slug ? `/learn/${route.slug}` : '/learn';
         case 'about':
             return '/about';
+        case 'new':
+            return '/new';
         case 'library':
             return `/library/${route.section || 'panels'}`;
         case 'project':

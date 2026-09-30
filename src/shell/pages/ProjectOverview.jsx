@@ -4,12 +4,13 @@
  * list of things still to resolve. Everything is read from the engine's analysis.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { StatusIcon, StatusPill } from '../../components/ui';
 import { Plus } from '../../components/Icons';
 import { buildPath } from '../../lib/routes';
 import { formatMoney } from '../../lib/pricing';
+import { projectDefaults } from '../../lib/projects';
 
 export const kWp = (watts) => `${(watts / 1000).toFixed(2)} kWp`;
 
@@ -44,7 +45,85 @@ function toResolve(design) {
     return rows.sort((a, b) => a.rank - b.rank);
 }
 
-export default function ProjectOverview({ design, onAddSystem }) {
+/** Project defaults (13.5): design temperatures copied into new systems. Existing systems keep theirs. */
+function ProjectDefaults({ project, onSave }) {
+    const defaults = projectDefaults(project);
+    const [editing, setEditing] = useState(false);
+    const [draft, setDraft] = useState(defaults);
+    const valid = Number.isFinite(Number(draft.designLowC)) && Number.isFinite(Number(draft.designHighC)) && draft.designLowC !== '' && draft.designHighC !== '';
+
+    return (
+        <section aria-labelledby="project-defaults" className="flex flex-col gap-3 rounded-[10px] border border-line bg-white px-5 py-[18px]">
+            <div className="flex items-baseline justify-between">
+                <h2 id="project-defaults" className="text-[15px] font-semibold">Project defaults</h2>
+                {!editing ? (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setDraft(defaults);
+                            setEditing(true);
+                        }}
+                        className="text-[13px] font-semibold text-secondary hover:underline"
+                    >
+                        Edit
+                    </button>
+                ) : null}
+            </div>
+            {editing ? (
+                <form
+                    className="flex flex-col gap-3"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!valid) return;
+                        onSave({ designLowC: Math.round(Number(draft.designLowC)), designHighC: Math.round(Number(draft.designHighC)) });
+                        setEditing(false);
+                    }}
+                >
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                        {[
+                            ['designLowC', 'Design low', -50, 15],
+                            ['designHighC', 'Design high (cell)', 30, 95],
+                        ].map(([key, label, min, max]) => (
+                            <label key={key} className="flex flex-col gap-1">
+                                <span className="text-xs text-muted">{label} (°C)</span>
+                                <input
+                                    type="number"
+                                    min={min}
+                                    max={max}
+                                    value={draft[key]}
+                                    onChange={(e) => setDraft((d) => ({ ...d, [key]: e.target.value }))}
+                                    className="h-9 rounded-lg border border-line-strong px-2.5 font-plex-mono text-sm"
+                                />
+                            </label>
+                        ))}
+                    </div>
+                    <div className="flex gap-2">
+                        <button type="submit" disabled={!valid} className="h-9 rounded-lg bg-brand px-3 text-sm font-semibold text-ink disabled:opacity-50">
+                            Save defaults
+                        </button>
+                        <button type="button" onClick={() => setEditing(false)} className="h-9 rounded-lg border border-line-strong px-3 text-sm font-semibold">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            ) : (
+                <dl className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                        <dt className="text-xs text-muted">Design low</dt>
+                        <dd className="font-plex-mono">{defaults.designLowC} °C</dd>
+                    </div>
+                    <div>
+                        <dt className="text-xs text-muted">Design high (cell)</dt>
+                        <dd className="font-plex-mono">{defaults.designHighC} °C</dd>
+                    </div>
+                </dl>
+            )}
+            <p className="text-xs leading-[18px] text-muted">Copied into new systems. Each system can override them in its Setup.</p>
+        </section>
+    );
+}
+
+export default function ProjectOverview({ design, onAddSystem, onSaveDefaults }) {
     const { project, systems, projectTotals } = design;
     const arrayCount = systems.reduce((n, s) => n + s.arrays.length, 0);
     const rows = toResolve(design);
@@ -103,7 +182,8 @@ export default function ProjectOverview({ design, onAddSystem }) {
                 </button>
             </div>
 
-            <section aria-labelledby="to-resolve" className="flex flex-col rounded-[10px] border border-line bg-white px-5 py-[18px]">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <section aria-labelledby="to-resolve" className="flex flex-col rounded-[10px] border border-line bg-white px-5 py-[18px] lg:col-span-2">
                 <h2 id="to-resolve" className="mb-2 text-[15px] font-semibold">To resolve</h2>
                 {rows.length === 0 ? (
                     <p className="border-t border-line-soft pt-3 text-sm text-muted">Nothing to resolve. Every array has a panel and a controller and passes its checks.</p>
@@ -129,6 +209,8 @@ export default function ProjectOverview({ design, onAddSystem }) {
                     </ul>
                 )}
             </section>
+            <ProjectDefaults project={project} onSave={onSaveDefaults} />
+            </div>
         </div>
     );
 }

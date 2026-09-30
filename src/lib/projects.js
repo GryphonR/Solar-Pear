@@ -13,6 +13,8 @@
  * Everything here is pure: no storage, no React.
  */
 
+import { COLD_TEMP_C, HOT_TEMP_C } from './arrayAnalysis';
+
 export const PROJECTS_KEY = 'solar_projects';
 export const PROJECTS_STORE_VERSION = 1;
 export const DEFAULT_PROJECT_NAME = 'My design';
@@ -35,11 +37,12 @@ export function makeSystem(name, settings = {}) {
     return { id: newId('sys'), name, settings: { ...settings } };
 }
 
-export function makeProject({ name = DEFAULT_PROJECT_NAME, systems, arrays = [], siteControllers = [], now = nowIso() } = {}) {
+export function makeProject({ name = DEFAULT_PROJECT_NAME, systems, arrays = [], siteControllers = [], defaults, now = nowIso() } = {}) {
     return {
         id: newId('proj'),
         name,
         kind: 'local',
+        ...(isPlainObject(defaults) ? { defaults: { ...defaults } } : {}),
         createdAt: now,
         updatedAt: now,
         systems: systems && systems.length > 0 ? systems : [makeSystem(DEFAULT_SYSTEM_NAME)],
@@ -305,12 +308,37 @@ export function sanitizeProject(raw) {
         id: raw.id,
         name: typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : DEFAULT_PROJECT_NAME,
         kind: 'local',
+        ...(isPlainObject(raw.defaults) ? { defaults: sanitizeDefaults(raw.defaults) } : {}),
         createdAt: typeof raw.createdAt === 'string' ? raw.createdAt : now,
         updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : now,
         systems,
         arrays: fix(raw.arrays, true),
         siteControllers: fix(raw.siteControllers, true),
     };
+}
+
+/**
+ * Project defaults (roadmap 13.5): design temperatures copied into new systems. Each system keeps its
+ * own values in `settings`, so changing a default never re-checks existing systems.
+ */
+export const DEFAULT_PROJECT_DEFAULTS = Object.freeze({ designLowC: COLD_TEMP_C, designHighC: HOT_TEMP_C });
+
+function sanitizeDefaults(raw) {
+    const out = {};
+    for (const key of Object.keys(DEFAULT_PROJECT_DEFAULTS)) {
+        const n = Number(raw?.[key]);
+        if (raw?.[key] !== null && raw?.[key] !== '' && Number.isFinite(n)) out[key] = n;
+    }
+    return out;
+}
+
+/** A project's defaults with the app defaults filled in. */
+export function projectDefaults(project) {
+    return { ...DEFAULT_PROJECT_DEFAULTS, ...sanitizeDefaults(project?.defaults) };
+}
+
+export function setProjectDefaults(project, patch) {
+    return { ...project, defaults: sanitizeDefaults({ ...projectDefaults(project), ...patch }) };
 }
 
 /** Returns a clean store, or null when nothing in it is usable. */

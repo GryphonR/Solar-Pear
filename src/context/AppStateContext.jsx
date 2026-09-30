@@ -15,8 +15,12 @@ import {
     duplicateProject as duplicateProjectInStore,
     getActiveProject,
     legacyToProject,
+    makeProject,
     makeStore,
+    makeSystem,
+    projectDefaults,
     projectToLegacy,
+    setProjectDefaults,
     removeSystem,
     renameProject as renameProjectInStore,
     renameSystem,
@@ -211,6 +215,9 @@ function AppStateProviderInner({ children }) {
             settings?.strictCurrent !== undefined
                 ? !!settings.strictCurrent
                 : !!fallback.strictCurrent,
+        // Descriptive fields from System Setup (13.5). They don't filter anything by themselves.
+        installType: settings?.installType ?? fallback.installType ?? null,
+        gridMode: settings?.gridMode ?? fallback.gridMode ?? null,
     });
 
     const getAreaSettings = (areaName) => {
@@ -364,8 +371,9 @@ function AppStateProviderInner({ children }) {
         setNotificationState(null);
     };
 
-    const setNotification = (message, variant = 'info') => {
-        setNotificationState({ message, variant });
+    /** `action` ({ label, onClick }) adds a button such as Undo to the toast. */
+    const setNotification = (message, variant = 'info', action = null) => {
+        setNotificationState({ message, variant, action });
     };
 
     useEffect(() => {
@@ -758,7 +766,14 @@ function AppStateProviderInner({ children }) {
             );
             return;
         }
-        const settings = sanitizeAreaSettings(null, { systemVoltage, systemType, filterEps, filterHouseBackup });
+        // New systems start from the project's default design temperatures (13.5).
+        const settings = sanitizeAreaSettings(null, {
+            systemVoltage,
+            systemType,
+            filterEps,
+            filterHouseBackup,
+            ...projectDefaults(activeProject),
+        });
         setProjectsStore((store) =>
             updateActiveProject(store, (project) =>
                 project.systems.some((s) => s.name === name) ? project : addSystem(project, name, settings).project
@@ -927,6 +942,45 @@ function AppStateProviderInner({ children }) {
         ]);
     };
 
+    // First run (13.5): nothing was saved before this visit, so the new shell opens the chooser.
+    const [isFirstRun, setIsFirstRun] = useState(
+        () =>
+            initialStoreRef.current === null &&
+            !LEGACY_DESIGN_KEYS.some((k) => {
+                try {
+                    return localStorage.getItem(k) != null;
+                } catch {
+                    return false;
+                }
+            })
+    );
+
+    /**
+     * Starts a project from a "What are you building?" preset. On first run it replaces the untouched
+     * starter project rather than adding a second one. Opens the new system.
+     */
+    const startProjectFromPreset = (preset, name) => {
+        const { area, ...starterArray } = initialArrays[0];
+        const settings = sanitizeAreaSettings({ ...(preset?.settings || {}) }, { ...DEFAULT_AREA_SETTINGS });
+        const system = makeSystem(preset?.systemName || 'House', settings);
+        const project = makeProject({
+            name: name || 'My design',
+            systems: [system],
+            arrays: [{ ...starterArray, id: newId('array'), systemId: system.id }],
+        });
+        const base = isFirstRun ? { ...projectsStore, projects: projectsStore.projects.filter((p) => p.id !== activeProject.id) } : projectsStore;
+        setProjectsStore({ ...base, activeProjectId: project.id, projects: [...base.projects, project] });
+        navigate(buildPath({ view: 'system', projectId: project.id, systemId: system.id }));
+    };
+    // First run ends once the user has left `/` (chosen a preset or skipped). Clearing it on navigation,
+    // not on click, avoids a render at `/` without the chooser, which would redirect to the project.
+    useEffect(() => {
+        if (isFirstRun && route.view !== 'home' && route.view !== 'new') setIsFirstRun(false);
+    }, [isFirstRun, route.view]);
+
+    const updateProjectDefaults = (patch) =>
+        setProjectsStore((store) => updateActiveProject(store, (project) => setProjectDefaults(project, patch)));
+
     // Project actions. Each one navigates to the resulting project, since the URL names the project.
     /** Navigates to a route object (see src/lib/routes.js). */
     const goTo = (target, options) => navigate(buildPath(target), options);
@@ -960,6 +1014,9 @@ function AppStateProviderInner({ children }) {
             activeProject,
             route: routePending ? { view: 'pending' } : route,
             goTo,
+            isFirstRun,
+            startProjectFromPreset,
+            updateProjectDefaults,
             activeTab,
             arraysData,
             panelsData,
@@ -1063,6 +1120,7 @@ function AppStateProviderInner({ children }) {
         }),
         [
             projectsStore,
+            isFirstRun,
             route,
             routePending,
             activeTab,
@@ -1111,6 +1169,8 @@ function AppStateProviderInner({ children }) {
             renameProject: value.renameProject,
             switchProject: value.switchProject,
             deleteProject: value.deleteProject,
+            startProjectFromPreset: value.startProjectFromPreset,
+            updateProjectDefaults: value.updateProjectDefaults,
             arraysData: value.arraysData,
             panelsData: value.panelsData,
             chargersData: value.chargersData,
@@ -1153,6 +1213,7 @@ function AppStateProviderInner({ children }) {
             activeTab: value.activeTab,
             route: value.route,
             goTo: value.goTo,
+            isFirstRun: value.isFirstRun,
             hideHeavyPanels: value.hideHeavyPanels,
             hideMarginalPanels: value.hideMarginalPanels,
             hideIncompatiblePanels: value.hideIncompatiblePanels,
