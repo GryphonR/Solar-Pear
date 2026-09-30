@@ -12,6 +12,7 @@ import { SlotCard, StatusPill } from '../../components/ui';
 import PriceTag from '../../components/PriceTag';
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
 import { ResultsDisclaimer } from '../../components/TrustNotices';
+import LayoutPlanner from '../planner/LayoutPlanner';
 import ArraySelectorView from '../../views/ArraySelectorView';
 import ParallelStringsSelect from '../../views/arraySelector/ParallelStringsSelect';
 import SystemSettingsSummary from '../SystemSettingsSummary';
@@ -367,6 +368,8 @@ export default function ArrayPage({ design, system, route }) {
 
             {tab === 'overview' ? (
                 <ArrayHub entry={entry} system={system} projectId={projectId} settings={settings} setupTo={setupTo} />
+            ) : tab === 'layout' ? (
+                <LayoutPlanner arrayId={entry.id} />
             ) : (
                 <ArraySelectorView arrayId={entry.id} embedded />
             )}

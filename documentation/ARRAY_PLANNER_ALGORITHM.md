@@ -87,6 +87,22 @@ The ordered list is what the UI shows as ranked options.
 
 ---
 
+## After the ranking: the redesigned planner (roadmap 13.8)
+
+The new shell's Layout tab (`src/shell/planner/`) uses the same engine. The extra steps live in [`plannerLayouts.js`](../src/lib/plannerLayouts.js), which is pure and tested:
+
+- **Roof shapes from the first-use card.** `plannerFromStart` turns three measurements into the planner's roof: a rectangle, a hipped face (a trapezoid whose ridge defaults to width − 2 × slope length, editable) or a rectangle to reshape by hand. A measurement from a map is corrected to the length along the slope with the pitch (`slopeLengthFromPlan`: depth ÷ cos pitch); the card links to SolarWizard for the pitch.
+- **One layout per panel model.** The list keeps the best orientation for each panel. With a controller assigned, it can be limited to layouts that have a wiring the controller accepts (`bestParallelStringsForController`, the same helper as auto-wiring). It can be sorted by power (engine order) or by £/kWp, with unknown prices last (`sortLayouts`).
+- **Empty slots.** The engine packs a full grid; the user can switch individual slots off (a vent, a shaded corner). `withEmptySlots` removes them by position key (`slotKey`, the slot's corner to the millimetre) and recomputes the count and power. Empty slots are stored per layout in `planner.emptySlots[layoutId]`.
+- **Preview before apply.** Choosing a layout changes nothing. `layoutPatch` works out the array fields it would set (panel, count, parallel strings, maximum panel size swapped for landscape), and `analyzeArrayWith` in `AppStateContext` runs the normal `analyzeArray` on the array with that patch. `layoutChangeSummary` compares the two analyses: panels, wiring, power, and which checks it would clear or add. No check is re-implemented: the preview is the engine's own verdict.
+- **Apply and undo.** "Use this layout" writes the patch with `updateArray` and records `planner.applied` (`{ id, panelModel, orientation, rects_m, emptyRects }`), so the drawing shows what is in the design. The toast offers Undo. If the roof is edited afterwards so the applied panels no longer fit, the planner says so.
+- **Same panel as another array.** `samePanelArrays` flags layouts whose panel another array in the project already uses, since buying one model is simpler.
+- **Setback line.** `insetPolygon` draws the edge setback as a dashed guide. It is exact for convex outlines; the engine still checks each panel against every edge itself.
+
+The drawing (outline, obstacles, clearances) is saved on the array as the user works and has no effect on any check. On a phone the Layout tab shows the roof and the applied layout view only; the panel count can still be set by hand.
+
+---
+
 ## What this algorithm is *not*
 
 - **Not** a global optimizer over mixed panel types in one array.  

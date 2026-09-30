@@ -948,6 +948,28 @@ function AppStateProviderInner({ children }) {
             });
         })();
 
+    /**
+     * Analysis of an array as it would be after `patch` (e.g. a previewed planner layout), without saving
+     * anything (roadmap 13.8). Same engine and inputs as getArrayAnalysis; only the array's fields differ.
+     */
+    const analyzeArrayWith = (arrayId, patch) => {
+        const patched = arraysData.map((a) => (a.id === arrayId ? { ...a, ...patch } : a));
+        const array = patched.find((a) => a.id === arrayId);
+        const areaSettings = getAreaSettings(array?.area || 'House');
+        const patchedSelections = { ...selections };
+        if (array) patchedSelections[arrayId] = { ...selections[arrayId], panel: array.panel ?? '' };
+        return analyzeArray(arrayId, {
+            arraysData: patched,
+            panelsData,
+            chargersData,
+            siteControllers,
+            selections: patchedSelections,
+            systemVoltage: areaSettings.systemVoltage,
+            hideHeavyPanels,
+            conditions: conditionsFromAreaSettings(areaSettings),
+        });
+    };
+
     const handleAddArraySave = (d) => {
         if ((addArrayModal.mode || 'add') === 'edit' && addArrayModal.targetArrayId) {
             setArraysData((prev) =>
@@ -1082,6 +1104,7 @@ function AppStateProviderInner({ children }) {
             // Derived
             availableChargers,
             getArrayAnalysis,
+            analyzeArrayWith,
             // Actions
             setProjectsStore,
             createProject,
@@ -1213,6 +1236,7 @@ function AppStateProviderInner({ children }) {
             userNotes: value.userNotes,
             availableChargers: value.availableChargers,
             getArrayAnalysis: value.getArrayAnalysis,
+            analyzeArrayWith: value.analyzeArrayWith,
             getAreaSettings: value.getAreaSettings,
             updateAreaSettings: value.updateAreaSettings,
             setArraysData: value.setArraysData,
