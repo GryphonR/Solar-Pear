@@ -1,3 +1,5 @@
+import { rankByPowerWithNearTies } from './layoutRanking';
+
 function clamp(n, min, max) {
     return Math.max(min, Math.min(max, n));
 }
@@ -180,6 +182,9 @@ export function dropSmallestPanelsByFootprint(panels, count = 3) {
     return sorted.slice(n);
 }
 
+/** Horizontal step (mm) when a row is scanned for the next position a panel fits. */
+export const ROW_SCAN_MM = 25;
+
 export function computePlannerLayouts({
     roofPolygon_m,
     exclusions_m = [],
@@ -233,18 +238,87 @@ export function computePlannerLayouts({
     if (wantPortrait) orientations.push('portrait');
     if (wantLandscape) orientations.push('landscape');
 
-    const uniqueSortedInts = (arr) => Array.from(new Set(arr.filter(Number.isFinite).map((n) => Math.round(n)))).sort((a, b) => a - b);
-
-    const buildOffsetCandidates = (step, usableMin, exclusionsMm) => {
-        if (!Number.isFinite(step) || step <= 0) return [0];
-        const cands = [0];
-        for (const ex of exclusionsMm || []) {
-            const a = ((ex.x - usableMin) % step + step) % step;
-            const b = ((ex.x + ex.w - usableMin) % step + step) % step;
-            cands.push(a, b);
+    // Vertical offsets tried for the rows: flush with the top, flush with the bottom (the eaves, where a
+    // hipped face is widest), a few steps in between, and the offsets that line a row up with each
+    // obstacle's top or bottom edge.
+    const buildRowOffsets = (stepY, panelH) => {
+        if (!Number.isFinite(stepY) || stepY <= 0) return [0];
+        const mod = (n) => ((n % stepY) + stepY) % stepY;
+        const cands = [0, mod(usableH - panelH), stepY / 4, stepY / 2, (3 * stepY) / 4];
+        for (const ex of exclusionsMm) {
+            cands.push(mod(ex.y - usable.minY), mod(ex.y + ex.h - usable.minY));
         }
-        // Keep set small and stable
-        return uniqueSortedInts(cands).slice(0, 16);
+        return Array.from(new Set(cands.filter(Number.isFinite).map((n) => Math.round(n)))).slice(0, 16);
+    };
+
+    // A layout depends only on the panel's footprint, so panels of the same size share one packing.
+    const packCache = new Map();
+
+    const pack = (panelW, panelH) => {
+        const key = `${panelW}x${panelH}`;
+        if (packCache.has(key)) return packCache.get(key);
+
+        const stepX = panelW + gap_mm;
+        const stepY = panelH + gap_mm;
+
+        const blockers = (rect) => exclusionsMm.filter((ex) => rectIntersectsAnyExclusionMm(rect, [ex]));
+        const fits = (rect) => {
+            const samples = rectSamplePointsMm(rect);
+            if (!samples.every((pt) => pointInPolygonMm(pt, roofPolygonMm))) return false;
+            if (edge_mm > 0 && !samples.every((pt) => minDistanceToPolygonEdgesMm(pt, roofPolygonMm) >= edge_mm)) return false;
+            return !rectIntersectsAnyExclusionMm(rect, exclusionsMm);
+        };
+
+        // Each row is packed on its own: a panel goes in the first place it fits, scanning from the left
+        // (and separately from the right) and jumping past obstacles. When both scans place the same
+        // number of panels, the row is centred between them if every centred position still fits.
+        const packRow = (y) => {
+            const rect = (x) => ({ x: Math.round(x), y, w: panelW, h: panelH });
+            const left = [];
+            for (let x = usable.minX; x + panelW <= usable.maxX + 1e-9; ) {
+                const r = rect(x);
+                if (fits(r)) {
+                    left.push(r.x);
+                    x = r.x + stepX;
+                    continue;
+                }
+                const bs = blockers(r);
+                x = bs.length ? Math.max(x + ROW_SCAN_MM, ...bs.map((ex) => ex.x + ex.w)) : x + ROW_SCAN_MM;
+            }
+            const right = [];
+            for (let x = usable.maxX - panelW; x >= usable.minX - 1e-9; ) {
+                const r = rect(x);
+                if (fits(r)) {
+                    right.unshift(r.x);
+                    x = r.x - stepX;
+                    continue;
+                }
+                const bs = blockers(r);
+                x = bs.length ? Math.min(x - ROW_SCAN_MM, ...bs.map((ex) => ex.x - panelW)) : x - ROW_SCAN_MM;
+            }
+            let xs = right.length > left.length ? right : left;
+            if (left.length && left.length === right.length) {
+                const mid = left.map((lx, i) => Math.round((lx + right[i]) / 2));
+                if (mid.every((mx) => fits(rect(mx)))) xs = mid;
+            }
+            return xs.map(rect);
+        };
+
+        let best = { rows: [], offsetY: 0, count: 0 };
+        for (const offY of buildRowOffsets(stepY, panelH)) {
+            const rows = [];
+            let count = 0;
+            for (let y = usable.minY + offY; y + panelH <= usable.maxY + 1e-9; y += stepY) {
+                const row = packRow(Math.round(y));
+                if (row.length) {
+                    rows.push(row);
+                    count += row.length;
+                }
+            }
+            if (count > best.count) best = { rows, offsetY: offY, count };
+        }
+        packCache.set(key, best);
+        return best;
     };
 
     for (const panel of eligiblePanels.slice(0, topN)) {
@@ -255,65 +329,13 @@ export function computePlannerLayouts({
             const panelH = orientation === 'portrait' ? panelH0 : panelW0;
             if (panelW <= 0 || panelH <= 0) continue;
 
-            const stepX = panelW + gap_mm;
-            const stepY = panelH + gap_mm;
-
-            const xOffsets = buildOffsetCandidates(stepX, usable.minX, exclusionsMm);
-            const yOffsets = buildOffsetCandidates(stepY, usable.minY, exclusionsMm);
-
-            let best = { rectsMm: [], placedRows: 0, placedCols: 0, offsetX: 0, offsetY: 0 };
-
-            for (const offX of xOffsets) {
-                for (const offY of yOffsets) {
-                    const rectsMm = [];
-                    let placedRows = 0;
-                    let placedCols = 0;
-
-                    // Iterate grid positions while staying within usable bbox.
-                    let r = 0;
-                    for (
-                        let y = usable.minY + offY;
-                        y + panelH <= usable.maxY + 1e-9;
-                        y += stepY, r++
-                    ) {
-                        let anyInRow = false;
-                        let c = 0;
-                        for (
-                            let x = usable.minX + offX;
-                            x + panelW <= usable.maxX + 1e-9;
-                            x += stepX, c++
-                        ) {
-                            const rect = { x: Math.round(x), y: Math.round(y), w: panelW, h: panelH };
-
-                            const samples = rectSamplePointsMm(rect);
-                            const inside = samples.every((pt) => pointInPolygonMm(pt, roofPolygonMm));
-                            if (!inside) continue;
-                            if (edge_mm > 0) {
-                                const farEnough = samples.every(
-                                    (pt) => minDistanceToPolygonEdgesMm(pt, roofPolygonMm) >= edge_mm
-                                );
-                                if (!farEnough) continue;
-                            }
-                            if (rectIntersectsAnyExclusionMm(rect, exclusionsMm)) continue;
-
-                            rectsMm.push(rect);
-                            anyInRow = true;
-                            placedCols = Math.max(placedCols, c + 1);
-                        }
-                        if (anyInRow) placedRows = r + 1;
-                    }
-
-                    if (rectsMm.length > best.rectsMm.length) {
-                        best = { rectsMm, placedRows, placedCols, offsetX: offX, offsetY: offY };
-                    }
-                }
-            }
-
-            const count = best.rectsMm.length;
+            const best = pack(panelW, panelH);
+            const rowCounts = best.rows.map((row) => row.length);
+            const count = best.count;
             const totalW = count * (Number(panel.power) || 0);
             const utilization = roofAreaMm2 > 0 ? (count * panelW * panelH) / roofAreaMm2 : 0;
 
-            const rects_m = best.rectsMm.map((r) => ({
+            const rects_m = best.rows.flat().map((r) => ({
                 x: mmIntToMeters(r.x),
                 y: mmIntToMeters(r.y),
                 w: mmIntToMeters(r.w),
@@ -325,25 +347,27 @@ export function computePlannerLayouts({
                 panelModel: panel.model,
                 panelName: panel.name,
                 orientation,
-                rows: best.placedRows,
-                cols: best.placedCols,
+                rows: rowCounts.length,
+                cols: rowCounts.length ? Math.max(...rowCounts) : 0,
+                rowCounts,
                 count,
                 totalW,
                 utilization,
                 rects_m,
-                offset_mm: { x: best.offsetX, y: best.offsetY },
+                offset_mm: { x: 0, y: best.offsetY },
             });
         }
     }
 
-    candidates.sort((a, b) => {
-        if (b.totalW !== a.totalW) return b.totalW - a.totalW;
-        if (b.count !== a.count) return b.count - a.count;
-        return b.utilization - a.utilization;
-    });
+    // Most power first; near-ties (within NEAR_TIE_FRACTION) go to the layout with fewer panels.
+    const ranked = rankByPowerWithNearTies(
+        [...candidates].sort((a, b) => b.utilization - a.utilization),
+        (c) => c.totalW,
+        (c) => c.count
+    );
 
     return {
-        ranked: candidates,
+        ranked,
         meta: {
             edge_mm,
             gap_mm,

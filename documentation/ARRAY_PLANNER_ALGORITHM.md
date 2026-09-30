@@ -45,27 +45,29 @@ So the algorithm does **not** mix different panel models in one layout: each can
 
 ---
 
-## Step 3: Regular grid + small search over “phase shifts”
+## Step 3: Rows, each packed on its own
 
 For each panel model and allowed orientation:
 
 1. **Footprint**  
-   Portrait uses the panel’s catalogue width × height on the roof; landscape swaps them.
+   Portrait uses the panel’s catalogue width × height on the roof; landscape swaps them. The layout depends only on the footprint, so panels of the same size share one packing (cached per footprint).
 
-2. **Grid spacing**  
-   Horizontal step = panel width + gap. Vertical step = panel height + gap.
+2. **Row spacing**  
+   Rows are one panel height + gap apart. Within a row, panels are at least one panel width + gap apart.
 
-3. **Starting offsets**  
-   Instead of always starting the grid at the top-left corner of the usable area, the engine tries a **small set of alternative starting positions** (“offsets”) along X and Y. Offsets are derived from the panel step and from the **edges of exclusions**, so the grid can shift slightly and **pack better around obstacles** (similar in spirit to nudging a tile pattern so fewer tiles are “cut” by a vent).
+3. **Vertical offsets**  
+   The rows can start at a few different heights: flush with the top of the usable area, flush with the bottom (the eaves, where a hipped face is widest), a quarter, half and three quarters of a step down, and the heights that line a row up with the **top or bottom edge of each obstacle**.
 
-4. **Placement rule**  
-   For each offset pair, it walks the grid row by row, column by column. For each cell it proposes one rectangle. That rectangle is **kept** only if:
-   - **All four corners** are **inside** the roof polygon (point-in-polygon test; on the boundary counts as inside).
-   - If setback &gt; 0, **every corner** is at least **edge_mm** away from the roof polygon’s edges (shortest distance to any edge segment).
+4. **Packing a row**  
+   Each row is packed independently, so a narrow row near a hip or an obstacle doesn't cost the other rows. The engine scans the row from the left in 25 mm steps (`ROW_SCAN_MM`) and puts a panel in the first place it fits, then continues one panel width + gap along; when a position overlaps an obstacle it jumps straight past it. It does the same from the right. When both scans place the same number of panels, the row is **centred** between them if every centred position still fits (on a symmetric hipped face this gives a symmetric layout). A position is **kept** only if:
+   - Its **corners, edge midpoints and centre** are **inside** the roof polygon (point-in-polygon test; on the boundary counts as inside).
+   - If setback &gt; 0, each of those points is at least **edge_mm** away from the roof polygon’s edges (shortest distance to any edge segment).
    - The rectangle does **not** overlap any exclusion.
 
 5. **Best offset for this panel + orientation**  
-   Among the tried offset pairs, the one that places the **largest number of panels** wins. Row/column counts recorded for that winner are approximate grid extents (useful for display), not a guarantee of a full rectangle of panels—corners of the roof often leave holes in the grid.
+   Among the vertical offsets, the one that places the **largest number of panels** wins. The result records `rowCounts` (panels in each non-empty row, from the top), `rows` (how many) and `cols` (the fullest row). Rows can hold different numbers of panels, which the planner shows as, for example, "rows of 2, 3, 4".
+
+Why rows rather than one grid: with a single grid for the whole roof, every panel that doesn't fit near a hip or a chimney wastes a full panel's width in every row, which penalises large modules much more than small ones. Before this change, small leisure panels often out-ranked far more efficient house panels on hipped roofs and roofs with obstacles for that reason alone.
 
 ---
 
@@ -77,13 +79,13 @@ For each successful combination (panel model × orientation × best offset), the
 - **Total power** — count × panel STC power (simple model: same module everywhere).  
 - **Utilisation** — share of the **usable bounding rectangle’s** area covered by panel area (informative; not the same as roof area on odd shapes).
 
-All candidates are then **sorted**:
+All candidates are then **ranked** (`rankByPowerWithNearTies` in [`layoutRanking.js`](../src/lib/layoutRanking.js)):
 
 1. Higher **total power** first.  
-2. If tied, higher **panel count**.  
+2. **Near-ties go to fewer panels.** A layout within 3% (`NEAR_TIE_FRACTION`) of the power of the layout leading its band ranks by panel count, fewest first: about the same power from fewer modules needs less mounting kit, fewer connectors and less labour. A layout more than 3% below the leader starts a new band, so the order is well defined. For example, 4 × 720 W and 16 × 180 W (both 2,880 W) rank the 4-panel layout first.  
 3. If still tied, higher **utilisation**.
 
-The ordered list is what the UI shows as ranked options.
+The ordered list is what the UI shows as ranked options. The planners' "Most power" sort uses the same rule.
 
 ---
 
@@ -92,7 +94,7 @@ The ordered list is what the UI shows as ranked options.
 The new shell's Layout tab (`src/shell/planner/`) uses the same engine. The extra steps live in [`plannerLayouts.js`](../src/lib/plannerLayouts.js), which is pure and tested:
 
 - **Roof shapes from the first-use card.** `plannerFromStart` turns three measurements into the planner's roof: a rectangle, a hipped face (a trapezoid whose ridge defaults to width − 2 × slope × cos(pitch), which holds when every face has the same pitch; the pitch comes from a map measurement, otherwise 35° is assumed and the UI says so; editable) or a rectangle to reshape by hand. A measurement from a map is corrected to the length along the slope with the pitch (`slopeLengthFromPlan`: depth ÷ cos pitch); the card links to SolarWizard for the pitch.
-- **Layouts, not panels.** Many panels of about the same size give the same grid, so `groupLayouts` groups the ranked candidates by orientation, rows × columns and panel count. Each group shows the band of panel sizes that produces it and expands to the panels in it. Sorted by panel size (largest first, so each band ends where the next layout takes over), by power, or by £/kWp (unknown prices last). With a controller assigned, the list can be limited to candidates that have a wiring the controller accepts (`bestParallelStringsForController`, the same helper as auto-wiring).
+- **Layouts, not panels.** Many panels of about the same size give the same grid, so `groupLayouts` groups the ranked candidates by orientation, panels per row and panel count. Each group shows the band of panel sizes that produces it and expands to the panels in it. Sorted by panel size (largest first, so each band ends where the next layout takes over), by power, or by £/kWp (unknown prices last). With a controller assigned, the list can be limited to candidates that have a wiring the controller accepts (`bestParallelStringsForController`, the same helper as auto-wiring).
 - **Empty slots.** The engine packs a full grid; the user can switch individual slots off (a vent, a shaded corner). `withEmptySlots` removes them by position key (`slotKey`, the slot's corner to the millimetre) and recomputes the count and power. Empty slots are stored per layout in `planner.emptySlots[layoutId]`.
 - **Preview before apply.** Choosing a layout changes nothing. `layoutPatch` works out the array fields it would set (panel, count, parallel strings, maximum panel size swapped for landscape), and `analyzeArrayWith` in `AppStateContext` runs the normal `analyzeArray` on the array with that patch. `layoutChangeSummary` compares the two analyses: panels, wiring, power, and which checks it would clear or add. No check is re-implemented: the preview is the engine's own verdict.
 - **Apply and undo.** "Use this layout" writes the patch with `updateArray` and records `planner.applied` (`{ id, panelModel, orientation, rects_m, emptyRects }`), so the drawing shows what is in the design. The toast offers Undo. If the roof is edited afterwards so the applied panels no longer fit, the planner says so.
@@ -114,6 +116,6 @@ The drawing (outline, obstacles, clearances) is saved on the array as the user w
 
 ## Mental model in one sentence
 
-**Try the strongest panel models first; for each one, try a fixed-orientation rectangular grid at several smart starting positions; keep only full rectangles inside the roof, clear of exclusions and edge setback; rank by total watts.**
+**For each panel model and orientation, try rows at several heights and pack each row on its own, keeping only full rectangles inside the roof, clear of exclusions and edge setback; rank by total watts, with near-ties going to fewer panels.**
 
 For implementation details (exact formulas, mm conversion, ray-casting), see [`plannerEngine.js`](../src/lib/plannerEngine.js).

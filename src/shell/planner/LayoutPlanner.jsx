@@ -28,6 +28,7 @@ import {
     ASSUMED_PITCH_DEG,
     ROOF_SHAPES,
     estimatedRidge,
+    gridLabel,
     groupLayouts,
     knownPitch,
     layoutChangeSummary,
@@ -612,7 +613,8 @@ export default function LayoutPlanner({ arrayId }) {
                     {groups.slice(0, shown).map((g) => {
                         const open = g.key === expandedKey;
                         const holdsPreview = g.key === previewGroupKey;
-                        const label = `${g.count} panels · ${g.orientation}${g.cols && g.rows ? ` · ${g.cols} × ${g.rows}` : ''}`;
+                        const grid = gridLabel(g);
+                        const label = `${g.count} panels · ${g.orientation}${grid ? ` · ${grid}` : ''}`;
                         const previewed = holdsPreview ? g.candidates.find((c) => c.id === effectivePreviewId) : null;
                         return (
                             <li key={g.key} className="border-b border-line-soft">

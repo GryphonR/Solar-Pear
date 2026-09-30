@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { computePlannerLayouts, dropSmallestPanelsByFootprint, projectedToTrueY_m } from "./plannerEngine";
+import { NEAR_TIE_FRACTION, rankByPowerWithNearTies } from "./layoutRanking";
 
 describe("projectedToTrueY_m", () => {
     it("converts projected Y using tilt (trueY = projectedY / cos(tilt))", () => {
@@ -317,3 +318,76 @@ describe("computePlannerLayouts", () => {
     });
 });
 
+describe("computePlannerLayouts row packing", () => {
+    const square = [{ model: "P1", name: "Panel 1", power: 400, width: 1000, height: 1000, active: true }];
+    const run = (roofPolygon_m, exclusions_m = []) =>
+        computePlannerLayouts({
+            roofPolygon_m,
+            exclusions_m,
+            spacing: { edge_mm: 0, gap_mm: 0 },
+            panelsData: square,
+            options: { orientation: "portrait", topN: 5 },
+        }).ranked[0];
+
+    it("lines rows up with an obstacle's top or bottom edge (vertical offsets use the obstacle's y)", () => {
+        // The vertical twin of the horizontal offset test: a narrow obstacle across y=1m blocks two rows
+        // on a grid from y=0, but only one once the rows shift.
+        const best = run(
+            [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 4.2 }, { x: 0, y: 4.2 }],
+            [{ id: "E1", x: 0, y: 0.95, w: 1, h: 0.2 }]
+        );
+        expect(best.count).toBe(3);
+    });
+
+    it("packs each row on its own, so a hipped face's wider rows take more panels", () => {
+        // Trapezoid: 2 m ridge at the top, 4 m eaves at the bottom, 2 m deep. One global grid fits 2 + 2;
+        // packed row by row it fits 2 + 3, with the bottom row centred.
+        const best = run([{ x: 1, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 2 }, { x: 0, y: 2 }]);
+        expect(best.count).toBe(5);
+        expect(best.rowCounts).toEqual([2, 3]);
+        expect(best.rows).toBe(2);
+        expect(best.cols).toBe(3);
+        expect(best.rects_m.filter((r) => r.y === 1).map((r) => r.x)).toEqual([0.5, 1.5, 2.5]);
+    });
+
+    it("jumps past an obstacle in a row instead of losing a whole grid column", () => {
+        // 4.2 m row with a 0.2 m vent at 1.0 m: one panel before it, three after.
+        const best = run([{ x: 0, y: 0 }, { x: 4.2, y: 0 }, { x: 4.2, y: 1 }, { x: 0, y: 1 }], [{ id: "V", x: 1.0, y: 0, w: 0.2, h: 1 }]);
+        expect(best.count).toBe(4);
+    });
+
+    it("ranks near-ties by fewer panels", () => {
+        // 16 small panels give 2880 W and 4 large ones 2880 W: the same power from fewer modules first.
+        const panelsData = [
+            { model: "SMALL", name: "Small", power: 180, width: 1000, height: 1000, active: true },
+            { model: "BIG", name: "Big", power: 720, width: 2000, height: 2000, active: true },
+        ];
+        const { ranked } = computePlannerLayouts({
+            roofPolygon_m: [{ x: 0, y: 0 }, { x: 4, y: 0 }, { x: 4, y: 4 }, { x: 0, y: 4 }],
+            spacing: { edge_mm: 0, gap_mm: 0 },
+            panelsData,
+            options: { orientation: "portrait", topN: 5 },
+        });
+        expect(ranked.map((r) => [r.panelModel, r.count, r.totalW])).toEqual([
+            ["BIG", 4, 2880],
+            ["SMALL", 16, 2880],
+        ]);
+    });
+});
+
+describe("rankByPowerWithNearTies", () => {
+    const rank = (items) => rankByPowerWithNearTies(items, (x) => x.w, (x) => x.n).map((x) => x.id);
+
+    it("puts fewer panels first within 3% of the band's best power, and keeps clear winners first", () => {
+        expect(rank([{ id: "many", w: 720, n: 16 }, { id: "few", w: 700, n: 4 }])).toEqual(["few", "many"]);
+        expect(rank([{ id: "many", w: 1000, n: 16 }, { id: "few", w: 900, n: 4 }])).toEqual(["many", "few"]);
+    });
+
+    it("anchors each band to its leader, so the order does not chain down", () => {
+        // 1000 leads; 980 is in its band; 960 is 4% below 1000 and starts a new band even though it is
+        // within 3% of 980.
+        const out = rank([{ id: "a", w: 1000, n: 20 }, { id: "b", w: 980, n: 10 }, { id: "c", w: 960, n: 2 }]);
+        expect(out).toEqual(["b", "a", "c"]);
+        expect(NEAR_TIE_FRACTION).toBe(0.03);
+    });
+});

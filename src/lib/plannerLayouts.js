@@ -9,6 +9,7 @@
 import { bestParallelStringsForController, formatWiringLabel } from './arrayAnalysis';
 import { arrayStatus } from './designStatus';
 import { ISSUE_ADVICE } from './issueAdvice';
+import { rankByPowerWithNearTies } from './layoutRanking';
 import { knownPrice } from './pricing';
 
 export const ROOF_SHAPES = Object.freeze([
@@ -215,7 +216,7 @@ export function sortLayouts(ranked, sort, panelByModel) {
 export function groupLayouts(candidates, sort, panelByModel) {
     const groups = new Map();
     for (const c of candidates) {
-        const key = [c.orientation, c.rows ?? '', c.cols ?? '', c.count].join('|');
+        const key = [c.orientation, c.rowCounts ? c.rowCounts.join('.') : `${c.rows ?? ''}x${c.cols ?? ''}`, c.count].join('|');
         if (!groups.has(key)) groups.set(key, []);
         groups.get(key).push(c);
     }
@@ -232,6 +233,7 @@ export function groupLayouts(candidates, sort, panelByModel) {
             count: first.count,
             rows: first.rows ?? null,
             cols: first.cols ?? null,
+            rowCounts: first.rowCounts ?? null,
             candidates: inner,
             best: inner[0],
             size: { minH: Math.min(...hs), maxH: Math.max(...hs), minW: Math.min(...ws), maxW: Math.max(...ws) },
@@ -240,14 +242,24 @@ export function groupLayouts(candidates, sort, panelByModel) {
         };
     });
     const area = (g) => g.size.maxH * g.size.maxW;
+    if (sort === 'power') return rankByPowerWithNearTies(out, (g) => g.power[1], (g) => g.count);
     return out.sort((a, b) => {
         if (sort === 'cost') {
             if (a.bestCostPerKWp == null || b.bestCostPerKWp == null) return (a.bestCostPerKWp == null) - (b.bestCostPerKWp == null) || b.power[1] - a.power[1];
             return a.bestCostPerKWp - b.bestCostPerKWp || b.power[1] - a.power[1];
         }
-        if (sort === 'power') return b.power[1] - a.power[1] || b.count - a.count;
         return area(b) - area(a) || a.count - b.count;
     });
+}
+
+/**
+ * Short description of a layout's rows: "4 × 2" when every row holds the same number of panels,
+ * otherwise the panels in each row from the top, e.g. "rows of 2, 3, 4" on a hipped face.
+ */
+export function gridLabel(layout) {
+    const counts = layout?.rowCounts;
+    if (Array.isArray(counts) && counts.length > 1 && counts.some((n) => n !== counts[0])) return `rows of ${counts.join(', ')}`;
+    return layout?.cols && layout?.rows ? `${layout.cols} × ${layout.rows}` : '';
 }
 
 /**

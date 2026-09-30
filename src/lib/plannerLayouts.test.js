@@ -9,6 +9,7 @@ import {
     plannerFromStart,
     roofPolygonFor,
     estimatedRidge,
+    gridLabel,
     groupLayouts,
     ASSUMED_PITCH_DEG,
     samePanelArrays,
@@ -125,10 +126,21 @@ describe('layouts grouped by layout, not by panel', () => {
 
     it('sorts groups by power or by £/kWp', () => {
         const byPower = groupLayouts(ranked, 'power', panelByModel);
-        expect(byPower.map((g) => g.power[1])).toEqual([...byPower.map((g) => g.power[1])].sort((a, b) => b - a));
+        // Most power first, except that a layout within 3% of a better one and with fewer panels may lead it.
+        for (let i = 0; i < byPower.length; i++) {
+            for (let j = i + 1; j < byPower.length; j++) expect(byPower[i].power[1]).toBeGreaterThanOrEqual(byPower[j].power[1] * 0.97);
+        }
         const byCost = groupLayouts(ranked, 'cost', panelByModel);
         expect(byCost[0].best.panelModel).toBe('P400');
         expect(byCost[0].bestCostPerKWp).toBe(125);
+    });
+});
+
+describe('gridLabel', () => {
+    it('describes a full grid as columns × rows and a ragged one row by row', () => {
+        expect(gridLabel({ rows: 2, cols: 4, rowCounts: [4, 4] })).toBe('4 × 2');
+        expect(gridLabel({ rows: 3, cols: 4, rowCounts: [2, 3, 4] })).toBe('rows of 2, 3, 4');
+        expect(gridLabel({ rows: 0, cols: 0, rowCounts: [] })).toBe('');
     });
 });
 
