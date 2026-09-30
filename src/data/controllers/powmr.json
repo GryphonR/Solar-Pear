@@ -31,6 +31,8 @@
         "datasheetUrl": "https://powmr.com/products/mppt-solar-charge-controller-60a",
         "buyLinks": [],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": false,
         "g99_cert": false,
         "g100_cert": false,

@@ -45,6 +45,13 @@ function linkFindings(item, id, add) {
     }
 }
 
+// Discontinued products stay selectable (people design around existing kit); the note explains why.
+function discontinuedFindings(item, add) {
+    if (item.discontinuedNote && item.discontinued !== true) {
+        add('warning', 'discontinued-note', 'discontinuedNote is set but discontinued is not true');
+    }
+}
+
 /**
  * @param {object[]} panels
  * @returns {Finding[]}
@@ -110,6 +117,7 @@ export function checkPanels(panels) {
         }
         if (!p.datasheetUrl) add('warning', 'datasheet', 'No datasheet URL');
         linkFindings(p, id, add);
+        discontinuedFindings(p, add);
     }
     return findings;
 }
@@ -158,6 +166,7 @@ export function checkControllers(controllers) {
         }
         if (!c.datasheetUrl) add('warning', 'datasheet', 'No datasheet URL');
         linkFindings(c, id, add);
+        discontinuedFindings(c, add);
     }
     return findings;
 }

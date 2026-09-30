@@ -1,4 +1,5 @@
 import React from 'react';
+import DiscontinuedBadge from '../components/DiscontinuedBadge';
 import { AlertTriangle } from '../components/Icons';
 import { ResultsDisclaimer } from '../components/TrustNotices';
 import { useAppState } from '../context/AppStateContext';
@@ -340,7 +341,7 @@ export default function SummaryView() {
                             <tr key={item.model} className="border-b border-slate-100 hover:bg-slate-50">
                                 <td className="py-3 px-4 font-bold text-slate-700">{qty}</td>
                                 <td className="py-3 px-4">
-                                    {item.name}
+                                    {item.name} <DiscontinuedBadge item={item} />
                                     <BomPriceAge item={item} />
                                 </td>
                                 <td className="py-3 px-4 text-right text-slate-600">
@@ -355,7 +356,7 @@ export default function SummaryView() {
                             <tr key={item.id} className="border-b border-slate-100 hover:bg-slate-50">
                                 <td className="py-3 px-4 font-bold text-slate-700">{qty}</td>
                                 <td className="py-3 px-4">
-                                    {item.name}
+                                    {item.name} <DiscontinuedBadge item={item} />
                                     <BomPriceAge item={item} />
                                 </td>
                                 <td className="py-3 px-4 text-right text-slate-600">

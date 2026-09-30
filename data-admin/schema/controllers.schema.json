@@ -26,6 +26,8 @@
     "datasheetUrl",
     "buyLinks",
     "availableUK",
+    "discontinued",
+    "discontinuedNote",
     "g98_cert",
     "g99_cert",
     "g100_cert",
@@ -58,10 +60,12 @@
     "three_phase": false,
     "islanding": false,
     "v_start_vbat_dependent": false,
-    "buyLinks": []
+    "buyLinks": [],
+    "discontinued": false,
+    "discontinuedNote": ""
   },
   "rules": {
-    "allowedEmptyStrings": ["notes", "priceCheckedAt", "reviewedAt", "reviewedBy"],
+    "allowedEmptyStrings": ["notes", "priceCheckedAt", "reviewedAt", "reviewedBy", "discontinuedNote"],
     "zeroValueSkips": [
       {
         "field": "price",
@@ -126,6 +130,8 @@
     "datasheetUrl": "string",
     "buyLinks": "array",
     "availableUK": "boolean",
+    "discontinued": "boolean",
+    "discontinuedNote": "string",
     "g98_cert": "boolean",
     "g99_cert": "boolean",
     "g100_cert": "boolean",

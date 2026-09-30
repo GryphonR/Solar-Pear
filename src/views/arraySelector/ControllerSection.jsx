@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import DiscontinuedBadge from '../../components/DiscontinuedBadge';
 import { AlertTriangle, CheckCircle, Info, ExternalLink, Trash2 } from '../../components/Icons';
 import BarCell from '../../components/BarCell';
 import { COLD_TEMP_C, HOT_TEMP_C, STRICT_CURRENT_FACTOR } from '../../lib/arrayAnalysis';
@@ -105,7 +106,10 @@ export default function ControllerSection({
                                     }`}
                                 >
                                     <div className="flex justify-between items-start mb-1">
-                                        <div className="font-bold text-slate-800">{sc.name}</div>
+                                        <div className="font-bold text-slate-800 flex items-center gap-1.5 flex-wrap">
+                                            {sc.name}
+                                            <DiscontinuedBadge item={model} />
+                                        </div>
                                         {Object.values(assignments).every((val) => !val) && (
                                             <button
                                                 onClick={() => deleteControllerInstance(sc.id)}
@@ -458,6 +462,7 @@ export default function ControllerSection({
                                                         <span className="font-medium text-slate-800">
                                                             {c.name}
                                                         </span>
+                                                        <DiscontinuedBadge item={c} />
                                                         <span className="text-xs text-slate-400">
                                                             ({c.manufacturer})
                                                         </span>

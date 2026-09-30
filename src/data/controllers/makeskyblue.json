@@ -31,6 +31,8 @@
         "datasheetUrl": "https://makeskyblue.com/products/60a-mppt-solar-charge-controller",
         "buyLinks": [],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": false,
         "g99_cert": false,
         "g100_cert": false,

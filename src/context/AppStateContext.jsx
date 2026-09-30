@@ -476,6 +476,8 @@ export function AppStateProvider({ children }) {
                 price: 0,
                 notes: '',
                 datasheetUrl: '',
+                discontinued: false,
+                discontinuedNote: '',
                 buyLinks: {},
             },
         });
@@ -517,6 +519,8 @@ export function AppStateProvider({ children }) {
                 glass: '',
                 bifacial: false,
                 flexible: false,
+                discontinued: false,
+                discontinuedNote: '',
                 cells: '',
                 notes: '',
                 datasheetUrl: '',

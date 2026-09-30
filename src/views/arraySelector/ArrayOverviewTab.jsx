@@ -1,4 +1,5 @@
 import React from 'react';
+import DiscontinuedBadge from '../../components/DiscontinuedBadge';
 import { NotesSourceLabel } from '../../components/DataProvenance';
 import PriceTag from '../../components/PriceTag';
 import { AlertTriangle, CheckCircle, Info, XIcon, ExternalLink } from '../../components/Icons';
@@ -58,7 +59,7 @@ export default function ArrayOverviewTab({
                             <div>
                                 <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Panel</span>
                                 {panel ? (
-                                    <span className="text-sm font-bold text-slate-800">{panel.name} ({panel.power}W)</span>
+                                    <><span className="text-sm font-bold text-slate-800">{panel.name} ({panel.power}W)</span> <DiscontinuedBadge item={panel} /></>
                                 ) : (
                                     <span className="text-sm font-bold text-blue-600">Select Panel</span>
                                 )}
@@ -87,7 +88,7 @@ export default function ArrayOverviewTab({
                             <div>
                                 <span className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Controller</span>
                                 {controller ? (
-                                    <span className="text-sm font-bold text-slate-800">{controller.manufacturer ? `${controller.manufacturer} ${controller.name}` : controller.name}</span>
+                                    <><span className="text-sm font-bold text-slate-800">{controller.manufacturer ? `${controller.manufacturer} ${controller.name}` : controller.name}</span> <DiscontinuedBadge item={controller} /></>
                                 ) : (
                                     <span className="text-sm font-bold text-blue-600">Select Controller</span>
                                 )}
