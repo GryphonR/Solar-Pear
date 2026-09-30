@@ -1,5 +1,6 @@
 import { safeHttpUrl } from './safeUrl';
 import { sanitizeCatalogueDiff } from './catalogueOverrides';
+import { sanitizeStore } from './projects';
 
 /**
  * Sanitize buyLinks (array or legacy object) to http(s) URLs only.
@@ -73,6 +74,22 @@ export function validateBackupPayload(imported) {
     requireArray('panelsData');
     requireArray('chargersData');
     requireArray('siteControllers');
+
+    // v6: the design is a list of projects. Older backups carry the flat areas/arrays/controllers instead.
+    if (data.projects !== undefined) {
+        const store = sanitizeStore({ projects: data.projects, activeProjectId: data.activeProjectId });
+        if (store) {
+            data.projectsStore = store;
+            const dropped = (Array.isArray(data.projects) ? data.projects.length : 0) - store.projects.length;
+            if (dropped > 0) warnings.push(`Ignored ${dropped} unusable project${dropped === 1 ? '' : 's'} in the backup.`);
+        } else if (!data.areasData) {
+            return { ok: false, error: 'The backup contains no usable projects.' };
+        } else {
+            warnings.push('Ignored invalid "projects".');
+        }
+        delete data.projects;
+        delete data.activeProjectId;
+    }
 
     if (data.areasData) {
         data.areasData = data.areasData.filter((a) => typeof a === 'string' && a.trim());

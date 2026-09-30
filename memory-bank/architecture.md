@@ -17,6 +17,7 @@ Vite 7, React 19, Tailwind v4 (theme in `src/index.css`), uPlot for graphs, and 
 | `src/views/MethodologyView.jsx` + `src/lib/methodology.js` | Public "How We Check" page. Content reads the engine constants; a test fails if a check code is undocumented |
 | `src/views/AboutView.jsx`, `src/components/TrustNotices.jsx`, `src/lib/siteInfo.js` | About & legal page (disclaimer, affiliate disclosure, pricing independence, data sources, privacy, terms), results disclaimer, affiliate notice, operator details and "Report a data error" links |
 | `src/components/BuyButton.jsx` | Renders `buyLinks`. Uses `rel="noopener noreferrer sponsored"` and marks affiliate links with `*` |
+| `src/lib/projects.js`, `src/lib/projectStorage.js` | Projects data model, the legacy-to-project conversion, system and project actions, validation, and localStorage load/save of `solar_projects` |
 | `src/lib/migration.js` | Legacy localStorage migrations for arrays, selections and site controllers, plus `applyReplacements` (moves designs off discontinued products listed in `src/data/replacements.json`) |
 | `src/lib/catalogueOverrides.js` | Catalogue persistence as user edits only: diff/apply, legacy v1 → v2 migration, storage load/save |
 | `src/lib/pricing.js` | Unknown-price handling (0/blank means unknown), GBP formatting, price-age labels (stale after 60 days) |
@@ -27,7 +28,7 @@ Vite 7, React 19, Tailwind v4 (theme in `src/index.css`), uPlot for graphs, and 
 | `.agent/workflows/` | Agent prompts for adding and verifying panels/controllers from datasheets |
 
 ## Persistence
-localStorage keys are listed in `documentation/LOCAL_STORAGE_KEYS.md`. Storage version 2: the catalogue lives in React state and **only the user's edits are stored** (`solar_catalogue_overrides`), so refreshed catalogue prices reach returning users. Legacy full-array keys are migrated once. Backups (`documentation/BACKUP_SCHEMA.md`, v5) export the same overrides. Failed writes raise a `solar-storage-error` event, which the app turns into a notice suggesting a backup.
+localStorage keys are listed in `documentation/LOCAL_STORAGE_KEYS.md`. Storage version 3: the design is a projects store (`solar_projects`, `src/lib/projects.js`, roadmap 13.2): Project -> System (`areas` in the older code and UI) -> Array, with opaque ids; `AppStateContext` derives the flat `areasData`, `arraysData`, `siteControllers` and `areaSettingsByArea` views from the active project so the existing views are unchanged. The catalogue lives in React state and **only the user's edits are stored** (`solar_catalogue_overrides`), so refreshed catalogue prices reach returning users. Legacy full-array keys are migrated once. Backups (`documentation/BACKUP_SCHEMA.md`, v6) export the same overrides. Failed writes raise a `solar-storage-error` event, which the app turns into a notice suggesting a backup.
 
 ## Build and deploy
 - `.github/workflows/deploy.yml`: on every push to `main` it runs the root tests, then data-admin install, test and build, then the root build, then deploys to **GitHub Pages** with `BASE_PATH=/`. The live site is **https://solarpear.echook.uk/** (a custom-domain CNAME on the Pages site).

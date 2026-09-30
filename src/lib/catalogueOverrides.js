@@ -144,9 +144,9 @@ export function sanitizeCatalogueDiff(value) {
     };
 }
 
-/** Version of the app's localStorage layout. 1 = full catalogue arrays; 2 = catalogue overrides. */
+/** Version of the app's localStorage layout. 1 = full catalogue arrays; 2 = catalogue overrides; 3 = projects (`solar_projects`). */
 export const STORAGE_VERSION_KEY = 'solar_storage_version';
-export const STORAGE_VERSION = 2;
+export const STORAGE_VERSION = 3;
 
 const readJson = (storage, key) => {
     const raw = storage.getItem(key);

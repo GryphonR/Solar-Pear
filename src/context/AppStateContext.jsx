@@ -7,6 +7,31 @@ import { GSE_COMPATIBILITY } from '../lib/gseCompatibility';
 import { applyReplacements, migrateArrays, migrateSelectionsAndSiteControllers } from '../lib/migration';
 import replacements from '../data/replacements.json';
 import {
+    PROJECTS_KEY,
+    addSystem,
+    applyLegacyToProject,
+    createProject as createProjectInStore,
+    deleteProject as deleteProjectInStore,
+    duplicateProject as duplicateProjectInStore,
+    getActiveProject,
+    legacyToProject,
+    makeStore,
+    projectToLegacy,
+    removeSystem,
+    renameProject as renameProjectInStore,
+    renameSystem,
+    switchProject as switchProjectInStore,
+    updateActiveProject,
+    newId,
+} from '../lib/projects';
+import {
+    loadProjectsStore,
+    readLegacyAreas,
+    removeLegacyDesignKeys,
+    LEGACY_DESIGN_KEYS,
+    saveProjectsStore,
+} from '../lib/projectStorage';
+import {
     CATALOGUE_OVERRIDES_KEY,
     LEGACY_CHARGERS_KEY,
     LEGACY_PANELS_KEY,
@@ -54,6 +79,7 @@ const finiteOr = (value, fallback) =>
         : fallback;
 
 export const APP_STORAGE_KEYS = [
+    PROJECTS_KEY,
     'solar_arrays',
     CATALOGUE_OVERRIDES_KEY,
     STORAGE_VERSION_KEY,
@@ -71,6 +97,14 @@ export const APP_STORAGE_KEYS = [
     'user_notes',
     'solar_active_array_content_tab',
 ];
+
+function freshProject() {
+    return legacyToProject({
+        areasData: ['House'],
+        arraysData: initialArrays,
+        areaSettingsByArea: { House: { ...DEFAULT_AREA_SETTINGS } },
+    });
+}
 
 const AppStateContext = createContext(null);
 const DataStateContext = createContext(null);
@@ -98,11 +132,16 @@ function AppStateProviderInner({ children }) {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [arraysData, setArraysData] = useLocalStorage('solar_arrays', initialArrays);
+    // Design data (systems, arrays, controller instances) lives in the active project of the projects
+    // store (storage v3, roadmap 13.2). The flat shapes below are derived from it for the existing views.
+    const initialStoreRef = useRef(undefined);
+    if (initialStoreRef.current === undefined) initialStoreRef.current = loadProjectsStore() ?? null;
+    const [projectsStore, setProjectsStore] = useState(
+        () => initialStoreRef.current ?? makeStore([freshProject()])
+    );
     // The catalogue lives in memory; only the user's edits are persisted (see catalogueOverrides.js).
     const [panelsData, setPanelsData] = useState(initialPanels);
     const [chargersData, setChargersData] = useState(initialChargers);
-    const [siteControllers, setSiteControllers] = useLocalStorage('solar_site_controllers', []);
     const [hideHeavyPanels, setHideHeavyPanels] = useLocalStorage('solar_hide_heavy_panels', false);
     const [hideMarginalPanels, setHideMarginalPanels] = useLocalStorage(
         'solar_hide_marginal_panels',
@@ -123,10 +162,34 @@ function AppStateProviderInner({ children }) {
         'solar_filter_house_backup',
         false
     );
-    const [areasData, setAreasData] = useLocalStorage('solar_areas', ['House']);
-    const [areaSettingsByArea, setAreaSettingsByArea] = useLocalStorage('solar_area_settings', {
-        House: { ...DEFAULT_AREA_SETTINGS },
-    });
+    const activeProject = getActiveProject(projectsStore);
+    const areasData = useMemo(() => projectToLegacy(activeProject).areasData, [activeProject.systems]);
+    const areaSettingsByArea = useMemo(
+        () => projectToLegacy(activeProject).areaSettingsByArea,
+        [activeProject.systems]
+    );
+    const arraysData = useMemo(
+        () => projectToLegacy(activeProject).arraysData,
+        [activeProject.arrays, activeProject.systems]
+    );
+    const siteControllers = useMemo(
+        () => projectToLegacy(activeProject).siteControllers,
+        [activeProject.siteControllers, activeProject.systems]
+    );
+
+    /** Builds a setter with the same API as useState for one legacy-shaped slice of the active project. */
+    const legacySetter = (key) => (updater) =>
+        setProjectsStore((store) =>
+            updateActiveProject(store, (project) => {
+                const current = projectToLegacy(project);
+                const next = typeof updater === 'function' ? updater(current[key]) : updater;
+                return applyLegacyToProject(project, { [key]: next });
+            })
+        );
+    const setArraysData = legacySetter('arraysData');
+    const setSiteControllers = legacySetter('siteControllers');
+    const setAreasData = legacySetter('areasData');
+    const setAreaSettingsByArea = legacySetter('areaSettingsByArea');
 
     const sanitizeAreaSettings = (settings, fallback = DEFAULT_AREA_SETTINGS) => ({
         systemVoltage:
@@ -296,24 +359,34 @@ function AppStateProviderInner({ children }) {
 
     useEffect(() => {
         try {
-            const savedArrays = localStorage.getItem('solar_arrays');
-            const migratedArrays = migrateArrays(savedArrays, initialArrays);
-
-            const savedSiteControllers = localStorage.getItem('solar_site_controllers');
-            const savedSelections = localStorage.getItem('solar_selections');
-            const { selections: migratedSelections, siteControllers: migratedSiteControllers } =
-                migrateSelectionsAndSiteControllers({
-                    savedSelectionsJson: savedSelections,
-                    savedSiteControllersJson: savedSiteControllers,
-                    savedArraysJson: savedArrays,
-                    initialArrays,
-                    initialSelections,
-                    initialChargers,
+            let baseProject = null; // set when a v2 design is migrated
+            if (!initialStoreRef.current && LEGACY_DESIGN_KEYS.some((k) => localStorage.getItem(k) != null)) {
+                // Storage v2 -> v3: build one Local project called "My design" from the flat keys.
+                const savedArrays = localStorage.getItem('solar_arrays');
+                const migratedArrays = migrateArrays(savedArrays, initialArrays);
+                const savedSiteControllers = localStorage.getItem('solar_site_controllers');
+                const savedSelections = localStorage.getItem('solar_selections');
+                const { selections: migratedSelections, siteControllers: migratedSiteControllers } =
+                    migrateSelectionsAndSiteControllers({
+                        savedSelectionsJson: savedSelections,
+                        savedSiteControllersJson: savedSiteControllers,
+                        savedArraysJson: savedArrays,
+                        initialArrays,
+                        initialSelections,
+                        initialChargers,
+                    });
+                const arraysWithSelections = migratedArrays.map((a) => ({
+                    ...a,
+                    ...(migratedSelections?.[a.id] || {}),
+                }));
+                const { areasData: savedAreas, areaSettingsByArea: savedSettings } = readLegacyAreas();
+                baseProject = legacyToProject({
+                    areasData: savedAreas ?? ['House'],
+                    arraysData: arraysWithSelections,
+                    siteControllers: migratedSiteControllers,
+                    areaSettingsByArea: savedSettings ?? { House: { ...DEFAULT_AREA_SETTINGS } },
                 });
-            const arraysWithSelections = migratedArrays.map((a) => ({
-                ...a,
-                ...(migratedSelections?.[a.id] || {}),
-            }));
+            }
 
             const catalogue = loadCatalogueFromStorage(initialPanels, initialChargers);
             setPanelsData(catalogue.panels);
@@ -321,16 +394,45 @@ function AppStateProviderInner({ children }) {
             const notices = [];
 
             // Move saved designs off discontinued or renamed products (src/data/replacements.json).
-            const replaced = applyReplacements(
-                { arrays: arraysWithSelections, siteControllers: migratedSiteControllers },
-                replacements,
-                {
-                    panelModels: new Set(catalogue.panels.map((p) => p.model)),
-                    controllerIds: new Set(catalogue.chargers.map((c) => c.id)),
+            // Fresh visitors have nothing to migrate or replace, so the default project stays as it is.
+            const baseStore = baseProject ? makeStore([baseProject]) : initialStoreRef.current;
+            const replacedChanges = [];
+            let migratedStore = baseStore;
+            if (baseStore) {
+                migratedStore = {
+                    ...baseStore,
+                    projects: baseStore.projects.map((project) => {
+                        const result = applyReplacements(
+                            { arrays: project.arrays, siteControllers: project.siteControllers },
+                            replacements,
+                            {
+                                panelModels: new Set(catalogue.panels.map((p) => p.model)),
+                                controllerIds: new Set(catalogue.chargers.map((c) => c.id)),
+                            }
+                        );
+                        replacedChanges.push(...result.changes);
+                        return result.changes.length === 0
+                            ? project
+                            : { ...project, arrays: result.arrays, siteControllers: result.siteControllers };
+                    }),
+                };
+                // Only swap the state if nothing has edited it since it was loaded.
+                if (baseProject) setProjectsStore(migratedStore);
+                else if (replacedChanges.length > 0) {
+                    setProjectsStore((current) => (current === initialStoreRef.current ? migratedStore : current));
                 }
-            );
-            setArraysData(replaced.arrays);
-            setSiteControllers(replaced.siteControllers);
+            }
+            if (baseProject) {
+                // Save now, and only remove the v2 keys once the v3 copy is safely written.
+                try {
+                    saveProjectsStore(migratedStore);
+                    removeLegacyDesignKeys();
+                } catch (error) {
+                    console.warn('Error saving migrated projects', error);
+                    window.dispatchEvent(new CustomEvent(STORAGE_ERROR_EVENT, { detail: { key: PROJECTS_KEY } }));
+                }
+            }
+            const replaced = { changes: replacedChanges };
             if (replaced.changes.length > 0) {
                 const byId = (list, key, id) => list.find((x) => x[key] === id)?.name || id;
                 const lines = replaced.changes.map((c) =>
@@ -380,6 +482,17 @@ function AppStateProviderInner({ children }) {
             window.dispatchEvent(new CustomEvent(STORAGE_ERROR_EVENT, { detail: { key: CATALOGUE_OVERRIDES_KEY } }));
         }
     }, [panelsData, chargersData, loadStatus]);
+
+    // Persist the projects store once the initial load/migration has run.
+    useEffect(() => {
+        if (loadStatus !== 'ok') return;
+        try {
+            saveProjectsStore(projectsStore);
+        } catch (error) {
+            console.warn('Error saving projects', error);
+            window.dispatchEvent(new CustomEvent(STORAGE_ERROR_EVENT, { detail: { key: PROJECTS_KEY } }));
+        }
+    }, [projectsStore, loadStatus]);
 
     // Warn once per session when the browser refuses to save (storage full, private mode, etc.).
     const storageWarningShown = useRef(false);
@@ -449,11 +562,9 @@ function AppStateProviderInner({ children }) {
         localStorage.removeItem('solar_selections');
         localStorage.removeItem(LEGACY_PANELS_KEY);
         localStorage.removeItem(LEGACY_CHARGERS_KEY);
-        setArraysData(initialArrays);
+        setProjectsStore(makeStore([freshProject()]));
         setPanelsData(initialPanels);
         setChargersData(initialChargers);
-        setSiteControllers([]);
-        setAreasData(['House']);
         setHideHeavyPanels(false);
         setHideMarginalPanels(false);
         setHideIncompatiblePanels(true);
@@ -462,14 +573,13 @@ function AppStateProviderInner({ children }) {
         setSystemType('any');
         setFilterEps(false);
         setFilterHouseBackup(false);
-        setAreaSettingsByArea({ House: { ...DEFAULT_AREA_SETTINGS } });
         setUserNotes({});
         setHiddenChargerMfr(null);
         setPlannerModal({ open: false, arrayId: null, draftArrayData: null, returnTo: null });
         setActiveTab('SUMMARY');
     };
 
-    const createControllerInstance = (modelId, area = 'House') => {
+    const createControllerInstance = (modelId, area = areasData[0] || 'House') => {
         const model = chargersData.find((c) => c.id === modelId);
         if (!model) return null;
         const newInstanceId = `inst_${modelId}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
@@ -626,39 +736,22 @@ function AppStateProviderInner({ children }) {
         const mode = addAreaModal.mode || 'add';
         if (mode === 'edit') {
             const previousName = addAreaModal.originalName;
-            if (!previousName) return;
-            if (name === previousName) return;
-            setAreasData((prev) => prev.map((area) => (area === previousName ? name : area)));
-            setAreaSettingsByArea((prev) => {
-                const current = prev && typeof prev === 'object' ? prev : {};
-                const next = { ...current };
-                const previousSettings = sanitizeAreaSettings(
-                    current[previousName],
-                    getAreaSettings(previousName)
-                );
-                delete next[previousName];
-                next[name] = previousSettings;
-                return next;
-            });
-            setArraysData((prev) =>
-                prev.map((array) => (array.area === previousName ? { ...array, area: name } : array))
+            if (!previousName || name === previousName) return;
+            // Systems have stable ids, so a rename leaves their arrays, controllers and settings attached.
+            setProjectsStore((store) =>
+                updateActiveProject(store, (project) => {
+                    const system = project.systems.find((s) => s.name === previousName);
+                    return system ? renameSystem(project, system.id, name) : project;
+                })
             );
             return;
         }
-        setAreasData((prev) => [...prev, name]);
-        setAreaSettingsByArea((prev) => {
-            const current = prev && typeof prev === 'object' ? prev : {};
-            if (current[name]) return current;
-            return {
-                ...current,
-                [name]: sanitizeAreaSettings(null, {
-                    systemVoltage,
-                    systemType,
-                    filterEps,
-                    filterHouseBackup,
-                }),
-            };
-        });
+        const settings = sanitizeAreaSettings(null, { systemVoltage, systemType, filterEps, filterHouseBackup });
+        setProjectsStore((store) =>
+            updateActiveProject(store, (project) =>
+                project.systems.some((s) => s.name === name) ? project : addSystem(project, name, settings).project
+            )
+        );
     };
 
     const openAddArrayModal = (options = {}) => {
@@ -763,30 +856,14 @@ function AppStateProviderInner({ children }) {
             'Delete Area',
             `Are you sure you want to delete the Area "${areaName}"? Any arrays assigned to it will be safely moved to the first available area.`,
             (deleteArraysInArea = false) => {
-                let fallbackArea = null;
-                setAreasData((prevAreas) => {
-                    if (prevAreas.length <= 1) return prevAreas;
-                    const newAreas = prevAreas.filter((a) => a !== areaName);
-                    fallbackArea = newAreas[0] || null;
-                    return newAreas;
-                });
-                setAreaSettingsByArea((prev) => {
-                    const current = prev && typeof prev === 'object' ? prev : {};
-                    const next = { ...current };
-                    delete next[areaName];
-                    return next;
-                });
-                if (deleteArraysInArea) {
-                    setArraysData((prev) => prev.filter((a) => a.area !== areaName));
-                } else {
-                    setArraysData((prev) => {
-                        const fallback =
-                            fallbackArea ||
-                            [...new Set(prev.map((a) => a.area).filter((a) => a && a !== areaName))][0];
-                        if (!fallback) return prev;
-                        return prev.map((a) => (a.area === areaName ? { ...a, area: fallback } : a));
-                    });
-                }
+                setProjectsStore((store) =>
+                    updateActiveProject(store, (project) => {
+                        const system = project.systems.find((s) => s.name === areaName);
+                        return system
+                            ? removeSystem(project, system.id, { deleteContents: deleteArraysInArea })
+                            : project;
+                    })
+                );
             },
             {
                 checkbox: {
@@ -824,11 +901,11 @@ function AppStateProviderInner({ children }) {
             );
             return;
         }
-        const newId = `array_${Date.now()}`;
+        const newArrayId = newId('array');
         setArraysData((prev) => [
             ...prev,
             {
-                id: newId,
+                id: newArrayId,
                 ...d,
                 panel: d.panel ?? '',
                 controllerInstanceId: d.controllerInstanceId ?? '',
@@ -838,9 +915,31 @@ function AppStateProviderInner({ children }) {
         ]);
     };
 
+    // Project actions (the project switcher arrives in 13.4). Switching resets the tab, since an array id
+    // from another project would point at nothing.
+    const createProject = (name) => {
+        setProjectsStore((store) => createProjectInStore(store, name).store);
+        setActiveTab('SUMMARY');
+    };
+    const duplicateProject = (projectId = activeProject.id) => {
+        setProjectsStore((store) => duplicateProjectInStore(store, projectId).store);
+        setActiveTab('SUMMARY');
+    };
+    const renameProject = (projectId, name) => setProjectsStore((store) => renameProjectInStore(store, projectId, name));
+    const switchProject = (projectId) => {
+        setProjectsStore((store) => switchProjectInStore(store, projectId));
+        setActiveTab('SUMMARY');
+    };
+    const deleteProject = (projectId) => {
+        setProjectsStore((store) => deleteProjectInStore(store, projectId));
+        setActiveTab('SUMMARY');
+    };
+
     const value = useMemo(
         () => ({
             // State
+            projectsStore,
+            activeProject,
             activeTab,
             arraysData,
             panelsData,
@@ -876,6 +975,12 @@ function AppStateProviderInner({ children }) {
             availableChargers,
             getArrayAnalysis,
             // Actions
+            setProjectsStore,
+            createProject,
+            duplicateProject,
+            renameProject,
+            switchProject,
+            deleteProject,
             setActiveTab,
             setArraysData,
             setPanelsData,
@@ -937,6 +1042,7 @@ function AppStateProviderInner({ children }) {
             clearNotification,
         }),
         [
+            projectsStore,
             activeTab,
             arraysData,
             panelsData,
@@ -975,6 +1081,14 @@ function AppStateProviderInner({ children }) {
 
     const dataStateValue = useMemo(
         () => ({
+            projectsStore: value.projectsStore,
+            activeProject: value.activeProject,
+            setProjectsStore: value.setProjectsStore,
+            createProject: value.createProject,
+            duplicateProject: value.duplicateProject,
+            renameProject: value.renameProject,
+            switchProject: value.switchProject,
+            deleteProject: value.deleteProject,
             arraysData: value.arraysData,
             panelsData: value.panelsData,
             chargersData: value.chargersData,
