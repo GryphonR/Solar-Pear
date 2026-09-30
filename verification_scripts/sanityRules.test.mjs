@@ -64,6 +64,14 @@ describe('sanity rules', () => {
         expect(rules(checkPanels([{ ...goodPanel, efficiency: 21.3 }]))).toContain('warning:efficiency');
     });
 
+    it('uses a lighter weight range for flexible panels, which cannot be GSE-compatible', () => {
+        expect(checkPanels([{ ...goodPanel, weight: 2 }]).map((f) => f.rule)).toContain('weight');
+        const flex = { ...goodPanel, flexible: true, weight: 2, gseCompatibility: 'None' };
+        expect(checkPanels([flex])).toEqual([]);
+        expect(rules(checkPanels([{ ...flex, weight: 12 }]))).toContain('warning:weight');
+        expect(rules(checkPanels([{ ...flex, gseCompatibility: 'Both' }]))).toContain('error:flexible-gse');
+    });
+
     it('flags duplicate ids and non-production links', () => {
         const f = checkPanels([
             goodPanel,

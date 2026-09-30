@@ -1,7 +1,7 @@
 # Data pipeline (catalogue)
 
 ## Catalogue snapshot (2026-09-25)
-- **Panels:** 177 across 19 manufacturers (Aiko, Canadian Solar, DMEGC, ET Solar, GB-Sol, JA, Jinko, LONGi, Maxeon, Meyer Burger, Q-Cells, REC, Renesola, Risen, Trina, UKSOL, Victron, Viridian, Voltacon). All are `active`.
+- **Panels:** 181 across 20 manufacturers (Aiko, Canadian Solar, DMEGC, ET Solar, GB-Sol, JA, Jinko, LONGi, Maxeon, Meyer Burger, Q-Cells, REC, Renesola, Renogy, Risen, Trina, UKSOL, Victron, Viridian, Voltacon). Two are flexible (`flexible: true`). All are `active`.
 - **Controllers:** 151 across 25 manufacturers (68 across 14 before task 3.11 added Sunsynk, Growatt, Lux Power, Fronius, SMA, Sigenergy, Tesla, Deye and Fogstar; task 3.6 added EPEver, Votronic and more Victron and Renogy units). Types include hybrid, charger, string, micro, AC-coupled and `dc-dc-charger`.
 - **Reviewed:** 2 of 245 records have `reviewed: true`.
 - **Prices:** 46 panels have `price: 0`. All `priceCheckedAt` dates are from 2026-08.

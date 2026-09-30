@@ -95,8 +95,15 @@ export function checkPanels(panels) {
         range('tempCoefPmax', -0.45, -0.24, (v) => v >= 0);
         range('tempCoefIsc', 0, 0.08, (v) => v < 0);
 
+        // Flexible laminates (no glass or frame) weigh a fraction of a rigid module.
+        const [minKg, maxKg] = p.flexible === true ? [1, 10] : [5, 40];
         if (!positive(p.weight)) add('warning', 'weight', `Weight not published (${p.weight}), so weight limits cannot be checked`);
-        else if (num(p.weight) < 5 || num(p.weight) > 40) add('warning', 'weight', `Weight ${p.weight} kg outside 5–40 kg`);
+        else if (num(p.weight) < minKg || num(p.weight) > maxKg) {
+            add('warning', 'weight', `Weight ${p.weight} kg outside ${minKg}–${maxKg} kg${p.flexible === true ? ' for a flexible panel' : ''}`);
+        }
+        if (p.flexible === true && p.gseCompatibility && p.gseCompatibility !== 'None') {
+            add('error', 'flexible-gse', `Flexible panel marked GSE-compatible (${p.gseCompatibility})`);
+        }
 
         if (positive(p.maxSystemVoltage) && ![600, 1000, 1500].includes(num(p.maxSystemVoltage))) {
             add('warning', 'max-system-voltage', `Unusual max system voltage ${p.maxSystemVoltage} V`);

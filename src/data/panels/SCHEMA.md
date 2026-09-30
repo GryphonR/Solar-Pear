@@ -27,6 +27,7 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `weight` | number | Weight in kg. Used for "hide panels over 25kg" filter. |
 | `glass` | string | Glass type (e.g. "Dual (1.6mm + 1.6mm)"). |
 | `bifacial` | boolean | Whether the panel is bifacial. |
+| `flexible` | boolean | `true` for flexible or semi-flexible laminate panels (no glass or frame), used on vans and boats. Flexible panels are never GSE-compatible, and the sanity check expects 1–10 kg rather than 5–40 kg. |
 | `power` | number | Nominal power in watts (e.g. 430). |
 | `voc` | number | Open-circuit voltage (V). Used for string voltage and cold-temperature checks. |
 | `vmp` | number | Voltage at max power (V). Used for MPPT range and hot-temperature checks. |
