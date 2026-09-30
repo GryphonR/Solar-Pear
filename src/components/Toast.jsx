@@ -6,15 +6,20 @@ const variantStyles = {
     error: 'bg-red-50 border-red-200 text-red-800',
     warning: 'bg-amber-50 border-amber-200 text-amber-800',
     info: 'bg-blue-50 border-blue-200 text-blue-800',
+    // New UI (13.1): dark toast, used with an action such as Undo.
+    dark: 'bg-ink border-ink text-white',
 };
 
 const AUTO_DISMISS_MS = 5000;
+const ACTION_DISMISS_MS = 8000;
 
 /**
+ * Pass `action={{ label: 'Undo', onClick }}` for a toast with an action button (dismisses after the click).
+ * An action toast stays 8 s by default so there's time to use it.
  * Fixed bottom overlay toast. Slides in/out; does not affect document flow.
  * Auto-dismiss after AUTO_DISMISS_MS with exit animation (caller clears on onClose).
  */
-export default function Toast({ message, variant = 'info', onClose, autoDismissMs = AUTO_DISMISS_MS }) {
+export default function Toast({ message, variant = 'info', onClose, action, autoDismissMs = action ? ACTION_DISMISS_MS : AUTO_DISMISS_MS }) {
     const [entered, setEntered] = useState(false);
     const [exiting, setExiting] = useState(false);
     const dismissedRef = useRef(false);
@@ -71,6 +76,18 @@ export default function Toast({ message, variant = 'info', onClose, autoDismissM
             >
                 <div className="flex items-center justify-between gap-4 px-4 py-3">
                     <p className="text-sm font-medium flex-1 min-w-0">{message}</p>
+                    {action ? (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                action.onClick?.();
+                                requestClose();
+                            }}
+                            className="h-8 px-3 rounded-md bg-ink-raised text-brand text-[13px] font-semibold flex-shrink-0"
+                        >
+                            {action.label}
+                        </button>
+                    ) : null}
                     <button
                         type="button"
                         onClick={requestClose}

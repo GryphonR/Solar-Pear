@@ -42,6 +42,8 @@
   "author": "Rowan",
   "license": "GPL-3.0-only",
   "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "uplot": "^1.6.32",

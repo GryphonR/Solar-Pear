@@ -3,6 +3,37 @@
 @theme {
   --color-brand: #ffcc00;
   --color-secondary: #0044cc;
+
+  /* UX overhaul (roadmap 13.1). Values come from the "Solar Pear UX Overhaul" Design system board. */
+  --font-plex: "IBM Plex Sans", system-ui, sans-serif;
+  --font-plex-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-ink: #14181f; /* sidebar */
+  --color-ink-raised: #2c3440;
+  --color-body: #1d232b; /* text */
+  --color-muted: #5b6470;
+  --color-subtle: #4a525d;
+  --color-paper: #f3f4f0; /* page */
+  --color-line: #dde0da;
+  --color-line-soft: #eceee9;
+  --color-line-strong: #c9cdc5;
+  --color-placeholder: #a6adb5;
+  --color-placeholder-bg: #fafaf8;
+  --color-select-bg: #f2f6fe;
+  --color-cta-bg: #f7f9fe;
+
+  /* Status: each has a fill, a text colour (4.5:1 on the fill), and an edge colour for diagrams. */
+  --color-status-error-bg: #fdedeb;
+  --color-status-error-fg: #8f1b12;
+  --color-status-error-edge: #b42318;
+  --color-status-warning-bg: #fff3df;
+  --color-status-warning-fg: #8a4b00;
+  --color-status-warning-edge: #b86a00;
+  --color-status-warning-line: #e3b25e;
+  --color-status-info-bg: #eaf0fa;
+  --color-status-info-fg: #2f5597;
+  --color-status-ok-bg: #e7f4ec;
+  --color-status-ok-fg: #1e6e47;
 }
 
 :root {
@@ -68,3 +99,13 @@ body {
 
 /* Brand colour usage: primary CTA accent (e.g. Add Panel) can use var(--color-brand) */
 /* Used in PanelsDbView "Add Panel" button via Tailwind bg-[var(--color-brand)] */
+
+/* Reduced motion: the new UI's transitions are decorative, so honour the OS setting everywhere. */
+@media (prefers-reduced-motion: reduce) {
+  .ui-next *,
+  .ui-next *::before,
+  .ui-next *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

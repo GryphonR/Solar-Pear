@@ -25,6 +25,7 @@ The legacy arrays can't tell a user's price edit from a price that was stale whe
 
 | Key | Shape | Written by | Migrated on load? |
 | --- | ----- | ---------- | ----------------- |
+| `solar_ui` | `'next'` or `'old'` | `src/lib/uiFlag.js`, set by `?ui=next` / `?ui=old` | No. UX overhaul feature flag (roadmap phase 13); absent means the old UI. Not exported in backups |
 | `solar_arrays` | Array of arrays `{ id, name, area, orientation, count, parallelStrings, format, mounting, maxPanelHeight, maxPanelWidth, maxPanelWeight, panel, controllerInstanceId, controllerMppt, controller, planner }` | hook | Yes (`migrateArrays`, `applyReplacements`) |
 | `solar_catalogue_overrides` | `{ panels: Diff, chargers: Diff }`, where `Diff = { overrides: { [id]: { field: value } }, custom: item[], removed: id[] }` | catalogue save effect | Created from legacy keys once |
 | `solar_storage_version` | `"2"` | catalogue save effect | – |
