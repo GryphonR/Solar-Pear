@@ -1,74 +1,77 @@
 import { describe, it, expect } from "vitest";
-import { LOCAL_PROJECT_ID, TABS, arrayPath, isSamePath, resolvePath, tabToPath } from "./routes";
+import { TABS, buildPath, isSamePath, parsePath, resolveRoute, routeToTab, tabToPath } from "./routes";
+import { seedProjectsStore } from "../test/projectFixtures";
 
-const arrays = [
-    { id: "A1", area: "House" },
-    { id: "array_2", area: "Barn roof" },
-];
-const base = `/p/${LOCAL_PROJECT_ID}`;
+const store = seedProjectsStore();
+const home = store.projects[0];
 
 describe("routes (roadmap 13.3)", () => {
-    it("maps every fixed view to a path and back", () => {
-        for (const tab of Object.values(TABS)) {
-            const path = tabToPath(tab);
-            expect(resolvePath(path, arrays)).toEqual({ tab, contentTab: null, canonicalPath: path });
+    it("round-trips every route shape through buildPath and parsePath", () => {
+        const routes = [
+            { view: "about" },
+            { view: "learn", slug: null },
+            { view: "learn", slug: "methodology" },
+            { view: "library", section: "controllers" },
+            { view: "project", projectId: "proj_home" },
+            { view: "summary", projectId: "proj_home" },
+            { view: "system", projectId: "proj_home", systemId: "sys_barn", tab: "setup" },
+            { view: "system", projectId: "proj_home", systemId: "sys_barn", tab: "overview" },
+            { view: "array", projectId: "proj_home", systemId: "sys_house", arrayId: "A1", tab: "panel" },
+        ];
+        for (const route of routes) expect(parsePath(buildPath(route))).toEqual(route);
+        expect(buildPath({ view: "system", projectId: "p", systemId: "s", tab: "overview" })).toBe("/p/p/s/s");
+        expect(parsePath("/")).toEqual({ view: "home" });
+        expect(parsePath("/nope")).toBeNull();
+        expect(parsePath("/learn/nope")).toBeNull();
+    });
+
+    it("maps old UI tabs to paths and back", () => {
+        const fixed = [
+            TABS.guidePanels,
+            TABS.guideControllers,
+            TABS.methodology,
+            TABS.about,
+            TABS.libraryPanels,
+            TABS.libraryControllers,
+            TABS.guide,
+        ];
+        for (const tab of fixed) {
+            const path = tabToPath(tab, { project: home });
+            expect(routeToTab(resolveRoute(path, store).route).tab).toBe(tab);
         }
-        expect(tabToPath(TABS.guide)).toBe("/");
-        expect(tabToPath(TABS.summary)).toBe(`${base}/summary`);
-        expect(tabToPath(TABS.libraryPanels)).toBe("/library/panels");
-        expect(tabToPath(TABS.guidePanels)).toBe("/learn/panels");
+        expect(tabToPath(TABS.summary, { project: home })).toBe("/p/proj_home/summary");
+        expect(tabToPath("A2", { project: home, contentTab: "panels" })).toBe("/p/proj_home/s/sys_barn/a/A2/panel");
+        expect(routeToTab(parsePath("/p/proj_home/s/sys_barn/a/A2/panel"))).toEqual({ tab: "A2", contentTab: "panels" });
+        expect(tabToPath("gone", { project: home })).toBe("/p/proj_home/summary");
     });
 
-    it("maps array pages, using `panel` for the Panel Selector", () => {
-        expect(tabToPath("A1", { arraysData: arrays })).toBe(`${base}/s/House/a/A1/overview`);
-        expect(tabToPath("A1", { arraysData: arrays, contentTab: "panels" })).toBe(`${base}/s/House/a/A1/panel`);
-        expect(resolvePath(`${base}/s/House/a/A1/panel`, arrays)).toEqual({
-            tab: "A1",
-            contentTab: "panels",
-            canonicalPath: `${base}/s/House/a/A1/panel`,
-        });
-        for (const contentTab of ["overview", "layout", "panels", "controllers"]) {
-            const path = arrayPath(arrays[0], contentTab);
-            expect(resolvePath(path, arrays).contentTab).toBe(contentTab);
+    it("shows the summary for project and system screens in the old UI", () => {
+        for (const path of ["/p/proj_home", "/p/proj_home/s/sys_house", "/p/proj_home/s/sys_house/bom"]) {
+            expect(routeToTab(parsePath(path)).tab).toBe(TABS.summary);
         }
+        expect(routeToTab(parsePath("/")).tab).toBe(TABS.guide);
+        expect(routeToTab(parsePath("/learn")).tab).toBe(TABS.guide);
     });
 
-    it("encodes area names and accepts the encoded or decoded form", () => {
-        const path = tabToPath("array_2", { arraysData: arrays, contentTab: "layout" });
-        expect(path).toBe(`${base}/s/Barn%20roof/a/array_2/layout`);
-        expect(resolvePath(path, arrays).tab).toBe("array_2");
-        expect(isSamePath(path, `${base}/s/Barn roof/a/array_2/layout/`)).toBe(true);
-        expect(isSamePath(path, `${base}/s/Barn roof/a/array_2/panel`)).toBe(false);
+    it("keeps valid routes, and corrects an array's system", () => {
+        expect(resolveRoute("/p/proj_home/s/sys_barn/a/A2/layout", store).canonicalPath).toBe("/p/proj_home/s/sys_barn/a/A2/layout");
+        expect(resolveRoute("/p/proj_home/s/sys_house/a/A2/layout", store).canonicalPath).toBe("/p/proj_home/s/sys_barn/a/A2/layout");
+        expect(resolveRoute("/p/proj_home/s/sys_barn/a/A2", store).canonicalPath).toBe("/p/proj_home/s/sys_barn/a/A2/overview");
+        expect(resolveRoute("/p/proj_van/s/sys_van/a/V1/overview", store).route.projectId).toBe("proj_van");
     });
 
-    it("resolves arrays by id, so a renamed area redirects to the canonical path", () => {
-        const route = resolvePath(`${base}/s/Old%20name/a/A1/layout`, arrays);
-        expect(route.tab).toBe("A1");
-        expect(route.canonicalPath).toBe(`${base}/s/House/a/A1/layout`);
+    it("falls back to the nearest thing that still exists", () => {
+        expect(resolveRoute("/p/proj_home/s/sys_barn/a/gone/panel", store).canonicalPath).toBe("/p/proj_home/s/sys_barn");
+        expect(resolveRoute("/p/proj_home/s/gone/a/gone", store).canonicalPath).toBe("/p/proj_home");
+        expect(resolveRoute("/p/proj_home/s/gone/controllers", store).canonicalPath).toBe("/p/proj_home");
+        expect(resolveRoute("/p/unknown/summary", store).canonicalPath).toBe("/p/proj_home");
+        expect(resolveRoute("/no/such/page", store).canonicalPath).toBe("/");
+        expect(resolveRoute("/library", store).canonicalPath).toBe("/library/panels");
+        expect(resolveRoute("/library/panels/", store).canonicalPath).toBe("/library/panels");
     });
 
-    it("defaults a missing or unknown array tab to the overview", () => {
-        expect(resolvePath(`${base}/s/House/a/A1`, arrays).canonicalPath).toBe(`${base}/s/House/a/A1/overview`);
-        expect(resolvePath(`${base}/s/House/a/A1/nope`, arrays).contentTab).toBe("overview");
-    });
-
-    it("sends deleted arrays and not-yet-built project and system screens to the summary", () => {
-        for (const path of [
-            `${base}/s/House/a/gone/overview`,
-            base,
-            `${base}/s/House`,
-            `${base}/s/House/setup`,
-            "/p/someone-else/summary",
-        ]) {
-            expect(resolvePath(path, arrays)).toMatchObject({ tab: TABS.summary, canonicalPath: `${base}/summary` });
-        }
-        expect(tabToPath("gone", { arraysData: arrays })).toBe(`${base}/summary`);
-    });
-
-    it("sends aliases and unknown paths to their canonical page", () => {
-        expect(resolvePath("/learn/guide", arrays)).toMatchObject({ tab: TABS.guide, canonicalPath: "/" });
-        expect(resolvePath("/library", arrays)).toMatchObject({ tab: TABS.libraryPanels });
-        expect(resolvePath("/library/panels/", arrays).canonicalPath).toBe("/library/panels");
-        expect(resolvePath("/no/such/page", arrays)).toMatchObject({ tab: TABS.guide, canonicalPath: "/" });
+    it("compares paths ignoring encoding and trailing slashes", () => {
+        expect(isSamePath("/p/a%20b/summary", "/p/a b/summary/")).toBe(true);
+        expect(isSamePath("/p/a/summary", "/p/b/summary")).toBe(false);
     });
 });

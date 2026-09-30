@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { MemoryRouter, useInRouterContext, useLocation, useNavigate } from 'react-router';
 import { initialPanels, initialChargers } from '../data/loadData.js';
 import { useLocalStorage, STORAGE_ERROR_EVENT } from '../hooks/useLocalStorage';
@@ -40,7 +40,7 @@ import {
     loadCatalogueFromStorage,
     saveCatalogueToStorage,
 } from '../lib/catalogueOverrides';
-import { arrayPath, isSamePath, resolvePath, tabToPath } from '../lib/routes';
+import { arrayRoute, buildPath, isSamePath, resolveRoute, routeToTab, tabToPath } from '../lib/routes';
 
 const initialArrays = [
     {
@@ -266,26 +266,37 @@ function AppStateProviderInner({ children }) {
     const [arrayTabMemory, setArrayTabMemory] = useLocalStorage('solar_active_array_content_tab', {});
     const arrayTabMemoryRef = useRef(arrayTabMemory);
 
-    // The URL is the source of truth for the view (src/lib/routes.js, roadmap 13.3).
-    const route = useMemo(
-        () => resolvePath(location.pathname, arraysData),
-        [location.pathname, arraysData]
+    // The URL is the source of truth for the view (src/lib/routes.js, roadmap 13.3). A project id in the
+    // URL selects the active project; until that switch lands the old UI shows the neutral summary.
+    const { route, canonicalPath } = useMemo(
+        () => resolveRoute(location.pathname, projectsStore),
+        [location.pathname, projectsStore]
     );
-    const activeTab = route.tab;
+    const routePending = !!route.projectId && route.projectId !== activeProject.id;
+    const { tab: activeTab, contentTab: routeContentTab } = routePending
+        ? { tab: 'SUMMARY', contentTab: null }
+        : routeToTab(route);
     const activeArrayContentTab = useMemo(
-        () => (route.contentTab ? { ...arrayTabMemory, [route.tab]: route.contentTab } : arrayTabMemory),
-        [arrayTabMemory, route.tab, route.contentTab]
+        () => (routeContentTab ? { ...arrayTabMemory, [activeTab]: routeContentTab } : arrayTabMemory),
+        [arrayTabMemory, activeTab, routeContentTab]
     );
     const locationRef = useRef(location);
     locationRef.current = location;
 
     // Remember the tab when the user arrives by URL, Back or Forward.
     useEffect(() => {
-        if (!route.contentTab || arrayTabMemoryRef.current[route.tab] === route.contentTab) return;
-        const next = { ...arrayTabMemoryRef.current, [route.tab]: route.contentTab };
+        if (!routeContentTab || arrayTabMemoryRef.current[activeTab] === routeContentTab) return;
+        const next = { ...arrayTabMemoryRef.current, [activeTab]: routeContentTab };
         arrayTabMemoryRef.current = next;
         setArrayTabMemory(next);
-    }, [route.tab, route.contentTab]);
+    }, [activeTab, routeContentTab]);
+
+    // Opening a link to another project makes it the active one (before paint, so nothing flickers).
+    useLayoutEffect(() => {
+        if (routePending && projectsStore.projects.some((p) => p.id === route.projectId)) {
+            setProjectsStore((store) => switchProjectInStore(store, route.projectId));
+        }
+    }, [routePending, route.projectId, projectsStore.projects]);
 
     /**
      * Navigates to a view. Any tab that isn't a fixed view is an array id.
@@ -294,7 +305,7 @@ function AppStateProviderInner({ children }) {
      * @param {{ hash?: string, replace?: boolean }} [options] - `hash` scrolls to an in-page section
      */
     const setActiveTab = (tab, { hash, replace = false } = {}) => {
-        const path = tabToPath(tab, { arraysData, contentTab: arrayTabMemoryRef.current[tab] });
+        const path = tabToPath(tab, { project: activeProject, contentTab: arrayTabMemoryRef.current[tab] });
         const target = hash ? `${path}#${hash}` : path;
         const current = locationRef.current;
         if (isSamePath(path, current.pathname) && (hash || '') === current.hash.replace(/^#/, '')) {
@@ -310,9 +321,9 @@ function AppStateProviderInner({ children }) {
         const next = typeof update === 'function' ? update(activeArrayContentTab) : update;
         arrayTabMemoryRef.current = next;
         setArrayTabMemory(next);
-        const array = route.contentTab ? arraysData.find((a) => a.id === route.tab) : null;
-        if (array && next[array.id] && next[array.id] !== route.contentTab) {
-            navigate(arrayPath(array, next[array.id]));
+        if (routeContentTab && next[activeTab] && next[activeTab] !== routeContentTab) {
+            const target = arrayRoute(activeProject, activeTab, next[activeTab]);
+            if (target) navigate(buildPath(target));
         }
     };
     const [infoModalPanelId, setInfoModalPanelId] = useState(null);
@@ -466,9 +477,9 @@ function AppStateProviderInner({ children }) {
     // Replace aliases, stale area names and unknown or deleted targets with the canonical URL.
     // Waits for the initial load so a link to a saved array isn't redirected before it exists.
     useEffect(() => {
-        if (loadStatus !== 'ok' || isSamePath(route.canonicalPath, location.pathname)) return;
-        navigate(`${route.canonicalPath}${location.hash}`, { replace: true });
-    }, [loadStatus, route.canonicalPath, location.pathname, location.hash, navigate]);
+        if (loadStatus !== 'ok' || isSamePath(canonicalPath, location.pathname)) return;
+        navigate(`${canonicalPath}${location.hash}`, { replace: true });
+    }, [loadStatus, canonicalPath, location.pathname, location.hash, navigate]);
 
     // Persist only the user's catalogue edits, once the initial load/migration has run.
     useEffect(() => {
@@ -562,7 +573,6 @@ function AppStateProviderInner({ children }) {
         localStorage.removeItem('solar_selections');
         localStorage.removeItem(LEGACY_PANELS_KEY);
         localStorage.removeItem(LEGACY_CHARGERS_KEY);
-        setProjectsStore(makeStore([freshProject()]));
         setPanelsData(initialPanels);
         setChargersData(initialChargers);
         setHideHeavyPanels(false);
@@ -576,7 +586,9 @@ function AppStateProviderInner({ children }) {
         setUserNotes({});
         setHiddenChargerMfr(null);
         setPlannerModal({ open: false, arrayId: null, draftArrayData: null, returnTo: null });
-        setActiveTab('SUMMARY');
+        const fresh = makeStore([freshProject()]);
+        setProjectsStore(fresh);
+        navigate(buildPath({ view: 'summary', projectId: fresh.activeProjectId }));
     };
 
     const createControllerInstance = (modelId, area = areasData[0] || 'House') => {
@@ -915,24 +927,30 @@ function AppStateProviderInner({ children }) {
         ]);
     };
 
-    // Project actions (the project switcher arrives in 13.4). Switching resets the tab, since an array id
-    // from another project would point at nothing.
+    // Project actions. Each one navigates to the resulting project, since the URL names the project.
+    /** Navigates to a route object (see src/lib/routes.js). */
+    const goTo = (target, options) => navigate(buildPath(target), options);
+    const goToProject = (projectId) => goTo({ view: 'project', projectId });
     const createProject = (name) => {
-        setProjectsStore((store) => createProjectInStore(store, name).store);
-        setActiveTab('SUMMARY');
+        const { store, project } = createProjectInStore(projectsStore, name);
+        setProjectsStore(store);
+        goToProject(project.id);
     };
     const duplicateProject = (projectId = activeProject.id) => {
-        setProjectsStore((store) => duplicateProjectInStore(store, projectId).store);
-        setActiveTab('SUMMARY');
+        const { store, project } = duplicateProjectInStore(projectsStore, projectId);
+        if (!project) return;
+        setProjectsStore(store);
+        goToProject(project.id);
     };
     const renameProject = (projectId, name) => setProjectsStore((store) => renameProjectInStore(store, projectId, name));
     const switchProject = (projectId) => {
         setProjectsStore((store) => switchProjectInStore(store, projectId));
-        setActiveTab('SUMMARY');
+        goToProject(projectId);
     };
     const deleteProject = (projectId) => {
-        setProjectsStore((store) => deleteProjectInStore(store, projectId));
-        setActiveTab('SUMMARY');
+        const next = deleteProjectInStore(projectsStore, projectId);
+        setProjectsStore(next);
+        if (projectId === activeProject.id) goToProject(next.activeProjectId);
     };
 
     const value = useMemo(
@@ -940,6 +958,8 @@ function AppStateProviderInner({ children }) {
             // State
             projectsStore,
             activeProject,
+            route: routePending ? { view: 'home' } : route,
+            goTo,
             activeTab,
             arraysData,
             panelsData,
@@ -1043,6 +1063,8 @@ function AppStateProviderInner({ children }) {
         }),
         [
             projectsStore,
+            route,
+            routePending,
             activeTab,
             arraysData,
             panelsData,
@@ -1129,6 +1151,8 @@ function AppStateProviderInner({ children }) {
     const uiStateValue = useMemo(
         () => ({
             activeTab: value.activeTab,
+            route: value.route,
+            goTo: value.goTo,
             hideHeavyPanels: value.hideHeavyPanels,
             hideMarginalPanels: value.hideMarginalPanels,
             hideIncompatiblePanels: value.hideIncompatiblePanels,

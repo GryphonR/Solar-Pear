@@ -1,31 +1,31 @@
 /**
  * @file routes.js
- * URL scheme for the app (roadmap 13.3, delivers 5.4). Pure functions that map between a URL path
- * and the app's view state (`activeTab` plus, on array pages, the array content tab). The URL is the
- * source of truth: `AppStateContext` derives `activeTab` from the location and navigates on change.
+ * URL scheme for the app (roadmap 13.3, delivers 5.4). Pure functions that turn a URL path into a
+ * route object, check it against the projects store, and build paths back. `AppStateContext` treats the
+ * URL as the source of truth: it derives the view from the location and navigates to change it.
  *
- * Route table (paths are relative to the Vite base path):
+ * | Path | Route `view` |
+ * | ---- | ------------ |
+ * | `/` | `home`: the Guide in the old UI; the last project (or the chooser) in the new shell |
+ * | `/learn`, `/learn/:slug` | `learn` (`guide`, `panels`, `controllers`, `methodology`) |
+ * | `/about` | `about` (sections are `#hash` anchors) |
+ * | `/library/panels`, `/library/controllers` | `library` |
+ * | `/p/:project` | `project` overview |
+ * | `/p/:project/summary` | `summary` (summary and BoM) |
+ * | `/p/:project/s/:system[/(overview\|setup\|controllers\|bom)]` | `system` |
+ * | `/p/:project/s/:system/a/:array[/(overview\|layout\|panel\|controllers)]` | `array` |
  *
- * | Path | View |
- * | ---- | ---- |
- * | `/` | Guide (the landing page until the chooser, 13.5) |
- * | `/learn/:slug` | `panels`, `controllers` and `methodology` guides; `guide` is an alias of `/` |
- * | `/about` | About & legal (sections are `#hash` anchors) |
- * | `/library/panels`, `/library/controllers` | Catalogue tables |
- * | `/p/:project/summary` | System summary and BoM |
- * | `/p/:project/s/:system/a/:array/(overview\|layout\|panel\|controllers)` | Array pages |
- * | `/p/:project`, `/p/:project/s/:system/…` | Redirect to the summary until the project and system screens exist (13.4–13.7) |
- *
- * Interim details, until 13.2 and 13.6 land:
- * - There is one implicit project, `LOCAL_PROJECT_ID`. 13.2 replaces it with stable opaque ids.
- * - `:system` is the URL-encoded area name, because areas have no ids yet. Array pages resolve by
- *   array id alone, so a renamed area only changes the canonical URL (old links redirect).
- * - `controllers` is still an array tab; 13.6 moves it to the system Controllers page.
+ * Ids are the opaque project, system and array ids from `src/lib/projects.js`, so renames never break a
+ * link. The array `controllers` tab exists until 13.6 moves controllers to the system page. The old UI
+ * has no project or system screens, so it shows the summary for those routes; the URLs stay valid.
  */
 
-/** The single local project until the projects model (13.2) adds real ids. */
-export const LOCAL_PROJECT_ID = 'local';
+export const LEARN_SLUGS = Object.freeze(['guide', 'panels', 'controllers', 'methodology']);
+export const LIBRARY_SECTIONS = Object.freeze(['panels', 'controllers']);
+export const SYSTEM_TABS = Object.freeze(['overview', 'setup', 'controllers', 'bom']);
+export const ARRAY_TABS = Object.freeze(['overview', 'layout', 'panel', 'controllers']);
 
+/** Tab ids of the old UI (`activeTab`). Any other `activeTab` value is an array id. */
 export const TABS = Object.freeze({
     guide: 'GUIDE',
     guidePanels: 'GUIDE_PANELS',
@@ -37,36 +37,19 @@ export const TABS = Object.freeze({
     libraryControllers: 'DB_CHARGERS',
 });
 
-/** Array content tab (internal id) → URL segment. */
-const ARRAY_TAB_SEGMENTS = Object.freeze({
-    overview: 'overview',
-    layout: 'layout',
-    panels: 'panel',
-    controllers: 'controllers',
-});
-const ARRAY_SEGMENT_TABS = Object.fromEntries(
-    Object.entries(ARRAY_TAB_SEGMENTS).map(([tab, segment]) => [segment, tab])
-);
+/** Old UI array content tab ↔ URL segment (`panels` shows as `panel`, as in the brief). */
+const CONTENT_TAB_TO_SEGMENT = Object.freeze({ overview: 'overview', layout: 'layout', panels: 'panel', controllers: 'controllers' });
+const SEGMENT_TO_CONTENT_TAB = Object.freeze(Object.fromEntries(Object.entries(CONTENT_TAB_TO_SEGMENT).map(([k, v]) => [v, k])));
 export const DEFAULT_ARRAY_CONTENT_TAB = 'overview';
 
-/** Fixed (non-array) tabs and their canonical paths. */
-const STATIC_PATHS = Object.freeze({
-    [TABS.guide]: '/',
-    [TABS.guidePanels]: '/learn/panels',
-    [TABS.guideControllers]: '/learn/controllers',
-    [TABS.methodology]: '/learn/methodology',
-    [TABS.about]: '/about',
-    [TABS.summary]: `/p/${LOCAL_PROJECT_ID}/summary`,
-    [TABS.libraryPanels]: '/library/panels',
-    [TABS.libraryControllers]: '/library/controllers',
-});
-const PATH_TABS = Object.fromEntries(Object.entries(STATIC_PATHS).map(([tab, path]) => [path, tab]));
-/** Extra paths that show a fixed tab but redirect to its canonical path. */
-const PATH_ALIASES = Object.freeze({
-    '/learn': TABS.guide,
-    '/learn/guide': TABS.guide,
-    '/library': TABS.libraryPanels,
-    [`/p/${LOCAL_PROJECT_ID}`]: TABS.summary,
+const TAB_TO_ROUTE = Object.freeze({
+    [TABS.guide]: { view: 'learn', slug: 'guide' },
+    [TABS.guidePanels]: { view: 'learn', slug: 'panels' },
+    [TABS.guideControllers]: { view: 'learn', slug: 'controllers' },
+    [TABS.methodology]: { view: 'learn', slug: 'methodology' },
+    [TABS.about]: { view: 'about' },
+    [TABS.libraryPanels]: { view: 'library', section: 'panels' },
+    [TABS.libraryControllers]: { view: 'library', section: 'controllers' },
 });
 
 const safeDecode = (segment) => {
@@ -76,63 +59,151 @@ const safeDecode = (segment) => {
         return segment;
     }
 };
+const enc = encodeURIComponent;
+const trimPath = (path) => ((path || '/').replace(/\/+$/, '') || '/');
 
 /** True when two paths name the same route, ignoring percent-encoding and trailing slashes. */
 export function isSamePath(a, b) {
-    const normalise = (path) =>
-        ((path || '/').replace(/\/+$/, '') || '/').split('/').map(safeDecode).join('/');
+    const normalise = (path) => trimPath(path).split('/').map(safeDecode).join('/');
     return normalise(a) === normalise(b);
 }
 
-/** Path of an array page. */
-export function arrayPath(array, contentTab = DEFAULT_ARRAY_CONTENT_TAB) {
-    const segment = ARRAY_TAB_SEGMENTS[contentTab] || ARRAY_TAB_SEGMENTS[DEFAULT_ARRAY_CONTENT_TAB];
-    const system = encodeURIComponent(array.area || 'House');
-    return `/p/${LOCAL_PROJECT_ID}/s/${system}/a/${encodeURIComponent(array.id)}/${segment}`;
-}
-
 /**
- * Path for a tab. Any tab that isn't a fixed view is an array id.
- *
- * @param {string} tab - `activeTab` value
- * @param {{ arraysData?: Array<{ id: string, area?: string }>, contentTab?: string }} [ctx]
- * @returns {string}
+ * Parses a path without checking ids. Returns null for paths that aren't part of the scheme.
+ * @param {string} pathname
  */
-export function tabToPath(tab, { arraysData = [], contentTab } = {}) {
-    if (STATIC_PATHS[tab]) return STATIC_PATHS[tab];
-    const array = arraysData.find((a) => a.id === tab);
-    if (!array) return STATIC_PATHS[TABS.summary];
-    return arrayPath(array, contentTab);
-}
-
-/**
- * Resolves a path to view state.
- *
- * @param {string} pathname - location pathname, relative to the base path
- * @param {Array<{ id: string, area?: string }>} arraysData
- * @returns {{ tab: string, contentTab: string | null, canonicalPath: string }}
- *   `canonicalPath` differs from `pathname` when the app should replace the URL (alias, renamed
- *   area, trailing slash, unknown or deleted target).
- */
-export function resolvePath(pathname, arraysData = []) {
-    const trimmed = (pathname || '/').replace(/\/+$/, '') || '/';
-    const fixed = (tab) => ({ tab, contentTab: null, canonicalPath: STATIC_PATHS[tab] });
-
-    if (PATH_TABS[trimmed]) return fixed(PATH_TABS[trimmed]);
-    if (PATH_ALIASES[trimmed]) return fixed(PATH_ALIASES[trimmed]);
-
-    const parts = trimmed.split('/').filter(Boolean).map(safeDecode);
-    if (parts[0] === 'p') {
-        // /p/:project/s/:system/a/:array[/:tab]
-        if (parts[2] === 's' && parts[4] === 'a' && parts[5] && parts.length <= 7) {
-            const array = arraysData.find((a) => a.id === parts[5]);
-            const contentTab = ARRAY_SEGMENT_TABS[parts[6]] || DEFAULT_ARRAY_CONTENT_TAB;
-            if (array) {
-                return { tab: array.id, contentTab, canonicalPath: arrayPath(array, contentTab) };
-            }
-        }
-        // Unknown project, system screens not built yet, or a deleted array.
-        return fixed(TABS.summary);
+export function parsePath(pathname) {
+    const parts = trimPath(pathname).split('/').filter(Boolean).map(safeDecode);
+    const [a, b, c, d, e, f, g, ...rest] = parts;
+    if (parts.length === 0) return { view: 'home' };
+    if (a === 'about' && parts.length === 1) return { view: 'about' };
+    if (a === 'learn' && parts.length <= 2) {
+        if (b === undefined) return { view: 'learn', slug: null };
+        return LEARN_SLUGS.includes(b) ? { view: 'learn', slug: b } : null;
     }
-    return fixed(TABS.guide);
+    if (a === 'library' && parts.length <= 2) {
+        return { view: 'library', section: LIBRARY_SECTIONS.includes(b) ? b : 'panels' };
+    }
+    if (a !== 'p' || !b || rest.length > 0) return null;
+    const projectId = b;
+    if (c === undefined) return { view: 'project', projectId };
+    if (c === 'summary' && d === undefined) return { view: 'summary', projectId };
+    if (c !== 's' || !d) return null;
+    const systemId = d;
+    if (e === undefined || SYSTEM_TABS.includes(e)) {
+        return f === undefined ? { view: 'system', projectId, systemId, tab: e || 'overview' } : null;
+    }
+    if (e !== 'a' || !f) return null;
+    return { view: 'array', projectId, systemId, arrayId: f, tab: ARRAY_TABS.includes(g) ? g : 'overview' };
+}
+
+/** Builds the canonical path for a route object. */
+export function buildPath(route) {
+    switch (route?.view) {
+        case 'learn':
+            return route.slug ? `/learn/${route.slug}` : '/learn';
+        case 'about':
+            return '/about';
+        case 'library':
+            return `/library/${route.section || 'panels'}`;
+        case 'project':
+            return `/p/${enc(route.projectId)}`;
+        case 'summary':
+            return `/p/${enc(route.projectId)}/summary`;
+        case 'system': {
+            const base = `/p/${enc(route.projectId)}/s/${enc(route.systemId)}`;
+            return route.tab && route.tab !== 'overview' ? `${base}/${route.tab}` : base;
+        }
+        case 'array':
+            return `/p/${enc(route.projectId)}/s/${enc(route.systemId)}/a/${enc(route.arrayId)}/${route.tab || 'overview'}`;
+        default:
+            return '/';
+    }
+}
+
+/**
+ * Parses a path and checks it against the projects store. Unknown or stale parts fall back to the
+ * nearest thing that exists: an array whose system changed gets its current system, a deleted array
+ * goes to its system, a deleted system to its project, and an unknown project to the active project.
+ *
+ * @param {string} pathname
+ * @param {{ activeProjectId?: string, projects?: Array<{ id: string, systems: {id:string}[], arrays: {id:string, systemId:string}[] }> }} store
+ * @returns {{ route: object, canonicalPath: string }}
+ */
+export function resolveRoute(pathname, store) {
+    const done = (route) => ({ route, canonicalPath: buildPath(route) });
+    const parsed = parsePath(pathname);
+    if (!parsed) return { route: { view: 'home' }, canonicalPath: '/' };
+    if (parsed.view === 'home') return { route: parsed, canonicalPath: '/' };
+    if (!parsed.projectId) return done(parsed);
+
+    const projects = store?.projects || [];
+    const project = projects.find((p) => p.id === parsed.projectId);
+    if (!project) {
+        const active = projects.find((p) => p.id === store?.activeProjectId) || projects[0];
+        return active ? done({ view: 'project', projectId: active.id }) : { route: { view: 'home' }, canonicalPath: '/' };
+    }
+    if (parsed.view === 'array') {
+        const array = project.arrays.find((x) => x.id === parsed.arrayId);
+        if (array && project.systems.some((s) => s.id === array.systemId)) {
+            return done({ ...parsed, systemId: array.systemId });
+        }
+    }
+    if (parsed.view === 'array' || parsed.view === 'system') {
+        if (project.systems.some((s) => s.id === parsed.systemId)) {
+            return done(parsed.view === 'system' ? parsed : { view: 'system', projectId: project.id, systemId: parsed.systemId, tab: 'overview' });
+        }
+        return done({ view: 'project', projectId: project.id });
+    }
+    return done(parsed);
+}
+
+/**
+ * Old UI view for a route: `{ tab, contentTab }`. Project and system screens don't exist in the old UI,
+ * so they show the summary.
+ */
+export function routeToTab(route) {
+    switch (route?.view) {
+        case 'learn':
+            return { tab: { panels: TABS.guidePanels, controllers: TABS.guideControllers, methodology: TABS.methodology }[route.slug] || TABS.guide, contentTab: null };
+        case 'about':
+            return { tab: TABS.about, contentTab: null };
+        case 'library':
+            return { tab: route.section === 'controllers' ? TABS.libraryControllers : TABS.libraryPanels, contentTab: null };
+        case 'project':
+        case 'summary':
+        case 'system':
+            return { tab: TABS.summary, contentTab: null };
+        case 'array':
+            return { tab: route.arrayId, contentTab: SEGMENT_TO_CONTENT_TAB[route.tab] || DEFAULT_ARRAY_CONTENT_TAB };
+        default:
+            return { tab: TABS.guide, contentTab: null };
+    }
+}
+
+/** Route for an array page of a project (`contentTab` is the old UI tab id, e.g. `panels`). */
+export function arrayRoute(project, arrayId, contentTab = DEFAULT_ARRAY_CONTENT_TAB) {
+    const array = project?.arrays.find((a) => a.id === arrayId);
+    if (!array) return null;
+    return {
+        view: 'array',
+        projectId: project.id,
+        systemId: array.systemId,
+        arrayId,
+        tab: CONTENT_TAB_TO_SEGMENT[contentTab] || CONTENT_TAB_TO_SEGMENT[DEFAULT_ARRAY_CONTENT_TAB],
+    };
+}
+
+/**
+ * Path for an old UI tab. Any tab that isn't a fixed view is an array id of `project`.
+ *
+ * @param {string} tab
+ * @param {{ project?: object, contentTab?: string }} [ctx]
+ */
+export function tabToPath(tab, { project, contentTab } = {}) {
+    if (TAB_TO_ROUTE[tab]) return buildPath(TAB_TO_ROUTE[tab]);
+    if (!project) return '/';
+    if (tab === TABS.summary) return buildPath({ view: 'summary', projectId: project.id });
+    const route = arrayRoute(project, tab, contentTab);
+    return buildPath(route || { view: 'summary', projectId: project.id });
 }
