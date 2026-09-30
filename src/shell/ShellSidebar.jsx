@@ -54,16 +54,23 @@ function ProgressDots({ progress, status }) {
     );
 }
 
-export default function ShellSidebar({ route, design, onAddSystem, onEditSystem, onAddArray, onEditArray }) {
+export default function ShellSidebar({ route, design, onAddSystem, onEditSystem, onAddArray, onEditArray, onClose }) {
     const projectId = design.project.id;
     const openSystemId = route.view === 'system' || route.view === 'array' ? route.systemId : null;
+    // In the drawer (touch screens, no hover) the edit pencils are always shown.
+    const touchVisible = onClose ? 'opacity-100' : 'opacity-0';
 
     return (
-        <nav aria-label="Project" className="flex w-[272px] flex-shrink-0 flex-col bg-ink font-plex text-[#C9CED6]">
-            <div className="flex h-20 flex-shrink-0 items-center justify-center border-b border-[#262C36] px-5">
+        <nav aria-label="Project" className="flex w-[272px] max-w-full flex-shrink-0 flex-col bg-ink font-plex text-[#C9CED6]">
+            <div className="relative flex h-20 flex-shrink-0 items-center justify-center border-b border-[#262C36] px-5">
                 <Link to={buildPath({ view: 'project', projectId })} aria-label="Solar Pear, project overview">
                     <SolarPearLogo className="h-12 w-[120px] text-[#F1F5F9]" />
                 </Link>
+                {onClose ? (
+                    <button type="button" onClick={onClose} aria-label="Close navigation" className="absolute right-3 flex h-9 w-9 items-center justify-center rounded-md text-xl text-[#C9CED6] hover:bg-[#1C222B] hover:text-white">
+                        ×
+                    </button>
+                ) : null}
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto px-3 py-4">
@@ -102,7 +109,7 @@ export default function ShellSidebar({ route, design, onAddSystem, onEditSystem,
                                     type="button"
                                     onClick={() => onEditSystem(system.name)}
                                     aria-label={`Rename or delete system ${system.name}`}
-                                    className="absolute right-1.5 top-2 rounded p-1 text-[#8A93A0] opacity-0 hover:bg-[#2C3440] hover:text-white focus:opacity-100 group-hover/system:opacity-100"
+                                    className={`absolute right-1.5 top-2 rounded p-1 text-[#8A93A0] hover:bg-[#2C3440] hover:text-white focus:opacity-100 group-hover/system:opacity-100 ${touchVisible}`}
                                 >
                                     <Pencil size={12} />
                                 </button>
@@ -129,7 +136,7 @@ export default function ShellSidebar({ route, design, onAddSystem, onEditSystem,
                                                     type="button"
                                                     onClick={() => onEditArray(array.id)}
                                                     aria-label={`Edit array ${array.name}`}
-                                                    className="mx-1 rounded p-1 text-[#8A93A0] opacity-0 hover:text-white focus:opacity-100 group-hover/array:opacity-100"
+                                                    className={`mx-1 rounded p-1 text-[#8A93A0] hover:text-white focus:opacity-100 group-hover/array:opacity-100 ${touchVisible}`}
                                                 >
                                                     <Pencil size={11} />
                                                 </button>

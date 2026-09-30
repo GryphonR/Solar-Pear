@@ -614,7 +614,7 @@ export default function PanelsGuideView() {
                     time the laminate bends.
                 </p>
 
-                <div className="rounded-lg border border-slate-200 overflow-hidden">
+                <div className="rounded-lg border border-slate-200 overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -706,7 +706,7 @@ export default function PanelsGuideView() {
                     mounting removes the air gap entirely and with it any rear gain at all.
                 </p>
 
-                <div className="rounded-lg border border-slate-200 overflow-hidden">
+                <div className="rounded-lg border border-slate-200 overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-400">

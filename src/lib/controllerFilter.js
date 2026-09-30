@@ -2,7 +2,7 @@
  * @file controllerFilter.js
  * Which catalogue controllers a system's settings allow (battery voltage, "Controllers shown", EPS and
  * whole-house backup). This is a listing filter, not a compatibility check; the checks stay in
- * `evaluateElectrical`. Shared by the classic controller table and the new controller picker (13.6).
+ * `evaluateElectrical`. Used by the controller picker (13.6).
  */
 
 /**

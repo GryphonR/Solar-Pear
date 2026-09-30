@@ -319,7 +319,7 @@ export default function ArrayPage({ design, system, route }) {
         <div className="flex flex-col gap-5">
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                         <EditableTitle value={entry.name} label={`Rename array ${entry.name}`} onRename={(name) => updateArray(entry.id, { name })} />
                         <span className="text-[13px] text-muted">Array in {system.name}</span>
                     </div>
@@ -333,7 +333,7 @@ export default function ArrayPage({ design, system, route }) {
                         <StatusPill status={entry.status}>{entry.status === 'unset' ? `${entry.progress.done} of 3 done` : undefined}</StatusPill>
                     </div>
                 </div>
-                <dl className="flex gap-8">
+                <dl className="flex flex-wrap gap-x-8 gap-y-2">
                     <div className="flex flex-col gap-0.5">
                         <dt className="text-xs text-muted">Peak power</dt>
                         <dd className="font-plex-mono text-[22px] font-semibold">{kWp(a.peakPower)}</dd>

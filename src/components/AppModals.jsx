@@ -1,6 +1,6 @@
 /**
  * @file AppModals.jsx
- * The toast and every app-level modal, shared by the classic UI and the new shell (roadmap 13.4).
+ * The toast and every app-level modal, used by the app shell (roadmap 13.4).
  */
 
 import React from 'react';
@@ -14,8 +14,8 @@ import ChargerInfoModal from './modals/ChargerInfoModal';
 import Toast from './Toast';
 import { useDataState, useUiState } from '../context/AppStateContext';
 
-/** @param {{ systemNoun?: string }} props - 'System' in the new shell (D9), 'Area' in the classic UI. */
-export default function AppModals({ systemNoun = 'Area' }) {
+/** @param {{ systemNoun?: string }} props - the UI calls an area a System (decision D9). */
+export default function AppModals({ systemNoun = 'System' }) {
     const {
         arraysData,
         areasData,

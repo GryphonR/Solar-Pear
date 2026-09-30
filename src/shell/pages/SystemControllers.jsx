@@ -15,9 +15,73 @@ import { controllerTypeLabel } from '../../lib/controllerTypes';
 import { formatMoney, knownPrice } from '../../lib/pricing';
 import { freePorts, unassignedArrays, unitPorts } from '../../lib/ports';
 import { useDataState, useUiState } from '../../context/AppStateContext';
+import { useIsPhone } from '../../hooks/useIsSmallScreen';
 
 const round = (v) => (Number.isFinite(v) ? Math.round(v) : '—');
 const wiringOf = (a) => (a?.array ? `${Math.round((a.array.count || 0) / (a.array.parallelStrings || 1))}S${a.array.parallelStrings || 1}P` : '');
+
+function AssignSelect({ port, unassigned, onAssign }) {
+    return unassigned.length > 0 ? (
+        <select
+            aria-label={`Assign an array to MPPT ${port}`}
+            value=""
+            onChange={(e) => e.target.value && onAssign(e.target.value)}
+            className="h-8 rounded-md border border-line-strong bg-white px-2 text-xs"
+        >
+            <option value="">Assign an array…</option>
+            {unassigned.map((x) => (
+                <option key={x.id} value={x.id}>
+                    {x.name}
+                </option>
+            ))}
+        </select>
+    ) : (
+        <span className="text-xs text-muted">No array waiting</span>
+    );
+}
+
+/** A port as a card, for phones (13.9): the same content as a table row, stacked. */
+function PortCard({ port, arrayEntry, projectId, systemId, unassigned, onAssign, onUnassign }) {
+    const a = arrayEntry?.analysis;
+    const c = a?.controller;
+    const tone = arrayEntry?.status === 'warning' ? 'bg-[#FFF9EE]' : arrayEntry?.status === 'error' ? 'bg-status-error-bg/60' : '';
+    return (
+        <li className={`flex flex-col gap-2 border-t border-line-soft px-4 py-3 text-[13px] ${tone}`}>
+            <div className="flex items-center justify-between gap-2">
+                <span className="font-plex-mono font-semibold">MPPT {port}</span>
+                {arrayEntry ? <StatusPill status={arrayEntry.status}>{arrayEntry.status === 'unset' ? 'Not checked' : undefined}</StatusPill> : null}
+            </div>
+            {arrayEntry ? (
+                <>
+                    <div>
+                        <Link to={buildPath({ view: 'array', projectId, systemId, arrayId: arrayEntry.id, tab: 'overview' })} className="font-medium text-secondary hover:underline">
+                            {arrayEntry.name}
+                        </Link>{' '}
+                        <span className="text-muted">{a?.panel ? wiringOf(a) : 'no panel yet'}</span>
+                    </div>
+                    {a?.panel ? (
+                        <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-xs">
+                            <dt className="text-muted">Cold Voc / max</dt>
+                            <dd className="text-right font-plex-mono">{`${round(a.coldVoc)} / ${c?.maxV ?? '—'} V`}</dd>
+                            <dt className="text-muted">Hot Vmp / MPPT</dt>
+                            <dd className="text-right font-plex-mono">{`${round(a.hotVmp)} / ${c?.mpptRangeMin && c?.mpptRangeMax ? `${c.mpptRangeMin}–${c.mpptRangeMax}` : '—'} V`}</dd>
+                            <dt className="text-muted">Hot Isc / max</dt>
+                            <dd className="text-right font-plex-mono">{`${a.arrayIscHot.toFixed(1)} / ${c?.maxIsc || '—'} A`}</dd>
+                        </dl>
+                    ) : null}
+                    <button type="button" onClick={onUnassign} className="self-start text-xs font-semibold text-secondary hover:underline">
+                        Unassign
+                    </button>
+                </>
+            ) : (
+                <div className="flex items-center justify-between gap-2">
+                    <span className="text-muted">Free</span>
+                    <AssignSelect port={port} unassigned={unassigned} onAssign={onAssign} />
+                </div>
+            )}
+        </li>
+    );
+}
 
 function PortRow({ port, arrayEntry, projectId, systemId, unassigned, onAssign, onUnassign }) {
     const a = arrayEntry?.analysis;
@@ -59,23 +123,7 @@ function PortRow({ port, arrayEntry, projectId, systemId, unassigned, onAssign, 
                         Free
                     </td>
                     <td className="py-3 pr-5 text-right" colSpan={2}>
-                        {unassigned.length > 0 ? (
-                            <select
-                                aria-label={`Assign an array to MPPT ${port}`}
-                                value=""
-                                onChange={(e) => e.target.value && onAssign(e.target.value)}
-                                className="h-8 rounded-md border border-line-strong bg-white px-2 text-xs"
-                            >
-                                <option value="">Assign an array…</option>
-                                {unassigned.map((x) => (
-                                    <option key={x.id} value={x.id}>
-                                        {x.name}
-                                    </option>
-                                ))}
-                            </select>
-                        ) : (
-                            <span className="text-xs text-muted">No array waiting</span>
-                        )}
+                        <AssignSelect port={port} unassigned={unassigned} onAssign={onAssign} />
                     </td>
                 </>
             )}
@@ -98,6 +146,7 @@ export default function SystemControllers({ design, system }) {
     } = useDataState();
     const { setInfoModalChargerId, setNotification } = useUiState();
     const [picker, setPicker] = useState(null); // { mode: 'add' | 'replace', arrayId?, instanceId? }
+    const phone = useIsPhone();
 
     const projectId = activeProject.id;
     const settings = getAreaSettings(system.name);
@@ -141,7 +190,7 @@ export default function SystemControllers({ design, system }) {
     return (
         <div className="flex gap-6">
             <div className="flex min-w-0 flex-1 flex-col gap-5">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                     <p className="text-[13px] text-muted">
                         Each array uses one MPPT port. Arrays on the same unit share its power limit.
                     </p>
@@ -168,7 +217,7 @@ export default function SystemControllers({ design, system }) {
                     const unitLabel = model?.type === 'charger' || model?.type === 'dc-dc-charger' ? 'Charger' : 'Controller';
                     return (
                         <article key={instance.id} aria-label={instance.name} className="flex flex-col rounded-[10px] border border-line bg-white">
-                            <div className="flex items-start justify-between gap-4 border-b border-line-soft px-5 py-[18px]">
+                            <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line-soft px-4 py-[18px] sm:px-5">
                                 <div className="flex flex-col gap-0.5">
                                     <span className="text-xs font-semibold tracking-[0.08em] text-muted uppercase">
                                         {unitLabel} {index + 1} · {model?.manufacturer || 'Unknown'} · {model ? controllerTypeLabel(model.type, { short: true }) : 'not in catalogue'}
@@ -210,6 +259,22 @@ export default function SystemControllers({ design, system }) {
                                     </button>
                                 </div>
                             </div>
+                            {phone ? (
+                                <ul aria-label={`${instance.name} ports`}>
+                                    {ports.map((p) => (
+                                        <PortCard
+                                            key={p.port}
+                                            port={p.port}
+                                            arrayEntry={p.arrayId ? entryOf(p.arrayId) : null}
+                                            projectId={projectId}
+                                            systemId={system.id}
+                                            unassigned={waiting}
+                                            onAssign={(arrayId) => updateSelection(arrayId, 'controllerInstance', instance.id, p.port)}
+                                            onUnassign={() => updateSelection(p.arrayId, 'clearController')}
+                                        />
+                                    ))}
+                                </ul>
+                            ) : (
                             <table className="w-full border-collapse text-[13px]">
                                 <thead>
                                     <tr className="bg-placeholder-bg text-left text-xs text-muted">
@@ -239,6 +304,7 @@ export default function SystemControllers({ design, system }) {
                                     ))}
                                 </tbody>
                             </table>
+                            )}
                             <div className="border-t border-line-soft px-5 py-4">
                                 <Meter
                                     label={power?.basis === 'charge' ? `Charge power, all ports (at ${power.batteryV} V)` : 'DC input power, all ports'}

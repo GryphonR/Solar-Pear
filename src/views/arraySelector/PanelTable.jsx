@@ -12,6 +12,7 @@ import {
     panelSeriesKey,
     parseManufacturerSeriesFilterValue,
 } from '../../lib/panelSeries';
+import { useIsPhone } from '../../hooks/useIsSmallScreen';
 
 /**
  * Sort a panel list by the active Compatible Panels Explorer column sort.
@@ -26,6 +27,108 @@ function sortPanelsByColumn(panels, panelSort) {
         if (valA > valB) return panelSort.dir === 'asc' ? 1 : -1;
         return 0;
     });
+}
+
+const SORTS = [
+    ['peakPower', 'kWp'],
+    ['costPerKWp', '£/kWp'],
+    ['panelCost', '£ total'],
+    ['coldVoc', 'Cold Voc'],
+    ['name', 'Name'],
+    ['weight', 'Weight'],
+];
+
+/** The panel list as cards, for phones (13.9): same groups, filters and actions as the table. */
+function PanelCards({ displayGroups, filteredPanels, selectedPanelModel, onSelectPanel, onOpenInfo, panelSort, togglePanelSort }) {
+    return (
+        <div className="flex flex-col gap-3">
+            <label className="flex items-center gap-2 text-xs text-slate-600">
+                Sort by
+                <select
+                    value={panelSort.key}
+                    onChange={(e) => togglePanelSort(e.target.value)}
+                    className="h-8 rounded-md border border-slate-300 bg-white px-2 text-xs"
+                >
+                    {SORTS.map(([key, label]) => (
+                        <option key={key} value={key}>
+                            {label}
+                        </option>
+                    ))}
+                </select>
+                <button type="button" onClick={() => togglePanelSort(panelSort.key)} className="h-8 rounded-md border border-slate-300 bg-white px-2" aria-label="Reverse the order">
+                    {panelSort.dir === 'asc' ? '↑' : '↓'}
+                </button>
+            </label>
+            {filteredPanels.length === 0 ? (
+                <p className="rounded-lg border border-slate-200 bg-white px-4 py-6 text-center text-sm text-slate-500 italic">
+                    No active panels meet both the physical format and the electrical constraints of the currently selected MPPT.
+                </p>
+            ) : (
+                <ul aria-label="Panels" className="flex flex-col gap-2">
+                    {displayGroups.flatMap((group) => {
+                        const items = [];
+                        if (group.showMfrHeader) {
+                            items.push(
+                                <li key={`mfr-${group.mfr}`} className="px-1 pt-2 text-xs font-bold tracking-wider text-slate-600 uppercase">
+                                    {group.mfr}
+                                </li>
+                            );
+                        }
+                        for (const p of group.panels) {
+                            const isSelected = selectedPanelModel === p.model;
+                            const inc = !p.isFullyCompatible;
+                            const safeDatasheet = safeHttpUrl(p.datasheetUrl);
+                            items.push(
+                                <li key={p.model} className={`flex flex-col gap-2 rounded-lg border bg-white px-3.5 py-3 text-xs ${inc ? 'border-red-300 bg-red-50' : isSelected ? 'border-blue-400 bg-blue-50/50' : 'border-slate-200'}`}>
+                                    <div className="flex flex-wrap items-center gap-1.5 text-sm font-semibold text-slate-800">
+                                        <span>{p.name}</span>
+                                        <DiscontinuedBadge item={p} />
+                                        <button onClick={() => onOpenInfo(p.model)} className="text-slate-400 hover:text-blue-600" aria-label="View technical specs">
+                                            <Info size={16} />
+                                        </button>
+                                        {safeDatasheet && (
+                                            <a href={safeDatasheet} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600" aria-label="View manufacturer datasheet">
+                                                <ExternalLink size={16} />
+                                            </a>
+                                        )}
+                                        {p.isVocWarn && <AlertTriangle size={16} className="text-orange-500" title="Cold Voc is within 6% of the controller limit" />}
+                                        <BuyButton buyLinks={p.buyLinks} />
+                                    </div>
+                                    <div className="flex flex-wrap gap-x-4 gap-y-0.5">
+                                        <span className="font-medium text-blue-700">{Number(p.peakPower).toLocaleString()} W</span>
+                                        <span>{p.costPerKWp == null ? '—' : `£${Number(p.costPerKWp).toFixed(2)}`}/kWp</span>
+                                        <span>{p.panelCost == null ? '—' : formatMoney(p.panelCost)} total</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-x-4 gap-y-0.5 font-plex-mono text-slate-600">
+                                        <span className={!p.isVocOk ? 'font-bold text-red-600' : ''}>Voc {Number(p.coldVoc).toFixed(1)} V</span>
+                                        <span className={!p.isVmpOk ? 'font-bold text-orange-500' : ''}>Vmp {Number(p.hotVmp).toFixed(1)} V</span>
+                                        <span className={!p.isIscOk ? 'font-bold text-orange-500' : ''}>Isc {Number(p.arrayIscHot).toFixed(2)} A</span>
+                                        <span className={!p.isWidthOk || !p.isHeightOk ? 'font-bold text-red-600' : ''}>
+                                            {p.height ?? '-'} × {p.width ?? '-'} mm
+                                        </span>
+                                        <span className={!p.isWeightOk ? 'font-bold text-red-600' : ''}>{p.weight != null ? `${p.weight} kg` : '-'}</span>
+                                    </div>
+                                    {isSelected ? (
+                                        <span className="inline-flex items-center self-start rounded bg-green-100 px-3 py-1.5 text-xs font-bold text-green-700">
+                                            <CheckCircle size={14} className="mr-1" /> Selected
+                                        </span>
+                                    ) : (
+                                        <button
+                                            onClick={() => onSelectPanel(p.model)}
+                                            className={`self-start rounded px-3 py-1.5 text-xs font-bold ${inc ? 'border border-red-400 bg-red-50 text-red-700' : 'border border-slate-300 bg-white text-slate-700'}`}
+                                        >
+                                            Select Panel
+                                        </button>
+                                    )}
+                                </li>
+                            );
+                        }
+                        return items;
+                    })}
+                </ul>
+            )}
+        </div>
+    );
 }
 
 export default function PanelTable({
@@ -43,6 +146,7 @@ export default function PanelTable({
     setHideIncompatiblePanels,
     controller,
 }) {
+    const phone = useIsPhone();
     const [manufacturerFilter, setManufacturerFilter] = useState('');
     const [seriesFilter, setSeriesFilter] = useState('');
 
@@ -248,8 +352,19 @@ export default function PanelTable({
             </div>
 
             <AffiliateNotice className="-mt-2 mb-2 px-1" />
+            {phone ? (
+                <PanelCards
+                    displayGroups={displayGroups}
+                    filteredPanels={filteredPanels}
+                    selectedPanelModel={selectedPanelModel}
+                    onSelectPanel={onSelectPanel}
+                    onOpenInfo={onOpenInfo}
+                    panelSort={panelSort}
+                    togglePanelSort={togglePanelSort}
+                />
+            ) : (
             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                <div className="max-h-[600px] overflow-y-auto">
+                <div className="max-h-[600px] overflow-auto">
                     <table className="w-full text-left border-collapse relative text-xs">
                         <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-sm">
                             <tr>
@@ -519,6 +634,7 @@ export default function PanelTable({
                     </table>
                 </div>
             </div>
+            )}
         </div>
     );
 }

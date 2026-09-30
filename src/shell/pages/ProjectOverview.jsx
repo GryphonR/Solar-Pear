@@ -137,7 +137,7 @@ export default function ProjectOverview({ design, onAddSystem, onSaveDefaults })
                         {systems.length} {systems.length === 1 ? 'system' : 'systems'} · {arrayCount} {arrayCount === 1 ? 'array' : 'arrays'} · saved on this device
                     </span>
                 </div>
-                <dl className="flex gap-8">
+                <dl className="flex flex-wrap gap-x-8 gap-y-2">
                     <div className="flex flex-col gap-0.5">
                         <dt className="text-xs text-muted">Peak power</dt>
                         <dd className="font-plex-mono text-[22px] font-semibold">{kWp(projectTotals.peakPower)}</dd>

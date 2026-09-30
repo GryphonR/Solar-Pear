@@ -1,6 +1,6 @@
 /**
  * @file PlannerPhone.jsx
- * The layout planner on a phone (roadmap 13.8, canvas board "PlannerPhone"): the roof and the applied
+ * The layout planner below 960 px (roadmap 13.8, canvas board "PlannerPhone"): the roof and the applied
  * layout, view only. Drawing needs a larger screen; the panel count can still be set by hand.
  */
 
@@ -30,7 +30,7 @@ export default function PlannerPhone({ array, geo, started, onManual }) {
                     {applied ? `${applied.rects_m.length} panel${applied.rects_m.length === 1 ? '' : 's'} on this roof` : array.count > 0 ? `${array.count} panels, set by hand` : 'No layout yet'}
                 </span>
                 <span className="text-[13px] text-subtle">
-                    {started ? 'Drawing the roof and choosing a layout needs a larger screen. Open this page on a tablet or computer to edit it.' : 'Describe the roof on a tablet or computer to see which panels fit.'}
+                    {started ? 'Drawing the roof and choosing a layout needs a wider screen. Open this page on a computer, or turn a tablet sideways, to edit it.' : 'Describe the roof on a computer, or a tablet turned sideways, to see which panels fit.'}
                 </span>
             </div>
             <button type="button" onClick={onManual} className="self-start text-[13px] font-semibold text-secondary hover:underline">

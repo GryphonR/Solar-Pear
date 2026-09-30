@@ -5,6 +5,7 @@
  * power-flow order, so the list is a true text equivalent. Every figure and status comes from the engine.
  */
 
+import { useIsPhone } from '../../hooks/useIsSmallScreen';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { StatusPill } from '../../components/ui';
@@ -390,7 +391,9 @@ function IssueCard({ item, paths }) {
 
 export default function SystemOverview({ design, system, onAddArray }) {
     const { arraysData, siteControllers, chargersData, getAreaSettings, updateSelection } = useDataState();
-    const [view, setView] = useState('diagram');
+    // Phones open on the list view (13.9); the diagram is still there, scrolling sideways.
+    const phone = useIsPhone();
+    const [view, setView] = useState(() => (phone ? 'list' : 'diagram'));
     const [expanded, setExpanded] = useState(() => new Set());
 
     const projectId = design.project.id;

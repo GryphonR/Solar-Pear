@@ -4,7 +4,8 @@
  * current route. The catalogue tables are mounted as Library and the guides as Learn.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { DRAWER_MAX_WIDTH, useViewportWidth } from '../hooks/useIsSmallScreen';
 import { Link, Navigate, useNavigate } from 'react-router';
 import ShellSidebar from './ShellSidebar';
 import TopBar from './TopBar';
@@ -185,6 +186,20 @@ export default function AppShell() {
     const navigate = useNavigate();
     const [nameDialog, setNameDialog] = useState(null); // { mode: 'rename' } | { mode: 'addArray', system, initial }
 
+    // Below `lg` the sidebar is a drawer (13.9), closed on navigation and with Escape.
+    const drawerMode = useViewportWidth() <= DRAWER_MAX_WIDTH;
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const drawerRef = useRef(null);
+    const routeKey = `${route.view}:${route.projectId || ''}:${route.systemId || ''}:${route.arrayId || ''}:${route.tab || ''}`;
+    useEffect(() => setDrawerOpen(false), [routeKey]);
+    useEffect(() => {
+        if (!drawerOpen) return undefined;
+        drawerRef.current?.querySelector('a, button:not([tabindex="-1"])')?.focus();
+        const onKey = (e) => e.key === 'Escape' && setDrawerOpen(false);
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [drawerOpen]);
+
     const onAddSystem = () => openAddAreaModal('');
     // Adding an array only asks for its name; the system is the one it was added from.
     const onAddArray = (systemName) => {
@@ -216,18 +231,34 @@ export default function AppShell() {
         );
     }
 
+    const sidebar = (extra) => (
+        <ShellSidebar
+            route={route}
+            design={design}
+            onAddSystem={onAddSystem}
+            onEditSystem={openEditAreaModal}
+            onAddArray={onAddArray}
+            onEditArray={openEditArrayModal}
+            {...extra}
+        />
+    );
+
     return (
         <div className="flex h-screen bg-paper font-plex text-body">
-            <ShellSidebar
-                route={route}
-                design={design}
-                onAddSystem={onAddSystem}
-                onEditSystem={openEditAreaModal}
-                onAddArray={onAddArray}
-                onEditArray={openEditArrayModal}
-            />
+            {drawerMode ? (
+                drawerOpen ? (
+                    <div className="fixed inset-0 z-40 flex" role="dialog" aria-modal="true" aria-label="Navigation" ref={drawerRef}>
+                        <button type="button" aria-label="Close navigation" tabIndex={-1} onClick={() => setDrawerOpen(false)} className="absolute inset-0 bg-ink/50" />
+                        <div className="relative flex h-full w-[272px] max-w-[85vw] shadow-2xl">{sidebar({ onClose: () => setDrawerOpen(false) })}</div>
+                    </div>
+                ) : null
+            ) : (
+                sidebar()
+            )}
             <div className="flex min-w-0 flex-1 flex-col">
                 <TopBar
+                    onOpenNav={drawerMode ? () => setDrawerOpen(true) : null}
+                    navOpen={drawerOpen}
                     route={route}
                     projectsStore={projectsStore}
                     activeProject={activeProject}
@@ -247,7 +278,7 @@ export default function AppShell() {
                     onReset={handleResetClick}
                 />
                 <main className="min-h-0 flex-1 overflow-y-auto">
-                    <div key={`${route.view}:${route.projectId || ''}:${route.systemId || ''}:${route.arrayId || ''}`} className="mx-auto max-w-7xl px-8 py-7">
+                    <div key={routeKey} className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
                         <ShellContent
                             route={route}
                             design={design}

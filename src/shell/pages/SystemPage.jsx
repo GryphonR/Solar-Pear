@@ -40,7 +40,7 @@ export default function SystemPage({ design, system, tab = 'overview', onAddArra
                         <StatusPill status={system.summary.status}>{system.summary.label}</StatusPill>
                     </div>
                 </div>
-                <dl className="flex gap-8">
+                <dl className="flex flex-wrap gap-x-8 gap-y-2">
                     <div className="flex flex-col gap-0.5">
                         <dt className="text-xs text-muted">Peak power</dt>
                         <dd className="font-plex-mono text-[22px] font-semibold">{kWp(system.totals.peakPower)}</dd>

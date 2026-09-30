@@ -22,7 +22,7 @@ export default function AddArrayModal({
     onSave,
     onUpdateField,
     onDelete,
-    systemNoun = 'Area',
+    systemNoun = 'System',
 }) {
     const d = { ...defaultData, ...data };
     const [error, setError] = useState(null);

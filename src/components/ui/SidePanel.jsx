@@ -3,7 +3,8 @@ import { XIcon } from '../Icons';
 
 /**
  * Non-modal side panel (the diagram and the pickers open editors here rather than in a modal, so the
- * design stays visible). Escape closes it; focus moves to the panel on open and back on close.
+ * design stays visible). Escape closes it; focus moves to the panel on open and back on close. Below `lg`
+ * there is no room beside the page, so it slides over it from the right (full width on phones).
  * @param {{ open: boolean, onClose: () => void, title: string, label?: string, children: React.ReactNode, footer?: React.ReactNode, className?: string }} props
  */
 export default function SidePanel({ open, onClose, title, label, children, footer, className = '' }) {
@@ -32,7 +33,7 @@ export default function SidePanel({ open, onClose, title, label, children, foote
             ref={ref}
             tabIndex={-1}
             aria-label={label || title}
-            className={`flex w-[480px] max-w-full flex-shrink-0 flex-col border-l border-line bg-white shadow-[-8px_0_24px_rgba(20,24,31,0.06)] focus:outline-none ${className}`}
+            className={`flex w-[480px] max-w-full flex-shrink-0 flex-col border-l border-line bg-white shadow-[-8px_0_24px_rgba(20,24,31,0.06)] focus:outline-none ${className} max-lg:fixed max-lg:inset-y-0 max-lg:right-0 max-lg:z-30 max-lg:max-h-none max-lg:w-full max-lg:rounded-none sm:max-lg:w-[480px]`}
         >
             <div className="flex items-center justify-between gap-3 border-b border-line-soft px-5 py-4">
                 <h2 className="text-lg font-semibold text-body">{title}</h2>

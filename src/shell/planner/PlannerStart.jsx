@@ -26,7 +26,7 @@ export default function PlannerStart({ arrayName, onStart, onSkip }) {
               : null;
 
     return (
-        <section aria-labelledby="planner-start-title" className="mx-auto flex w-full max-w-[720px] flex-col gap-6 rounded-[10px] border border-line bg-white p-8">
+        <section aria-labelledby="planner-start-title" className="mx-auto flex w-full max-w-[720px] flex-col gap-6 rounded-[10px] border border-line bg-white p-5 sm:p-8">
             <div className="flex flex-col gap-1.5">
                 <h2 id="planner-start-title" className="text-xl font-semibold">
                     Describe this roof section
@@ -74,7 +74,7 @@ export default function PlannerStart({ arrayName, onStart, onSkip }) {
 
             <fieldset className="flex flex-col gap-3">
                 <legend className="mb-2.5 text-sm font-semibold">3 · Size</legend>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <NumberField label="Width" unit="m" value={start.width} onChange={(v) => set({ width: v })} aria="Width in metres" />
                     {map ? (
                         <>

@@ -231,7 +231,7 @@ export default function SummaryView() {
                     <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 font-semibold text-slate-700">
                         Panel configuration
                     </div>
-                    <div className="max-h-[400px] overflow-y-auto">
+                    <div className="max-h-[400px] overflow-auto">
                         <table className="w-full text-left border-collapse relative">
                             <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                                 <tr>
@@ -263,7 +263,7 @@ export default function SummaryView() {
                     <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 font-semibold text-slate-700">
                         Controller configuration
                     </div>
-                    <div className="max-h-[400px] overflow-y-auto">
+                    <div className="max-h-[400px] overflow-auto">
                         <table className="w-full text-left border-collapse relative">
                             <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                                 <tr>
@@ -313,13 +313,14 @@ export default function SummaryView() {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden mt-6">
-                <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 font-semibold text-slate-700 flex justify-between items-center">
+                <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 font-semibold text-slate-700 flex flex-wrap justify-between items-center gap-x-4">
                     <span>Bill of Materials (BOM)</span>
                     <span className="text-sm font-normal text-slate-500">
                         Aggregated quantities for procurement
                     </span>
                 </div>
-                <table className="w-full text-left border-collapse">
+                <div className="overflow-x-auto">
+                <table className="w-full min-w-[480px] text-left border-collapse">
                     <thead>
                         <tr className="bg-slate-50 border-b border-slate-200">
                             <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -388,6 +389,7 @@ export default function SummaryView() {
                         )}
                     </tfoot>
                 </table>
+                </div>
             </div>
         </div>
     );

@@ -12,7 +12,10 @@ vi.mock("../data/loadData.js", async (importOriginal) => {
 });
 
 let small = false;
-vi.mock("../hooks/useIsSmallScreen", () => ({ MIN_DESKTOP_LAYOUT_WIDTH: 960, useIsSmallScreen: () => small }));
+vi.mock("../hooks/useIsSmallScreen", async (importOriginal) => ({
+    ...(await importOriginal()),
+    useIsSmallScreen: () => small,
+}));
 
 import { AppStateProvider } from "../context/AppStateContext";
 import App from "../App";
@@ -137,7 +140,7 @@ describe("layout planner (roadmap 13.8)", () => {
         );
         expect(await screen.findByRole("img", { name: /^Roof drawing: 6\.00 m wide.*1 panel$/ })).toBeInTheDocument();
         expect(screen.getByText("1 panel on this roof")).toBeInTheDocument();
-        expect(screen.getByText(/needs a larger screen/)).toBeInTheDocument();
+        expect(screen.getByText(/needs a wider screen/)).toBeInTheDocument();
         expect(screen.queryByRole("toolbar")).not.toBeInTheDocument();
         expect(screen.queryByRole("button", { name: /Leave this slot empty$/ })).not.toBeInTheDocument();
     });

@@ -171,7 +171,7 @@ export default function PanelsDbView({ rowAction } = {}) {
                                         </div>
                                     </div>
                                     <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                                        <div className="max-h-[500px] overflow-y-auto">
+                                        <div className="max-h-[500px] overflow-auto">
                                             <table className="w-full text-left border-collapse relative">
                                                 <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                                                     <tr className="bg-slate-50 border-b border-slate-200">

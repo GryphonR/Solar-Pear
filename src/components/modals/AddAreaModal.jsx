@@ -10,8 +10,8 @@ export default function AddAreaModal({
     onClose,
     onSave,
     onDelete,
-    // 'System' in the new shell (decision D9); the classic UI still says 'Area'.
-    noun = 'Area',
+    // The UI calls an area a System (decision D9).
+    noun = 'System',
 }) {
     const [error, setError] = useState(null);
     const [draft, setDraft] = useState(() => value || '');

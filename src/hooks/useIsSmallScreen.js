@@ -21,32 +21,33 @@ function getLayoutViewportWidthPx() {
     return Math.max(inner, docClient, visual);
 }
 
-/** True when the layout viewport is too narrow to edit the roof drawing (see `MIN_DESKTOP_LAYOUT_WIDTH`). */
-export function useIsSmallScreen() {
-    const [isSmallScreen, setIsSmallScreen] = useState(() => {
-        if (typeof window === 'undefined') return false;
-        return getLayoutViewportWidthPx() < MIN_DESKTOP_LAYOUT_WIDTH;
-    });
+/** Breakpoints for layouts chosen in JavaScript (so only one version of a table or list is rendered). */
+export const PHONE_MAX_WIDTH = 767; // below `md`: cards instead of tables, the diagram's list view
+export const DRAWER_MAX_WIDTH = 1023; // below `lg`: the sidebar is a drawer
+
+/** The layout viewport width in px, kept up to date on resize and rotation. */
+export function useViewportWidth() {
+    const [width, setWidth] = useState(() => (typeof window === 'undefined' ? MIN_DESKTOP_LAYOUT_WIDTH : getLayoutViewportWidthPx()));
 
     useEffect(() => {
         if (typeof window === 'undefined') return undefined;
-
-        const handleResize = () => {
-            setIsSmallScreen(getLayoutViewportWidthPx() < MIN_DESKTOP_LAYOUT_WIDTH);
-        };
-
+        const handleResize = () => setWidth(getLayoutViewportWidthPx());
         handleResize();
         window.addEventListener('resize', handleResize);
         window.addEventListener('orientationchange', handleResize);
         window.visualViewport?.addEventListener('resize', handleResize);
-        window.visualViewport?.addEventListener('scroll', handleResize);
         return () => {
             window.removeEventListener('resize', handleResize);
             window.removeEventListener('orientationchange', handleResize);
             window.visualViewport?.removeEventListener('resize', handleResize);
-            window.visualViewport?.removeEventListener('scroll', handleResize);
         };
     }, []);
 
-    return isSmallScreen;
+    return width;
 }
+
+/** True on phone-width screens (see `PHONE_MAX_WIDTH`). */
+export const useIsPhone = () => useViewportWidth() <= PHONE_MAX_WIDTH;
+
+/** True when the layout viewport is too narrow to edit the roof drawing (see `MIN_DESKTOP_LAYOUT_WIDTH`). */
+export const useIsSmallScreen = () => useViewportWidth() < MIN_DESKTOP_LAYOUT_WIDTH;

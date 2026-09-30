@@ -68,7 +68,7 @@ export default function Chooser({ backTo, onChoose, onSkip }) {
 
     return (
         <div className="flex min-h-screen flex-col bg-paper font-plex text-body">
-            <header className="flex h-14 flex-shrink-0 items-center justify-between bg-ink px-6">
+            <header className="flex h-14 flex-shrink-0 items-center justify-between bg-ink px-3 sm:px-6">
                 <SolarPearLogo className="h-12 w-[120px] text-[#F1F5F9]" />
                 <nav aria-label="Main" className="flex items-center gap-1 text-sm font-medium">
                     {backTo ? (
@@ -81,10 +81,10 @@ export default function Chooser({ backTo, onChoose, onSkip }) {
                 </nav>
             </header>
 
-            <main className="flex flex-1 flex-col items-center gap-10 px-6 pb-10 pt-16">
+            <main className="flex flex-1 flex-col items-center gap-8 px-4 pb-10 pt-8 sm:gap-10 sm:px-6 sm:pt-16">
                 <div className="flex flex-col items-center gap-3 text-center">
                     <span className="text-xs font-semibold tracking-[0.12em] text-muted">NEW PROJECT</span>
-                    <h1 className="text-[44px] font-semibold leading-[52px] tracking-[-0.02em]">What are you building?</h1>
+                    <h1 className="text-[32px] leading-[40px] font-semibold tracking-[-0.02em] sm:text-[44px] sm:leading-[52px]">What are you building?</h1>
                     <p className="max-w-[620px] text-[17px] leading-[26px] text-subtle">
                         This sets sensible defaults for the project. You can change any of them later.
                     </p>
@@ -100,7 +100,7 @@ export default function Chooser({ backTo, onChoose, onSkip }) {
                     />
                 </label>
 
-                <div role="radiogroup" aria-label="What are you building?" className="-mt-4 grid w-full max-w-[1240px] grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-5">
+                <div role="radiogroup" aria-label="What are you building?" className="-mt-4 grid w-full max-w-[1240px] grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-5">
                     {[...PRESETS, BLANK].map((preset) => {
                         const selected = choice?.id === preset.id;
                         return (
@@ -110,7 +110,7 @@ export default function Chooser({ backTo, onChoose, onSkip }) {
                                 role="radio"
                                 aria-checked={selected}
                                 onClick={() => setChoice(preset)}
-                                className={`flex min-h-[250px] flex-col gap-3.5 rounded-xl border bg-white px-5 py-[22px] text-left text-body ${selected ? 'border-secondary bg-select-bg ring-2 ring-secondary' : 'border-line hover:border-ink hover:shadow-[0_6px_18px_rgba(20,24,31,0.08)]'}`}
+                                className={`flex min-h-[180px] flex-col sm:min-h-[250px] gap-3.5 rounded-xl border bg-white px-5 py-[22px] text-left text-body ${selected ? 'border-secondary bg-select-bg ring-2 ring-secondary' : 'border-line hover:border-ink hover:shadow-[0_6px_18px_rgba(20,24,31,0.08)]'}`}
                             >
                                 <span className={`flex h-12 w-12 items-center justify-center rounded-[10px] ${preset.blank ? 'border border-dashed border-line-strong bg-paper' : 'bg-[#FFF6CC]'}`} aria-hidden="true">
                                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14181F" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
