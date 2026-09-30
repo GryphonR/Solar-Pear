@@ -6,7 +6,8 @@ Vite 7, React 19, Tailwind v4 (theme in `src/index.css`), uPlot for graphs, and 
 ## Layout
 | Path | Role |
 | ---- | ---- |
-| `src/App.jsx` | Shell, sidebar, view switching on `activeTab` |
+| `src/App.jsx` | Root: small-screen gate, then the classic UI (`AppSidebar` + view switching on `activeTab`) or, with `?ui=next`, the new shell. `AppModals` holds the modals both use |
+| `src/shell/` | New shell (phase 13, behind `src/lib/uiFlag.js`): `AppShell` renders the page for the current `route`; `ShellSidebar`, `TopBar`, `pages/*`; `useDesignSummary` rolls up status via `src/lib/designStatus.js` |
 | `src/lib/routes.js` | URL scheme (13.3): `/p/:project/s/:system/a/:array/:tab` and friends, using the 13.2 ids. React Router with history URLs; `AppStateContext` derives the view from the location (`route`, and `activeTab` for the old views), navigates to change it (`goTo`, `setActiveTab`), and activates the project named in the URL. The build copies `index.html` to `404.html` so GitHub Pages deep links work |
 | `src/context/AppStateContext.jsx` (~1000 lines) | All app state, localStorage load/migrate, CRUD for areas/arrays/controllers, `getArrayAnalysis` |
 | `src/lib/arrayAnalysis.js` | Core compatibility maths (`analyzeArray`, temp factors, wiring helpers) |
