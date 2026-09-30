@@ -75,7 +75,7 @@ function LibraryTabs({ section }) {
     );
 }
 
-function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, onEditSystem, updateProjectDefaults }) {
+function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, updateProjectDefaults }) {
     const projectId = design.project.id;
     const projectCrumb = { label: design.project.name, to: buildPath({ view: 'project', projectId }) };
     const learnCrumb = { label: 'Learn', to: '/learn' };
@@ -101,7 +101,7 @@ function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, on
             return (
                 <>
                     <Breadcrumb items={[projectCrumb, { label: system.name }]} />
-                    <SystemPage design={design} system={system} tab={route.tab} onAddArray={onAddArray} onEditSystem={onEditSystem} />
+                    <SystemPage design={design} system={system} tab={route.tab} onAddArray={onAddArray} />
                 </>
             );
         case 'array': {
@@ -169,23 +169,31 @@ export default function AppShell() {
         deleteProject,
         startProjectFromPreset,
         updateProjectDefaults,
+        arraysData,
+        addArrayToSystem,
     } = useDataState();
     const {
         route,
         setActiveTab,
         openAddAreaModal,
-        openAddArrayModal,
         openEditAreaModal,
         openEditArrayModal,
         openConfirm,
         isFirstRun,
+        setNotification,
     } = useUiState();
     const { handleDownload, handleUploadClick, handleResetClick } = useBackupRestore();
     const navigate = useNavigate();
-    const [nameDialog, setNameDialog] = useState(null); // { mode: 'rename' }
+    const [nameDialog, setNameDialog] = useState(null); // { mode: 'rename' } | { mode: 'addArray', system, initial }
 
     const onAddSystem = () => openAddAreaModal('');
-    const onAddArray = (systemName) => openAddArrayModal({ area: systemName });
+    // Adding an array only asks for its name; the system is the one it was added from.
+    const onAddArray = (systemName) => {
+        const names = new Set(arraysData.filter((a) => a.area === systemName).map((a) => a.name));
+        let n = names.size + 1;
+        while (names.has(`Array ${n}`)) n += 1;
+        setNameDialog({ mode: 'addArray', system: systemName, initial: `Array ${n}` });
+    };
     const projectPath = buildPath({ view: 'project', projectId: activeProject.id });
 
     // First run opens the chooser at /; New project opens it at /new (13.5).
@@ -248,7 +256,6 @@ export default function AppShell() {
                             setActiveTab={setActiveTab}
                             onAddSystem={onAddSystem}
                             onAddArray={onAddArray}
-                            onEditSystem={openEditAreaModal}
                             updateProjectDefaults={updateProjectDefaults}
                         />
                     </div>
@@ -257,7 +264,7 @@ export default function AppShell() {
 
             <AppModals systemNoun="System" />
             <NameDialog
-                open={!!nameDialog}
+                open={nameDialog?.mode === 'rename'}
                 title="Rename project"
                 label="Project name"
                 initialValue={activeProject.name}
@@ -265,6 +272,19 @@ export default function AppShell() {
                 onCancel={() => setNameDialog(null)}
                 onConfirm={(name) => {
                     renameProject(activeProject.id, name);
+                    setNameDialog(null);
+                }}
+            />
+            <NameDialog
+                open={nameDialog?.mode === 'addArray'}
+                title={`Add an array to ${nameDialog?.system || ''}`}
+                label="Array name"
+                initialValue={nameDialog?.initial || ''}
+                confirmLabel="Add array"
+                onCancel={() => setNameDialog(null)}
+                onConfirm={(name) => {
+                    addArrayToSystem(nameDialog.system, name);
+                    setNotification(`${name} added to ${nameDialog.system}.`, 'success');
                     setNameDialog(null);
                 }}
             />

@@ -46,7 +46,11 @@ describe("first run and the chooser (roadmap 13.5)", () => {
         expect(await screen.findByRole("heading", { name: "What are you building?" })).toBeInTheDocument();
         // No plug-in tile (D11).
         expect(screen.queryByText(/plug-in|balcony/i)).not.toBeInTheDocument();
-        await userEvent.click(screen.getByRole("button", { name: /House with battery/ }));
+        const start = screen.getByRole("button", { name: /to start$/ });
+        expect(start).toBeDisabled();
+        await userEvent.click(screen.getByRole("radio", { name: /House with battery/ }));
+        expect(location.pathname).toBe("/"); // choosing a tile only selects it
+        await userEvent.click(screen.getByRole("button", { name: /^Start design: House with battery/ }));
 
         await waitFor(() => expect(location.pathname).toMatch(/^\/p\/proj_[0-9a-f]+\/s\/sys_[0-9a-f]+$/));
         expect(screen.getByRole("heading", { level: 1, name: "House" })).toBeInTheDocument();
@@ -76,7 +80,8 @@ describe("first run and the chooser (roadmap 13.5)", () => {
         await userEvent.click(screen.getByRole("button", { name: /Hawthorn Cottage/ }));
         await userEvent.click(screen.getByRole("menuitem", { name: "New project" }));
         expect(location.pathname).toBe("/new");
-        await userEvent.click(screen.getByRole("button", { name: /Van, boat or caravan/ }));
+        await userEvent.click(screen.getByRole("radio", { name: /Van, boat or caravan/ }));
+        await userEvent.click(screen.getByRole("button", { name: /^Start design/ }));
         await waitFor(() => expect(stored().projects).toHaveLength(3));
         expect(stored().projects[2].systems[0]).toMatchObject({ name: "Van", settings: { systemVoltage: 12, systemType: "dc-charger" } });
     });

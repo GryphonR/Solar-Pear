@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { Link, Navigate, useNavigate } from 'react-router';
-import { SlotCard, StatusPill } from '../../components/ui';
+import { EditableTitle, SlotCard, StatusPill } from '../../components/ui';
 import PriceTag from '../../components/PriceTag';
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
 import { ResultsDisclaimer } from '../../components/TrustNotices';
@@ -301,7 +301,7 @@ function ArrayHub({ entry, system, projectId, settings, setupTo }) {
 }
 
 export default function ArrayPage({ design, system, route }) {
-    const { activeProject, getAreaSettings } = useDataState();
+    const { activeProject, getAreaSettings, updateArray } = useDataState();
     const projectId = activeProject.id;
     const entry = system.arrays.find((x) => x.id === route.arrayId);
     if (!entry?.analysis) return null;
@@ -319,8 +319,8 @@ export default function ArrayPage({ design, system, route }) {
         <div className="flex flex-col gap-5">
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="flex flex-col gap-1.5">
-                    <div className="flex items-baseline gap-3">
-                        <h1 className="text-[30px] font-semibold leading-9">{entry.name}</h1>
+                    <div className="flex items-center gap-3">
+                        <EditableTitle value={entry.name} label={`Rename array ${entry.name}`} onRename={(name) => updateArray(entry.id, { name })} />
                         <span className="text-[13px] text-muted">Array in {system.name}</span>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 text-[13px] text-subtle">

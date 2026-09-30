@@ -9,6 +9,7 @@ import {
     plannerFromStart,
     roofPolygonFor,
     estimatedRidge,
+    groupLayouts,
     ASSUMED_PITCH_DEG,
     samePanelArrays,
     slopeLengthFromPlan,
@@ -101,6 +102,33 @@ describe('layouts, empty slots and the apply preview (roadmap 13.8)', () => {
         expect(sortLayouts(list, 'cost', byModel).map((r) => r.panelModel)).toEqual(['P400', 'P430', 'NOPRICE']);
         expect(sortLayouts(list, 'power', byModel)).toBe(list);
         expect(layoutCostPerKWp({ ...panel, price: 0 }, 8)).toBeNull();
+    });
+});
+
+describe('layouts grouped by layout, not by panel', () => {
+    const big = { ...panel, model: 'BIG', name: 'Big 500', power: 500, height: 2094, width: 1134, price: 120 };
+    const panelByModel = new Map([panel, cheap, big].map((p) => [p.model, p]));
+    const roof = roofPolygonFor('rectangle', 6, 4.2);
+    const { ranked } = computePlannerLayouts({ roofPolygon_m: roof, exclusions_m: [], spacing: { edge_mm: 300, gap_mm: 20 }, panelsData: [panel, cheap, big], options: { orientation: 'either', topN: 50 } });
+
+    it('puts panels that give the same grid together, with the size band that gives it', () => {
+        const groups = groupLayouts(ranked, 'size', panelByModel);
+        const same = groups.find((g) => g.candidates.some((c) => c.panelModel === 'P430'));
+        // P430 and P400 are the same size, so they share every layout; the big panel gives different ones.
+        expect(same.candidates.map((c) => c.panelModel).sort()).toEqual(['P400', 'P430']);
+        expect(same.size).toEqual({ minH: 1722, maxH: 1722, minW: 1134, maxW: 1134 });
+        expect(same.best.panelModel).toBe('P430'); // most power first inside a group
+        expect(groups.every((g) => g.candidates.every((c) => c.count === g.count && c.orientation === g.orientation))).toBe(true);
+        // Largest panels first, so each band ends where the next layout starts.
+        expect(groups[0].size.maxH).toBe(2094);
+    });
+
+    it('sorts groups by power or by £/kWp', () => {
+        const byPower = groupLayouts(ranked, 'power', panelByModel);
+        expect(byPower.map((g) => g.power[1])).toEqual([...byPower.map((g) => g.power[1])].sort((a, b) => b - a));
+        const byCost = groupLayouts(ranked, 'cost', panelByModel);
+        expect(byCost[0].best.panelModel).toBe('P400');
+        expect(byCost[0].bestCostPerKWp).toBe(125);
     });
 });
 

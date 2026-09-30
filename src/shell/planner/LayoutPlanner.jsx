@@ -28,6 +28,7 @@ import {
     ASSUMED_PITCH_DEG,
     ROOF_SHAPES,
     estimatedRidge,
+    groupLayouts,
     knownPitch,
     layoutChangeSummary,
     layoutCostPerKWp,
@@ -36,7 +37,6 @@ import {
     samePanelArrays,
     slopeLengthFromPlan,
     slotKey,
-    sortLayouts,
     withEmptySlots,
 } from '../../lib/plannerLayouts';
 import { ISSUE_ADVICE } from '../../lib/issueAdvice';
@@ -56,7 +56,7 @@ const DEFAULTS = {
     roofPolygonAuto: true,
     exclusions: [],
     spacing: { edge_mm: 300, gap_mm: 20 },
-    options: { orientation: 'either', sort: 'power' },
+    options: { orientation: 'either', sort: 'size' },
     emptySlots: {},
     applied: null,
 };
@@ -84,6 +84,9 @@ export function normalisePlanner(raw) {
 }
 
 const kWp = (w) => `${(w / 1000).toFixed(2)} kWp`;
+const kWpRange = ([lo, hi]) => (Math.abs(hi - lo) < 5 ? kWp(hi) : `${(lo / 1000).toFixed(2)}–${kWp(hi)}`);
+const mm = (n) => Math.round(Number(n)).toLocaleString('en-GB');
+const mmRange = (lo, hi) => (lo === hi ? mm(hi) : `${mm(lo)}–${mm(hi)}`);
 const shortName = (panel) => panel?.name || panel?.model || '';
 
 function Section({ title, count, children }) {
@@ -385,27 +388,31 @@ export default function LayoutPlanner({ arrayId }) {
         }).ranked.filter((r) => r.count > 0);
     }, [started, settled.roofPolygon, settled.exclusions, settled.spacing, settled.options.orientation, candidatesPanels]);
 
-    const layouts = useMemo(() => {
-        const seen = new Set();
+    // Every candidate that passes (both orientations of a panel can give different layouts), then grouped
+    // by layout so panels of about the same size don't fill the list with the same grid.
+    const candidates = useMemo(() => {
         const out = [];
         for (const r of ranked) {
-            if (seen.has(r.panelModel)) continue; // best orientation per panel
             const panel = panelByModel.get(r.panelModel);
             const ps = controller && panel ? bestParallelStringsForController(array, panel, r.count, controller, settings.systemVoltage, conditions) : null;
             if (controller && passOnly && ps == null) continue;
-            seen.add(r.panelModel);
             out.push({ ...r, panel, wiring: isMicroinverter(controller) ? null : formatWiringLabel(r.count, ps ?? 1) });
         }
-        return sortLayouts(out, geo.options.sort, panelByModel);
-    }, [ranked, panelByModel, controller, passOnly, array, settings.systemVoltage, conditions, geo.options.sort]);
+        return out;
+    }, [ranked, panelByModel, controller, passOnly, array, settings.systemVoltage, conditions]);
+    const groups = useMemo(() => groupLayouts(candidates, geo.options.sort, panelByModel), [candidates, geo.options.sort, panelByModel]);
+    const [openGroup, setOpenGroup] = useState(null); // null: follow the preview; undefined: all closed
+    const [shownInGroup, setShownInGroup] = useState(PAGE);
 
     const appliedKeys = useMemo(() => new Set((geo.applied?.rects_m || []).map(slotKey)), [geo.applied]);
     const hasApplied = !!geo.applied && appliedKeys.size > 0;
     // The drawing can change after a layout was applied; say so when the applied panels no longer fit.
     const appliedCandidate = hasApplied ? ranked.find((r) => r.id === geo.applied.id) : null;
     const appliedFits = !hasApplied || (!!appliedCandidate && [...appliedKeys].every((k) => appliedCandidate.rects_m.some((r) => slotKey(r) === k)));
-    const effectivePreviewId = previewId ?? (hasApplied ? null : layouts[0]?.id ?? null);
-    const preview = layouts.find((l) => l.id === effectivePreviewId) || ranked.find((l) => l.id === effectivePreviewId) || null;
+    const effectivePreviewId = previewId ?? (hasApplied ? null : groups[0]?.best.id ?? null);
+    const preview = candidates.find((l) => l.id === effectivePreviewId) || ranked.find((l) => l.id === effectivePreviewId) || null;
+    const previewGroupKey = groups.find((g) => g.candidates.some((c) => c.id === effectivePreviewId))?.key ?? null;
+    const expandedKey = openGroup === undefined ? null : openGroup ?? previewGroupKey;
     const previewPanel = preview ? panelByModel.get(preview.panelModel) : null;
     const trimmed = preview ? withEmptySlots(preview, geo.emptySlots[preview.id] || [], previewPanel) : null;
 
@@ -584,6 +591,7 @@ export default function LayoutPlanner({ arrayId }) {
                         <label className="flex flex-col gap-1">
                             Sort
                             <select value={geo.options.sort} onChange={(e) => change({ options: { ...geo.options, sort: e.target.value } }, { final: true })} className="h-8 rounded-md border border-line-strong bg-white px-2 text-[13px] text-body">
+                                <option value="size">Panel size</option>
                                 <option value="power">Most power</option>
                                 <option value="cost">Lowest £/kWp</option>
                             </select>
@@ -601,49 +609,93 @@ export default function LayoutPlanner({ arrayId }) {
                 </div>
 
                 <ul className="flex min-h-0 flex-1 flex-col overflow-y-auto" aria-label="Layouts">
-                    {layouts.slice(0, shown).map((l) => {
-                        const selected = l.id === effectivePreviewId;
-                        const cost = knownPrice(l.panel) == null ? null : knownPrice(l.panel) * l.count;
-                        const perKWp = layoutCostPerKWp(l.panel, l.count);
-                        const same = samePanelArrays(l.panelModel, arraysData, arrayId);
+                    {groups.slice(0, shown).map((g) => {
+                        const open = g.key === expandedKey;
+                        const holdsPreview = g.key === previewGroupKey;
+                        const label = `${g.count} panels · ${g.orientation}${g.cols && g.rows ? ` · ${g.cols} × ${g.rows}` : ''}`;
+                        const previewed = holdsPreview ? g.candidates.find((c) => c.id === effectivePreviewId) : null;
                         return (
-                            <li key={l.id} className="border-b border-line-soft">
+                            <li key={g.key} className="border-b border-line-soft">
                                 <button
                                     type="button"
-                                    aria-pressed={selected}
-                                    onClick={() => setPreviewId(l.id)}
-                                    className={`flex w-full flex-col gap-1 px-5 py-3 text-left ${selected ? 'bg-select-bg shadow-[inset_3px_0_0_#0044CC]' : 'hover:bg-paper'}`}
+                                    aria-expanded={open}
+                                    onClick={() => {
+                                        setOpenGroup(open ? undefined : g.key);
+                                        setShownInGroup(PAGE);
+                                        if (!holdsPreview) setPreviewId(g.best.id);
+                                    }}
+                                    className={`flex w-full gap-2 px-4 py-3 text-left ${holdsPreview ? 'bg-select-bg shadow-[inset_3px_0_0_#0044CC]' : 'hover:bg-paper'}`}
                                 >
-                                    <span className="flex items-baseline justify-between gap-2 text-sm font-semibold">
-                                        <span className="truncate">{shortName(l.panel) || l.panelName}</span>
-                                        <span className="shrink-0 font-plex-mono text-[13px]">{kWp(l.totalW)}</span>
-                                    </span>
-                                    <span className="text-xs text-subtle">
-                                        {l.count} × {l.orientation}
-                                        {l.wiring ? ` · ${l.wiring}` : ''} · {cost == null ? 'price unknown' : formatMoney(cost)}
-                                        {perKWp == null ? '' : ` · ${formatMoney(perKWp)}/kWp`}
-                                    </span>
-                                    {selected || same.length ? (
-                                        <span className="flex flex-wrap gap-1.5 text-[11px] font-semibold">
-                                            {selected ? <span className="rounded bg-secondary px-1.5 py-0.5 text-white">Previewing</span> : null}
-                                            {same.length ? <span className="rounded bg-status-ok-bg px-1.5 py-0.5 text-status-ok-fg">Same panel as {same.join(', ')}</span> : null}
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" className={`mt-1 shrink-0 text-muted transition-transform ${open ? 'rotate-90' : ''}`}>
+                                        <path d="m9 6 6 6-6 6" />
+                                    </svg>
+                                    <span className="flex min-w-0 flex-1 flex-col gap-1">
+                                        <span className="flex items-baseline justify-between gap-2 text-sm font-semibold">
+                                            <span className="truncate">{label}</span>
+                                            <span className="shrink-0 font-plex-mono text-[13px]">{kWpRange(g.power)}</span>
                                         </span>
-                                    ) : null}
+                                        <span className="text-xs text-subtle">
+                                            Panels {mmRange(g.size.minH, g.size.maxH)} × {mmRange(g.size.minW, g.size.maxW)} mm · {g.candidates.length} {g.candidates.length === 1 ? 'panel fits' : 'panels fit'}
+                                            {g.bestCostPerKWp == null ? '' : ` · from ${formatMoney(g.bestCostPerKWp)}/kWp`}
+                                        </span>
+                                        {previewed ? (
+                                            <span className="flex flex-wrap gap-1.5 text-[11px] font-semibold">
+                                                <span className="rounded bg-secondary px-1.5 py-0.5 text-white">Previewing {shortName(previewed.panel)}</span>
+                                            </span>
+                                        ) : null}
+                                    </span>
                                 </button>
+                                {open ? (
+                                    <ul aria-label={`Panels for ${label}`} className="flex flex-col border-t border-line-soft bg-paper/60 py-1">
+                                        {g.candidates.slice(0, shownInGroup).map((l) => {
+                                            const selected = l.id === effectivePreviewId;
+                                            const cost = knownPrice(l.panel) == null ? null : knownPrice(l.panel) * l.count;
+                                            const perKWp = layoutCostPerKWp(l.panel, l.count);
+                                            const same = samePanelArrays(l.panelModel, arraysData, arrayId);
+                                            return (
+                                                <li key={l.id}>
+                                                    <button
+                                                        type="button"
+                                                        aria-pressed={selected}
+                                                        onClick={() => setPreviewId(l.id)}
+                                                        className={`flex w-full flex-col gap-0.5 py-2 pr-4 pl-9 text-left ${selected ? 'bg-white font-medium ring-1 ring-inset ring-secondary' : 'hover:bg-white'}`}
+                                                    >
+                                                        <span className="flex items-baseline justify-between gap-2 text-[13px]">
+                                                            <span className="truncate">{shortName(l.panel) || l.panelName}</span>
+                                                            <span className="shrink-0 font-plex-mono text-xs">{kWp(l.totalW)}</span>
+                                                        </span>
+                                                        <span className="text-[11px] text-subtle">
+                                                            {mm(l.panel?.height)} × {mm(l.panel?.width)} mm{l.wiring ? ` · ${l.wiring}` : ''} · {cost == null ? 'price unknown' : formatMoney(cost)}
+                                                            {perKWp == null ? '' : ` · ${formatMoney(perKWp)}/kWp`}
+                                                        </span>
+                                                        {same.length ? <span className="self-start rounded bg-status-ok-bg px-1.5 py-0.5 text-[11px] font-semibold text-status-ok-fg">Same panel as {same.join(', ')}</span> : null}
+                                                    </button>
+                                                </li>
+                                            );
+                                        })}
+                                        {g.candidates.length > shownInGroup ? (
+                                            <li className="py-1.5 pl-9">
+                                                <button type="button" onClick={() => setShownInGroup(g.candidates.length)} className="text-[12px] font-semibold text-secondary hover:underline">
+                                                    Show all {g.candidates.length} panels
+                                                </button>
+                                            </li>
+                                        ) : null}
+                                    </ul>
+                                ) : null}
                             </li>
                         );
                     })}
-                    {layouts.length === 0 ? (
+                    {groups.length === 0 ? (
                         <li className="px-5 py-6 text-sm text-muted">
                             {ranked.length && controller && passOnly
                                 ? `No layout passes on ${controller.name}. Untick the filter to see them all.`
                                 : 'Nothing fits yet. Check the size and the setback, or remove an obstacle.'}
                         </li>
                     ) : null}
-                    {layouts.length > shown ? (
+                    {groups.length > shown ? (
                         <li className="px-5 py-3">
                             <button type="button" onClick={() => setShown((n) => n + PAGE)} className="text-[13px] font-semibold text-secondary hover:underline">
-                                Show more ({layouts.length - shown})
+                                Show more layouts ({groups.length - shown})
                             </button>
                         </li>
                     ) : null}

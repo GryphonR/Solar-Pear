@@ -1,8 +1,8 @@
 /**
  * @file Chooser.jsx
  * "What are you building?" (roadmap 13.5, delivers 7.1; canvas board "First run"). Shown on first run and
- * for New project. Each tile starts a project with one system set up from a preset; there is no plug-in
- * tile (decision D11).
+ * for New project. Name the project, pick the closest tile, then Start design: the project gets one system
+ * set up from that preset. There is no plug-in tile (decision D11).
  */
 
 import React, { useState } from 'react';
@@ -49,6 +49,7 @@ const ICONS = {
 
 export default function Chooser({ firstRun, backTo, onChoose, onSkip }) {
     const [name, setName] = useState('My design');
+    const [choice, setChoice] = useState(null);
     const projectName = name.trim() || 'My design';
 
     return (
@@ -71,44 +72,56 @@ export default function Chooser({ firstRun, backTo, onChoose, onSkip }) {
                     <span className="text-xs font-semibold tracking-[0.12em] text-muted">NEW PROJECT</span>
                     <h1 className="text-[44px] font-semibold leading-[52px] tracking-[-0.02em]">What are you building?</h1>
                     <p className="max-w-[620px] text-[17px] leading-[26px] text-subtle">
-                        Pick the closest match. It sets sensible defaults for voltage, temperatures and the products
-                        you&apos;ll see. You can change any of them later.
+                        This sets sensible defaults for the project. You can change any of them later.
                     </p>
                 </div>
 
-                <div className="grid w-full max-w-[1120px] grid-cols-2 gap-5 xl:grid-cols-4">
-                    {PRESETS.map((preset) => (
-                        <button
-                            key={preset.id}
-                            type="button"
-                            onClick={() => onChoose(preset, projectName)}
-                            className="flex min-h-[250px] flex-col gap-3.5 rounded-xl border border-line bg-white px-5 py-[22px] text-left text-body hover:border-ink hover:shadow-[0_6px_18px_rgba(20,24,31,0.08)]"
-                        >
-                            <span className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#FFF6CC]" aria-hidden="true">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14181F" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                                    {ICONS[preset.id]}
-                                </svg>
-                            </span>
-                            <span className="text-[17px] font-semibold">{preset.title}</span>
-                            <span className="text-sm leading-[21px] text-subtle">{preset.text}</span>
-                            <span className="mt-auto font-plex-mono text-xs text-muted">{preset.tag}</span>
-                        </button>
-                    ))}
+                <label className="flex w-full max-w-[1120px] flex-col gap-1.5">
+                    <span className="text-sm font-semibold">Project name</span>
+                    <input
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        maxLength={80}
+                        className="h-11 w-full max-w-[360px] rounded-lg border border-line-strong bg-white px-3 text-[15px]"
+                    />
+                </label>
+
+                <div role="radiogroup" aria-label="What are you building?" className="-mt-4 grid w-full max-w-[1120px] grid-cols-2 gap-5 xl:grid-cols-4">
+                    {PRESETS.map((preset) => {
+                        const selected = choice?.id === preset.id;
+                        return (
+                            <button
+                                key={preset.id}
+                                type="button"
+                                role="radio"
+                                aria-checked={selected}
+                                onClick={() => setChoice(preset)}
+                                className={`flex min-h-[250px] flex-col gap-3.5 rounded-xl border bg-white px-5 py-[22px] text-left text-body ${selected ? 'border-secondary bg-select-bg ring-2 ring-secondary' : 'border-line hover:border-ink hover:shadow-[0_6px_18px_rgba(20,24,31,0.08)]'}`}
+                            >
+                                <span className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#FFF6CC]" aria-hidden="true">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14181F" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                                        {ICONS[preset.id]}
+                                    </svg>
+                                </span>
+                                <span className="text-[17px] font-semibold">{preset.title}</span>
+                                <span className="text-sm leading-[21px] text-subtle">{preset.text}</span>
+                                <span className="mt-auto font-plex-mono text-xs text-muted">{preset.tag}</span>
+                            </button>
+                        );
+                    })}
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
-                    <label className="flex items-center gap-2.5">
-                        <span className="text-subtle">Project name</span>
-                        <input
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            maxLength={80}
-                            className="h-10 w-[220px] rounded-lg border border-line-strong bg-white px-3 text-sm"
-                        />
-                    </label>
-                    <span className="h-6 w-px bg-line" aria-hidden="true" />
+                <div className="flex w-full max-w-[1120px] flex-wrap items-center justify-between gap-4 border-t border-line pt-6 text-sm">
                     <button type="button" onClick={() => onSkip(projectName)} className="font-semibold text-secondary hover:underline">
                         {firstRun ? 'Skip, start with a blank system' : 'Start with a blank system'}
+                    </button>
+                    <button
+                        type="button"
+                        disabled={!choice}
+                        onClick={() => choice && onChoose(choice, projectName)}
+                        className="h-11 rounded-lg bg-brand px-6 text-[15px] font-semibold text-ink disabled:cursor-not-allowed disabled:bg-line-soft disabled:text-muted"
+                    >
+                        {choice ? `Start design: ${choice.title}` : 'Choose what you’re building to start'}
                     </button>
                 </div>
 

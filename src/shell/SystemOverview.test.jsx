@@ -61,7 +61,7 @@ describe("system overview single line diagram (roadmap 13.7)", () => {
         expect(focusable[2]).toMatch(/^DC isolator/);
         expect(focusable[3]).toBe("Assign to MPPT 2");
         expect(focusable[4]).toBe(hybrid.name);
-        const westAt = focusable.findIndex((t) => /Choose a panel/.test(t));
+        const westAt = focusable.findIndex((t) => /Configure array/.test(t));
         expect(westAt).toBeGreaterThan(4);
         expect(screen.getByText("Checked at -10 °C cold · 65 °C cell")).toBeInTheDocument();
     });
@@ -86,14 +86,46 @@ describe("system overview single line diagram (roadmap 13.7)", () => {
         const issues = screen.getByRole("region", { name: "Issues" });
         const west = within(issues).getByText("West roof").closest("article");
         expect(west).toHaveTextContent("No panel or controller yet");
-        await userEvent.click(within(west).getByRole("link", { name: "Choose a panel" }));
-        expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A3/panel");
+        await userEvent.click(within(west).getByRole("link", { name: "Configure array" }));
+        expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A3/layout");
     });
 
     it("shows an empty system as placeholders with a next step", async () => {
         renderAt("/p/proj_home/s/sys_barn");
         const sld = await screen.findByTestId("sld");
         expect(within(sld).getByText("No controller yet")).toBeInTheDocument();
-        expect(within(sld).getByRole("link", { name: "Choose a panel →" })).toBeInTheDocument();
+        expect(within(sld).getByRole("link", { name: "Configure array →" })).toHaveAttribute("href", "/p/proj_home/s/sys_barn/a/A2/layout");
+    });
+
+    it("adds an array from under the diagram's arrays, in this system", async () => {
+        renderAt("/p/proj_home/s/sys_house");
+        const sld = await screen.findByTestId("sld");
+        await userEvent.click(within(sld).getByRole("button", { name: "Add array" }));
+        const dialog = await screen.findByRole("dialog", { name: "Add an array to House" });
+        expect(within(dialog).getByRole("textbox", { name: "Array name" })).toHaveValue("Array 3");
+        await userEvent.click(within(dialog).getByRole("button", { name: "Add array" }));
+        await waitFor(() => expect(stored().projects[0].arrays.find((a) => a.name === "Array 3")).toMatchObject({ systemId: "sys_house", panel: "" }));
+    });
+
+    it("renames the system in place from its heading", async () => {
+        renderAt("/p/proj_home/s/sys_house");
+        await userEvent.click(await screen.findByRole("button", { name: "Rename system House" }));
+        const field = screen.getByRole("textbox", { name: "Rename system House" });
+        await userEvent.clear(field);
+        await userEvent.type(field, "Barn");
+        expect(screen.getByText("Another system is already called Barn.")).toBeInTheDocument();
+        await userEvent.clear(field);
+        await userEvent.type(field, "Farmhouse{Enter}");
+        expect(await screen.findByRole("heading", { level: 1, name: "Farmhouse" })).toBeInTheDocument();
+        expect(stored().projects[0].systems.map((x) => x.name)).toContain("Farmhouse");
+    });
+
+    it("renames an array in place from its heading", async () => {
+        renderAt("/p/proj_home/s/sys_house/a/A1/layout");
+        await userEvent.click(await screen.findByRole("button", { name: "Rename array South roof" }));
+        const arrayField = screen.getByRole("textbox", { name: "Rename array South roof" });
+        await userEvent.clear(arrayField);
+        await userEvent.type(arrayField, "Front roof{Enter}");
+        await waitFor(() => expect(stored().projects[0].arrays.find((a) => a.id === "A1").name).toBe("Front roof"));
     });
 });

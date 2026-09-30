@@ -7,3 +7,4 @@ export { default as SidePanel } from './SidePanel';
 export { default as EmptyState } from './EmptyState';
 export { FilterBar, FilterButton } from './FilterBar';
 export { default as Toast } from '../Toast';
+export { default as EditableTitle } from './EditableTitle';

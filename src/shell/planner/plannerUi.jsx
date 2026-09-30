@@ -22,7 +22,7 @@ export function NumberField({ label, unit, value, onChange, onBlur, aria, placeh
                     aria-label={aria || label}
                     onChange={(e) => onChange(e.target.value)}
                     onBlur={onBlur}
-                    className="h-full w-full min-w-0 rounded-md bg-transparent px-2.5 font-plex-mono text-sm text-body outline-none"
+                    className="focus-ring-on-wrapper h-full w-full min-w-0 rounded-md bg-transparent px-2.5 font-plex-mono text-sm text-body outline-none"
                 />
                 <span className="pr-2.5 font-plex-mono text-xs text-muted">{unit}</span>
             </span>

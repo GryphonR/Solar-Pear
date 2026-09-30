@@ -68,6 +68,10 @@ textarea:focus-visible {
   outline: 2px solid var(--color-secondary, #0044cc);
   outline-offset: 2px;
 }
+/* A field whose wrapper draws the focus ring (e.g. an input with a unit suffix) opts out of its own. */
+input.focus-ring-on-wrapper:focus-visible {
+  outline: none;
+}
 
 /**
  * Viewport-height chain so #root can scroll: with only min-height on #root, the box grew with content and

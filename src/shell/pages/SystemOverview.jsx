@@ -79,7 +79,7 @@ const box = (n) => ({ left: n.x, top: n.y, width: n.w, height: n.h });
 
 function ArrayNode({ n, to }) {
     if (n.placeholder) {
-        const next = { layout: 'Set the layout', panel: 'Choose a panel', controller: 'Add it to a controller' }[n.next] || 'Open';
+        const next = n.next === 'controller' ? 'Add it to a controller' : 'Configure array';
         return (
             <div style={box(n)} className={`absolute flex flex-col gap-1 rounded-lg px-3.5 py-3 ${PLACEHOLDER}`}>
                 <span className="flex items-center justify-between text-sm font-semibold">
@@ -346,7 +346,7 @@ function DiagramList({ layout, issues, paths, conditions }) {
 function IssueCard({ item, paths }) {
     const tone = { error: 'border-status-error-edge', warning: 'border-status-warning-line', info: 'border-line' }[item.severity];
     const word = { error: 'text-status-error-fg', warning: 'text-status-warning-fg', info: 'text-status-info-fg' }[item.severity];
-    const arrayTo = item.arrayId ? paths.arrayById(item.arrayId, item.missing === 'layout' ? 'layout' : item.missing === 'panel' ? 'panel' : 'overview') : null;
+    const arrayTo = item.arrayId ? paths.arrayById(item.arrayId, item.missing === 'layout' || item.missing === 'panel' ? 'layout' : 'overview') : null;
     return (
         <article id={`issue-${item.id}`} tabIndex={-1} className={`flex flex-col gap-2.5 rounded-[10px] border bg-white px-[18px] py-4 ${tone} ${FOCUS}`}>
             <div className="flex items-center gap-2 text-xs text-muted">
@@ -370,7 +370,7 @@ function IssueCard({ item, paths }) {
             <div className="flex flex-wrap gap-4 text-sm font-semibold">
                 {arrayTo ? (
                     <Link to={arrayTo} className="text-secondary hover:underline">
-                        {item.missing === 'panel' ? 'Choose a panel' : item.missing === 'layout' ? 'Set the layout' : 'Open the array'}
+                        {item.missing === 'panel' || item.missing === 'layout' ? 'Configure array' : 'Open the array'}
                     </Link>
                 ) : null}
                 {item.instanceId || item.needsController ? (
@@ -405,7 +405,8 @@ export default function SystemOverview({ design, system, onAddArray }) {
 
     const paths = {
         arrayById: (arrayId, tab = 'overview') => buildPath({ view: 'array', projectId, systemId: system.id, arrayId, tab }),
-        array: (n) => buildPath({ view: 'array', projectId, systemId: system.id, arrayId: n.arrayId, tab: n.next === 'layout' ? 'layout' : n.next === 'panel' ? 'panel' : 'overview' }),
+        // An unfinished array opens on its Layout tab, where configuring it starts.
+        array: (n) => buildPath({ view: 'array', projectId, systemId: system.id, arrayId: n.arrayId, tab: n.next === 'layout' || n.next === 'panel' ? 'layout' : 'overview' }),
         controllers: buildPath({ view: 'system', projectId, systemId: system.id, tab: 'controllers' }),
         setup: buildPath({ view: 'system', projectId, systemId: system.id, tab: 'setup' }),
     };
@@ -423,6 +424,11 @@ export default function SystemOverview({ design, system, onAddArray }) {
         else exportPng(svg, `${name}.png`);
     };
 
+    // "+ Add array" under the last array in the diagram (not part of the drawing, so not exported).
+    const arrayNodes = layout.nodes.filter((n) => n.kind === 'array');
+    const addMore = arrayNodes.length
+        ? { x: arrayNodes[0].x, y: Math.max(...arrayNodes.map((n) => n.y + n.h)) + 16, w: arrayNodes[0].w, h: 40 }
+        : null;
     const byId = new Map([...layout.nodes, ...layout.edges].map((x) => [x.id, x]));
     const renderItem = (id) => {
         const x = byId.get(id);
@@ -580,7 +586,7 @@ export default function SystemOverview({ design, system, onAddArray }) {
                                     </span>
                                 ))}
                             </div>
-                            <div data-testid="sld" className="relative mt-4" style={{ width: layout.width, height: layout.height }}>
+                            <div data-testid="sld" className="relative mt-4" style={{ width: layout.width, height: addMore ? addMore.y + addMore.h : layout.height }}>
                                 <svg aria-hidden="true" width={layout.width} height={layout.height} className="absolute inset-0 overflow-visible">
                                     <defs>
                                         {Object.entries(EDGE).map(([k, c]) => (
@@ -608,6 +614,16 @@ export default function SystemOverview({ design, system, onAddArray }) {
                                     })}
                                 </svg>
                                 {layout.order.map(renderItem)}
+                                {addMore ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => onAddArray(system.name)}
+                                        style={box(addMore)}
+                                        className={`absolute flex items-center justify-center gap-1.5 rounded-lg text-[13px] font-semibold text-secondary hover:bg-paper ${PLACEHOLDER} ${FOCUS}`}
+                                    >
+                                        <Plus size={14} /> Add array
+                                    </button>
+                                ) : null}
                             </div>
                         </div>
                     ) : (

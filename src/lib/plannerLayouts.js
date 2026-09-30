@@ -202,6 +202,55 @@ export function sortLayouts(ranked, sort, panelByModel) {
 }
 
 /**
+ * Ranked candidates grouped by layout: the same orientation, grid (rows × columns) and panel count.
+ * Many panels of about the same size give the same layout, so the list shows layouts, each with the band
+ * of panel sizes that produces it, and the panels as a choice inside it.
+ * @param {object[]} candidates ranked layouts (`computePlannerLayouts().ranked`), already filtered
+ * @param {'size'|'power'|'cost'} sort size: largest panels first (so each group's band ends where the next
+ *   layout takes over); power: best kWp first; cost: best £/kWp first, unknown last
+ * @param {Map<string, object>} panelByModel
+ * @returns {{ key, orientation, count, rows, cols, candidates: object[], best: object,
+ *            size: { minH, maxH, minW, maxW }, power: [number, number], bestCostPerKWp: number|null }[]}
+ */
+export function groupLayouts(candidates, sort, panelByModel) {
+    const groups = new Map();
+    for (const c of candidates) {
+        const key = [c.orientation, c.rows ?? '', c.cols ?? '', c.count].join('|');
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(c);
+    }
+    const out = [...groups.entries()].map(([key, list]) => {
+        const panels = list.map((c) => panelByModel.get(c.panelModel)).filter(Boolean);
+        const hs = panels.map((p) => Number(p.height) || 0);
+        const ws = panels.map((p) => Number(p.width) || 0);
+        const inner = sortLayouts([...list].sort((a, b) => b.totalW - a.totalW), sort === 'cost' ? 'cost' : 'power', panelByModel);
+        const costs = list.map((c) => layoutCostPerKWp(panelByModel.get(c.panelModel), c.count)).filter((x) => x != null);
+        const [first] = list;
+        return {
+            key,
+            orientation: first.orientation,
+            count: first.count,
+            rows: first.rows ?? null,
+            cols: first.cols ?? null,
+            candidates: inner,
+            best: inner[0],
+            size: { minH: Math.min(...hs), maxH: Math.max(...hs), minW: Math.min(...ws), maxW: Math.max(...ws) },
+            power: [Math.min(...list.map((c) => c.totalW)), Math.max(...list.map((c) => c.totalW))],
+            bestCostPerKWp: costs.length ? Math.min(...costs) : null,
+        };
+    });
+    const area = (g) => g.size.maxH * g.size.maxW;
+    return out.sort((a, b) => {
+        if (sort === 'cost') {
+            if (a.bestCostPerKWp == null || b.bestCostPerKWp == null) return (a.bestCostPerKWp == null) - (b.bestCostPerKWp == null) || b.power[1] - a.power[1];
+            return a.bestCostPerKWp - b.bestCostPerKWp || b.power[1] - a.power[1];
+        }
+        if (sort === 'power') return b.power[1] - a.power[1] || b.count - a.count;
+        return area(b) - area(a) || a.count - b.count;
+    });
+}
+
+/**
  * The setback line: the roof outline moved inwards by `d` metres on every edge. Exact for convex shapes
  * (rectangles, hipped faces); for a drawn concave outline it is a guide only, since the engine checks the
  * distance from each panel to every edge itself.

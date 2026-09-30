@@ -54,8 +54,14 @@ describe("layout planner (roadmap 13.8)", () => {
         renderAt(LAYOUT);
         await describeRoof(user);
 
+        // Layouts are grouped by grid; the first group is open with its best panel previewed.
         const layouts = screen.getByRole("list", { name: "Layouts" });
-        expect(within(layouts).getAllByRole("button", { pressed: true })[0]).toHaveTextContent("Previewing");
+        const group = within(layouts).getAllByRole("button", { expanded: true })[0];
+        expect(group).toHaveTextContent(/^\d+ panels · (portrait|landscape)/);
+        expect(group).toHaveTextContent(/Panels [\d,–]+ × [\d,–]+ mm · \d+ panels? fits?/);
+        expect(group).toHaveTextContent("Previewing");
+        const panels = within(layouts).getByRole("list", { name: /^Panels for / });
+        expect(within(panels).getAllByRole("button", { pressed: true })).toHaveLength(1);
         expect(screen.getByText(/^Not checked: the array has no controller yet/)).toBeInTheDocument();
         // The drawing is saved, the layout isn't.
         await waitFor(() => expect(southRoof().planner?.roofPolygon).toHaveLength(4));

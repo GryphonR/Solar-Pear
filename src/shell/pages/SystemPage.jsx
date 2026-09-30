@@ -6,7 +6,8 @@
 
 import React from 'react';
 import { Link } from 'react-router';
-import { StatusPill } from '../../components/ui';
+import { EditableTitle, StatusPill } from '../../components/ui';
+import { useDataState } from '../../context/AppStateContext';
 import { buildPath } from '../../lib/routes';
 import { Cost, kWp } from './ProjectOverview';
 import SystemSetup from './SystemSetup';
@@ -19,7 +20,8 @@ const TABS = [
     ['controllers', 'Controllers'],
 ];
 
-export default function SystemPage({ design, system, tab = 'overview', onAddArray, onEditSystem }) {
+export default function SystemPage({ design, system, tab = 'overview', onAddArray }) {
+    const { renameSystemById } = useDataState();
     const projectId = design.project.id;
     const current = TABS.some(([key]) => key === tab) ? tab : 'overview';
 
@@ -27,13 +29,15 @@ export default function SystemPage({ design, system, tab = 'overview', onAddArra
         <div className="flex flex-col gap-6">
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="flex flex-col gap-1.5">
-                    <h1 className="text-[30px] font-semibold leading-9">{system.name}</h1>
+                    <EditableTitle
+                        value={system.name}
+                        label={`Rename system ${system.name}`}
+                        onRename={(name) => renameSystemById(system.id, name)}
+                        validate={(name) => (design.systems.some((s) => s.id !== system.id && s.name === name) ? `Another system is already called ${name}.` : null)}
+                    />
                     <div className="flex flex-wrap items-center gap-3 text-[13px] text-subtle">
                         <span>{system.meta}</span>
                         <StatusPill status={system.summary.status}>{system.summary.label}</StatusPill>
-                        <button type="button" onClick={() => onEditSystem(system.name)} className="font-semibold text-secondary underline-offset-2 hover:underline">
-                            Rename
-                        </button>
                     </div>
                 </div>
                 <dl className="flex gap-8">

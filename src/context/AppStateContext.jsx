@@ -970,6 +970,36 @@ function AppStateProviderInner({ children }) {
         });
     };
 
+    /** New shell (13.x): add a named array to a system with the usual defaults; returns its id. */
+    const addArrayToSystem = (systemName, name) => {
+        const id = newId('array');
+        setArraysData((prev) => [
+            ...prev,
+            {
+                id,
+                name,
+                area: systemName,
+                orientation: 'South',
+                count: 6,
+                format: 'Portrait',
+                mounting: 'On Roof',
+                maxPanelHeight: '',
+                maxPanelWidth: '',
+                maxPanelWeight: '',
+                panel: '',
+                controllerInstanceId: '',
+                controllerMppt: 1,
+                controller: '',
+            },
+        ]);
+        return id;
+    };
+
+    /** Renames a system by id (its arrays, controllers and settings stay attached). */
+    const renameSystemById = (systemId, name) => {
+        setProjectsStore((store) => updateActiveProject(store, (project) => renameSystem(project, systemId, name)));
+    };
+
     const handleAddArraySave = (d) => {
         if ((addArrayModal.mode || 'add') === 'edit' && addArrayModal.targetArrayId) {
             setArraysData((prev) =>
@@ -1105,6 +1135,8 @@ function AppStateProviderInner({ children }) {
             availableChargers,
             getArrayAnalysis,
             analyzeArrayWith,
+            addArrayToSystem,
+            renameSystemById,
             // Actions
             setProjectsStore,
             createProject,
@@ -1237,6 +1269,8 @@ function AppStateProviderInner({ children }) {
             availableChargers: value.availableChargers,
             getArrayAnalysis: value.getArrayAnalysis,
             analyzeArrayWith: value.analyzeArrayWith,
+            addArrayToSystem: value.addArrayToSystem,
+            renameSystemById: value.renameSystemById,
             getAreaSettings: value.getAreaSettings,
             updateAreaSettings: value.updateAreaSettings,
             setArraysData: value.setArraysData,
