@@ -22,7 +22,11 @@ import ChargersDbView from './views/ChargersDbView';
 import ArraySelectorView from './views/ArraySelectorView';
 import PanelsGuideView from './views/PanelsGuideView';
 import ControllersGuideView from './views/ControllersGuideView';
+import MethodologyView from './views/MethodologyView';
+import AboutView from './views/AboutView';
 import Toast from './components/Toast';
+import { openAboutSection } from './components/TrustNotices';
+import { ABOUT_SECTIONS, ABOUT_TAB, METHODOLOGY_TAB, OPERATOR_NAME } from './lib/siteInfo';
 import { useDataState, usePlannerState, useUiState } from './context/AppStateContext';
 import { useBackupRestore } from './hooks/useBackupRestore';
 
@@ -121,6 +125,7 @@ export default function App() {
         usePlannerState();
 
     const { handleDownload, handleUploadClick, handleResetClick } = useBackupRestore();
+    const openAbout = (sectionId) => openAboutSection(setActiveTab, sectionId);
     const activeArray = arraysData.find((a) => a.id === activeTab);
     const modalSystemVoltage = activeArray
         ? getAreaSettings(activeArray.area).systemVoltage
@@ -200,7 +205,11 @@ export default function App() {
                 <div className="max-w-7xl mx-auto p-8 relative min-h-full flex flex-col">
                     <div className="flex-1 min-h-0">
                         <div key={activeTab} className="animate-in fade-in duration-150">
-                            {activeTab === 'GUIDE' ? (
+                            {activeTab === ABOUT_TAB ? (
+                                <AboutView onOpenMethodology={() => setActiveTab(METHODOLOGY_TAB)} />
+                            ) : activeTab === METHODOLOGY_TAB ? (
+                                <MethodologyView onOpenAbout={openAbout} />
+                            ) : activeTab === 'GUIDE' ? (
                                 <Guide />
                             ) : activeTab === 'GUIDE_PANELS' ? (
                                 <PanelsGuideView />
@@ -218,11 +227,30 @@ export default function App() {
                         </div>
                     </div>
 
-                    <footer className="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400 text-[10px] uppercase tracking-widest pb-4">
-                        <p>© Copyright eChook 2026</p>
-                        <p className="mt-1 normal-case italic tracking-normal">
-                            This site uses affiliate links.
+                    <footer className="mt-16 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs pb-4 space-y-2">
+                        <p className="max-w-2xl mx-auto leading-relaxed">
+                            Solar Pear checks component compatibility; it is not an installation design. Always
+                            follow the manufacturers’ datasheets and BS 7671. Some buy links are affiliate links.
                         </p>
+                        <nav aria-label="About and legal" className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                            {[
+                                ['Methodology', () => setActiveTab(METHODOLOGY_TAB)],
+                                ['Disclaimer', () => openAbout(ABOUT_SECTIONS.disclaimer)],
+                                ['Affiliate links', () => openAbout(ABOUT_SECTIONS.affiliates)],
+                                ['Privacy', () => openAbout(ABOUT_SECTIONS.privacy)],
+                                ['Terms', () => openAbout(ABOUT_SECTIONS.terms)],
+                            ].map(([label, onClick]) => (
+                                <button
+                                    key={label}
+                                    type="button"
+                                    onClick={onClick}
+                                    className="underline-offset-2 hover:underline hover:text-slate-600"
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </nav>
+                        <p className="text-[10px] uppercase tracking-widest">© {OPERATOR_NAME} 2026</p>
                     </footer>
                 </div>
             </div>

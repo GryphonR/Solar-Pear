@@ -6,6 +6,7 @@ import DesignNotes from '../DesignNotes';
 import { ExternalLink, Info } from '../Icons';
 import { GSE_COMPATIBILITY, getPanelGseCompatibility } from '../../lib/gseCompatibility';
 import { safeHttpUrl } from '../../lib/safeUrl';
+import { dataCorrectionIssueUrl } from '../../lib/siteInfo';
 
 export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdateNote }) {
     if (!panel) return null;
@@ -29,6 +30,9 @@ export default function PanelInfoModal({ open, panel, userNote, onClose, onUpdat
                         <ExternalLink size={12} className="mr-1" /> Datasheet
                     </a>
                 )}
+                <a href={dataCorrectionIssueUrl('panel', p)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-slate-500 hover:text-slate-800 hover:underline">
+                    Report a data error
+                </a>
             </div>
         </div>
     );

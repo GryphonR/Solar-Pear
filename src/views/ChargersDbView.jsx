@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, Info, ExternalLink } from '../components/Icons';
 import BuyButton from '../components/BuyButton';
+import { AffiliateNotice } from '../components/TrustNotices';
 import { useAppState } from '../context/AppStateContext';
 import { controllerTypeBadgeClass, controllerTypeLabel } from '../lib/controllerTypes';
 import { safeHttpUrl } from '../lib/safeUrl';
@@ -30,6 +31,7 @@ export default function ChargersDbView() {
                     <div>
                         <h2 className="text-2xl font-bold text-slate-800">PV Controllers Database</h2>
                         <p className="text-slate-500">Standalone MPPT chargers and hybrid inverters.</p>
+                        <AffiliateNotice className="mt-1" />
                     </div>
                     <button
                         onClick={addCharger}
