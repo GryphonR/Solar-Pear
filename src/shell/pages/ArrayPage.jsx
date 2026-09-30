@@ -79,7 +79,8 @@ function ControllerSlot({ entry, system, projectId, arraysData, siteControllers,
     const systemArrays = arraysData.filter((x) => x.area === system.name);
     const free = freePorts(instances, systemArrays, chargersData);
 
-    const portPicker = free.length > 0 ? (
+    // Options carry full controller names, so the select gets a set width instead of sizing to the longest.
+    const portPicker = (width) => free.length > 0 ? (
         <select
             aria-label={a?.controller ? 'Change port' : 'Assign a port'}
             value=""
@@ -87,7 +88,7 @@ function ControllerSlot({ entry, system, projectId, arraysData, siteControllers,
                 const [instanceId, port] = e.target.value.split('|');
                 if (instanceId) updateSelection(entry.id, 'controllerInstance', instanceId, Number(port));
             }}
-            className="h-8 rounded-md border border-line-strong bg-white px-2 text-xs"
+            className={`h-8 min-w-0 rounded-md border border-line-strong bg-white px-2 text-xs ${width}`}
         >
             <option value="">{a?.controller ? 'Change port…' : 'Assign a free port…'}</option>
             {free.map((f) => (
@@ -108,7 +109,7 @@ function ControllerSlot({ entry, system, projectId, arraysData, siteControllers,
                     detail={`Controllers are managed on the ${system.name} system's Controllers tab.`}
                     onAction={() => navigate(controllersTo)}
                 />
-                {portPicker ? <div className="text-[13px]">{portPicker}</div> : null}
+                {free.length > 0 ? <div className="text-[13px]">{portPicker('w-full')}</div> : null}
             </div>
         );
     }
@@ -120,8 +121,8 @@ function ControllerSlot({ entry, system, projectId, arraysData, siteControllers,
     return (
         <article className={`flex flex-col gap-2 rounded-[10px] border bg-white p-4 ${attention ? 'border-status-warning-line' : 'border-line'}`}>
             <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold tracking-[0.08em] text-muted uppercase">3 · Controller</span>
-                {portPicker}
+                <span className="shrink-0 text-xs font-semibold tracking-[0.08em] whitespace-nowrap text-muted uppercase">3 · Controller</span>
+                {portPicker('w-36')}
             </div>
             <span className="text-xs font-semibold tracking-[0.06em] text-muted uppercase">
                 {c.manufacturer} · {controllerTypeLabel(c.type, { short: true })}
