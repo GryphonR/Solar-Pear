@@ -20,7 +20,8 @@ import Guide from '../components/Guide';
 import SummaryView from '../views/SummaryView';
 import PanelsDbView from '../views/PanelsDbView';
 import ChargersDbView from '../views/ChargersDbView';
-import ArraySelectorView from '../views/ArraySelectorView';
+import ArrayPage from './pages/ArrayPage';
+import { ControllerUseIn, PanelUseIn } from './UseIn';
 import PanelsGuideView from '../views/PanelsGuideView';
 import ControllersGuideView from '../views/ControllersGuideView';
 import MethodologyView from '../views/MethodologyView';
@@ -115,7 +116,7 @@ function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, on
                             { label: array?.name || 'Array' },
                         ]}
                     />
-                    <ArraySelectorView arrayId={route.arrayId} />
+                    <ArrayPage design={design} system={system} route={route} />
                 </>
             );
         }
@@ -123,7 +124,11 @@ function ShellContent({ route, design, setActiveTab, onAddSystem, onAddArray, on
             return (
                 <>
                     <LibraryTabs section={route.section} />
-                    {route.section === 'controllers' ? <ChargersDbView /> : <PanelsDbView />}
+                    {route.section === 'controllers' ? (
+                        <ChargersDbView rowAction={(c) => <ControllerUseIn controller={c} />} />
+                    ) : (
+                        <PanelsDbView rowAction={(p) => <PanelUseIn panel={p} />} />
+                    )}
                 </>
             );
         case 'learn': {

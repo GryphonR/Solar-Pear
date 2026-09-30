@@ -8,7 +8,8 @@ import { getGseCompatibilityDbLabel } from '../lib/gseCompatibility';
 import { safeHttpUrl } from '../lib/safeUrl';
 import { groupPanelsBySeries, panelSeriesKey, seriesDesignNotes } from '../lib/panelSeries';
 
-export default function PanelsDbView() {
+/** @param {{ rowAction?: (panel: object) => React.ReactNode }} props - extra per-row action (new shell's "Use in…"). */
+export default function PanelsDbView({ rowAction } = {}) {
     const { panelsData, setPanelsData, updatePanel, addPanel, setInfoModalPanelId } = useAppState();
     const [ukFilterEnabled, setUkFilterEnabled] = useState(false);
     // Design Notes are per-series (see SCHEMA.md); rather than showing the note inline for every
@@ -204,6 +205,11 @@ export default function PanelsDbView() {
                                                         <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
                                                             Price (£)
                                                         </th>
+                                                        {rowAction ? (
+                                                            <th scope="col" className="py-3 px-2 text-xs font-semibold text-slate-500 uppercase">
+                                                                <span className="sr-only">Use</span>
+                                                            </th>
+                                                        ) : null}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -294,6 +300,7 @@ export default function PanelsDbView() {
                                                                         }
                                                                     />
                                                                 </td>
+                                                                {rowAction ? <td className="p-1 px-2">{rowAction(p)}</td> : null}
                                                             </tr>
                                                         );
                                                     })}

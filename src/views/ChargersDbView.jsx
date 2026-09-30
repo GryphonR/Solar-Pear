@@ -7,7 +7,8 @@ import { useAppState } from '../context/AppStateContext';
 import { controllerTypeBadgeClass, controllerTypeLabel } from '../lib/controllerTypes';
 import { safeHttpUrl } from '../lib/safeUrl';
 
-export default function ChargersDbView() {
+/** @param {{ rowAction?: (controller: object) => React.ReactNode }} props - extra per-row action (new shell's "Use in…"). */
+export default function ChargersDbView({ rowAction } = {}) {
     const {
         chargersData,
         setChargersData,
@@ -110,6 +111,11 @@ export default function ChargersDbView() {
                                             <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
                                                 Buy
                                             </th>
+                                            {rowAction ? (
+                                                <th scope="col" className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase">
+                                                    <span className="sr-only">Use</span>
+                                                </th>
+                                            ) : null}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -201,6 +207,7 @@ export default function ChargersDbView() {
                                                     <td className="p-1 px-4">
                                                         <BuyButton buyLinks={c.buyLinks ?? {}} />
                                                     </td>
+                                                    {rowAction ? <td className="p-1 px-4">{rowAction(c)}</td> : null}
                                                 </tr>
                                                 );
                                             })}

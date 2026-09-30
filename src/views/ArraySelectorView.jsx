@@ -12,8 +12,13 @@ import ArrayPlanner from '../components/planner/ArrayPlanner';
 import SystemSettingsSummary from '../shell/SystemSettingsSummary';
 import { useUiMode } from '../context/UiModeContext';
 import { buildPath } from '../lib/routes';
+import { controllerMatchesSystem } from '../lib/controllerFilter';
 
-export default function ArraySelectorView({ arrayId }) {
+/**
+ * @param {{ arrayId: string, embedded?: boolean }} props - `embedded` (new shell, 13.6) renders only the
+ *   current tab's content; the new array page supplies its own header, tabs and overview.
+ */
+export default function ArraySelectorView({ arrayId, embedded = false }) {
     const {
         getArrayAnalysis,
         panelsData,
@@ -137,23 +142,7 @@ export default function ArraySelectorView({ arrayId }) {
     );
 
     const controllersForAreaType = useMemo(
-        () =>
-            controllersWithFlags.filter((c) => {
-                const volts = c.systemVoltages || [48];
-                if (areaSettings.systemVoltage !== null && !volts.includes(areaSettings.systemVoltage)) {
-                    return false;
-                }
-                if (areaSettings.systemType === 'any') return true;
-                if (areaSettings.systemType === 'dc-charger') return c.systemType === 'dc-charger';
-                if (areaSettings.systemType === 'grid-connected') {
-                    if (!(c.g98_cert || c.g99_cert)) return false;
-                    if (areaSettings.filterEps && !c.eps) return false;
-                    if (areaSettings.filterHouseBackup && !c.house_backup) return false;
-                    return true;
-                }
-                if (areaSettings.systemType === 'off-grid-ac') return !!c.pure_off_grid_native;
-                return true;
-            }),
+        () => controllersWithFlags.filter((c) => controllerMatchesSystem(c, areaSettings)),
         [controllersWithFlags, areaSettings]
     );
 
@@ -186,6 +175,8 @@ export default function ArraySelectorView({ arrayId }) {
 
     return (
         <div className="space-y-6 pb-12">
+            {!embedded && (
+            <>
             <div className="flex justify-between items-end pb-4 border-b border-slate-200">
                 <div>
                     <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
@@ -257,8 +248,10 @@ export default function ArraySelectorView({ arrayId }) {
                     Controller Selector
                 </button>
             </div>
+            </>
+            )}
 
-            {contentTab === 'overview' && (
+            {contentTab === 'overview' && !embedded && (
                 <ArrayOverviewTab
                     array={array}
                     arrayId={arrayId}
@@ -299,7 +292,7 @@ export default function ArraySelectorView({ arrayId }) {
                 />
             )}
 
-            {contentTab === 'controllers' && (
+            {contentTab === 'controllers' && !embedded && (
                 <ControllerSection
                     areaControllers={areaControllers}
                     arraysData={arraysData}

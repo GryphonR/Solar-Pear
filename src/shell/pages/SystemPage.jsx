@@ -1,7 +1,7 @@
 /**
  * @file SystemPage.jsx
  * System page: header, tabs and the tab's content. Overview is a card per array until the diagram (13.7);
- * Setup is 13.5; Controllers arrives in 13.6.
+ * Setup is 13.5; Controllers is 13.6.
  */
 
 import React from 'react';
@@ -11,10 +11,12 @@ import { Plus } from '../../components/Icons';
 import { buildPath } from '../../lib/routes';
 import { Cost, kWp } from './ProjectOverview';
 import SystemSetup from './SystemSetup';
+import SystemControllers from './SystemControllers';
 
 const TABS = [
     ['overview', 'Overview'],
     ['setup', 'Setup'],
+    ['controllers', 'Controllers'],
 ];
 
 function slotText(array) {
@@ -71,6 +73,8 @@ export default function SystemPage({ design, system, tab = 'overview', onAddArra
 
             {current === 'setup' ? (
                 <SystemSetup design={design} system={system} />
+            ) : current === 'controllers' ? (
+                <SystemControllers design={design} system={system} />
             ) : (
                 <section aria-label="Arrays" className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     {system.arrays.map((array) => {

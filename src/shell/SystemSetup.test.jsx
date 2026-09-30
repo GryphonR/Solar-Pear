@@ -110,7 +110,7 @@ describe("System Setup (roadmap 13.5)", () => {
     });
 
     it("only shows system settings on the array page, with a link to Setup", async () => {
-        renderAt("/p/proj_home/s/sys_house/a/A1/controllers");
+        renderAt("/p/proj_home/s/sys_house/a/A1/overview");
         const summary = await screen.findByTestId("system-settings-summary");
         expect(within(summary).getByRole("link", { name: "Edit in System Setup" })).toHaveAttribute(
             "href",

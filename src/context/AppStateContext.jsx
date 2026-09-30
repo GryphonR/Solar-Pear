@@ -627,6 +627,37 @@ function AppStateProviderInner({ children }) {
         );
     };
 
+    /**
+     * Swaps a controller unit's model (13.6, "Replace…"). Arrays keep their port if the new model has it;
+     * arrays on ports it doesn't have are unassigned. Returns how many were unassigned.
+     */
+    const replaceControllerInstance = (instanceId, modelId) => {
+        const model = chargersData.find((c) => c.id === modelId);
+        const instance = siteControllers.find((sc) => sc.id === instanceId);
+        if (!model || !instance) return 0;
+        const ports = Math.max(1, Number(model.trackers) || 1);
+        const dropped = arraysData.filter(
+            (a) => a.controllerInstanceId === instanceId && (Number(a.controllerMppt) || 1) > ports
+        ).length;
+        setSiteControllers((prev) =>
+            prev.map((sc) =>
+                sc.id === instanceId
+                    ? { ...sc, modelId, name: `${model.manufacturer ? model.manufacturer + ' ' : ''}${model.name}` }
+                    : sc
+            )
+        );
+        if (dropped > 0) {
+            setArraysData((prev) =>
+                prev.map((a) =>
+                    a.controllerInstanceId === instanceId && (Number(a.controllerMppt) || 1) > ports
+                        ? { ...a, controllerInstanceId: '', controllerMppt: 1, controller: '' }
+                        : a
+                )
+            );
+        }
+        return dropped;
+    };
+
     const updateSelection = (arrayId, unitType, valueId, mpptIndex = 1) => {
         setArraysData((prev) =>
             prev.map((a) => {
@@ -1097,6 +1128,7 @@ function AppStateProviderInner({ children }) {
             deleteArray,
             deleteArea,
             deleteControllerInstance,
+            replaceControllerInstance,
             createControllerInstance,
             openConfirm,
             addPanel,
@@ -1198,6 +1230,7 @@ function AppStateProviderInner({ children }) {
             deleteArray: value.deleteArray,
             deleteArea: value.deleteArea,
             deleteControllerInstance: value.deleteControllerInstance,
+            replaceControllerInstance: value.replaceControllerInstance,
             createControllerInstance: value.createControllerInstance,
             handleAreaModalSave: value.handleAreaModalSave,
             handleAddArraySave: value.handleAddArraySave,

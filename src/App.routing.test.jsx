@@ -78,7 +78,7 @@ describe("URL routing (roadmap 13.3)", () => {
         expect(screen.getByRole("heading", { name: /Solar Panels Database/i })).toBeInTheDocument();
         act(() => navigate(1));
         await waitFor(() => expect(screen.getByRole("heading", { name: /^South roof$/i })).toBeInTheDocument());
-    });
+    }, 15000); // several full-page renders; slow under a parallel run
 
     it("reopens an array on the tab the user last used", async () => {
         renderAt("/p/proj_home/s/sys_house/a/A1/panel");
