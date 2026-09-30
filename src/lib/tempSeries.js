@@ -1,3 +1,5 @@
+import { evaluateElectrical } from './arrayAnalysis';
+
 const STC_TEMP_C = 25;
 const TEMP_MIN = -40;
 const TEMP_MAX = 85;
@@ -21,18 +23,17 @@ export function buildTempRange() {
  * @param {object} array - Array with count, parallelStrings
  * @param {object | null} controller - Optional; if set, includes maxV, maxIsc for reference lines
  * @param {number | null} effectiveStartupV - Optional; from getEffectiveStartupV(controller, systemVoltage)
- * @returns {{ temps: number[], vocSeries: number[] | null, iscSeries: number[] | null, pmaxSeries: number[] | null, controllerMaxV: number | null, effectiveStartupV: number | null, controllerMaxIsc: number | null }}
+ * @returns {{ temps: number[], isMicro: boolean, vocSeries: number[] | null, iscSeries: number[] | null, pmaxSeries: number[] | null, controllerMaxV: number | null, effectiveStartupV: number | null, controllerMaxIsc: number | null }}
  */
 export function computeTempSeries(panel, array, controller = null, effectiveStartupV = null) {
     const temps = buildTempRange();
-    const pStrings = array.parallelStrings || 1;
-    // Fail closed: non-divisor wiring yields no electrical series (avoids fractional series length).
-    const wiringValid =
-        Number.isFinite(array.count) &&
-        array.count > 0 &&
-        pStrings > 0 &&
-        array.count % pStrings === 0;
-    const panelsPerSeriesString = wiringValid ? array.count / pStrings : 0;
+    // Wiring comes from the engine so the curves match the checks: a microinverter has one
+    // panel per input, and non-divisor wiring yields no electrical series (fails closed).
+    const { wiringValid, isMicro, seriesLength: panelsPerSeriesString, stringsPerInput: pStrings } =
+        evaluateElectrical(panel, controller, {
+            count: array.count,
+            parallelStrings: array.parallelStrings || 1,
+        });
 
     let vocSeries = null;
     if (wiringValid && panel.tempCoefVoc != null && panel.voc != null) {
@@ -58,6 +59,7 @@ export function computeTempSeries(panel, array, controller = null, effectiveStar
 
     return {
         temps,
+        isMicro,
         vocSeries,
         iscSeries,
         pmaxSeries,
