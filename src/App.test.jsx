@@ -43,6 +43,7 @@ function renderApp() {
 function clearAppStorage() {
     const keys = [
         "user_notes",
+        "solar_projects",
         "solar_arrays",
         "solar_site_controllers",
         // Legacy migration key (read-only for app, but cleared for isolation).

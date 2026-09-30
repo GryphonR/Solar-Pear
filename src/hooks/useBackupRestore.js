@@ -12,8 +12,11 @@ import {
  * Backup file schema version for export/import.
  * v5: the catalogue is exported as `catalogueOverrides` (user edits only) instead of full
  * `panelsData` / `chargersData` arrays, so restoring an old backup cannot pin stale prices.
+ * v6: the design is exported as `projects` (with `activeProjectId`), each holding its systems, arrays and
+ * controller instances, instead of the flat `areasData` / `arraysData` / `siteControllers` /
+ * `areaSettingsByArea`. Older backups still import: they replace the active project's contents.
  */
-export const BACKUP_SCHEMA_VERSION = 5;
+export const BACKUP_SCHEMA_VERSION = 6;
 
 /**
  * Builds the backup payload object (for export). Pure function for testability.
@@ -22,16 +25,14 @@ export const BACKUP_SCHEMA_VERSION = 5;
 export function buildBackupPayload(state, bundled = { panels: initialPanels, chargers: initialChargers }) {
     return {
         schemaVersion: BACKUP_SCHEMA_VERSION,
-        areasData: state.areasData,
-        arraysData: state.arraysData,
+        projects: state.projectsStore.projects,
+        activeProjectId: state.projectsStore.activeProjectId,
         catalogueOverrides: buildCatalogueOverrides(
             state.panelsData,
             state.chargersData,
             bundled.panels,
             bundled.chargers
         ),
-        siteControllers: state.siteControllers,
-        areaSettingsByArea: state.areaSettingsByArea,
         systemVoltage: state.systemVoltage,
         hiddenChargerMfr: state.hiddenChargerMfr,
         hideHeavyPanels: state.hideHeavyPanels,
@@ -50,6 +51,7 @@ export function buildBackupPayload(state, bundled = { panels: initialPanels, cha
  */
 export function applyBackupData(imported, setters, bundled = { panels: initialPanels, chargers: initialChargers }) {
     const {
+        setProjectsStore,
         setAreasData,
         setArraysData,
         setPanelsData,
@@ -70,6 +72,8 @@ export function applyBackupData(imported, setters, bundled = { panels: initialPa
     const data = validated.data;
     const warnings = validated.warnings || [];
 
+    if (data.projectsStore) setProjectsStore(data.projectsStore);
+    // Legacy (v5 and earlier) design fields are written into the active project.
     if (data.areasData) setAreasData(data.areasData);
     if (data.arraysData) {
         const legacySelections = data.selections;
@@ -154,17 +158,15 @@ export function applyBackupData(imported, setters, bundled = { panels: initialPa
  */
 export function useBackupRestore() {
     const {
-        areasData,
-        arraysData,
+        projectsStore,
         panelsData,
         chargersData,
-        siteControllers,
-        areaSettingsByArea,
         systemVoltage,
         hiddenChargerMfr,
         hideHeavyPanels,
         hideMarginalPanels,
         userNotes,
+        setProjectsStore,
         setAreasData,
         setArraysData,
         setPanelsData,
@@ -183,12 +185,9 @@ export function useBackupRestore() {
 
     const handleDownload = () => {
         const exportData = buildBackupPayload({
-            areasData,
-            arraysData,
+            projectsStore,
             panelsData,
             chargersData,
-            siteControllers,
-            areaSettingsByArea,
             systemVoltage,
             hiddenChargerMfr,
             hideHeavyPanels,
@@ -228,6 +227,7 @@ export function useBackupRestore() {
                             );
                         }
                         const { warnings } = applyBackupData(imported, {
+                            setProjectsStore,
                             setAreasData,
                             setArraysData,
                             setPanelsData,

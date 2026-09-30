@@ -147,7 +147,7 @@ describe("loadCatalogueFromStorage (storage v1 → v2)", () => {
         const dump = storage.dump();
         expect(dump.solar_panels).toBeUndefined();
         expect(JSON.parse(dump[CATALOGUE_OVERRIDES_KEY]).panels.overrides).toEqual({ B: { active: false } });
-        expect(dump.solar_storage_version).toBe("2");
+        expect(dump.solar_storage_version).toBe("3");
         // Second load reads the new format.
         expect(loadCatalogueFromStorage(bundled, [], storage).migrated).toBe(false);
     });

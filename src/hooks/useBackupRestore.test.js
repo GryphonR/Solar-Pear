@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { makeStore, legacyToProject, projectToLegacy, applyLegacyToProject } from '../lib/projects';
+import { validateBackupPayload } from '../lib/backupValidation';
 import {
     BACKUP_SCHEMA_VERSION,
     buildBackupPayload,
@@ -8,12 +10,9 @@ import {
 describe('buildBackupPayload', () => {
     it('includes schemaVersion', () => {
         const state = {
-            areasData: ['House'],
-            arraysData: [],
+            projectsStore: makeStore(),
             panelsData: [],
             chargersData: [],
-            siteControllers: [],
-            areaSettingsByArea: { House: { systemVoltage: 48, systemType: 'any', filterEps: false, filterHouseBackup: false } },
             systemVoltage: null,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -27,12 +26,9 @@ describe('buildBackupPayload', () => {
 
     it('includes falsy values so they round-trip on restore', () => {
         const state = {
-            areasData: ['House'],
-            arraysData: [],
+            projectsStore: makeStore(),
             panelsData: [],
             chargersData: [],
-            siteControllers: [],
-            areaSettingsByArea: { House: { systemVoltage: 24, systemType: 'dc-charger', filterEps: false, filterHouseBackup: false } },
             systemVoltage: 24,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -47,12 +43,9 @@ describe('buildBackupPayload', () => {
 
     it('includes systemVoltage 0 and null when present', () => {
         const state = {
-            areasData: ['House'],
-            arraysData: [],
+            projectsStore: makeStore(),
             panelsData: [],
             chargersData: [],
-            siteControllers: [],
-            areaSettingsByArea: { House: { systemVoltage: 0, systemType: 'any', filterEps: false, filterHouseBackup: false } },
             systemVoltage: 0,
             hiddenChargerMfr: null,
             hideHeavyPanels: false,
@@ -252,6 +245,7 @@ describe('applyBackupData', () => {
     const captureSetters = () => {
         const out = {};
         const setters = {
+            setProjectsStore: () => {},
             setAreasData: () => {},
             setArraysData: () => {},
             setPanelsData: (v) => {
@@ -281,11 +275,9 @@ describe('applyBackupData', () => {
     it('v5 backups export only user edits and restore them over the current catalogue', () => {
         const payload = buildBackupPayload(
             {
-                areasData: ['House'],
-                arraysData: [],
+                projectsStore: makeStore(),
                 panelsData: [{ ...bundled.panels[0], price: 95 }, bundled.panels[1], { model: 'MINE', price: 10 }],
                 chargersData: bundled.chargers,
-                siteControllers: [],
             },
             bundled
         );
@@ -379,5 +371,102 @@ describe('applyBackupData', () => {
         };
         applyBackupData({ userNotes: {} }, setters);
         expect(notes).toEqual({});
+    });
+});
+
+
+describe('backup v6: projects', () => {
+    const projectsState = () => {
+        const a = legacyToProject({
+            areasData: ['House', 'Garage'],
+            arraysData: [
+                { id: 'A1', name: 'South', area: 'House', count: 8, panel: 'p1', controllerInstanceId: 'inst_1', controllerMppt: 1, controller: '' },
+                { id: 'A2', name: 'Roof', area: 'Garage', count: 4, panel: '', controllerInstanceId: '', controllerMppt: 1, controller: '' },
+            ],
+            siteControllers: [{ id: 'inst_1', modelId: 'x', area: 'House', name: 'X (#1)' }],
+            areaSettingsByArea: { House: { systemVoltage: 48 }, Garage: { systemVoltage: 12 } },
+        });
+        const b = legacyToProject({ areasData: ['Van'], arraysData: [{ id: 'V1', area: 'Van', count: 2 }] }, { name: 'Van' });
+        return { ...makeStore([a, b]), activeProjectId: b.id };
+    };
+    const emptyCatalogue = { panels: [], chargers: [] };
+
+    it('exports every project and the active one, and no flat design fields', () => {
+        const store = projectsState();
+        const payload = buildBackupPayload({ projectsStore: store, panelsData: [], chargersData: [] }, emptyCatalogue);
+        expect(payload.schemaVersion).toBe(6);
+        expect(payload.projects).toHaveLength(2);
+        expect(payload.activeProjectId).toBe(store.activeProjectId);
+        for (const legacy of ['areasData', 'arraysData', 'siteControllers', 'areaSettingsByArea']) {
+            expect(payload).not.toHaveProperty(legacy);
+        }
+    });
+
+    it('round-trips: export, JSON, validate, restore gives back identical projects and ids', () => {
+        const store = projectsState();
+        const payload = JSON.parse(
+            JSON.stringify(buildBackupPayload({ projectsStore: store, panelsData: [], chargersData: [] }, emptyCatalogue))
+        );
+        let restored;
+        const noop = () => {};
+        applyBackupData(
+            payload,
+            {
+                setProjectsStore: (v) => (restored = v),
+                setAreasData: noop, setArraysData: noop, setSiteControllers: noop, setAreaSettingsByArea: noop,
+                setPanelsData: noop, setChargersData: noop, setSystemVoltage: noop, setHiddenChargerMfr: noop,
+                setHideHeavyPanels: noop, setHideMarginalPanels: noop, setUserNotes: noop,
+            },
+            emptyCatalogue
+        );
+        expect(restored.activeProjectId).toBe(store.activeProjectId);
+        expect(restored.projects.map((p) => p.id)).toEqual(store.projects.map((p) => p.id));
+        expect(restored.projects.map((p) => projectToLegacy(p))).toEqual(store.projects.map((p) => projectToLegacy(p)));
+        expect(restored.projects[0].systems.map((s) => s.id)).toEqual(store.projects[0].systems.map((s) => s.id));
+    });
+
+    it('drops unusable projects with a warning and falls back to the first when the active id is unknown', () => {
+        const good = makeStore().projects[0];
+        const result = validateBackupPayload({ schemaVersion: 6, projects: [good, { id: 'bad' }], activeProjectId: 'nope' });
+        expect(result.ok).toBe(true);
+        expect(result.data.projectsStore.projects).toHaveLength(1);
+        expect(result.data.projectsStore.activeProjectId).toBe(good.id);
+        expect(result.warnings.join(' ')).toMatch(/1 unusable project/);
+    });
+
+    it('rejects a backup whose only design data is unusable', () => {
+        expect(validateBackupPayload({ projects: [{ id: 'bad' }] }).ok).toBe(false);
+    });
+
+    it('a v5 backup still imports, replacing the active project contents through the legacy setters', () => {
+        const store = projectsState();
+        let project = store.projects.find((p) => p.id === store.activeProjectId);
+        const apply = (key) => (v) => {
+            const cur = projectToLegacy(project)[key];
+            project = applyLegacyToProject(project, { [key]: typeof v === 'function' ? v(cur) : v });
+        };
+        const noop = () => {};
+        applyBackupData(
+            {
+                schemaVersion: 5,
+                areasData: ['Cabin'],
+                arraysData: [{ id: 'C1', name: 'Roof', area: 'Cabin', count: 6, panel: '', controllerInstanceId: '', controllerMppt: 1, controller: '' }],
+                siteControllers: [],
+                areaSettingsByArea: { Cabin: { systemVoltage: 24 } },
+            },
+            {
+                setProjectsStore: noop,
+                setAreasData: apply('areasData'), setArraysData: apply('arraysData'),
+                setSiteControllers: apply('siteControllers'), setAreaSettingsByArea: apply('areaSettingsByArea'),
+                setPanelsData: noop, setChargersData: noop, setSystemVoltage: noop, setHiddenChargerMfr: noop,
+                setHideHeavyPanels: noop, setHideMarginalPanels: noop, setUserNotes: noop,
+            },
+            emptyCatalogue
+        );
+        const after = projectToLegacy(project);
+        expect(after.areasData).toEqual(['Cabin']);
+        expect(after.arraysData.map((a) => [a.id, a.area])).toEqual([['C1', 'Cabin']]);
+        expect(after.areaSettingsByArea.Cabin).toEqual({ systemVoltage: 24 });
+        expect(project.id).toBe(store.activeProjectId);
     });
 });
