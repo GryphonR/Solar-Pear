@@ -1,6 +1,6 @@
 # Domain rules (electrical and physical)
 
-All maths lives in `src/lib/arrayAnalysis.js`. **`evaluateElectrical(panel, controller, { count, parallelStrings, systemVoltage, conditions })` is the single source of truth.** `analyzeArray`, the panel ranking (`useValidPanels.js`), the controller list (`ArraySelectorView.jsx`), the area-controller cards and the planner all call it. Don't re-implement any check elsewhere. It returns metrics, `flags`, `issues[]` (`{ code, severity: error|warning|info, message }`) and `hardOk`.
+All maths lives in `src/lib/arrayAnalysis.js`. **`evaluateElectrical(panel, controller, { count, parallelStrings, systemVoltage, conditions })` is the single source of truth.** `analyzeArray`, the panel ranking (`useValidPanels.js`), the controller list (`ArraySelectorView.jsx`), the area-controller cards and the planner all call it. Don't re-implement any check elsewhere. When you add or change a check, update `src/lib/methodology.js` (the public methodology page) too; `methodology.test.js` fails on undocumented codes. It returns metrics, `flags`, `issues[]` (`{ code, severity: error|warning|info, message }`) and `hardOk`.
 
 `evaluatePhysicalFit(array, panel, hideHeavyPanels)` covers GSE format, size and weight. `evaluateControllerPower(controller, totalWp, { systemVoltage, arrayCount })` covers the controller-level power check. `analyzeArray` sums every array on the same controller instance before calling it.
 

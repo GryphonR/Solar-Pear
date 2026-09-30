@@ -6,6 +6,7 @@ import SummaryView from './SummaryView';
 
 vi.mock('../context/AppStateContext', () => ({
     useAppState: vi.fn(),
+    useUiState: () => ({ setActiveTab: vi.fn() }),
 }));
 
 const minimalArray = {

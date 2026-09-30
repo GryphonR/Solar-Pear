@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertTriangle } from '../components/Icons';
+import { ResultsDisclaimer } from '../components/TrustNotices';
 import { useAppState } from '../context/AppStateContext';
 import { checkVictronRsSharedTrackerLimits, controllerUnitsForArray } from '../lib/arrayAnalysis';
 import { formatMoney, knownPrice, priceAge } from '../lib/pricing';
@@ -145,6 +146,7 @@ export default function SummaryView() {
                 <div>
                     <h2 className="text-2xl font-bold text-slate-800">System Summary</h2>
                     <p className="text-slate-500">Overview of all configured arrays and total hardware cost.</p>
+                    <ResultsDisclaimer className="mt-1" />
                 </div>
             </div>
 

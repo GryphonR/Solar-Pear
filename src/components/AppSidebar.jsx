@@ -12,6 +12,7 @@ import {
     Upload,
     Info,
 } from './Icons';
+import { ABOUT_TAB, METHODOLOGY_TAB } from '../lib/siteInfo';
 
 /**
  * Main app sidebar: logo, nav (Guide, PV Controllers, Panels),
@@ -58,6 +59,18 @@ export default function AppSidebar({
                             className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors text-[13px] ${activeTab === 'GUIDE_CONTROLLERS' ? 'bg-slate-700 text-white font-medium' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
                         >
                             <Server className="mr-3 flex-shrink-0" size={14} /> Guide to Controllers
+                        </button>
+                        <button
+                            onClick={() => setActiveTab(METHODOLOGY_TAB)}
+                            className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors text-[13px] ${activeTab === METHODOLOGY_TAB ? 'bg-slate-700 text-white font-medium' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+                        >
+                            <CheckCircle className="mr-3 flex-shrink-0" size={14} /> How We Check
+                        </button>
+                        <button
+                            onClick={() => setActiveTab(ABOUT_TAB)}
+                            className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors text-[13px] ${activeTab === ABOUT_TAB ? 'bg-slate-700 text-white font-medium' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+                        >
+                            <Info className="mr-3 flex-shrink-0" size={14} /> About &amp; Legal
                         </button>
                     </div>
                 </nav>

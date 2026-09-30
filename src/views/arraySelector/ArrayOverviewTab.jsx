@@ -4,6 +4,7 @@ import PriceTag from '../../components/PriceTag';
 import { AlertTriangle, CheckCircle, Info, XIcon, ExternalLink } from '../../components/Icons';
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
 import DesignNotes from '../../components/DesignNotes';
+import { ResultsDisclaimer } from '../../components/TrustNotices';
 import { isCompatibleFormat, COLD_TEMP_C, HOT_TEMP_C } from '../../lib/arrayAnalysis';
 import { controllerTypeBadgeClass, controllerTypeLabel } from '../../lib/controllerTypes';
 import { safeHttpUrl } from '../../lib/safeUrl';
@@ -115,6 +116,7 @@ export default function ArrayOverviewTab({
                             </div>
                         </div>
                     </div>
+                    <ResultsDisclaimer className="-mt-2 px-1" />
                     {panel && (
                         <div className="grid grid-cols-3 gap-4">
                             <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200" title={`Open-circuit voltage of the string at ${coldTempC}°C. Must stay below your MPPT's maximum PV input.`}>

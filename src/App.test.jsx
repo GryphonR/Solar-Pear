@@ -114,6 +114,8 @@ describe("App UI flows", () => {
         expect(
             screen.getByRole("heading", { name: /System Summary/i })
         ).toBeInTheDocument();
+        // Roadmap 6.1: the disclaimer sits beside the results rather than in a first-run banner.
+        expect(screen.getByText(/Checks component compatibility only/i)).toBeInTheDocument();
     });
 
     it("Guide roof route opens the Layout tab of the seeded array", async () => {
@@ -165,6 +167,20 @@ describe("App UI flows", () => {
         // Nothing is selected on a fresh project, so the pills carry no chosen-item detail.
         expect(screen.getByRole("button", { name: /^Panel$/i })).toBeInTheDocument();
         expect(screen.getByRole("button", { name: /^Controller$/i })).toBeInTheDocument();
+    });
+
+    it("opens the methodology and About & legal pages from the sidebar (roadmap 6.5)", async () => {
+        renderApp();
+        await screen.findByText(/Free roofspace, panel, and controller matching/i);
+
+        await userEvent.click(screen.getByRole("button", { name: /^How We Check$/i }));
+        expect(screen.getByRole("heading", { name: /how we check compatibility/i })).toBeInTheDocument();
+        expect(screen.getByText("Controller maximum voltage")).toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole("button", { name: /^About & Legal$/i }));
+        for (const heading of [/^Disclaimer$/, /^Affiliate links$/, /^Privacy$/, /^Terms of use$/]) {
+            expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
+        }
     });
 
     it("navigates from the sidebar to the Guide to Panels page", async () => {

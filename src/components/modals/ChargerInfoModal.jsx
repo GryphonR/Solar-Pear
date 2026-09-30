@@ -6,6 +6,7 @@ import { CheckCircle, ExternalLink, Info, XIcon } from '../Icons';
 import { getEffectiveStartupV } from '../../lib/arrayAnalysis';
 import { controllerTypeBadgeClass, controllerTypeLabel } from '../../lib/controllerTypes';
 import { safeHttpUrl } from '../../lib/safeUrl';
+import { dataCorrectionIssueUrl } from '../../lib/siteInfo';
 
 export default function ChargerInfoModal({ open, charger, systemVoltage, userNote, onClose, onUpdateNote }) {
     if (!charger) return null;
@@ -27,6 +28,9 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                         <ExternalLink size={12} className="mr-1" /> Datasheet
                     </a>
                 )}
+                <a href={dataCorrectionIssueUrl('controller', c)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-slate-500 hover:text-slate-800 hover:underline">
+                    Report a data error
+                </a>
             </div>
         </div>
     );

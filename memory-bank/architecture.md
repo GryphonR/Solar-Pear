@@ -13,6 +13,8 @@ Vite 7, React 19, Tailwind v4 (theme in `src/index.css`), uPlot for graphs, and 
 | `src/views/arraySelector/ControllerSection.jsx` | Controller picker and MPPT port assignment |
 | `src/components/planner/ArrayPlanner.jsx` (~2000 lines) + `src/lib/plannerEngine.js` | Roof drawing and auto-fit packing (see `documentation/ARRAY_PLANNER_ALGORITHM.md`) |
 | `src/views/SummaryView.jsx` | Totals and BoM |
+| `src/views/MethodologyView.jsx` + `src/lib/methodology.js` | Public "How We Check" page. Content reads the engine constants; a test fails if a check code is undocumented |
+| `src/views/AboutView.jsx`, `src/components/TrustNotices.jsx`, `src/lib/siteInfo.js` | About & legal page (disclaimer, affiliate disclosure, pricing independence, data sources, privacy, terms), results disclaimer, affiliate notice, operator details and "Report a data error" links |
 | `src/components/BuyButton.jsx` | Renders `buyLinks`. Uses `rel="noopener noreferrer sponsored"` and marks affiliate links with `*` |
 | `src/lib/migration.js` | Legacy localStorage migrations for arrays, selections and site controllers, plus `applyReplacements` (moves designs off discontinued products listed in `src/data/replacements.json`) |
 | `src/lib/catalogueOverrides.js` | Catalogue persistence as user edits only: diff/apply, legacy v1 → v2 migration, storage load/save |
