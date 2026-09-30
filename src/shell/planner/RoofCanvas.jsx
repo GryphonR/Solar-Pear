@@ -9,7 +9,7 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { clamp, edgeAnnotations, pointToSegmentProjection, toSvgPoint } from '../../components/planner/domain/plannerGeometry';
+import { clamp, edgeAnnotations, pointToSegmentProjection, toSvgPoint } from './plannerGeometry';
 import { insetPolygon, slotKey } from '../../lib/plannerLayouts';
 
 export const TOOLS = [

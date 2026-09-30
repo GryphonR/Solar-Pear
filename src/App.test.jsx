@@ -1,359 +1,146 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, waitFor, within, fireEvent } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter, useLocation } from "react-router";
+import { seedProjectsStore } from "./test/projectFixtures";
 
-// App UI flows only need a tiny catalog. Rendering the full panels/controllers DB
+// App UI flows only need a tiny catalogue. Rendering the full panels/controllers DB
 // makes Testing Library role queries too slow for the default timeouts in CI.
 vi.mock("./data/loadData.js", async (importOriginal) => {
     const actual = await importOriginal();
-    const duplicatePanel =
-        actual.initialPanels.find((p) => p.model === "TSM-430NEG9R.28") || actual.initialPanels[0];
-    const otherPanel =
-        actual.initialPanels.find((p) => p.model !== duplicatePanel.model) || {
-            ...duplicatePanel,
-            model: "TEST-PANEL-2",
-            name: "Test Panel 2",
-        };
-    const duplicateCharger =
-        actual.initialChargers.find((c) => c.id === "ss75_15") || actual.initialChargers[0];
-    const otherCharger =
-        actual.initialChargers.find((c) => c.id !== duplicateCharger.id) || {
-            ...duplicateCharger,
-            id: "test_charger_2",
-            name: "Test Charger 2",
-        };
-    return {
-        ...actual,
-        initialPanels: [duplicatePanel, otherPanel],
-        initialChargers: [duplicateCharger, otherCharger],
-    };
+    const duplicatePanel = actual.initialPanels.find((p) => p.model === "TSM-430NEG9R.28") || actual.initialPanels[0];
+    const otherPanel = actual.initialPanels.find((p) => p.model !== duplicatePanel.model);
+    const duplicateCharger = actual.initialChargers.find((c) => c.id === "ss75_15") || actual.initialChargers[0];
+    const otherCharger = actual.initialChargers.find((c) => c.id !== duplicateCharger.id);
+    return { ...actual, initialPanels: [duplicatePanel, otherPanel], initialChargers: [duplicateCharger, otherCharger] };
 });
 
 import { AppStateProvider } from "./context/AppStateContext";
 import App from "./App";
 
-function renderApp() {
+let location;
+function Probe() {
+    location = useLocation();
+    return null;
+}
+
+function renderAt(path) {
     return render(
-        <AppStateProvider>
-            <App />
-        </AppStateProvider>
+        <MemoryRouter initialEntries={[path]}>
+            <AppStateProvider>
+                <App />
+                <Probe />
+            </AppStateProvider>
+        </MemoryRouter>
     );
 }
 
-function clearAppStorage() {
-    const keys = [
-        "user_notes",
-        "solar_projects",
-        "solar_arrays",
-        "solar_site_controllers",
-        // Legacy migration key (read-only for app, but cleared for isolation).
-        "solar_selections",
-        "solar_chargers",
-        "solar_panels",
-        "solar_hide_heavy_panels",
-        "solar_hide_marginal_panels",
-        "solar_system_voltage",
-        "solar_system_type",
-        "solar_filter_eps",
-        "solar_filter_house_backup",
-        "solar_areas",
-    ];
-    keys.forEach((k) => localStorage.removeItem(k));
-}
+const openMore = async () => userEvent.click(await screen.findByRole("button", { name: /^More: / }));
 
-describe("App UI flows", () => {
+describe("App UI flows (roadmap 13.9: the shell is the only UI)", () => {
     beforeEach(() => {
-        clearAppStorage();
+        localStorage.clear();
+        localStorage.setItem("solar_projects", JSON.stringify(seedProjectsStore()));
     });
 
-    it("renders without crashing and shows Guide by default", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(
-                screen.getByText(/Free roofspace, panel, and controller matching/i)
-            ).toBeInTheDocument();
-        });
+    it("opens the chooser on a first visit", async () => {
+        localStorage.clear();
+        renderAt("/");
+        expect(await screen.findByRole("heading", { name: "What are you building?" })).toBeInTheDocument();
     });
 
-    it("navigates to PV Controllers and shows controllers database", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(
-            screen.getByRole("button", { name: /pv controllers/i })
-        );
-        expect(
-            screen.getByRole("heading", { name: /PV Controllers Database/i })
-        ).toBeInTheDocument();
+    it("tidies away the retired UI flag", async () => {
+        localStorage.setItem("solar_ui", "old");
+        localStorage.setItem("solar_hide_incompatible_controllers", "true");
+        renderAt("/p/proj_home");
+        await screen.findByRole("heading", { level: 1, name: "Hawthorn Cottage" });
+        expect(localStorage.getItem("solar_ui")).toBeNull();
+        expect(localStorage.getItem("solar_hide_incompatible_controllers")).toBeNull();
     });
 
-    it("navigates to Panels and shows panels database", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(screen.getByRole("button", { name: /^panels$/i }));
-        expect(
-            screen.getByRole("heading", { name: /Solar Panels Database/i })
-        ).toBeInTheDocument();
+    it("reaches both Library tables from the top bar", async () => {
+        renderAt("/p/proj_home");
+        await userEvent.click(await screen.findByRole("link", { name: "Library" }));
+        expect(await screen.findByRole("heading", { name: /Solar Panels Database/i })).toBeInTheDocument();
+        cleanup();
+        renderAt("/library/controllers");
+        expect(await screen.findByRole("heading", { name: /PV Controllers Database/i })).toBeInTheDocument();
     });
 
-    it("navigates to System Summary and shows summary view", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        // Exact match: the Guide also offers a shortcut to the summary, so a loose
-        // pattern would match both that and the sidebar button.
-        await userEvent.click(
-            screen.getByRole("button", { name: /^system summary$/i })
-        );
-        expect(
-            screen.getByRole("heading", { name: /System Summary/i })
-        ).toBeInTheDocument();
-        // Roadmap 6.1: the disclaimer sits beside the results rather than in a first-run banner.
+    it("shows the summary with the results disclaimer (roadmap 6.1)", async () => {
+        renderAt("/p/proj_home/summary");
+        expect(await screen.findByRole("heading", { name: /System Summary/i })).toBeInTheDocument();
         expect(screen.getByText(/Checks component compatibility only/i)).toBeInTheDocument();
     });
 
-    it("Guide roof route opens the Layout tab of the seeded array", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
+    it("routes from the How Solar Pear works guide to the array's layout and panel tabs and the controllers", async () => {
+        renderAt("/learn/guide");
+        expect(await screen.findByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
         await userEvent.click(screen.getByRole("button", { name: /draw the roof/i }));
+        await waitFor(() => expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A1/layout"));
 
-        expect(screen.getByRole("heading", { name: /^Array 1$/i })).toBeInTheDocument();
-        // The planner stays mounted while hidden, so assert the Layout tab is the selected one
-        // rather than merely that planner markup exists.
-        expect(screen.getByRole("button", { name: /^Layout$/ })).toHaveClass("border-blue-600");
+        cleanup();
+        renderAt("/learn/guide");
+        await userEvent.click((await screen.findAllByRole("button", { name: /choose a panel/i }))[0]);
+        await waitFor(() => expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A1/panel"));
+
+        cleanup();
+        renderAt("/learn/guide");
+        await userEvent.click((await screen.findAllByRole("button", { name: /choose a controller/i }))[0]);
+        await waitFor(() => expect(location.pathname).toBe("/p/proj_home/s/sys_house/controllers"));
     });
 
-    it("Guide panel route opens the Panel Selector tab of the seeded array", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(screen.getByRole("button", { name: /choose a panel/i }));
-
-        expect(
-            screen.getByRole("heading", { name: /Compatible Panels Explorer/i })
-        ).toBeInTheDocument();
-    });
-
-    it("Guide controller route opens the Controller Selector tab of the seeded array", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(screen.getByRole("button", { name: /choose a controller/i }));
-
-        expect(
-            screen.getByRole("heading", { name: /Add New PV Controller from Database/i })
-        ).toBeInTheDocument();
-    });
-
-    it("Guide progress pills show panel and controller outstanding on a fresh project", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        // Nothing is selected on a fresh project, so the pills carry no chosen-item detail.
-        expect(screen.getByRole("button", { name: /^Panel$/i })).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: /^Controller$/i })).toBeInTheDocument();
-    });
-
-    it("opens the methodology and About & legal pages from the sidebar (roadmap 6.5)", async () => {
-        renderApp();
-        await screen.findByText(/Free roofspace, panel, and controller matching/i);
-
-        await userEvent.click(screen.getByRole("button", { name: /^How We Check$/i }));
-        expect(screen.getByRole("heading", { name: /how we check compatibility/i })).toBeInTheDocument();
+    it("opens the methodology and About & legal pages from the menu (roadmap 6.5)", async () => {
+        renderAt("/p/proj_home");
+        await openMore();
+        await userEvent.click(screen.getByRole("menuitem", { name: "How we check" }));
+        expect(await screen.findByRole("heading", { name: /how we check compatibility/i })).toBeInTheDocument();
         expect(screen.getByText("Controller maximum voltage")).toBeInTheDocument();
 
-        await userEvent.click(screen.getByRole("button", { name: /^About & Legal$/i }));
+        await openMore();
+        await userEvent.click(screen.getByRole("menuitem", { name: /About, disclosures and privacy/ }));
         for (const heading of [/^Disclaimer$/, /^Affiliate links$/, /^Privacy$/, /^Terms of use$/]) {
-            expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
+            expect(await screen.findByRole("heading", { name: heading })).toBeInTheDocument();
         }
     });
 
-    it("navigates from the sidebar to the Guide to Panels page", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(screen.getByRole("button", { name: /^Guide to Panels$/i }));
-
-        expect(
-            screen.getByRole("heading", { name: /^Guide to panels$/i })
-        ).toBeInTheDocument();
-        // Each cell architecture the page explains should have its own card.
+    it("shows the Guide to panels and the Guide to controllers under Learn", async () => {
+        renderAt("/learn/panels");
         for (const tech of [/^PERC$/, /^TOPCon$/, /^HJT$/, /^Back-contact$/]) {
-            expect(screen.getByRole("heading", { name: tech })).toBeInTheDocument();
+            expect(await screen.findByRole("heading", { name: tech })).toBeInTheDocument();
         }
-        // Doping alone is not an architecture, so it must not appear as a group.
-        expect(
-            screen.queryByRole("heading", { name: /architecture unspecified/i })
-        ).not.toBeInTheDocument();
-        // Panel-adjacent topics the page also covers.
-        for (const topic of [
-            /Why you might want thicker or thinner glass/i,
-            /Optimisers and module-level electronics/i,
-        ]) {
+        expect(screen.queryByRole("heading", { name: /architecture unspecified/i })).not.toBeInTheDocument();
+        for (const topic of [/Why you might want thicker or thinner glass/i, /Optimisers and module-level electronics/i]) {
             expect(screen.getByRole("heading", { name: topic })).toBeInTheDocument();
         }
+        await userEvent.click(screen.getByRole("button", { name: /See the three compatibility checks/i }));
+        expect(await screen.findByRole("heading", { name: /The three checks that decide compatibility/i })).toBeInTheDocument();
+
+        cleanup();
+        renderAt("/learn/controllers");
+        expect(await screen.findByRole("heading", { name: /PWM and MPPT/i })).toBeInTheDocument();
     });
 
-    it("navigates from the sidebar to the Guide to Controllers page", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(screen.getByRole("button", { name: /^Guide to Controllers$/i }));
-
-        expect(
-            screen.getByRole("heading", { name: /^Guide to controllers$/i })
-        ).toBeInTheDocument();
-        expect(screen.getByRole("heading", { name: /PWM and MPPT/i })).toBeInTheDocument();
-    });
-
-    it("reaches the panels guide from the main Guide page and back again", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        // The launchpad card and the sidebar entry share a name, so scope to the card's wording.
-        await userEvent.click(
-            screen.getByRole("button", { name: /Guide to panels Mono and poly/i })
-        );
-        expect(screen.getByRole("heading", { name: /^Guide to panels$/i })).toBeInTheDocument();
-
-        // And the page offers a route back to the compatibility explainer.
-        await userEvent.click(
-            screen.getByRole("button", { name: /See the three compatibility checks/i })
-        );
-        expect(
-            screen.getByRole("heading", { name: /The three checks that decide compatibility/i })
-        ).toBeInTheDocument();
-    });
-
-    it("opens Add Panel modal from Panels tab and shows form", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(screen.getByRole("button", { name: /^panels$/i }));
-        await waitFor(() => {
-            expect(
-                screen.getByRole("heading", { name: /Solar Panels Database/i })
-            ).toBeInTheDocument();
-        });
-
-        await userEvent.click(
-            screen.getByRole("button", { name: /add panel/i })
-        );
-        expect(
-            screen.getByRole("heading", { name: /Add Custom Solar Panel/i })
-        ).toBeInTheDocument();
-        expect(
-            screen.getByRole("button", { name: /Add Panel to Database/i })
-        ).toBeInTheDocument();
-    });
-
-    it("opens Confirm modal on Reset click; Cancel closes it", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        const resetButton = screen.getByTitle(
-            /reset all settings to factory defaults/i
-        );
-        await userEvent.click(resetButton);
-
-        await waitFor(() => {
-            expect(
-                screen.getByRole("heading", { name: /Reset Application/i })
-            ).toBeInTheDocument();
-        });
-        expect(
-            screen.getByText(/permanently lost/i)
-        ).toBeInTheDocument();
-
+    it("asks before resetting everything; Cancel keeps the design", async () => {
+        renderAt("/p/proj_home");
+        await openMore();
+        await userEvent.click(screen.getByRole("menuitem", { name: /Reset everything/ }));
+        expect(await screen.findByRole("heading", { name: /Reset Application/i })).toBeInTheDocument();
+        expect(screen.getByText(/permanently lost/i)).toBeInTheDocument();
         await userEvent.click(screen.getByRole("button", { name: /cancel/i }));
-        await waitFor(() => {
-            expect(
-                screen.queryByRole("heading", { name: /Reset Application/i })
-            ).not.toBeInTheDocument();
-        });
+        await waitFor(() => expect(screen.queryByRole("heading", { name: /Reset Application/i })).not.toBeInTheDocument());
+        expect(JSON.parse(localStorage.getItem("solar_projects")).projects[0].name).toBe("Hawthorn Cottage");
     });
 
-    it("opens Add Array modal from sidebar area action", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        const addArrayButton = screen.getByRole("button", {
-            name: /add array/i,
-        });
-        await userEvent.click(addArrayButton);
-
-        expect(
-            screen.getByRole("heading", { name: /Add Physical Array/i })
-        ).toBeInTheDocument();
-    });
-
-    it("opens Edit Array modal from sidebar array edit action", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(
-            screen.getByRole("button", { name: /edit array array 1/i })
-        );
-
-        expect(
-            screen.getByRole("heading", { name: /Edit Physical Array/i })
-        ).toBeInTheDocument();
-    });
-
-    it("opens Edit Area modal from sidebar area edit action", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(
-            screen.getByRole("button", { name: /edit area house/i })
-        );
-
-        expect(
-            screen.getByRole("heading", { name: /Edit Area/i })
-        ).toBeInTheDocument();
-    });
-
-    it("keeps focus on area name input while typing in Edit Area modal", async () => {
+    it("edits an array and a system from the sidebar pencils", async () => {
         const user = userEvent.setup();
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
+        renderAt("/p/proj_home/s/sys_house");
+        await user.click(await screen.findByRole("button", { name: /Edit array South roof/i }));
+        expect(screen.getByRole("heading", { name: /Edit Physical Array/i })).toBeInTheDocument();
+        await user.click(screen.getByRole("button", { name: /^Cancel$/ }));
 
-        await user.click(screen.getByRole("button", { name: /edit area house/i }));
-        const dialog = screen.getByRole("dialog", { name: /Edit Area/i });
+        await user.click(screen.getByRole("button", { name: /Rename or delete system House/i }));
+        const dialog = screen.getByRole("dialog", { name: /Edit System/i });
         const input = within(dialog).getByPlaceholderText(/outbuilding/i);
         await user.click(input);
         await user.keyboard("xyz");
@@ -361,51 +148,18 @@ describe("App UI flows", () => {
         expect(document.activeElement).toBe(input);
     });
 
-    it("prevents submit when adding a panel with duplicate Model ID and keeps modal open", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
+    it("won't add a custom panel or controller whose model ID already exists", async () => {
+        renderAt("/library/panels");
+        await userEvent.click(await screen.findByRole("button", { name: /add panel/i }));
+        let dialog = await screen.findByRole("dialog");
+        fireEvent.change(within(dialog).getByLabelText(/Model ID \(Unique\)/i), { target: { value: "TSM-430NEG9R.28" } });
+        expect(screen.getByRole("button", { name: /Add Panel to Database/i })).toBeDisabled();
 
-        await userEvent.click(screen.getByRole("button", { name: /^panels$/i }));
-        await waitFor(() => {
-            expect(screen.getByRole("heading", { name: /Solar Panels Database/i })).toBeInTheDocument();
-        });
-        await userEvent.click(screen.getByRole("button", { name: /add panel/i }));
-        await waitFor(() => {
-            expect(screen.getByRole("heading", { name: /Add Custom Solar Panel/i })).toBeInTheDocument();
-        });
-
-        const dialog = screen.getByRole("dialog");
-        const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
-        fireEvent.change(modelIdInput, { target: { value: "TSM-430NEG9R.28" } });
-
-        const addButton = screen.getByRole("button", { name: /Add Panel to Database/i });
-        expect(addButton).toBeDisabled();
-        expect(screen.getByRole("heading", { name: /Add Custom Solar Panel/i })).toBeInTheDocument();
-    });
-
-    it("prevents submit when adding a controller with duplicate Model ID and keeps modal open", async () => {
-        renderApp();
-        await waitFor(() => {
-            expect(screen.getByText(/Free roofspace, panel, and controller matching/i)).toBeInTheDocument();
-        });
-
-        await userEvent.click(screen.getByRole("button", { name: /pv controllers/i }));
-        await waitFor(() => {
-            expect(screen.getByRole("heading", { name: /PV Controllers Database/i })).toBeInTheDocument();
-        });
-        await userEvent.click(screen.getByRole("button", { name: /add controller/i }));
-        await waitFor(() => {
-            expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
-        });
-
-        const dialog = screen.getByRole("dialog");
-        const modelIdInput = within(dialog).getByLabelText(/Model ID \(Unique\)/i);
-        fireEvent.change(modelIdInput, { target: { value: "ss75_15" } });
-
-        const addButton = screen.getByRole("button", { name: /Add Controller to Database/i });
-        expect(addButton).toBeDisabled();
-        expect(screen.getByRole("heading", { name: /Add Custom PV Controller/i })).toBeInTheDocument();
+        cleanup();
+        renderAt("/library/controllers");
+        await userEvent.click((await screen.findAllByRole("button", { name: /add controller/i })).at(-1));
+        dialog = await screen.findByRole("dialog", { name: /Add Custom PV Controller/i });
+        fireEvent.change(within(dialog).getByLabelText(/Model ID \(Unique\)/i), { target: { value: "ss75_15" } });
+        expect(within(dialog).getByRole("button", { name: /Add Controller to Database/i })).toBeDisabled();
     });
 });

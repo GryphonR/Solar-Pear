@@ -49,7 +49,6 @@ describe("system overview single line diagram (roadmap 13.7)", () => {
     beforeEach(() => {
         localStorage.clear();
         localStorage.setItem("solar_projects", JSON.stringify(seed()));
-        localStorage.setItem("solar_ui", "next");
     });
 
     it("draws the system in power-flow order, reachable by keyboard", async () => {

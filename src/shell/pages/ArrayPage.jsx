@@ -3,7 +3,7 @@
  * Array page in the new shell (roadmap 13.6, canvas board "Array Overview hub"): header, Overview /
  * Layout / Panel tabs, and the Overview hub with the three slots, the checks and the temperature
  * response. Controllers are managed on the system's Controllers tab, so there is no controller tab here.
- * Layout and Panel reuse the existing views (`ArraySelectorView` embedded).
+ * Layout is the planner (`shell/planner`), Panel the ranked panel table (`PanelChooser`).
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import PriceTag from '../../components/PriceTag';
 import ArrayOverviewGraphs from '../../components/ArrayOverviewGraphs';
 import { ResultsDisclaimer } from '../../components/TrustNotices';
 import LayoutPlanner from '../planner/LayoutPlanner';
-import ArraySelectorView from '../../views/ArraySelectorView';
+import PanelChooser from '../PanelChooser';
 import ParallelStringsSelect from '../../views/arraySelector/ParallelStringsSelect';
 import SystemSettingsSummary from '../SystemSettingsSummary';
 import { isMicroinverter } from '../../lib/arrayAnalysis';
@@ -371,7 +371,7 @@ export default function ArrayPage({ design, system, route }) {
             ) : tab === 'layout' ? (
                 <LayoutPlanner arrayId={entry.id} />
             ) : (
-                <ArraySelectorView arrayId={entry.id} embedded />
+                <PanelChooser arrayId={entry.id} />
             )}
         </div>
     );

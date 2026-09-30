@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SolarPearLogo from '../components/SolarPearLogo';
 import { StatusPill, SlotCard, Meter, SidePanel, EmptyState, FilterBar, FilterButton, STATUS, Toast } from '../components/ui';
 
-/** Component gallery for the UX overhaul (open with `?ui=kit`). Every component in every state. */
+/** Component gallery for the UX overhaul (development only: open with `?kit`). Every component in every state. */
 export default function DesignKit() {
     const [panelOpen, setPanelOpen] = useState(false);
     const [search, setSearch] = useState('');

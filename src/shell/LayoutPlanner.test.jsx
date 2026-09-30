@@ -46,7 +46,6 @@ describe("layout planner (roadmap 13.8)", () => {
         small = false;
         localStorage.clear();
         localStorage.setItem("solar_projects", JSON.stringify(seedProjectsStore()));
-        localStorage.setItem("solar_ui", "next");
     });
 
     it("starts from three measurements and previews without changing the design", async () => {

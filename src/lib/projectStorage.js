@@ -45,3 +45,14 @@ export function readLegacyAreas(storage = window.localStorage) {
 export function removeLegacyDesignKeys(storage = window.localStorage) {
     LEGACY_DESIGN_KEYS.forEach((k) => storage.removeItem(k));
 }
+
+/** Keys only the classic UI used (removed in roadmap 13.9): the UI flag and a controller-table filter. */
+export const RETIRED_UI_KEYS = Object.freeze(['solar_ui', 'solar_hide_incompatible_controllers']);
+
+export function removeRetiredUiKeys(storage = window.localStorage) {
+    try {
+        RETIRED_UI_KEYS.forEach((k) => storage.removeItem(k));
+    } catch {
+        // Storage unavailable: nothing to tidy.
+    }
+}

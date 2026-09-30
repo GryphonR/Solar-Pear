@@ -51,8 +51,8 @@ describe("URL routing (roadmap 13.3)", () => {
 
     it("opens a deep link to an array tab", async () => {
         renderAt("/p/proj_home/s/sys_barn/a/A2/layout");
-        expect(await screen.findByRole("heading", { name: /^Barn roof$/i })).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: /^Layout$/ })).toHaveClass("border-blue-600");
+        expect(await screen.findByRole("heading", { level: 1, name: /^Barn roof$/i })).toBeInTheDocument();
+        expect(screen.getByRole("tab", { name: "Layout" })).toHaveAttribute("aria-selected", "true");
     });
 
     it("switches to the project named in the URL", async () => {
@@ -62,32 +62,24 @@ describe("URL routing (roadmap 13.3)", () => {
     });
 
     it("updates the URL on navigation and supports Back and Forward", async () => {
-        renderAt("/");
-        await userEvent.click(await screen.findByRole("button", { name: /^panels$/i }));
+        renderAt("/p/proj_home");
+        await userEvent.click(await screen.findByRole("link", { name: "Library" }));
         expect(location.pathname).toBe("/library/panels");
 
-        await userEvent.click(screen.getByRole("button", { name: /^South roof$/ }));
+        await userEvent.click(screen.getByRole("link", { name: /^House/ }));
+        await userEvent.click(await screen.findByRole("link", { name: /^South roof/ }));
         expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A1/overview");
-        await userEvent.click(screen.getByRole("button", { name: /^Panel Selector$/ }));
+        await userEvent.click(screen.getByRole("tab", { name: "Panel" }));
         expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A1/panel");
 
         act(() => navigate(-1));
         await waitFor(() => expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A1/overview"));
-        act(() => navigate(-1));
+        act(() => navigate(-2));
         await waitFor(() => expect(location.pathname).toBe("/library/panels"));
         expect(screen.getByRole("heading", { name: /Solar Panels Database/i })).toBeInTheDocument();
-        act(() => navigate(1));
-        await waitFor(() => expect(screen.getByRole("heading", { name: /^South roof$/i })).toBeInTheDocument());
+        act(() => navigate(2));
+        await waitFor(() => expect(screen.getByRole("heading", { level: 1, name: /^South roof$/i })).toBeInTheDocument());
     }, 15000); // several full-page renders; slow under a parallel run
-
-    it("reopens an array on the tab the user last used", async () => {
-        renderAt("/p/proj_home/s/sys_house/a/A1/panel");
-        await screen.findByRole("heading", { name: /^South roof$/i });
-        await userEvent.click(screen.getByRole("button", { name: /^system summary$/i }));
-        expect(location.pathname).toBe("/p/proj_home/summary");
-        await userEvent.click(screen.getByRole("button", { name: /^South roof$/ }));
-        expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A1/panel");
-    });
 
     it("replaces stale and unknown URLs with the canonical one", async () => {
         renderAt("/p/proj_home/s/sys_house/a/A2/layout");
@@ -95,15 +87,15 @@ describe("URL routing (roadmap 13.3)", () => {
 
         act(() => navigate("/p/proj_home/s/sys_barn/a/deleted/overview"));
         await waitFor(() => expect(location.pathname).toBe("/p/proj_home/s/sys_barn"));
-        expect(screen.getByRole("heading", { name: /System Summary/i })).toBeInTheDocument();
+        expect(screen.getByRole("heading", { level: 1, name: "Barn" })).toBeInTheDocument();
 
         act(() => navigate("/p/nobody/summary"));
         await waitFor(() => expect(location.pathname).toBe("/p/proj_home"));
     });
 
     it("links About & legal sections by hash", async () => {
-        renderAt("/");
-        await userEvent.click(await screen.findByRole("button", { name: /^Privacy$/ }));
+        renderAt("/p/proj_home");
+        await userEvent.click(await screen.findByRole("link", { name: /^Privacy$/ }));
         expect(location.pathname).toBe("/about");
         expect(location.hash).toBe("#privacy");
     });

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-/** Minimum layout width (px) for the full planner UI. Below this, only the guide is shown. */
+/** Minimum layout width (px) for editing in the layout planner. Below this the planner is view-only (13.9). */
 export const MIN_DESKTOP_LAYOUT_WIDTH = 960;
 
 /**
@@ -21,7 +21,7 @@ function getLayoutViewportWidthPx() {
     return Math.max(inner, docClient, visual);
 }
 
-/** True when the layout viewport is too narrow for the full app (see `MIN_DESKTOP_LAYOUT_WIDTH`). */
+/** True when the layout viewport is too narrow to edit the roof drawing (see `MIN_DESKTOP_LAYOUT_WIDTH`). */
 export function useIsSmallScreen() {
     const [isSmallScreen, setIsSmallScreen] = useState(() => {
         if (typeof window === 'undefined') return false;

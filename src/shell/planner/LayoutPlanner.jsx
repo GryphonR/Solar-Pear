@@ -22,8 +22,8 @@ import {
     isMicroinverter,
     panelMeetsWeightCap,
 } from '../../lib/arrayAnalysis';
-import { computeTrueDimsM } from '../../components/planner/domain/plannerGeometry';
-import { getAssignedControllerModel } from '../../components/planner/domain/plannerSelectors';
+import { computeTrueDimsM } from './plannerGeometry';
+import { getAssignedControllerModel } from './plannerSelectors';
 import {
     ASSUMED_PITCH_DEG,
     ROOF_SHAPES,

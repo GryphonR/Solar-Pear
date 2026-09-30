@@ -1,8 +1,7 @@
 /**
  * @file AppShell.jsx
- * The new app shell (roadmap 13.4), shown with `?ui=next`: sidebar tree, top bar and the page for the
- * current route. Existing views are mounted inside it (tables as Library, guides as Learn) until later
- * phase 13 tasks replace them.
+ * The app shell (roadmap 13.4; the only UI since 13.9): sidebar tree, top bar and the page for the
+ * current route. The catalogue tables are mounted as Library and the guides as Learn.
  */
 
 import React, { useState } from 'react';

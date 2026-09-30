@@ -11,9 +11,8 @@ import AddPanelModal from './modals/AddPanelModal';
 import AddChargerModal from './modals/AddChargerModal';
 import PanelInfoModal from './modals/PanelInfoModal';
 import ChargerInfoModal from './modals/ChargerInfoModal';
-import ArrayPlannerModal from './modals/ArrayPlannerModal';
 import Toast from './Toast';
-import { useDataState, usePlannerState, useUiState } from '../context/AppStateContext';
+import { useDataState, useUiState } from '../context/AppStateContext';
 
 /** @param {{ systemNoun?: string }} props - 'System' in the new shell (D9), 'Area' in the classic UI. */
 export default function AppModals({ systemNoun = 'Area' }) {
@@ -54,8 +53,6 @@ export default function AppModals({ systemNoun = 'Area' }) {
         systemVoltage,
         openConfirm,
     } = useUiState();
-    const { plannerModal, closePlanner, savePlannerToArray, savePlannerToDraftArray, applyPlannerCandidateToDraftArray } =
-        usePlannerState();
 
     const activeArray = arraysData.find((a) => a.id === activeTab);
     const modalSystemVoltage = activeArray ? getAreaSettings(activeArray.area).systemVoltage : systemVoltage;
@@ -193,29 +190,6 @@ export default function AppModals({ systemNoun = 'Area' }) {
                         checkbox: null,
                     })
                 }
-            />
-            <ArrayPlannerModal
-                open={plannerModal.open}
-                arrayId={plannerModal.arrayId}
-                draftArrayData={plannerModal.draftArrayData}
-                arraysData={arraysData}
-                panelsData={panelsData}
-                onClose={closePlanner}
-                onApplyLayoutRejected={() =>
-                    setNotification(
-                        'No layout to apply. Wait for results or adjust the roof and filters.',
-                        'warning'
-                    )
-                }
-                onSavePlanner={(targetArrayId, plannerData) => {
-                    if (targetArrayId) {
-                        savePlannerToArray(targetArrayId, plannerData);
-                    } else {
-                        savePlannerToDraftArray(plannerData);
-                    }
-                    setNotification('Array updated from the previewed layout. Planner settings saved.', 'success');
-                }}
-                onApplyCandidateToDraft={applyPlannerCandidateToDraftArray}
             />
         </>
     );

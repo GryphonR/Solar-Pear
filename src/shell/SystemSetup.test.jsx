@@ -38,7 +38,6 @@ const stored = () => JSON.parse(localStorage.getItem("solar_projects"));
 describe("first run and the chooser (roadmap 13.5)", () => {
     beforeEach(() => {
         localStorage.clear();
-        localStorage.setItem("solar_ui", "next");
     });
 
     it("opens the chooser on first run and sets up a system from the preset", async () => {
@@ -92,7 +91,6 @@ describe("System Setup (roadmap 13.5)", () => {
     beforeEach(() => {
         localStorage.clear();
         localStorage.setItem("solar_projects", JSON.stringify(seedProjectsStore()));
-        localStorage.setItem("solar_ui", "next");
     });
 
     it("edits the system's settings, reports the re-check and can undo", async () => {
@@ -143,16 +141,5 @@ describe("System Setup (roadmap 13.5)", () => {
         expect(stored().projects[0].systems[2].settings.designLowC).toBe(-15);
         // Existing systems keep theirs.
         expect(stored().projects[0].systems[0].settings.designLowC ?? -10).toBe(-10);
-    });
-});
-
-describe("classic UI is unchanged (roadmap 13.5)", () => {
-    it("still edits design temperatures on the array's controller tab", async () => {
-        localStorage.clear();
-        localStorage.setItem("solar_projects", JSON.stringify(seedProjectsStore()));
-        localStorage.setItem("solar_ui", "old");
-        renderAt("/p/proj_home/s/sys_house/a/A1/controllers");
-        expect(await screen.findByTestId("design-conditions")).toBeInTheDocument();
-        expect(screen.queryByTestId("system-settings-summary")).not.toBeInTheDocument();
     });
 });

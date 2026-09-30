@@ -52,7 +52,6 @@ describe("array hub and system controllers (roadmap 13.6)", () => {
     beforeEach(() => {
         localStorage.clear();
         localStorage.setItem("solar_projects", JSON.stringify(seedProjectsStore()));
-        localStorage.setItem("solar_ui", "next");
     });
 
     it("shows the array hub with three slots and no controller tab", async () => {

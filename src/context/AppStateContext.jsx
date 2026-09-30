@@ -32,6 +32,7 @@ import {
     loadProjectsStore,
     readLegacyAreas,
     removeLegacyDesignKeys,
+    removeRetiredUiKeys,
     LEGACY_DESIGN_KEYS,
     saveProjectsStore,
 } from '../lib/projectStorage';
@@ -157,10 +158,6 @@ function AppStateProviderInner({ children }) {
         'solar_hide_incompatible_panels',
         true
     );
-    const [hideIncompatibleControllers, setHideIncompatibleControllers] = useLocalStorage(
-        'solar_hide_incompatible_controllers',
-        true
-    );
     const [systemVoltage, setSystemVoltage] = useLocalStorage('solar_system_voltage', null);
     const [systemType, setSystemType] = useLocalStorage('solar_system_type', 'any');
     const [filterEps, setFilterEps] = useLocalStorage('solar_filter_eps', false);
@@ -269,7 +266,6 @@ function AppStateProviderInner({ children }) {
     }, [arraysData]);
 
     const [panelSort, setPanelSort] = useState({ key: 'peakPower', dir: 'desc' });
-    const [controllerSort, setControllerSort] = useState({ key: 'price', dir: 'asc' });
     const [activeSelectorTabs, setActiveSelectorTabs] = useState({});
     // Last content tab per array, so reopening an array from the sidebar returns to that tab.
     const [arrayTabMemory, setArrayTabMemory] = useLocalStorage('solar_active_array_content_tab', {});
@@ -351,12 +347,6 @@ function AppStateProviderInner({ children }) {
         targetArrayId: null,
         data: {},
     });
-    const [plannerModal, setPlannerModal] = useState({
-        open: false,
-        arrayId: null,
-        draftArrayData: null,
-        returnTo: null, // 'addArray' | null
-    });
     const [confirmModal, setConfirmModal] = useState({
         open: false,
         title: '',
@@ -409,6 +399,7 @@ function AppStateProviderInner({ children }) {
                 });
             }
 
+            removeRetiredUiKeys();
             const catalogue = loadCatalogueFromStorage(initialPanels, initialChargers);
             setPanelsData(catalogue.panels);
             setChargersData(catalogue.chargers);
@@ -588,14 +579,12 @@ function AppStateProviderInner({ children }) {
         setHideHeavyPanels(false);
         setHideMarginalPanels(false);
         setHideIncompatiblePanels(true);
-        setHideIncompatibleControllers(true);
         setSystemVoltage(null);
         setSystemType('any');
         setFilterEps(false);
         setFilterHouseBackup(false);
         setUserNotes({});
         setHiddenChargerMfr(null);
-        setPlannerModal({ open: false, arrayId: null, draftArrayData: null, returnTo: null });
         const fresh = makeStore([freshProject()]);
         setProjectsStore(fresh);
         navigate(buildPath({ view: 'summary', projectId: fresh.activeProjectId }));
@@ -848,63 +837,11 @@ function AppStateProviderInner({ children }) {
         });
     };
 
-    const openPlannerForNewArray = (draftArrayData) => {
-        setAddArrayModal({
-            open: false,
-            mode: 'add',
-            targetArrayId: null,
-            data: draftArrayData || {},
-        });
-        setPlannerModal({
-            open: true,
-            arrayId: null,
-            draftArrayData: draftArrayData || {},
-            returnTo: 'addArray',
-        });
-    };
-
-    const closePlanner = () => {
-        // Read current modal from closure - do not nest setAddArrayModal inside a setState updater.
-        const prev = plannerModal;
-        setPlannerModal({ open: false, arrayId: null, draftArrayData: null, returnTo: null });
-        if (prev.returnTo === 'addArray') {
-            setAddArrayModal({
-                open: true,
-                mode: 'add',
-                targetArrayId: null,
-                data: prev.draftArrayData || {},
-            });
-        }
-    };
-
     const savePlannerToArray = (arrayId, plannerData) => {
         if (!arrayId) return;
         setArraysData((prev) =>
             prev.map((a) => (a.id === arrayId ? { ...a, planner: plannerData } : a))
         );
-    };
-
-    const savePlannerToDraftArray = (plannerData) => {
-        setPlannerModal((prev) => ({
-            ...prev,
-            draftArrayData: { ...(prev.draftArrayData || {}), planner: plannerData },
-        }));
-        setAddArrayModal((prev) => ({
-            ...prev,
-            data: { ...(prev.data || {}), planner: plannerData },
-        }));
-    };
-
-    const applyPlannerCandidateToDraftArray = (fields) => {
-        if (!fields || typeof fields !== 'object') return;
-        setPlannerModal((prev) => ({
-            ...prev,
-            draftArrayData: { ...(prev.draftArrayData || {}), ...fields },
-        }));
-        setAddArrayModal((prev) => ({
-            ...prev,
-            data: { ...(prev.data || {}), ...fields },
-        }));
     };
 
     const deleteArea = (areaName) => {
@@ -1125,13 +1062,11 @@ function AppStateProviderInner({ children }) {
             hideHeavyPanels,
             hideMarginalPanels,
             hideIncompatiblePanels,
-            hideIncompatibleControllers,
             systemVoltage,
             systemType,
             filterEps,
             filterHouseBackup,
             panelSort,
-            controllerSort,
             activeSelectorTabs,
             activeArrayContentTab,
             infoModalPanelId,
@@ -1140,7 +1075,6 @@ function AppStateProviderInner({ children }) {
             addChargerModal,
             addAreaModal,
             addArrayModal,
-            plannerModal,
             confirmModal,
             hiddenChargerMfr,
             notification,
@@ -1168,7 +1102,6 @@ function AppStateProviderInner({ children }) {
             setHideHeavyPanels,
             setHideMarginalPanels,
             setHideIncompatiblePanels,
-            setHideIncompatibleControllers,
             setSystemVoltage,
             setSystemType,
             setFilterEps,
@@ -1176,7 +1109,6 @@ function AppStateProviderInner({ children }) {
             getAreaSettings,
             updateAreaSettings,
             setPanelSort,
-            setControllerSort,
             setActiveSelectorTabs,
             setActiveArrayContentTab,
             setInfoModalPanelId,
@@ -1185,7 +1117,6 @@ function AppStateProviderInner({ children }) {
             setAddChargerModal,
             setAddAreaModal,
             setAddArrayModal,
-            setPlannerModal,
             setConfirmModal,
             setHiddenChargerMfr,
             updateArray,
@@ -1207,11 +1138,7 @@ function AppStateProviderInner({ children }) {
             openEditArrayModal,
             handleAreaModalSave,
             handleAddArraySave,
-            openPlannerForNewArray,
-            closePlanner,
             savePlannerToArray,
-            savePlannerToDraftArray,
-            applyPlannerCandidateToDraftArray,
             performReset,
             loadStatus,
             startFresh,
@@ -1235,13 +1162,11 @@ function AppStateProviderInner({ children }) {
             hideHeavyPanels,
             hideMarginalPanels,
             hideIncompatiblePanels,
-            hideIncompatibleControllers,
             systemVoltage,
             systemType,
             filterEps,
             filterHouseBackup,
             panelSort,
-            controllerSort,
             activeSelectorTabs,
             activeArrayContentTab,
             infoModalPanelId,
@@ -1250,7 +1175,6 @@ function AppStateProviderInner({ children }) {
             addChargerModal,
             addAreaModal,
             addArrayModal,
-            plannerModal,
             confirmModal,
             hiddenChargerMfr,
             notification,
@@ -1321,13 +1245,11 @@ function AppStateProviderInner({ children }) {
             hideHeavyPanels: value.hideHeavyPanels,
             hideMarginalPanels: value.hideMarginalPanels,
             hideIncompatiblePanels: value.hideIncompatiblePanels,
-            hideIncompatibleControllers: value.hideIncompatibleControllers,
             systemVoltage: value.systemVoltage,
             systemType: value.systemType,
             filterEps: value.filterEps,
             filterHouseBackup: value.filterHouseBackup,
             panelSort: value.panelSort,
-            controllerSort: value.controllerSort,
             activeSelectorTabs: value.activeSelectorTabs,
             activeArrayContentTab: value.activeArrayContentTab,
             infoModalPanelId: value.infoModalPanelId,
@@ -1343,13 +1265,11 @@ function AppStateProviderInner({ children }) {
             setHideHeavyPanels: value.setHideHeavyPanels,
             setHideMarginalPanels: value.setHideMarginalPanels,
             setHideIncompatiblePanels: value.setHideIncompatiblePanels,
-            setHideIncompatibleControllers: value.setHideIncompatibleControllers,
             setSystemVoltage: value.setSystemVoltage,
             setSystemType: value.setSystemType,
             setFilterEps: value.setFilterEps,
             setFilterHouseBackup: value.setFilterHouseBackup,
             setPanelSort: value.setPanelSort,
-            setControllerSort: value.setControllerSort,
             setActiveSelectorTabs: value.setActiveSelectorTabs,
             setActiveArrayContentTab: value.setActiveArrayContentTab,
             setInfoModalPanelId: value.setInfoModalPanelId,
@@ -1375,13 +1295,7 @@ function AppStateProviderInner({ children }) {
 
     const plannerStateValue = useMemo(
         () => ({
-            plannerModal: value.plannerModal,
-            setPlannerModal: value.setPlannerModal,
-            openPlannerForNewArray: value.openPlannerForNewArray,
-            closePlanner: value.closePlanner,
             savePlannerToArray: value.savePlannerToArray,
-            savePlannerToDraftArray: value.savePlannerToDraftArray,
-            applyPlannerCandidateToDraftArray: value.applyPlannerCandidateToDraftArray,
         }),
         [value]
     );
