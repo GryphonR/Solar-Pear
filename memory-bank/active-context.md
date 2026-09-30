@@ -8,7 +8,8 @@
   - an About & legal page with the disclaimer, affiliate disclosure, pricing independence, data sources, privacy and terms (6.1, 6.2, 6.3, 6.7, 6.10);
   - a one-line disclaimer beside each array's verdict and on the Summary (no first-run banner: too intrusive), an affiliate notice by the buy buttons, footer links, "Report a data error" links in the info modals, and `changelogs/data-corrections.md` (6.6).
   - The legal text is a draft without legal advice. The operator is given as "eChook" and the only contact route is GitHub; a private contact address is still needed.
-- Branch `claude/4-14-supplier-research-*` (on top of phase 6) records the 4.14 desk research in `affiliate-research.md` and fills the 4.1 table. Apply order: Renogy UK (Awin), Bimble, Voltacon (Paid On Results), Sunstore, Butler Technik (Awin, Victron), City Plumbing. Grid-tied and hybrid gear has few affiliate-able consumer retailers, which strengthens the case for the installer-quote lead form (4.13) and for portable power and plug-in solar (3.10, 7.12).
+- Branch `claude/4-14-supplier-research-*` (on top of phase 6) records the 4.14 desk research in `affiliate-research.md` and fills the 4.1 table. Apply order: Renogy UK (Awin), Bimble, Voltacon (Paid On Results), Sunstore, Butler Technik (Awin, Victron), City Plumbing. Grid-tied and hybrid gear has few affiliate-able consumer retailers, which strengthens the case for the installer-quote lead form (4.13) and for portable power stations (3.10).
+- UX overhaul (2026-09-30): the redesign is planned as roadmap phase 13 (tasks 13.1–13.9), built incrementally behind a feature flag. The design lives in the Design canvas "Solar Pear UX Overhaul" (https://claude.ai/artifact/7o6URUudKricDigHW4hAuX). New related tasks: 3.14 (ENA Type Test references) and 7.17 (DNO pack). Plug-in solar is out of scope (D11).
 - Catalogue review (3.3) is human work and stands at 2 of 66 sellable products. Review status stays internal.
 
 ## Next up
