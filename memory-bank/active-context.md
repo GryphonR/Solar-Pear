@@ -4,7 +4,7 @@
 - `main` is at `adb2294` (phases 0–2 done, phase 3 mostly done; see the roadmap progress table).
 - Task 3.11 merged in PR #8: 56 mainstream UK inverters (Sunsynk, Growatt, Lux Power, Fronius, SMA, Sigenergy, Tesla Powerwall 3, Deye, Fogstar). The Hypontech micro is still outstanding; SolarEdge is out of scope for now (decision D7).
 - Task 3.6 merged in PR #10: 27 off-grid and leisure chargers (Victron SmartSolar/BlueSolar/Orion-Tr Smart, Renogy Rover and DCC, EPEver Tracer AN, Votronic MPP).
-- Branch `feat/small-panels` (task 3.7) adds the `flexible` panel field and four Renogy small rigid and flexible panels. Victron, Photonic Universe and Sunbeam panels are blocked on datasheets.
+- Branch `feat/small-panels` (task 3.7) adds the `flexible` panel field and four Renogy small rigid and flexible panels. Victron panels are blocked on a looping datasheet link; Photonic Universe and Sunbeam are left out because they publish no temperature coefficients or max system voltage (decision D8).
 - Catalogue review (3.3) is human work and stands at 2 of 66 sellable products. Review status stays internal.
 
 ## Direction
