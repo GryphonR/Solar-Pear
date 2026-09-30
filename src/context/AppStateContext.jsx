@@ -139,6 +139,8 @@ function AppStateProviderInner({ children }) {
     // Design data (systems, arrays, controller instances) lives in the active project of the projects
     // store (storage v3, roadmap 13.2). The flat shapes below are derived from it for the existing views.
     const initialStoreRef = useRef(undefined);
+    // Set while the chooser is being reopened after the last project was deleted (see deleteProject).
+    const reopeningChooserRef = useRef(false);
     if (initialStoreRef.current === undefined) initialStoreRef.current = loadProjectsStore() ?? null;
     const [projectsStore, setProjectsStore] = useState(
         () => initialStoreRef.current ?? makeStore([freshProject()])
@@ -485,7 +487,7 @@ function AppStateProviderInner({ children }) {
     // Replace aliases, stale area names and unknown or deleted targets with the canonical URL.
     // Waits for the initial load so a link to a saved array isn't redirected before it exists.
     useEffect(() => {
-        if (loadStatus !== 'ok' || isSamePath(canonicalPath, location.pathname)) return;
+        if (loadStatus !== 'ok' || isSamePath(canonicalPath, location.pathname) || reopeningChooserRef.current) return;
         navigate(`${canonicalPath}${location.hash}`, { replace: true });
     }, [loadStatus, canonicalPath, location.pathname, location.hash, navigate]);
 
@@ -1057,7 +1059,12 @@ function AppStateProviderInner({ children }) {
     };
     // First run ends once the user has left `/` (chosen a preset or skipped). Clearing it on navigation,
     // not on click, avoids a render at `/` without the chooser, which would redirect to the project.
+    // After deleting the last project the chooser is reopened; hold this off until `/` has been reached.
     useEffect(() => {
+        if (reopeningChooserRef.current) {
+            if (route.view === 'home') reopeningChooserRef.current = false;
+            return;
+        }
         if (isFirstRun && route.view !== 'home' && route.view !== 'new') setIsFirstRun(false);
     }, [isFirstRun, route.view]);
 
@@ -1087,7 +1094,13 @@ function AppStateProviderInner({ children }) {
     const deleteProject = (projectId) => {
         const next = deleteProjectInStore(projectsStore, projectId);
         setProjectsStore(next);
-        if (projectId === activeProject.id) goToProject(next.activeProjectId);
+        if (projectsStore.projects.length === 1 && projectsStore.projects[0].id === projectId) {
+            // That was the last project: start again from the chooser, as on a first visit (the fresh
+            // starter project is replaced by whatever is chosen).
+            reopeningChooserRef.current = true;
+            setIsFirstRun(true);
+            navigate('/');
+        } else if (projectId === activeProject.id) goToProject(next.activeProjectId);
     };
 
     const value = useMemo(

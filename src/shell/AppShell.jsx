@@ -201,7 +201,6 @@ export default function AppShell() {
         return (
             <>
                 <Chooser
-                    firstRun={isFirstRun}
                     backTo={isFirstRun ? null : { label: activeProject.name, to: projectPath }}
                     onChoose={startProjectFromPreset}
                     onSkip={(name) => {

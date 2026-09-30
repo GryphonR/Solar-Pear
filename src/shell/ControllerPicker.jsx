@@ -16,6 +16,9 @@ import { portCount } from '../lib/ports';
 import { ABOUT_SECTIONS } from '../lib/siteInfo';
 
 const PAGE = 20;
+/** MPPT input counts to filter by; the last one also matches anything with more. */
+const MPPT_OPTIONS = [1, 2, 3, 4];
+const mpptBucket = (c) => Math.min(portCount(c), MPPT_OPTIONS[MPPT_OPTIONS.length - 1]);
 const RANK = { valid: 0, warning: 1, unchecked: 2, error: 3 };
 const FIT = {
     valid: { label: 'Fits', className: 'text-status-ok-fg' },
@@ -56,6 +59,7 @@ export default function ControllerPicker({ open, onClose, title, system, setting
     const [query, setQuery] = useState('');
     const [ignoreSetup, setIgnoreSetup] = useState(false);
     const [includeMisfits, setIncludeMisfits] = useState(false);
+    const [mppts, setMppts] = useState(() => new Set()); // empty: any number of MPPT inputs
     const [shown, setShown] = useState(PAGE);
 
     const rows = useMemo(() => {
@@ -63,6 +67,7 @@ export default function ControllerPicker({ open, onClose, title, system, setting
         return chargers
             .filter((c) => c.id !== currentModelId)
             .filter((c) => ignoreSetup || controllerMatchesSystem(c, settings))
+            .filter((c) => mppts.size === 0 || mppts.has(mpptBucket(c)))
             .filter((c) => !q || `${c.manufacturer || ''} ${c.name} ${c.id}`.toLowerCase().includes(q))
             .map((c) => ({ c, fit: fitOf(c, targets, settings) }))
             .filter((r) => includeMisfits || r.fit !== 'error')
@@ -73,7 +78,7 @@ export default function ControllerPicker({ open, onClose, title, system, setting
                     (knownPrice(a.c) ?? 0) - (knownPrice(b.c) ?? 0) ||
                     a.c.name.localeCompare(b.c.name)
             );
-    }, [chargers, currentModelId, ignoreSetup, settings, query, targets, includeMisfits]);
+    }, [chargers, currentModelId, ignoreSetup, settings, query, targets, includeMisfits, mppts]);
 
     const chips = [
         settings.systemVoltage ? `${settings.systemVoltage} V` : null,
@@ -126,6 +131,40 @@ export default function ControllerPicker({ open, onClose, title, system, setting
                     <Link to={setupTo} className="ml-auto text-secondary hover:underline">
                         Edit setup
                     </Link>
+                </div>
+                <div role="group" aria-label="MPPT inputs" className="flex flex-wrap items-center gap-1.5 text-xs">
+                    <span className="mr-1 font-medium text-subtle">MPPT inputs:</span>
+                    {MPPT_OPTIONS.map((n, i) => {
+                        const on = mppts.has(n);
+                        const label = i === MPPT_OPTIONS.length - 1 ? `${n}+` : String(n);
+                        return (
+                            <button
+                                key={n}
+                                type="button"
+                                aria-pressed={on}
+                                aria-label={`${label} MPPT input${n === 1 ? '' : 's'}`}
+                                onClick={() => {
+                                    setMppts((prev) => {
+                                        const next = new Set(prev);
+                                        if (next.has(n)) next.delete(n);
+                                        else next.add(n);
+                                        return next;
+                                    });
+                                    setShown(PAGE);
+                                }}
+                                className={`h-7 min-w-9 rounded-full border px-2.5 font-plex-mono font-semibold ${on ? 'border-ink bg-ink text-white' : 'border-line-strong bg-white text-body hover:bg-paper'}`}
+                            >
+                                {label}
+                            </button>
+                        );
+                    })}
+                    {mppts.size ? (
+                        <button type="button" onClick={() => setMppts(new Set())} className="ml-1 font-semibold text-secondary hover:underline">
+                            Any
+                        </button>
+                    ) : (
+                        <span className="ml-1 text-muted">any</span>
+                    )}
                 </div>
                 <p className="text-xs text-muted">
                     {withPanels.length > 0

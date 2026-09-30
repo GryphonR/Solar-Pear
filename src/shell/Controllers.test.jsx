@@ -107,6 +107,22 @@ describe("array hub and system controllers (roadmap 13.6)", () => {
         expect(stored().projects[0].arrays[0].controllerInstanceId).toBe("");
     });
 
+    it("filters the picker by the number of MPPT inputs", async () => {
+        renderAt("/p/proj_home/s/sys_house/controllers");
+        await userEvent.click((await screen.findAllByRole("button", { name: /Add a controller/ }))[0]);
+        const panel = screen.getByRole("complementary", { name: /Add a controller/ });
+        const listed = () => within(within(panel).getByRole("list", { name: "Controllers" })).queryAllByRole("button", { name: /^Add / }).map((b) => b.getAttribute("aria-label"));
+        await userEvent.click(within(panel).getByRole("checkbox", { name: /Include ones that don't fit/ }));
+        const showAll = within(panel).queryByRole("button", { name: "Show all" });
+        if (showAll) await userEvent.click(showAll); // ignore the system's setup filters for this test
+        await userEvent.click(within(panel).getByRole("button", { name: "2 MPPT inputs" }));
+        expect(listed()).toEqual([`Add ${fullName(twoPort)}`]);
+        await userEvent.click(within(panel).getByRole("button", { name: "1 MPPT input" }));
+        expect(listed().sort()).toEqual([`Add ${fullName(onePort)}`, `Add ${fullName(twoPort)}`].sort());
+        await userEvent.click(within(panel).getByRole("button", { name: "Any" }));
+        expect(within(panel).getByRole("button", { name: "2 MPPT inputs" })).toHaveAttribute("aria-pressed", "false");
+    });
+
     it("adds a controller for a waiting array straight onto its first port", async () => {
         renderAt("/p/proj_home/s/sys_house/controllers");
         await userEvent.click(await screen.findByRole("button", { name: "Add a controller for South roof" }));

@@ -69,7 +69,8 @@ describe("first run and the chooser (roadmap 13.5)", () => {
         const input = await screen.findByRole("textbox", { name: "Project name" });
         await userEvent.clear(input);
         await userEvent.type(input, "Allotment");
-        await userEvent.click(screen.getByRole("button", { name: /Skip, start with a blank system/ }));
+        await userEvent.click(screen.getByRole("radio", { name: /Blank system/ }));
+        await userEvent.click(screen.getByRole("button", { name: "Start design: Blank system" }));
         expect(await screen.findByRole("heading", { level: 1, name: "Allotment" })).toBeInTheDocument();
     });
 

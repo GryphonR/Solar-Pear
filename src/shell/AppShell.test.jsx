@@ -86,7 +86,8 @@ describe("new app shell behind ?ui=next (roadmap 13.4)", () => {
         const name = await screen.findByRole("textbox", { name: "Project name" });
         await userEvent.clear(name);
         await userEvent.type(name, "Shed");
-        await userEvent.click(screen.getByRole("button", { name: "Start with a blank system" }));
+        await userEvent.click(screen.getByRole("radio", { name: /Blank system/ }));
+        await userEvent.click(screen.getByRole("button", { name: "Start design: Blank system" }));
         expect(await screen.findByRole("heading", { level: 1, name: "Shed" })).toBeInTheDocument();
 
         await userEvent.click(screen.getByRole("button", { name: /Shed/ }));
@@ -99,6 +100,22 @@ describe("new app shell behind ?ui=next (roadmap 13.4)", () => {
         await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
         await waitFor(() => expect(JSON.parse(localStorage.getItem("solar_projects")).projects.map((p) => p.name)).not.toContain("Van"));
         expect(location.pathname).not.toBe("/p/proj_van");
+    });
+
+    it("goes back to the chooser after deleting the last project", async () => {
+        const store = JSON.parse(localStorage.getItem("solar_projects"));
+        store.projects = store.projects.filter((p) => p.id === "proj_home");
+        localStorage.setItem("solar_projects", JSON.stringify(store));
+        renderAt("/p/proj_home");
+        await userEvent.click(await screen.findByRole("button", { name: /Hawthorn Cottage/ }));
+        await userEvent.click(screen.getByRole("menuitem", { name: /Delete project/ }));
+        await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
+        expect(await screen.findByRole("heading", { name: "What are you building?" })).toBeInTheDocument();
+        expect(location.pathname).toBe("/");
+        // Choosing replaces the fresh starter project rather than adding a second one.
+        await userEvent.click(screen.getByRole("radio", { name: /Van, boat or caravan/ }));
+        await userEvent.click(screen.getByRole("button", { name: /^Start design/ }));
+        await waitFor(() => expect(JSON.parse(localStorage.getItem("solar_projects")).projects).toHaveLength(1));
     });
 
     it("leaves the classic UI unchanged when the flag is off", async () => {

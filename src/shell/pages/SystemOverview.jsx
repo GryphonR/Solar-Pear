@@ -558,13 +558,6 @@ export default function SystemOverview({ design, system, onAddArray }) {
                         <span className="font-plex-mono">
                             Checked at {conditions.coldTempC} °C cold · {conditions.hotTempC} °C cell
                         </span>
-                        <button
-                            type="button"
-                            onClick={() => onAddArray(system.name)}
-                            className="flex h-8 items-center gap-1 rounded-md border border-line px-3 text-[13px] text-body hover:bg-paper"
-                        >
-                            <Plus size={14} /> Add array
-                        </button>
                         <Menu label="Export" menuLabel="Export diagram" align="right" buttonClassName="h-8 rounded-md border border-line bg-white px-3 text-[13px] text-body hover:bg-paper">
                             {(close) => (
                                 <>

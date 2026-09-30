@@ -36,6 +36,11 @@ const ICONS = {
             <path d="M9 20v-4h2v4" />
         </>
     ),
+    blank: (
+        <>
+            <path d="M12 8v8M8 12h8" />
+        </>
+    ),
     mobile: (
         <>
             <path d="M2 16V8a2 2 0 0 1 2-2h11l4 4h1a2 2 0 0 1 2 2v4h-2" />
@@ -47,7 +52,16 @@ const ICONS = {
     ),
 };
 
-export default function Chooser({ firstRun, backTo, onChoose, onSkip }) {
+/** The blank start, offered as a tile like the presets so Start design is the only way on. */
+const BLANK = {
+    id: 'blank',
+    blank: true,
+    title: 'Blank system',
+    text: 'No preset. Set the battery voltage, temperatures and which controllers to show yourself in System Setup.',
+    tag: 'Set up yourself',
+};
+
+export default function Chooser({ backTo, onChoose, onSkip }) {
     const [name, setName] = useState('My design');
     const [choice, setChoice] = useState(null);
     const projectName = name.trim() || 'My design';
@@ -76,18 +90,18 @@ export default function Chooser({ firstRun, backTo, onChoose, onSkip }) {
                     </p>
                 </div>
 
-                <label className="flex w-full max-w-[1120px] flex-col gap-1.5">
+                <label className="flex w-full max-w-[360px] flex-col items-center gap-1.5">
                     <span className="text-sm font-semibold">Project name</span>
                     <input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         maxLength={80}
-                        className="h-11 w-full max-w-[360px] rounded-lg border border-line-strong bg-white px-3 text-[15px]"
+                        className="h-11 w-full rounded-lg border border-line-strong bg-white px-3 text-center text-[15px]"
                     />
                 </label>
 
-                <div role="radiogroup" aria-label="What are you building?" className="-mt-4 grid w-full max-w-[1120px] grid-cols-2 gap-5 xl:grid-cols-4">
-                    {PRESETS.map((preset) => {
+                <div role="radiogroup" aria-label="What are you building?" className="-mt-4 grid w-full max-w-[1240px] grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-5">
+                    {[...PRESETS, BLANK].map((preset) => {
                         const selected = choice?.id === preset.id;
                         return (
                             <button
@@ -98,7 +112,7 @@ export default function Chooser({ firstRun, backTo, onChoose, onSkip }) {
                                 onClick={() => setChoice(preset)}
                                 className={`flex min-h-[250px] flex-col gap-3.5 rounded-xl border bg-white px-5 py-[22px] text-left text-body ${selected ? 'border-secondary bg-select-bg ring-2 ring-secondary' : 'border-line hover:border-ink hover:shadow-[0_6px_18px_rgba(20,24,31,0.08)]'}`}
                             >
-                                <span className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#FFF6CC]" aria-hidden="true">
+                                <span className={`flex h-12 w-12 items-center justify-center rounded-[10px] ${preset.blank ? 'border border-dashed border-line-strong bg-paper' : 'bg-[#FFF6CC]'}`} aria-hidden="true">
                                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14181F" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                                         {ICONS[preset.id]}
                                     </svg>
@@ -111,14 +125,15 @@ export default function Chooser({ firstRun, backTo, onChoose, onSkip }) {
                     })}
                 </div>
 
-                <div className="flex w-full max-w-[1120px] flex-wrap items-center justify-between gap-4 border-t border-line pt-6 text-sm">
-                    <button type="button" onClick={() => onSkip(projectName)} className="font-semibold text-secondary hover:underline">
-                        {firstRun ? 'Skip, start with a blank system' : 'Start with a blank system'}
-                    </button>
+                <div className="flex w-full max-w-[1240px] justify-end border-t border-line pt-6">
                     <button
                         type="button"
                         disabled={!choice}
-                        onClick={() => choice && onChoose(choice, projectName)}
+                        onClick={() => {
+                            if (!choice) return;
+                            if (choice.blank) onSkip(projectName);
+                            else onChoose(choice, projectName);
+                        }}
                         className="h-11 rounded-lg bg-brand px-6 text-[15px] font-semibold text-ink disabled:cursor-not-allowed disabled:bg-line-soft disabled:text-muted"
                     >
                         {choice ? `Start design: ${choice.title}` : 'Choose what you’re building to start'}
