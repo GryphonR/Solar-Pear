@@ -45,7 +45,7 @@ npm run preview
 
 ## How the checks work
 
-Each array is checked against its assigned MPPT input using worst-case cell temperatures. These default to −10 °C and 65 °C and can be changed per area on the Controller Selector tab:
+Each array is checked against its assigned MPPT input using worst-case cell temperatures. These default to −10 °C and 65 °C and can be changed per system on its Setup tab:
 
 | Check | Condition | Severity |
 | ----- | --------- | -------- |

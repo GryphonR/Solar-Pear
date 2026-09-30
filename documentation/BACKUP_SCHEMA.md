@@ -19,6 +19,8 @@ The Download button exports a JSON backup of the user's design and settings. Upl
 
 ## Top-level fields (version 6)
 
+Unchanged by the switch to the new UI (roadmap 13.9): the feature flag and the old controller-table filter were never exported.
+
 | Field | Type | Description |
 | ----- | ---- | ----------- |
 | `schemaVersion` | number | `6` |
