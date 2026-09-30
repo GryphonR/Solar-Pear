@@ -1,30 +1,23 @@
 /**
  * @file SystemPage.jsx
- * System page: header, tabs and the tab's content. Overview is a card per array until the diagram (13.7);
- * Setup is 13.5; Controllers is 13.6.
+ * System page: header, tabs and the tab's content. Overview is the single line diagram and issues (13.7),
+ * Setup is 13.5, Controllers is 13.6.
  */
 
 import React from 'react';
 import { Link } from 'react-router';
 import { StatusPill } from '../../components/ui';
-import { Plus } from '../../components/Icons';
 import { buildPath } from '../../lib/routes';
 import { Cost, kWp } from './ProjectOverview';
 import SystemSetup from './SystemSetup';
 import SystemControllers from './SystemControllers';
+import SystemOverview from './SystemOverview';
 
 const TABS = [
     ['overview', 'Overview'],
     ['setup', 'Setup'],
     ['controllers', 'Controllers'],
 ];
-
-function slotText(array) {
-    const a = array.analysis;
-    const panel = a?.panel ? `${a.array.count} × ${a.panel.name || a.panel.model}` : 'No panel yet';
-    const controller = a?.controller ? a.controller.name : 'No controller yet';
-    return { panel, controller };
-}
 
 export default function SystemPage({ design, system, tab = 'overview', onAddArray, onEditSystem }) {
     const projectId = design.project.id;
@@ -76,35 +69,7 @@ export default function SystemPage({ design, system, tab = 'overview', onAddArra
             ) : current === 'controllers' ? (
                 <SystemControllers design={design} system={system} />
             ) : (
-                <section aria-label="Arrays" className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                    {system.arrays.map((array) => {
-                        const { panel, controller } = slotText(array);
-                        return (
-                            <Link
-                                key={array.id}
-                                to={buildPath({ view: 'array', projectId, systemId: system.id, arrayId: array.id, tab: 'overview' })}
-                                className="flex flex-col gap-2.5 rounded-[10px] border border-line bg-white p-[18px] text-body hover:border-line-strong"
-                            >
-                                <span className="flex items-center justify-between gap-2">
-                                    <span className="truncate text-base font-semibold">{array.name}</span>
-                                    <StatusPill status={array.status}>{array.status === 'unset' ? `${array.progress.done} of 3 done` : undefined}</StatusPill>
-                                </span>
-                                <span className={`text-[13px] ${array.progress.panel ? 'text-subtle' : 'text-muted'}`}>{panel}</span>
-                                <span className={`text-[13px] ${array.progress.controller ? 'text-subtle' : 'text-muted'}`}>{controller}</span>
-                                <span className="font-plex-mono text-sm">{kWp(array.analysis?.peakPower || 0)}</span>
-                            </Link>
-                        );
-                    })}
-                    <button
-                        type="button"
-                        onClick={() => onAddArray(system.name)}
-                        className="flex min-h-[140px] flex-col items-center justify-center gap-1.5 rounded-[10px] border-[1.5px] border-dashed border-placeholder p-[18px] text-[15px] font-semibold text-body hover:bg-white"
-                    >
-                        <Plus size={22} />
-                        Add an array
-                        <span className="max-w-[240px] text-center text-[13px] font-normal text-muted">A roof section or ground frame with one panel type.</span>
-                    </button>
-                </section>
+                <SystemOverview design={design} system={system} onAddArray={onAddArray} />
             )}
         </div>
     );
