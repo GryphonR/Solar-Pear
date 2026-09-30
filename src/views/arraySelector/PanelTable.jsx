@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import DiscontinuedBadge from '../../components/DiscontinuedBadge';
 import { AlertTriangle, CheckCircle, Info, ExternalLink } from '../../components/Icons';
 import BuyButton from '../../components/BuyButton';
 import { AffiliateNotice } from '../../components/TrustNotices';
@@ -380,6 +381,7 @@ export default function PanelTable({
                                                 >
                                                     <div className="flex items-center gap-1.5 flex-wrap">
                                                         <span>{p.name}</span>
+                                                        <DiscontinuedBadge item={p} />
                                                         <button
                                                             onClick={() => onOpenInfo(p.model)}
                                                             className="text-slate-400 hover:text-blue-600 transition-colors"

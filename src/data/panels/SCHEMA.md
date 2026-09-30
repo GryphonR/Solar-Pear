@@ -49,6 +49,8 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `buyLinks` | array | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
 | `active` | boolean | If `true`, panel appears in selectors. |
 | `availableUK` | boolean | True if panel is readily available in the UK|
+| `discontinued` | boolean | `true` when the manufacturer no longer makes the panel or has stopped trading. Discontinued products stay selectable, so people designing around existing or second-hand kit can still check it; the app labels them "Discontinued". Use `src/data/replacements.json` instead when a product is renamed or has a direct successor that saved designs should move to. |
+| `discontinuedNote` | string | Why it was discontinued, shown to users (e.g. warranty no longer honoured), or `""`. Only set when `discontinued` is `true`. |
 | `reviewed` | bool | `true` once a person has checked every spec against the manufacturer datasheet. Internal only: review status is not shown in the app. |
 | `reviewedAt` | string | ISO date (`YYYY-MM-DD`) of that review, or `""`. |
 | `reviewedBy` | string | Who reviewed it (name or handle), or `""`. |

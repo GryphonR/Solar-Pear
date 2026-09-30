@@ -1,4 +1,5 @@
 import React from 'react';
+import DiscontinuedBadge from '../components/DiscontinuedBadge';
 import { Plus, Info, ExternalLink } from '../components/Icons';
 import BuyButton from '../components/BuyButton';
 import { AffiliateNotice } from '../components/TrustNotices';
@@ -133,7 +134,8 @@ export default function ChargersDbView() {
                                                         </label>
                                                     </td>
                                                     <td className="p-1 px-4">
-                                                        <span className="text-sm text-slate-800">{c.name}</span>
+                                                        <span className="text-sm text-slate-800">{c.name}</span>{' '}
+                                                        <DiscontinuedBadge item={c} />
                                                     </td>
                                                     <td className="p-1 px-4">
                                                         <span className="text-xs text-slate-400 font-mono whitespace-nowrap">

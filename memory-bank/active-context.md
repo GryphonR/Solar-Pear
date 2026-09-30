@@ -8,12 +8,12 @@
   - an About & legal page with the disclaimer, affiliate disclosure, pricing independence, data sources, privacy and terms (6.1, 6.2, 6.3, 6.7, 6.10);
   - a one-line disclaimer beside each array's verdict and on the Summary (no first-run banner: too intrusive), an affiliate notice by the buy buttons, footer links, "Report a data error" links in the info modals, and `changelogs/data-corrections.md` (6.6).
   - The legal text is a draft without legal advice. The operator is given as "eChook" and the only contact route is GitHub; a private contact address is still needed.
-- Roadmap task 4.14 was added: research consumer-facing UK suppliers and their affiliate programmes before applying to any (4.1).
+- Branch `claude/4-14-supplier-research-*` (on top of phase 6) records the 4.14 desk research in `affiliate-research.md` and fills the 4.1 table. Apply order: Renogy UK (Awin), Bimble, Voltacon (Paid On Results), Sunstore, Butler Technik (Awin, Victron), City Plumbing. Grid-tied and hybrid gear has few affiliate-able consumer retailers, which strengthens the case for the installer-quote lead form (4.13) and for portable power and plug-in solar (3.10, 7.12).
 - Catalogue review (3.3) is human work and stands at 2 of 66 sellable products. Review status stays internal.
 
 ## Next up
 - Merge phase 6. The rest of the phase needs the owner: 6.8 licence strategy, 6.9 trademark check, 6.4 Amazon rules (decided through 4.14), and 6.11 accessibility.
-- 4.14 supplier and affiliate research, then 4.1 applications.
+- Finish 4.14 (trust signals, Bimble T&Cs, Voltacon's current rate, emails to TradeSparky, Fogstar and 12 Volt Planet), then the owner applies to programmes in the ranked order (4.1).
 - Keep the 3.3 reviews going toward the 80% launch target.
 
 ## Open decisions

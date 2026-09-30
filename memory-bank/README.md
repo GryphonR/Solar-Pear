@@ -10,6 +10,7 @@ Persistent project context for AI assistants and new contributors. Read this fol
 | [data-pipeline.md](data-pipeline.md) | Panel and controller catalogue, schemas, data-admin, verification scripts |
 | [known-issues.md](known-issues.md) | Bugs and inaccuracies found, with file references and status |
 | [active-context.md](active-context.md) | Current focus and recent decisions |
+| [affiliate-research.md](affiliate-research.md) | UK retailers, their affiliate programmes and terms, and the order to apply in (roadmap 4.14) |
 | [roadmap.md](roadmap.md) | **Launch and monetisation roadmap**: 142 tickable tasks across 13 phases, with a decision log |
 
 Last full review: 2026-09-25 (at commit `5507f6a`).

@@ -72,6 +72,11 @@ describe('sanity rules', () => {
         expect(rules(checkPanels([{ ...flex, gseCompatibility: 'Both' }]))).toContain('error:flexible-gse');
     });
 
+    it('warns when a discontinued note is set without the discontinued flag', () => {
+        expect(checkPanels([{ ...goodPanel, discontinued: true, discontinuedNote: 'No longer made' }])).toEqual([]);
+        expect(rules(checkPanels([{ ...goodPanel, discontinuedNote: 'No longer made' }]))).toContain('warning:discontinued-note');
+    });
+
     it('flags duplicate ids and non-production links', () => {
         const f = checkPanels([
             goodPanel,

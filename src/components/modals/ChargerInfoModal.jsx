@@ -1,4 +1,5 @@
 import React from 'react';
+import DiscontinuedBadge, { DiscontinuedNotice } from '../DiscontinuedBadge';
 import { NotesSourceLabel } from '../DataProvenance';
 import PriceTag from '../PriceTag';
 import Modal from '../Modal';
@@ -22,6 +23,7 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${controllerTypeBadgeClass(c.type)}`}>
                     {controllerTypeLabel(c.type)}
                 </span>
+                <DiscontinuedBadge item={c} />
                 <PriceTag item={c} />
                 {safeDatasheet && (
                     <a href={safeDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors">
@@ -32,6 +34,7 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                     Report a data error
                 </a>
             </div>
+            <DiscontinuedNotice item={c} />
         </div>
     );
 

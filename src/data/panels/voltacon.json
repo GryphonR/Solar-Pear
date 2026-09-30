@@ -37,6 +37,8 @@
             }
         ],
         "active": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "reviewed": false,
         "reviewedAt": "",
         "reviewedBy": "",
@@ -81,6 +83,8 @@
             }
         ],
         "active": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "reviewed": false,
         "reviewedAt": "",
         "reviewedBy": "",
@@ -125,6 +129,8 @@
             }
         ],
         "active": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "reviewed": false,
         "reviewedAt": "",
         "reviewedBy": "",

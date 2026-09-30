@@ -29,6 +29,8 @@
         "datasheetUrl": "https://www.srnesolar.com/userfiles/files/2023/07/18/Shiner_User%20Manual_V1.05.pdf",
         "buyLinks": [],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": false,
         "g99_cert": false,
         "g100_cert": false,

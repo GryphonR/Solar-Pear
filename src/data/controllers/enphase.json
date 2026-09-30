@@ -47,6 +47,8 @@
             }
         ],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": true,
         "g99_cert": true,
         "g100_cert": true,
@@ -108,6 +110,8 @@
             }
         ],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": true,
         "g99_cert": true,
         "g100_cert": true,
@@ -150,6 +154,8 @@
         "datasheetUrl": "https://enphase.com/en-ie/download/iq8-series-microinverters-data-sheet",
         "buyLinks": [],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": true,
         "g99_cert": true,
         "g100_cert": true,
@@ -199,6 +205,8 @@
             }
         ],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": true,
         "g99_cert": true,
         "g100_cert": true,
@@ -241,6 +249,8 @@
         "datasheetUrl": "https://enphase.com/en-ie/download/iq8-series-microinverters-data-sheet",
         "buyLinks": [],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": true,
         "g99_cert": true,
         "g100_cert": true,
@@ -290,6 +300,8 @@
             }
         ],
         "availableUK": true,
+        "discontinued": false,
+        "discontinuedNote": "",
         "g98_cert": true,
         "g99_cert": true,
         "g100_cert": true,

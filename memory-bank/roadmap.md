@@ -204,7 +204,7 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
 Currently 0 of 122 links are affiliate links, and 178 products have no link at all.
 
 ### 4A. Programmes
-- [ ] **4.14 Research consumer-facing suppliers and their affiliate programmes** – Do this before 4.1. Most current buy links go to trade wholesalers (Segen, CCL, Waxman, Tradesparky), which DIY buyers often can't use and which rarely run affiliate schemes. Build a shortlist of UK retailers that sell panels, charge controllers and inverters to the public, covering the grid-tied/hybrid, off-grid and leisure (van/boat) segments. For each one, record:
+- [ ] 🚧 **4.14 Research consumer-facing suppliers and their affiliate programmes** – Do this before 4.1. Most current buy links go to trade wholesalers (Segen, CCL, Waxman, Tradesparky), which DIY buyers often can't use and which rarely run affiliate schemes. Build a shortlist of UK retailers that sell panels, charge controllers and inverters to the public, covering the grid-tied/hybrid, off-grid and leisure (van/boat) segments. For each one, record:
   - what it sells, whether it sells to consumers, and roughly how much of the catalogue it stocks;
   - whether it runs an affiliate programme, and on which network (Awin, CJ, Impact, Webgains, in-house, Amazon);
   - commission rate, cookie length, payment threshold and terms;
@@ -213,20 +213,28 @@ Currently 0 of 122 links are affiliate links, and 178 products have no link at a
 
   Also cover brand-direct stores (Renogy UK, EcoFlow, Victron via its dealers) and marketplaces.
   - Acceptance: findings in `memory-bank/affiliate-research.md` with sources and the date checked, a ranked list of retailers to apply to first, and the 4.1 table filled in from it.
+  - Progress (2026-09-30): desk research done in [affiliate-research.md](affiliate-research.md), with a ranked list and the 4.1 table below filled in. Off-grid and leisure are well covered (Renogy, Bimble, Voltacon, Sunstore, Butler Technik); grid-tied and hybrid gear mostly isn't, because it sells through trade distributors and TradeSparky, none of which has a programme. Still to do: trust signals per retailer, Bimble's full T&Cs, Voltacon's current rate (1% or 3%), stock overlap for the new retailers, and direct emails to TradeSparky, Fogstar and 12 Volt Planet.
 - [ ] **4.1 Apply to affiliate programmes** and record the status in the table below. Networks to check: Awin, CJ, Impact, Webgains, Amazon Associates UK, and direct/in-house schemes.
 
   | Retailer / brand | Network | Applied | Approved | Commission | Cookie | Notes |
   | ---------------- | ------- | ------- | -------- | ---------- | ------ | ----- |
-  | Amazon UK | Associates | | | | 24 h | Strict price-display rules (see 6.4) |
-  | Bimble Solar | ? | | | | | Off-grid specialist |
-  | Midsummer Energy | ? | | | | | |
-  | Tradesparky | ? | | | | | |
-  | City Plumbing | ? | | | | | |
-  | Segen / CCL / Waxman | trade | | | | | Trade only; possibly not affiliate-able |
-  | Voltacon | ? | | | | | |
-  | Renogy UK | ? | | | | | |
-  | EcoFlow / Anker / Jackery | Awin / Impact | | | | | High ticket |
-  | Victron (via retailers) | – | | | | | Victron has no direct sales |
+  | Renogy UK | Awin | | | ≈6% (reported) | 30 d | Rank 1. Brand-direct for 9 products; no brand PPC; only Awin voucher codes count |
+  | Bimble Solar | In-house | | | 2% | ? | Rank 2. Off-grid specialist, Victron dealer, 14 links already |
+  | Voltacon Solar | Paid On Results | | | 1% (3% in 2021 blog) | 60 d | Rank 3. Most-linked retailer (24); auto-accept; no brand PPC |
+  | Sunstore Solar | In-house | | | 5% | 30 d | Rank 4. Off-grid and Victron kits; paid monthly |
+  | Butler Technik | Awin | | | 2–5% | 30 d | Rank 5. Victron dealer (36 Victron records); product feeds; Google Ads only with permission |
+  | City Plumbing | Rakuten / Partnerize | | | ≈1.5% (reported) | ≤ 30 d | Rank 6. Consumer route for grid-tied and plug-in kits; 8 links |
+  | Sunshine Solar | In-house | | | 6%+ | ? | Rank 7. Check stock overlap first |
+  | TradeSparky | none found | | | | | Sells to the public; 21 links. Email to ask |
+  | Fogstar | none found | | | | | Own-brand Lux inverters and batteries. Email to ask |
+  | Segen / CCL / Waxman / Midsummer Wholesale | trade | | | | | Trade only; keep as price references |
+  | EcoFlow UK | Awin / CJ | | | 5% | 7 d | After 3.10/7.12; AOV ≈ £1,000 |
+  | Anker SOLIX UK | In-house / Webgains | | | 8% (reported) | 30 d | After 3.10/7.12 |
+  | Jackery UK | Awin | | | 6% | 30 d | After 3.10; no TM bidding |
+  | Bluetti UK | In-house | | | 5–10% (reported) | 30 d | After 3.10; £100 min payout |
+  | Amazon UK | Associates | | | 3–5% by category | 24 h | Defer until 6.4 is decided; price-display rules |
+  | Screwfix | – | | | 1% | 14 d | Closed to new applicants |
+  | Victron (via retailers) | – | | | | | No direct sales; use Butler Technik, Bimble, Sunstore |
 
 - [ ] **4.2 Choose a retailer strategy** – Decide the order in which buy options appear: best price, affiliate first, or a mix. Record it in the Decision log. **Recommendation:** show the cheapest option honestly, and mark which links earn commission. Trust drives long-term revenue.
 
