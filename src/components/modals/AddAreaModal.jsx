@@ -10,6 +10,8 @@ export default function AddAreaModal({
     onClose,
     onSave,
     onDelete,
+    // 'System' in the new shell (decision D9); the classic UI still says 'Area'.
+    noun = 'Area',
 }) {
     const [error, setError] = useState(null);
     const [draft, setDraft] = useState(() => value || '');
@@ -32,7 +34,7 @@ export default function AddAreaModal({
 
     const handleSave = () => {
         if (!trimmed) {
-            setError('Please enter an area name.');
+            setError(`Please enter ${noun === 'Area' ? 'an' : 'a'} ${noun.toLowerCase()} name.`);
             return;
         }
         if (
@@ -42,7 +44,7 @@ export default function AddAreaModal({
                     (mode !== 'edit' || a.toLowerCase() !== (originalName || '').toLowerCase())
             )
         ) {
-            setError(`An Area named "${trimmed}" already exists.`);
+            setError(`${noun === 'Area' ? 'An' : 'A'} ${noun} named "${trimmed}" already exists.`);
             return;
         }
         onSave(trimmed);
@@ -58,7 +60,7 @@ export default function AddAreaModal({
         <Modal
             open={open}
             onClose={onClose}
-            title={mode === 'edit' ? 'Edit Area' : 'Add New Area'}
+            title={mode === 'edit' ? `Edit ${noun}` : `Add New ${noun}`}
             maxWidth="max-w-md"
             bodyScrollable={false}
             footer={
@@ -74,7 +76,7 @@ export default function AddAreaModal({
                             onClick={onDelete}
                             className="px-4 py-2 bg-red-50 border border-red-200 text-red-700 rounded hover:bg-red-100 font-medium transition-colors"
                         >
-                            Delete Area
+                            Delete {noun}
                         </button>
                     )}
                     <button
@@ -90,13 +92,13 @@ export default function AddAreaModal({
                         disabled={isInvalid}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {mode === 'edit' ? 'Save Changes' : 'Save Area'}
+                        {mode === 'edit' ? 'Save Changes' : `Save ${noun}`}
                     </button>
                 </>
             }
         >
             <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Area Name</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{noun} Name</label>
                 <input
                     type="text"
                     autoFocus

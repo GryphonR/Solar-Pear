@@ -22,6 +22,7 @@ export default function AddArrayModal({
     onSave,
     onUpdateField,
     onDelete,
+    systemNoun = 'Area',
 }) {
     const d = { ...defaultData, ...data };
     const [error, setError] = useState(null);
@@ -94,7 +95,7 @@ export default function AddArrayModal({
                     <input type="text" className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.name} onChange={(e) => update('name', e.target.value)} />
                 </div>
                 <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Area</label>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{systemNoun}</label>
                     <select className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.area} onChange={(e) => update('area', e.target.value)}>
                         {areas.map((ar) => (
                             <option key={ar} value={ar}>{ar}</option>

@@ -958,7 +958,7 @@ function AppStateProviderInner({ children }) {
             // State
             projectsStore,
             activeProject,
-            route: routePending ? { view: 'home' } : route,
+            route: routePending ? { view: 'pending' } : route,
             goTo,
             activeTab,
             arraysData,
