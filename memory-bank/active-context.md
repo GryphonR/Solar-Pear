@@ -5,6 +5,7 @@
 - Task 3.11 merged in PR #8: 56 mainstream UK inverters (Sunsynk, Growatt, Lux Power, Fronius, SMA, Sigenergy, Tesla Powerwall 3, Deye, Fogstar). The Hypontech micro is still outstanding; SolarEdge is out of scope for now (decision D7).
 - Task 3.6 merged in PR #10: 27 off-grid and leisure chargers (Victron SmartSolar/BlueSolar/Orion-Tr Smart, Renogy Rover and DCC, EPEver Tracer AN, Votronic MPP).
 - Branch `feat/small-panels` (task 3.7) adds the `flexible` panel field, four Renogy small rigid and flexible panels, and the Victron BlueSolar Mono 130/150/190 W (the discontinued 185 W maps to the 190 W via `replacements.json`). Photonic Universe and Sunbeam are left out because they publish no temperature coefficients or max system voltage (decision D8).
+- UX overhaul (2026-09-30): the redesign is planned as roadmap phase 13 (tasks 13.1–13.9), built incrementally behind a feature flag. The design lives in the Design canvas "Solar Pear UX Overhaul" (https://claude.ai/artifact/7o6URUudKricDigHW4hAuX). New related tasks: 3.14 (ENA Type Test references) and 7.17 (DNO pack). Plug-in solar is out of scope (D11).
 - Catalogue review (3.3) is human work and stands at 2 of 66 sellable products. Review status stays internal.
 
 ## Direction

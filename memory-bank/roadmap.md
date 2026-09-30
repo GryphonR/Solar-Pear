@@ -34,17 +34,18 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 0 | Housekeeping | P0 | 7 / 8 |
 | 1 | Calculation correctness & safety | P0 | 11 / 13 |
 | 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
-| 3 | Catalogue quality & coverage | P0/P1 | 5 / 13 |
+| 3 | Catalogue quality & coverage | P0/P1 | 5 / 14 |
 | 4 | Affiliate infrastructure | P1 | 0 / 13 |
 | 5 | Hosting, routing & SEO | P1 | 0 / 13 |
 | 6 | Trust, legal & compliance | P0 | 0 / 11 |
-| 7 | Product & UX improvements | P1/P2 | 0 / 16 |
+| 7 | Product & UX improvements | P1/P2 | 0 / 17 |
 | 8 | Analytics & measurement | P1 | 0 / 7 |
 | 9 | Engineering, performance & CI | P1/P2 | 0 / 11 |
 | 10 | Internationalisation | P2 | 0 / 8 |
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
-| **Total** | | | **29 / 141** |
+| 13 | UX overhaul | P1 | 0 / 9 |
+| **Total** | | | **29 / 152** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -196,6 +197,8 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
   - Done: `.github/workflows/catalogue-refresh.yml` (Mondays 06:00 UTC plus manual). Datasheets and sanity always run; prices run only with the `SERPER_API_KEY` secret and `ENABLE_PRICE_REFRESH=true` variable. Opens a `bot/catalogue-refresh` PR with a report.
 - [ ] **3.13 Record inverter technology** – Add a field for the inverter's topology to inverter records, e.g. `inverterTopology`: `transformerless` (solid state / high-frequency), `hf-transformer`, `lf-transformer` or `toroidal-transformer`. Add it to the controller schema, data-admin and the sanity rules, backfill it from datasheets, and show it in the controller table, filters and info modal.
   - Acceptance: every inverter and inverter-charger record has a value, or an explicit `unknown`. Users can filter the controller list by topology.
+- [ ] **3.14 Record ENA Type Test Register references** – A DNO-compliant single line diagram (for G98 notifications and G99 applications) must quote, for each grid-connected generating unit, the Manufacturer's Reference number from the ENA Type Test Verification Report Register. Add an optional controller field, e.g. `enaTypeTestRef` (string, as printed on the register), to the controller schema, data-admin and `SCHEMA.md`, then collect it from the register for every catalogue item that connects to the grid (hybrid, string and micro inverters, and AC-coupled units). Off-grid chargers and DC-DC chargers don't need one. While collecting, check each record's `g98_cert` / `g99_cert` flags against the register.
+  - Acceptance: every record with `g98_cert` or `g99_cert` set has an `enaTypeTestRef`, or an explicit "not on the register" marker with a note. A sanity rule warns when a G98/G99 record has neither. The SLD and the controller info modal show the reference, and the SLD shows "ENA ref not recorded" rather than a blank when it is missing.
 
 ---
 
@@ -304,13 +307,19 @@ The app is currently a single URL with no indexable content. Search is the main 
 - [ ] **7.9 Wiring diagram (basic)** – Generate a single-line schematic per array (panels → string → isolator → MPPT port). This adds perceived value and differentiates the product.
 - [ ] **7.10 Favourites and comparison tray** – Pin panels or controllers, and compare them side by side.
 - [ ] **7.11 Optional cloud save** – Store designs server-side via magic link or passkey. This depends on a backend decision and is also a route to email capture (12.5).
-- [ ] **7.12 Balcony and plug-in solar** – Add a mode for the growing plug-in solar market (legal in Germany, with UK regulations evolving): 800 W micro, 2 panels. It's an easy, high-volume product category.
+- [ ] ❌ **7.12 Balcony and plug-in solar** – Add a mode for the growing plug-in solar market (legal in Germany, with UK regulations evolving): 800 W micro, 2 panels. It's an easy, high-volume product category.
+  - Dropped (D11): plug-in kits come pre-specified and matched, so there is nothing for the design tool to check or plan. If they matter commercially, they belong in the catalogue as kits (3.10), not as a design mode.
 - [ ] **7.13 Price-drop alerts** – "Notify me when this panel drops below £X", which drives email capture and return visits.
 - [ ] **7.14 Dark mode** – Using the Tailwind v4 theme tokens.
 - [ ] **7.15 Empty and error states** – Review every view for helpful empty states, following the patterns described in the README.
 - [ ] **7.16 Panel spider (radar) chart** – Show an at-a-glance radar chart of each panel's strengths and weaknesses in the panel info modal, and possibly in the comparison tray (7.10). Candidate axes: shading tolerance, thermal performance (Pmax temperature coefficient), efficiency, cost per kWp, weight per W, warranty and degradation. Each axis is scored from catalogue data, relative to the rest of the catalogue.
   - **Before implementing:** confirm the final categories and how each one is scored with the owner, using questions.
   - Acceptance: every axis is derived from a documented catalogue field or rule, and missing data is shown as unknown rather than scored as 0.
+- [ ] **7.17 DNO pack (G98/G99 supporting documents)** – A printable pack that gives the installer or the homeowner the diagram and equipment details a DNO asks for with a G98 notification or a G99 application. It is generated from the design, plus a short set of site details the app doesn't hold today. It is per **connection point** (one supply, one MPAN), so it lives at project level and gathers every grid-connected system on that supply; off-grid systems are left out. The on-screen system diagram stays a design tool and does not show DNO-only detail. Depends on 3.14 (ENA references), 7.8 (print/PDF export) and 7.9 (wiring diagram).
+  - **Site details to collect** (new, per connection point): supply address and MPAN, earthing arrangement (TN-C-S, TN-S, TT), supply phases and main fuse rating, meter locations (import/export, and any generation meter), the AC isolator next to each inverter and the main isolation point, any G100 export limitation scheme and its setting, and the installer's name and contact details. Each is optional so a draft can be produced, and missing items are marked on the drawing, not hidden.
+  - **Pack contents:** (1) an A3 landscape single line diagram in drawing style (black on white, readable in greyscale) with a title block (project, address, MPAN, drawn by, date, revision); (2) an equipment schedule listing each generating and storage unit with manufacturer, model, ENA Type Test reference, rated AC output, and the G98/G99 route; (3) a summary of the total installed capacity against the G98 limit (16 A per phase) and the resulting route; (4) a checklist of what still needs completing or signing by a competent person.
+  - **Before building:** confirm with the owner, and against the current ENA G98 and G99 documents and the DNOs' published guidance, exactly which items a DNO requires on the SLD and in the forms. This task produces supporting documents; it does not fill in or submit the DNO's own forms.
+  - Acceptance: a pack for a hybrid system with two arrays prints as a single PDF with the SLD sheet and the equipment schedule, uses only design data and the site details the user entered, and marks every missing required item on the drawing. Off-grid systems never appear in a pack. The disclaimer states that the application is the responsibility of the installer or the applicant.
 
 ---
 
@@ -396,12 +405,43 @@ Only start once UK product-market fit and revenue are proven.
 
 ---
 
+## Phase 13 – UX overhaul (P1)
+
+Implements the redesign in the UX overhaul brief (`documentation/UX_OVERHAUL_BRIEF.md`, currently only in the site-restructure worktree; merge it to `main` with this work) and the Design canvas "Solar Pear UX Overhaul" (https://claude.ai/artifact/7o6URUudKricDigHW4hAuX). Where the canvas and the brief disagree, the canvas is newer. The `.dc.html` artboards hold the exact sizes, spacing and copy.
+
+How to deliver it:
+- **Incrementally on `main`, behind a feature flag** (e.g. `?ui=next` or a localStorage switch), never as one big-bang rewrite. The old UI keeps working until the new one reaches parity. One PR per task, citing its ID.
+- **No new electrical rules.** `evaluateElectrical` in `src/lib/arrayAnalysis.js` stays the single source of truth; new screens only read its output.
+- **Separate tracks that can run in parallel:** accounts and sync (brief section 5.4; needs the Cloudflare Worker and D1 database, D10a, and supersedes 7.11), which can start once 13.2 provides stable ids and one versioned document per project; the DNO pack (7.17), after 3.14; and Playwright journeys (9.7), added as each task lands.
+
+- [ ] **13.1 Style foundation and shared components** – Add the canvas's colours, IBM Plex Sans and Mono, and the status colours (error, warning, info, OK, not set) to the `@theme` in `src/index.css`. Build the shared components: status pill, slot card, meter, side panel, toast with undo, filter bar and empty state. Take exact values from the `.dc.html` files.
+  - Acceptance: each component has every state shown on the canvas's Design system board, keyboard focus is visible, and status never relies on colour alone.
+- [ ] **13.2 Projects data model and migration** – Add Project → System (still `areas` in storage; "System" in the UI, D9) → Array, with stable opaque ids. Migrate existing data into one Local project called "My design"; catalogue edits, notes and filter preferences stay global. Bump the storage version to 3 and the backup schema to v6, keeping older backups importable. Split `AppStateContext.jsx` into catalogue, design and UI slices while doing this (part of 9.2).
+  - Acceptance: an existing user upgrades without losing anything and without being asked anything; migration and backup round-trip tests cover v2 storage and v5 backups.
+- [ ] **13.3 URL routing** – Add React Router with history URLs: `/`, `/p/:project`, `/p/:project/s/:system/(overview|setup|controllers|bom)`, `/p/:project/s/:system/a/:array/(overview|layout|panel)`, `/p/:project/summary`, `/library/panels`, `/library/controllers` and `/learn/:slug`. Use a `404.html` fallback while on GitHub Pages; Cloudflare hosting handles it natively. Avoid hash routes, which would block pre-rendering (5.5). This delivers 5.4.
+  - Acceptance: every screen has a linkable URL, Back and Forward work, and a refresh keeps the user where they were.
+- [ ] **13.4 New app shell behind the flag** – The sidebar tree (Project → Systems → Arrays, with status and progress dots), top bar, project switcher (new, duplicate, rename, delete) and save-state indicator. At first, mount the existing views inside the shell: the panel and controller tables as Library, the guides as Learn.
+  - Acceptance: with the flag on, a user can reach every existing feature through the new navigation; with it off, nothing has changed.
+- [ ] **13.5 System Setup, presets and the "What are you building?" chooser** – Move install type, grid mode, battery voltage, design temperatures and strict current off the array's Controller Selector tab into System Setup, with project-level defaults. First run opens the chooser (four tiles; no plug-in tile, D11); returning users open their last project. This delivers 7.1.
+  - Acceptance: system-wide settings can't be edited from inside an array page, and a change shows how many arrays were re-checked.
+- [ ] **13.6 Array hub and the Controllers tab** – The array Overview hub with Layout, Panel and Controller slot cards and the slim controller slot; the system Controllers tab with unit cards, ports, load meter and the controller picker side panel; Library "Use in…" actions.
+  - Acceptance: the old Controller Selector tab is gone, and a user can add, replace and remove controllers and assign free ports from the system page.
+- [ ] **13.7 Single line diagram** – Write a pure layout function (e.g. `src/lib/sldLayout.js`) that turns the design and `evaluateElectrical` results into positioned nodes and edges, with unit tests. Render the System Overview diagram and the accessible list view from the same output, plus the issue list with why and fix text (7.5). Include placeholders, empty states, the microinverter collapse and templates for every controller type (brief section 7).
+  - Acceptance: the layout is stable as arrays are added, every node is reachable by keyboard in power-flow order, and every status traces to a message with a cause and a fix.
+- [ ] **13.8 Layout planner redesign** – Rebuild the planner screens (canvas boards "Layout planner"): the roof inspector, drawing toolbar, ranked layouts with a before/after summary and "Use this layout", the first-use roof card (with a SolarWizard link for the pitch) and the view-only phone state. Engine additions: leaving individual slots empty, analysing a previewed layout before it is applied, and a "same panel as another array" hint. Update `documentation/ARRAY_PLANNER_ALGORITHM.md`.
+  - Acceptance: a user can preview a layout, see exactly what would change, and apply or discard it; nothing changes until they choose.
+- [ ] **13.9 Switch over** – Remove the flag and the old UI. Deliver the tablet and phone layouts: drawer navigation, tables as cards and the diagram's list view (part of 7.7). Update `architecture.md`, `LOCAL_STORAGE_KEYS.md` and `BACKUP_SCHEMA.md`.
+  - Acceptance: the old views and the flag are deleted, all tests pass, and nothing in the app is blocked below 960 px except editing in the planner.
+
+---
+
 ## Decision log
 
 Record direction-changing decisions here, newest first.
 
 | Date | ID | Decision | Rationale | Related tasks |
 | ---- | -- | -------- | --------- | ------------- |
+| 2026-09-30 | D11 | **No plug-in (balcony) solar mode**, and no plug-in tile in the "What are you building?" chooser | Plug-in kits are pre-specified and matched by the manufacturer, so there are no string, controller or cold-Voc decisions for the tool to make. Kits may still be listed as products under 3.10 | 7.12, 3.10 |
 | 2026-09-30 | D8 | Products are added to the catalogue **only with complete published data**: panels need temperature coefficients and max system voltage. Engine fallback coefficients are for user-added panels only | The cold-Voc check is the one hard safety gate; shipping catalogue products on guessed coefficients would undermine it. Photonic Universe and Sunbeam left out until full datasheets appear | 3.7 |
 | 2026-09-27 | D7 | SolarEdge (and other optimiser-based systems) are **out of scope for now** | Optimisers fix the string voltage, so the engine's per-string Voc/Vmp checks don't apply; supporting them needs a new controller type, per-optimiser checks and optimiser BoM lines. Revisit if demand justifies it | 3.11 |
 | 2026-09-25 | D1 | Isc above a controller's max PV short-circuit rating is an **error**, reversing 5507f6a. Controllers can opt out with `iscSelfLimiting` | Victron and other manufacturers treat max PV Isc as a hardware limit; clipping (Imp over operating current) stays a warning | 1.4, KI-5, KI-20 |
