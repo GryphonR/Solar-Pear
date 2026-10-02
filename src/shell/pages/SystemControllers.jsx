@@ -226,7 +226,7 @@ export default function SystemControllers({ design, system }) {
                                     <span className="text-xs font-semibold tracking-[0.08em] text-muted uppercase">
                                         {unitLabel} {index + 1} · {model?.manufacturer || 'Unknown'} · {model ? controllerTypeLabel(model.type, { short: true }) : 'not in catalogue'}
                                     </span>
-                                    <h3 className="text-xl font-semibold">{model?.name || instance.name}</h3>
+                                    <h2 className="text-xl font-semibold">{model?.name || instance.name}</h2>
                                     {model ? (
                                         <span className="text-[13px] text-muted">
                                             {ports.length} MPPT {ports.length === 1 ? 'port' : 'ports'} · {(model.systemVoltages || []).join('/')} V

@@ -52,14 +52,23 @@ export default function BuyButton({ buyLinks }) {
     useEffect(() => {
         if (!open) return;
         const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+        const onKey = (e) => {
+            if (e.key !== 'Escape') return;
+            setOpen(false);
+            ref.current?.querySelector('button')?.focus();
+        };
         document.addEventListener('mousedown', handler);
-        return () => document.removeEventListener('mousedown', handler);
+        document.addEventListener('keydown', onKey);
+        return () => {
+            document.removeEventListener('mousedown', handler);
+            document.removeEventListener('keydown', onKey);
+        };
     }, [open]);
 
     if (links.length === 0) {
         return (
-            <button disabled className="inline-flex items-center justify-center w-7 h-7 rounded bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200" title="No purchase links available">
-                <ShoppingCart size={14} />
+            <button disabled className="inline-flex items-center justify-center w-7 h-7 rounded bg-slate-100 text-slate-500 cursor-not-allowed border border-slate-200" title="No purchase links available" aria-label="No purchase links available">
+                <ShoppingCart size={14} aria-hidden="true" />
             </button>
         );
     }
@@ -71,6 +80,7 @@ export default function BuyButton({ buyLinks }) {
                 target="_blank"
                 rel="noopener noreferrer sponsored"
                 title={`Buy from ${link.supplier}${link.isAffiliate ? ' *' : ''}`}
+                aria-label={`Buy from ${link.supplier}${link.isAffiliate ? ' (affiliate link)' : ''} (opens in a new tab)`}
                 className="inline-flex items-center justify-center w-7 h-7 rounded bg-emerald-600 text-white hover:bg-emerald-700 transition-colors border border-emerald-700">
                 <ShoppingCart size={14} />
             </a>
@@ -81,9 +91,12 @@ export default function BuyButton({ buyLinks }) {
             <button
                 onClick={() => setOpen(o => !o)}
                 title="Multiple purchase options"
+                aria-label={`Buy: ${links.length} retailers`}
+                aria-haspopup="true"
+                aria-expanded={open}
                 className="inline-flex items-center justify-center h-7 px-2 rounded bg-emerald-600 text-white hover:bg-emerald-700 transition-colors border border-emerald-700"
             >
-                <ShoppingCart size={14} /> <ChevronDown size={12} className={`ml-1 transition-transform ${open ? 'rotate-180' : ''}`} />
+                <ShoppingCart size={14} aria-hidden="true" /> <ChevronDown size={12} aria-hidden="true" className={`ml-1 transition-transform ${open ? 'rotate-180' : ''}`} />
             </button>
             {open && (
                 <div className="absolute right-0 mt-1 w-44 bg-white border border-slate-200 rounded-lg shadow-lg z-20 overflow-hidden">
@@ -95,9 +108,11 @@ export default function BuyButton({ buyLinks }) {
                             rel="noopener noreferrer sponsored"
                             onClick={() => setOpen(false)}
                             className="flex items-center gap-2 px-3 py-2 text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                            <ShoppingCart size={12} />
+                            <ShoppingCart size={12} aria-hidden="true" />
                             {link.supplier}
-                            {link.isAffiliate ? '*' : ''}
+                            {link.isAffiliate ? <span aria-hidden="true">*</span> : ''}
+                            {link.isAffiliate ? <span className="sr-only"> (affiliate link)</span> : ''}
+                            <span className="sr-only"> (opens in a new tab)</span>
                         </a>
                     ))}
                 </div>

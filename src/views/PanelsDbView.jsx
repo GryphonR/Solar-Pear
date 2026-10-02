@@ -72,7 +72,7 @@ export default function PanelsDbView({ rowAction } = {}) {
             <div className="pb-4 border-b border-slate-200">
                 <div className="flex justify-between items-end">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-800">Solar Panels Database</h2>
+                        <h1 className="text-2xl font-bold text-slate-800">Solar Panels Database</h1>
                         <p className="text-slate-500">
                             View panel specifications. Only the price field is editable; use Select All / Deselect All to
                             filter arrays.
@@ -106,12 +106,12 @@ export default function PanelsDbView({ rowAction } = {}) {
                 return (
                     <div key={mfr} className="space-y-3">
                         <div className="flex items-center justify-between mb-1 px-1">
-                            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+                            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
                                 {mfr}{' '}
-                                <span className="font-normal text-slate-400 normal-case">
+                                <span className="font-normal text-slate-500 normal-case">
                                     ({mfrPanels.length} panels)
                                 </span>
-                            </h3>
+                            </h2>
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => toggleAllPanelMfr(mfr, true)}
@@ -136,23 +136,23 @@ export default function PanelsDbView({ rowAction } = {}) {
                             return (
                                 <div key={`${mfr}|${seriesKey}`} className="ml-0 sm:ml-2">
                                     <div className="flex items-center justify-between mb-1.5 px-1">
-                                        <h4 className="text-xs font-semibold text-slate-600 flex items-center gap-1">
+                                        <h3 className="text-xs font-semibold text-slate-600 flex items-center gap-1">
                                             {seriesKey}{' '}
-                                            <span className="font-normal text-slate-400">
+                                            <span className="font-normal text-slate-500">
                                                 ({seriesPanels.length})
                                             </span>
                                             {designNotes && (
                                                 <button
                                                     type="button"
                                                     onClick={() => setSeriesNotesModal({ seriesKey, notes: designNotes })}
-                                                    className="p-1 -m-1 text-slate-400 hover:text-blue-600 transition-colors"
+                                                    className="p-1 -m-1 text-slate-500 hover:text-blue-600 transition-colors"
                                                     title="View Design Notes for this series"
                                                     aria-label={`View design notes for the ${seriesKey} series`}
                                                 >
                                                     <Info size={14} />
                                                 </button>
                                             )}
-                                        </h4>
+                                        </h3>
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => toggleAllPanelSeries(mfr, seriesKey, true)}
@@ -242,7 +242,7 @@ export default function PanelsDbView({ rowAction } = {}) {
                                                                     <DiscontinuedBadge item={p} />
                                                                 </td>
                                                                 <td className="p-1 px-2">
-                                                                    <span className="text-xs text-slate-400 font-mono whitespace-nowrap">
+                                                                    <span className="text-xs text-slate-500 font-mono whitespace-nowrap">
                                                                         {p.model}
                                                                     </span>
                                                                 </td>
@@ -250,7 +250,7 @@ export default function PanelsDbView({ rowAction } = {}) {
                                                                     <div className="flex justify-center items-center gap-1">
                                                                         <button
                                                                             onClick={() => setInfoModalPanelId(p.model)}
-                                                                            className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
+                                                                            className="p-2 text-slate-500 hover:text-blue-600 transition-colors"
                                                                             title="View Technical Specs"
                                                                             aria-label={`View technical specs for ${p.name || p.model}`}
                                                                         >
@@ -261,9 +261,9 @@ export default function PanelsDbView({ rowAction } = {}) {
                                                                                 href={safeDatasheet}
                                                                                 target="_blank"
                                                                                 rel="noopener noreferrer"
-                                                                                className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
+                                                                                className="p-2 text-slate-500 hover:text-blue-600 transition-colors"
                                                                                 title="View Manufacturer Datasheet"
-                                                                                aria-label="View manufacturer datasheet"
+                                                                                aria-label={`Datasheet for ${p.name || p.model} (opens in a new tab)`}
                                                                             >
                                                                                 <ExternalLink size={18} />
                                                                             </a>
@@ -295,6 +295,7 @@ export default function PanelsDbView({ rowAction } = {}) {
                                                                         value={p.price || ''}
                                                                         placeholder="—"
                                                                         title={p.price ? '' : 'Price unavailable: enter your own'}
+                                                                        aria-label={`Price for ${p.name || p.model} (£)`}
                                                                         onChange={(e) =>
                                                                             updatePanel(p.model, 'price', parseFloat(e.target.value) || 0)
                                                                         }

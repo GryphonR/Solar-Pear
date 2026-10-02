@@ -19,7 +19,7 @@ import { CheckCircle, XIcon, ChevronDown, Info } from '../Icons';
  */
 export const GuidePageHeader = ({ eyebrow, title, children }) => (
     <header className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">{eyebrow}</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">{eyebrow}</p>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">{title}</h1>
         <div className="text-base text-slate-600 leading-relaxed space-y-3 max-w-3xl">{children}</div>
     </header>
@@ -56,7 +56,7 @@ export const GuideDetails = ({ title, children }) => (
             <span className="text-sm font-semibold text-slate-800">{title}</span>
             <ChevronDown
                 size={16}
-                className="text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180"
+                className="text-slate-500 flex-shrink-0 transition-transform group-open:rotate-180"
             />
         </summary>
         <div className="px-4 pb-4 pt-1 space-y-3">{children}</div>
@@ -112,7 +112,7 @@ export const StatRow = ({ stats }) => (
                 key={stat.label}
                 className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 min-w-0"
             >
-                <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
                     {stat.label}
                 </span>
                 <span className="block text-sm font-semibold text-slate-800 tabular-nums">
@@ -140,7 +140,7 @@ export const ExampleChips = ({ label = 'In the database', items, onSelect, empty
 
     return (
         <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                 {label}
             </p>
             <div className="flex flex-wrap gap-2">
@@ -152,10 +152,10 @@ export const ExampleChips = ({ label = 'In the database', items, onSelect, empty
                         title="Open full specification"
                         className="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-left hover:border-blue-300 hover:bg-blue-50/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     >
-                        <Info size={13} className="text-slate-400 group-hover:text-blue-600 flex-shrink-0" />
+                        <Info size={13} className="text-slate-500 group-hover:text-blue-600 flex-shrink-0" />
                         <span className="text-sm font-medium text-slate-700">{item.name}</span>
                         {item.detail && (
-                            <span className="text-xs text-slate-400 tabular-nums">{item.detail}</span>
+                            <span className="text-xs text-slate-500 tabular-nums">{item.detail}</span>
                         )}
                     </button>
                 ))}
@@ -181,7 +181,7 @@ export const SeriesList = ({ label = 'Series in the database', groups, emptyNote
 
     return (
         <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                 {label}
             </p>
             <dl className="grid gap-x-6 gap-y-1 sm:grid-cols-2 text-sm">

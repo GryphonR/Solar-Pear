@@ -215,7 +215,7 @@ export default function PanelsGuideView() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                <tr className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                                     <th className="py-1.5 pr-3">Format</th>
                                     <th className="py-1.5 pr-3">In the database</th>
                                     <th className="py-1.5 pr-3">Average Voc</th>
@@ -512,7 +512,7 @@ export default function PanelsGuideView() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                <tr className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                                     <th className="py-1.5 pr-3">Construction</th>
                                     <th className="py-1.5 pr-3">Total glass</th>
                                     <th className="py-1.5 pr-3">Panels</th>
@@ -617,7 +617,7 @@ export default function PanelsGuideView() {
                 <div className="rounded-lg border border-slate-200 overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            <tr className="bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500">
                                 <th className="py-2 px-3">Build</th>
                                 <th className="py-2 px-3">Front pane</th>
                                 <th className="py-2 px-3">Strongest at</th>
@@ -709,7 +709,7 @@ export default function PanelsGuideView() {
                 <div className="rounded-lg border border-slate-200 overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            <tr className="bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500">
                                 <th className="py-2 px-3">Mounting</th>
                                 <th className="py-2 px-3">Typical measured gain</th>
                             </tr>
@@ -803,7 +803,7 @@ export default function PanelsGuideView() {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            <tr className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                                 <th className="py-1.5 pr-3">Shading on the array</th>
                                 <th className="py-1.5">Measured gain over a plain string inverter</th>
                             </tr>

@@ -68,7 +68,7 @@ describe("app shell (roadmap 13.4)", () => {
         renderAt("/p/proj_home");
         await userEvent.click(await screen.findByRole("link", { name: "Library" }));
         expect(screen.getByRole("heading", { name: /Solar Panels Database/i })).toBeInTheDocument();
-        await userEvent.click(screen.getByRole("tab", { name: "Controllers" }));
+        await userEvent.click(screen.getByRole("link", { name: "Controllers" }));
         expect(screen.getByRole("heading", { name: /PV Controllers Database/i })).toBeInTheDocument();
         await userEvent.click(screen.getByRole("link", { name: "Learn" }));
         await userEvent.click(screen.getByRole("link", { name: /How we check compatibility/ }));

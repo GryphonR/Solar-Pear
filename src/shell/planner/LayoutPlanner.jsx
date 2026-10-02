@@ -9,7 +9,7 @@
  * rest of the design; it doesn't affect any check.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppState } from '../../context/AppStateContext';
 import { computePlannerLayouts, dropSmallestPanelsByFootprint } from '../../lib/plannerEngine';
 import {
@@ -131,6 +131,15 @@ function RoofInspector({ geo, change, onDrawObstacle, selectedObstacleId, onSele
         const next = { ...input, ...patch };
         change({ roofInput: next, ...regenerate(next) }, { final: true });
     };
+    const setObstacle = (id, patch) => change({ exclusions: geo.exclusions.map((x) => (x.id === id ? { ...x, ...patch } : x)) }, { final: true });
+    // A 1 × 1 m obstacle mid-roof, then positioned with the fields: the non-drag way to add one.
+    const addObstacle = () => {
+        const id = `excl_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+        const w = Math.min(1, trueX_m), h = Math.min(1, trueY_m);
+        const obstacle = { id, x: Math.max(0, (trueX_m - w) / 2), y: Math.max(0, (trueY_m - h) / 2), w, h, label: `Obstacle ${geo.exclusions.length + 1}` };
+        change({ exclusions: [...geo.exclusions, obstacle] }, { final: true });
+        onSelectObstacle(id);
+    };
 
     return (
         <aside aria-label="Roof" className="flex flex-col gap-5 rounded-[10px] border border-line bg-white px-5 py-[18px]">
@@ -217,32 +226,57 @@ function RoofInspector({ geo, change, onDrawObstacle, selectedObstacleId, onSele
 
             <Section title="OBSTACLES" count={geo.exclusions.length}>
                 {geo.exclusions.map((r) => (
-                    <div key={r.id} className={`flex items-center gap-2 rounded-md border px-2.5 py-2 ${r.id === selectedObstacleId ? 'border-secondary bg-select-bg' : 'border-line'}`}>
-                        <span className="h-3.5 w-3.5 shrink-0 border border-[#6B4E16] bg-[repeating-linear-gradient(45deg,#D9C9A3_0_2px,#F6F1E6_2px_4px)]" aria-hidden="true" />
-                        <button type="button" onClick={() => onSelectObstacle(r.id)} className="flex min-w-0 flex-1 flex-col text-left">
-                            <input
-                                aria-label="Obstacle name"
-                                defaultValue={r.label || 'Obstacle'}
-                                onBlur={(e) => e.target.value !== r.label && change({ exclusions: geo.exclusions.map((x) => (x.id === r.id ? { ...x, label: e.target.value || 'Obstacle' } : x)) }, { final: true })}
-                                className="w-full truncate bg-transparent text-[13px] font-medium outline-none focus:underline"
-                            />
-                            <span className="font-plex-mono text-[11px] text-muted">
-                                {r.w.toFixed(2)} × {r.h.toFixed(2)} m
-                            </span>
-                        </button>
-                        <button
-                            type="button"
-                            aria-label={`Delete ${r.label || 'obstacle'}`}
-                            onClick={() => change({ exclusions: geo.exclusions.filter((x) => x.id !== r.id) }, { final: true })}
-                            className="flex h-7 w-7 items-center justify-center rounded text-muted hover:bg-paper hover:text-status-error-fg"
-                        >
-                            ×
-                        </button>
-                    </div>
+                    <Fragment key={r.id}>
+                        <div className={`flex items-center gap-2 rounded-md border px-2.5 py-2 ${r.id === selectedObstacleId ? 'border-secondary bg-select-bg' : 'border-line'}`}>
+                            <span className="h-3.5 w-3.5 shrink-0 border border-[#6B4E16] bg-[repeating-linear-gradient(45deg,#D9C9A3_0_2px,#F6F1E6_2px_4px)]" aria-hidden="true" />
+                            <div className="flex min-w-0 flex-1 flex-col">
+                                <input
+                                    aria-label="Obstacle name"
+                                    defaultValue={r.label || 'Obstacle'}
+                                    onFocus={() => onSelectObstacle(r.id)}
+                                    onBlur={(e) => e.target.value !== r.label && change({ exclusions: geo.exclusions.map((x) => (x.id === r.id ? { ...x, label: e.target.value || 'Obstacle' } : x)) }, { final: true })}
+                                    className="w-full truncate bg-transparent text-[13px] font-medium outline-none focus:underline"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => onSelectObstacle(r.id)}
+                                    aria-label={`Select ${r.label || 'obstacle'} on the drawing`}
+                                    aria-pressed={r.id === selectedObstacleId}
+                                    className="self-start text-left"
+                                >
+                                    <span className="font-plex-mono text-[11px] text-muted">
+                                        {r.w.toFixed(2)} × {r.h.toFixed(2)} m
+                                    </span>
+                                </button>
+                            </div>
+                            <button
+                                type="button"
+                                aria-label={`Delete ${r.label || 'obstacle'}`}
+                                onClick={() => change({ exclusions: geo.exclusions.filter((x) => x.id !== r.id) }, { final: true })}
+                                className="flex h-7 w-7 items-center justify-center rounded text-muted hover:bg-paper hover:text-status-error-fg"
+                            >
+                                ×
+                            </button>
+                        </div>
+                        {r.id === selectedObstacleId ? (
+                            // Position and size without dragging (WCAG 2.5.7, roadmap 6.11).
+                            <div className="grid grid-cols-4 gap-2" role="group" aria-label={`${r.label || 'Obstacle'} position and size`}>
+                                <CommitField label="From left" unit="m" value={r.x.toFixed(2)} onCommit={(v) => setObstacle(r.id, { x: Math.max(0, v) })} aria={`${r.label || 'Obstacle'}: distance from the left edge in metres`} />
+                                <CommitField label="From top" unit="m" value={r.y.toFixed(2)} onCommit={(v) => setObstacle(r.id, { y: Math.max(0, v) })} aria={`${r.label || 'Obstacle'}: distance from the top edge in metres`} />
+                                <CommitField label="Width" unit="m" value={r.w.toFixed(2)} onCommit={(v) => setObstacle(r.id, { w: Math.max(0.1, v) })} aria={`${r.label || 'Obstacle'}: width in metres`} />
+                                <CommitField label="Height" unit="m" value={r.h.toFixed(2)} onCommit={(v) => setObstacle(r.id, { h: Math.max(0.1, v) })} aria={`${r.label || 'Obstacle'}: height in metres`} />
+                            </div>
+                        ) : null}
+                    </Fragment>
                 ))}
-                <button type="button" onClick={onDrawObstacle} className="self-start text-[13px] font-semibold text-secondary hover:underline">
-                    + Draw an obstacle on the roof
-                </button>
+                <div className="flex flex-wrap gap-x-4 gap-y-1">
+                    <button type="button" onClick={onDrawObstacle} className="text-[13px] font-semibold text-secondary hover:underline">
+                        + Draw an obstacle on the roof
+                    </button>
+                    <button type="button" onClick={addObstacle} className="text-[13px] font-semibold text-secondary hover:underline">
+                        + Add one by size
+                    </button>
+                </div>
             </Section>
         </aside>
     );

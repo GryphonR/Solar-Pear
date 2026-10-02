@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { divisorsOf } from '../../lib/arrayAnalysis';
 
 /**
@@ -6,13 +6,15 @@ import { divisorsOf } from '../../lib/arrayAnalysis';
  */
 export default function ParallelStringsSelect({ array, arrayId, updateArray }) {
     const divisors = divisorsOf(array.count);
+    const id = useId();
 
     if (divisors.length <= 1) return null;
 
     return (
         <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-500 font-medium">Wiring Configuration:</span>
+            <label htmlFor={id} className="text-sm text-slate-500 font-medium">Wiring Configuration:</label>
             <select
+                id={id}
                 className="text-sm font-medium border border-slate-300 rounded-md px-2 py-1 bg-blue-50 text-blue-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={array.parallelStrings || 1}
                 onChange={(e) =>

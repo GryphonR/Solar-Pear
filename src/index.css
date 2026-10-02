@@ -2,6 +2,8 @@
 
 @theme {
   --color-brand: #ffcc00;
+  /* Darker than Tailwind's #62748e so small muted text reaches 4.5:1 on the paper background (6.11). */
+  --color-slate-500: #57687f;
   --color-secondary: #0044cc;
 
   /* UX overhaul (roadmap 13.1). Values come from the "Solar Pear UX Overhaul" Design system board. */

@@ -14,7 +14,7 @@ export default function PriceTag({ item, now }) {
             {known ? `${formatMoney(item.price)} per unit` : 'Price unavailable'}
             {age && (
                 <span
-                    className={`ml-1 text-xs font-normal ${age.isStale ? 'text-amber-700' : 'text-slate-400'}`}
+                    className={`ml-1 text-xs font-normal ${age.isStale ? 'text-amber-700' : 'text-slate-500'}`}
                     title={age.isStale ? 'This price was checked a while ago and may be out of date.' : undefined}
                 >
                     · checked {age.label}

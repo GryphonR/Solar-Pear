@@ -355,19 +355,18 @@ export default function ArrayPage({ design, system, route }) {
                 </dl>
             </div>
 
-            <div role="tablist" aria-label={`${entry.name} sections`} className="flex gap-1 border-b border-line">
+            <nav aria-label={`${entry.name} sections`} className="flex gap-1 border-b border-line">
                 {TABS.map(([key, label]) => (
                     <Link
                         key={key}
-                        role="tab"
-                        aria-selected={tab === key}
+                        aria-current={tab === key ? 'page' : undefined}
                         to={buildPath({ view: 'array', projectId, systemId: system.id, arrayId: entry.id, tab: key })}
                         className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold ${tab === key ? 'border-brand text-body' : 'border-transparent text-muted hover:text-body'}`}
                     >
                         {label}
                     </Link>
                 ))}
-            </div>
+            </nav>
 
             {tab === 'overview' ? (
                 <ArrayHub entry={entry} system={system} projectId={projectId} settings={settings} setupTo={setupTo} />

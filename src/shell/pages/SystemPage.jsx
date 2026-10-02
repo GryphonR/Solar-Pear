@@ -54,19 +54,18 @@ export default function SystemPage({ design, system, tab = 'overview', onAddArra
                 </dl>
             </div>
 
-            <div role="tablist" aria-label={`${system.name} sections`} className="flex gap-1 border-b border-line">
+            <nav aria-label={`${system.name} sections`} className="flex gap-1 border-b border-line">
                 {TABS.map(([key, label]) => (
                     <Link
                         key={key}
-                        role="tab"
-                        aria-selected={current === key}
+                        aria-current={current === key ? 'page' : undefined}
                         to={buildPath({ view: 'system', projectId, systemId: system.id, tab: key })}
                         className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold ${current === key ? 'border-brand text-body' : 'border-transparent text-muted hover:text-body'}`}
                     >
                         {label}
                     </Link>
                 ))}
-            </div>
+            </nav>
 
             {current === 'setup' ? (
                 <SystemSetup design={design} system={system} />

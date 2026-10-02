@@ -37,7 +37,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 3 | Catalogue quality & coverage | P0/P1 | 5 / 14 |
 | 4 | Affiliate infrastructure | P1 | 0 / 14 |
 | 5 | Hosting, routing & SEO | P1 | 1 / 13 |
-| 6 | Trust, legal & compliance | P0 | 7 / 11 |
+| 6 | Trust, legal & compliance | P0 | 8 / 11 |
 | 7 | Product & UX improvements | P1/P2 | 2 / 17 |
 | 8 | Analytics & measurement | P1 | 0 / 7 |
 | 9 | Engineering, performance & CI | P1/P2 | 0 / 11 |
@@ -45,7 +45,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
 | 13 | UX overhaul | P1 | 9 / 9 |
-| **Total** | | | **50 / 154** |
+| **Total** | | | **51 / 154** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -320,7 +320,9 @@ The app is currently a single URL with no indexable content. Search is the main 
 - [ ] **6.9 Trademark check** – Check that "Solar Pear" is clear to use in the UK and EU (UK IPO search), and consider registering it once there is traction.
 - [x] **6.10 Terms of use** – Add a limitation-of-liability clause. Consider product liability for electrical advice, and get a professional review if revenue becomes material.
   - Done: the "Terms of use" section of About & legal (as-is, no professional advice, limitation of liability that keeps the non-excludable UK liabilities, retailer responsibility, GPL, England and Wales law). This is a draft written without legal advice; get it professionally reviewed before revenue becomes material.
-- [ ] **6.11 Accessibility** – Aim for WCAG 2.2 AA: keyboard navigation of tables and modals, colour contrast on status pills, and screen-reader labels on the icon-only buttons (BuyButton).
+- [x] **6.11 Accessibility** – Aim for WCAG 2.2 AA: keyboard navigation of tables and modals, colour contrast on status pills, and screen-reader labels on the icon-only buttons (BuyButton).
+  - Done (2026-10-02): an axe-core audit (WCAG 2.0–2.2 A/AA plus best practice) of all 20 routes with a populated design now reports no violations. Fixes: small grey text in the older views reached only 2.4–4.3:1 on the paper background, so `text-slate-400` text became `text-slate-500` and `slate-500` is darkened to #57687f in the theme; lighter text on the Summary's dark panels; warning figures in the panel table use the status-warning colour. BuyButton has spoken labels (retailer, affiliate, new tab), `aria-expanded` and Escape. Icon buttons name their product and have 24 px targets. Filter, wiring and price fields have labels. The route tab bars are now `nav` with `aria-current` (they were links pretending to be ARIA tabs). Headings run in order with one `h1` per page. A skip-to-content link. The planner's obstacle name field is no longer inside a button, and obstacles can be added, placed and sized from fields (WCAG 2.5.7 dragging alternative). Modals, side panels, menus and the drawer already trapped or returned focus and closed on Escape.
+  - Not covered: corners of a hand-drawn roof outline are still moved only by dragging (the preset shapes with size fields are the alternative), focus isn't moved to the new page heading after navigation, and there has been no pass with a real screen reader (NVDA or VoiceOver); do one with the beta group (11.3).
 
 ---
 

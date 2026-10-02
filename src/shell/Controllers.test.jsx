@@ -56,8 +56,8 @@ describe("array hub and system controllers (roadmap 13.6)", () => {
 
     it("shows the array hub with three slots and no controller tab", async () => {
         renderAt("/p/proj_home/s/sys_house/a/A1/overview");
-        const tabs = await screen.findByRole("tablist", { name: "South roof sections" });
-        expect(within(tabs).getAllByRole("tab").map((t) => t.textContent)).toEqual(["Overview", "Layout", "Panel"]);
+        const tabs = await screen.findByRole("navigation", { name: "South roof sections" });
+        expect(within(tabs).getAllByRole("link").map((t) => t.textContent)).toEqual(["Overview", "Layout", "Panel"]);
         expect(screen.getByRole("button", { name: /Choose a panel/ })).toBeInTheDocument();
         expect(screen.getByRole("button", { name: /Add a controller/ })).toBeInTheDocument();
         expect(screen.queryByRole("button", { name: /Controller Selector/ })).not.toBeInTheDocument();

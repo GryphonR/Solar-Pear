@@ -52,7 +52,7 @@ describe("URL routing (roadmap 13.3)", () => {
     it("opens a deep link to an array tab", async () => {
         renderAt("/p/proj_home/s/sys_barn/a/A2/layout");
         expect(await screen.findByRole("heading", { level: 1, name: /^Barn roof$/i })).toBeInTheDocument();
-        expect(screen.getByRole("tab", { name: "Layout" })).toHaveAttribute("aria-selected", "true");
+        expect(screen.getByRole("link", { name: "Layout" })).toHaveAttribute("aria-current", "page");
     });
 
     it("switches to the project named in the URL", async () => {
@@ -69,7 +69,7 @@ describe("URL routing (roadmap 13.3)", () => {
         await userEvent.click(screen.getByRole("link", { name: /^House/ }));
         await userEvent.click(await screen.findByRole("link", { name: /^South roof/ }));
         expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A1/overview");
-        await userEvent.click(screen.getByRole("tab", { name: "Panel" }));
+        await userEvent.click(screen.getByRole("link", { name: "Panel" }));
         expect(location.pathname).toBe("/p/proj_home/s/sys_house/a/A1/panel");
 
         act(() => navigate(-1));

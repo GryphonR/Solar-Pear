@@ -93,7 +93,7 @@ export default function Modal({
             <button
                 type="button"
                 onClick={onClose}
-                className="p-2 text-slate-400 hover:text-slate-700 bg-white rounded-full shadow-sm border border-slate-200 transition-colors flex-shrink-0 ml-2"
+                className="p-2 text-slate-500 hover:text-slate-700 bg-white rounded-full shadow-sm border border-slate-200 transition-colors flex-shrink-0 ml-2"
                 aria-label="Close"
             >
                 <XIcon size={20} />
@@ -107,7 +107,7 @@ export default function Modal({
             <button
                 type="button"
                 onClick={onClose}
-                className="p-2 text-slate-400 hover:text-slate-700 bg-white rounded-full shadow-sm border border-slate-200 transition-colors"
+                className="p-2 text-slate-500 hover:text-slate-700 bg-white rounded-full shadow-sm border border-slate-200 transition-colors"
                 aria-label="Close"
             >
                 <XIcon size={20} />

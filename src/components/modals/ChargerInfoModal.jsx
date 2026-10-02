@@ -43,7 +43,7 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
             <div className="space-y-8">
                 <div className="grid grid-cols-2 gap-6">
                     <div>
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Input Specifications</h3>
+                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Input Specifications</h3>
                         <dl className="space-y-3 text-sm">
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Max PV Voltage</dt><dd className="text-red-700 font-bold">{c.maxV} V</dd></div>
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Startup Voltage</dt><dd className="text-slate-800 font-semibold">{displayStartupV} V{c.v_start_vbat_dependent && systemVoltage != null ? ` (Vbat + ${c.startupV} V)` : c.v_start_vbat_dependent ? ' (Vbat + ' + (c.startupV ?? 0) + ' V)' : ''}</dd></div>
@@ -51,21 +51,21 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                         </dl>
                     </div>
                     <div>
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">System Compatibility</h3>
+                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">System Compatibility</h3>
                         <dl className="space-y-3 text-sm">
                             <div className="flex justify-between"><dt className="text-slate-500 font-medium">Battery Voltages</dt><dd className="text-slate-800 font-semibold">{(c.systemVoltages || [48]).join('V, ')}V</dd></div>
                         </dl>
                     </div>
                     <div className="col-span-2">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">UK Grid Certifications</h3>
+                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">UK Grid Certifications</h3>
                         <div className="grid grid-cols-3 gap-4">
-                            <div className={`p-3 rounded-lg border ${c.g98_cert ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
+                            <div className={`p-3 rounded-lg border ${c.g98_cert ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
                                 <div className="flex items-center gap-2">{c.g98_cert ? <CheckCircle size={16} /> : <XIcon size={16} />}<span className="text-sm font-bold">G98 Cert</span></div>
                             </div>
-                            <div className={`p-3 rounded-lg border ${c.g99_cert ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
+                            <div className={`p-3 rounded-lg border ${c.g99_cert ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
                                 <div className="flex items-center gap-2">{c.g99_cert ? <CheckCircle size={16} /> : <XIcon size={16} />}<span className="text-sm font-bold">G99 Cert</span></div>
                             </div>
-                            <div className={`p-3 rounded-lg border ${c.g100_cert ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
+                            <div className={`p-3 rounded-lg border ${c.g100_cert ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
                                 <div className="flex items-center gap-2">{c.g100_cert ? <CheckCircle size={16} /> : <XIcon size={16} />}<span className="text-sm font-bold">G100 Cert</span></div>
                             </div>
                         </div>
@@ -77,14 +77,14 @@ export default function ChargerInfoModal({ open, charger, systemVoltage, userNot
                     <p className="text-sm text-slate-700 leading-relaxed">{c.notes || 'No specific architectural notes for this controller. Refer to manufacturer specifications.'}</p>
                 </div>
                 <div>
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center">Your Persistent Notes</h3>
+                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center">Your Persistent Notes</h3>
                     <textarea
                         className="w-full p-4 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm text-slate-700 placeholder-slate-400 min-h-[100px] resize-y shadow-inner"
                         placeholder="Log supplier quotes, lead times, compatibility thoughts, or personal preferences here..."
                         value={userNote || ''}
                         onChange={(e) => onUpdateNote?.(c.id, e.target.value)}
                     />
-                    <p className="text-xs text-slate-400 mt-2 text-right">Notes autosave to your browser.</p>
+                    <p className="text-xs text-slate-500 mt-2 text-right">Notes autosave to your browser.</p>
                 </div>
             </div>
         </Modal>

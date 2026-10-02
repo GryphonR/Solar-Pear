@@ -86,7 +86,7 @@ describe("tablet and phone layouts (roadmap 13.9)", () => {
         expect(screen.getByRole("button", { name: "List" })).toHaveAttribute("aria-pressed", "true");
         expect(screen.getByRole("list", { name: "System in power-flow order" })).toBeInTheDocument();
 
-        await userEvent.click(screen.getByRole("tab", { name: "Controllers" }));
+        await userEvent.click(within(screen.getByRole("navigation", { name: "House sections" })).getByRole("link", { name: "Controllers" }));
         const ports = await screen.findByRole("list", { name: /ports$/ });
         expect(within(ports).getAllByRole("listitem")).toHaveLength(2);
         expect(within(ports).getByRole("link", { name: "South roof" })).toBeInTheDocument();

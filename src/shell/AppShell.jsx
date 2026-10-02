@@ -59,19 +59,18 @@ const LIBRARY_TABS = [
 
 function LibraryTabs({ section }) {
     return (
-        <div role="tablist" aria-label="Library" className="mb-6 flex gap-1 border-b border-line">
+        <nav aria-label="Library" className="mb-6 flex gap-1 border-b border-line">
             {LIBRARY_TABS.map(([key, label]) => (
                 <Link
                     key={key}
-                    role="tab"
-                    aria-selected={section === key}
+                    aria-current={section === key ? 'page' : undefined}
                     to={`/library/${key}`}
                     className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold ${section === key ? 'border-brand text-body' : 'border-transparent text-muted hover:text-body'}`}
                 >
                     {label}
                 </Link>
             ))}
-        </div>
+        </nav>
     );
 }
 
@@ -245,6 +244,17 @@ export default function AppShell() {
 
     return (
         <div className="flex h-screen bg-paper font-plex text-body">
+            {/* WCAG 2.4.1: skip the sidebar and top bar. Focuses <main> directly rather than via a URL hash. */}
+            <a
+                href="#main-content"
+                onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('main-content')?.focus();
+                }}
+                className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+            >
+                Skip to main content
+            </a>
             {drawerMode ? (
                 drawerOpen ? (
                     <div className="fixed inset-0 z-40 flex" role="dialog" aria-modal="true" aria-label="Navigation" ref={drawerRef}>
@@ -277,7 +287,7 @@ export default function AppShell() {
                     onUpload={handleUploadClick}
                     onReset={handleResetClick}
                 />
-                <main className="min-h-0 flex-1 overflow-y-auto">
+                <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto focus:outline-none">
                     <div key={routeKey} className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
                         <ShellContent
                             route={route}

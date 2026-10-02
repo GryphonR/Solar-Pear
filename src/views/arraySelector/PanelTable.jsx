@@ -83,15 +83,15 @@ function PanelCards({ displayGroups, filteredPanels, selectedPanelModel, onSelec
                                     <div className="flex flex-wrap items-center gap-1.5 text-sm font-semibold text-slate-800">
                                         <span>{p.name}</span>
                                         <DiscontinuedBadge item={p} />
-                                        <button onClick={() => onOpenInfo(p.model)} className="text-slate-400 hover:text-blue-600" aria-label="View technical specs">
+                                        <button onClick={() => onOpenInfo(p.model)} className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-slate-500 hover:text-blue-600" aria-label={`View technical specs for ${p.name}`}>
                                             <Info size={16} />
                                         </button>
                                         {safeDatasheet && (
-                                            <a href={safeDatasheet} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600" aria-label="View manufacturer datasheet">
+                                            <a href={safeDatasheet} target="_blank" rel="noopener noreferrer" className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-slate-500 hover:text-blue-600" aria-label={`Datasheet for ${p.name} (opens in a new tab)`}>
                                                 <ExternalLink size={16} />
                                             </a>
                                         )}
-                                        {p.isVocWarn && <AlertTriangle size={16} className="text-orange-500" title="Cold Voc is within 6% of the controller limit" />}
+                                        {p.isVocWarn && <AlertTriangle size={16} className="text-status-warning-fg" title="Cold Voc is within 6% of the controller limit" />}
                                         <BuyButton buyLinks={p.buyLinks} />
                                     </div>
                                     <div className="flex flex-wrap gap-x-4 gap-y-0.5">
@@ -101,8 +101,8 @@ function PanelCards({ displayGroups, filteredPanels, selectedPanelModel, onSelec
                                     </div>
                                     <div className="flex flex-wrap gap-x-4 gap-y-0.5 font-plex-mono text-slate-600">
                                         <span className={!p.isVocOk ? 'font-bold text-red-600' : ''}>Voc {Number(p.coldVoc).toFixed(1)} V</span>
-                                        <span className={!p.isVmpOk ? 'font-bold text-orange-500' : ''}>Vmp {Number(p.hotVmp).toFixed(1)} V</span>
-                                        <span className={!p.isIscOk ? 'font-bold text-orange-500' : ''}>Isc {Number(p.arrayIscHot).toFixed(2)} A</span>
+                                        <span className={!p.isVmpOk ? 'font-bold text-status-warning-fg' : ''}>Vmp {Number(p.hotVmp).toFixed(1)} V</span>
+                                        <span className={!p.isIscOk ? 'font-bold text-status-warning-fg' : ''}>Isc {Number(p.arrayIscHot).toFixed(2)} A</span>
                                         <span className={!p.isWidthOk || !p.isHeightOk ? 'font-bold text-red-600' : ''}>
                                             {p.height ?? '-'} × {p.width ?? '-'} mm
                                         </span>
@@ -275,9 +275,9 @@ export default function PanelTable({
         <div>
             <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
                 <div>
-                    <h3 className="text-lg font-bold text-slate-800">
+                    <h2 className="text-lg font-bold text-slate-800">
                         Compatible Panels Explorer
-                    </h3>
+                    </h2>
                     <p className="text-sm text-slate-500">
                         {controller
                             ? `Showing active panels that pass physical limits and strictly match the ${controller.name} limits.`
@@ -286,10 +286,11 @@ export default function PanelTable({
                 </div>
                 <div className="flex flex-wrap items-stretch gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
                     <div className="flex flex-col justify-center min-w-[10rem]">
-                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                        <label htmlFor="panel-filter-manufacturer" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
                             Manufacturer
                         </label>
                         <select
+                            id="panel-filter-manufacturer"
                             className="w-full min-w-[10rem] p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-xs bg-white"
                             value={manufacturerFilter}
                             onChange={(e) => handleManufacturerChange(e.target.value)}
@@ -303,10 +304,11 @@ export default function PanelTable({
                         </select>
                     </div>
                     <div className="flex flex-col justify-center min-w-[10rem]">
-                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                        <label htmlFor="panel-filter-series" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
                             Series
                         </label>
                         <select
+                            id="panel-filter-series"
                             className="w-full min-w-[10rem] p-1.5 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none text-xs bg-white"
                             value={seriesFilter}
                             onChange={(e) => setSeriesFilter(e.target.value)}
@@ -472,7 +474,7 @@ export default function PanelTable({
                                                 className="py-1 px-3 text-xs font-semibold text-slate-500"
                                             >
                                                 {group.seriesKey}
-                                                <span className="font-normal text-slate-400 ml-1">
+                                                <span className="font-normal text-slate-500 ml-1">
                                                     ({group.panels.length})
                                                 </span>
                                             </td>
@@ -499,9 +501,9 @@ export default function PanelTable({
                                                         <DiscontinuedBadge item={p} />
                                                         <button
                                                             onClick={() => onOpenInfo(p.model)}
-                                                            className="text-slate-400 hover:text-blue-600 transition-colors"
+                                                            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-slate-500 hover:text-blue-600 transition-colors"
                                                             title="View Technical Specs"
-                                                            aria-label="View technical specs"
+                                                            aria-label={`View technical specs for ${p.name}`}
                                                         >
                                                             <Info size={16} />
                                                         </button>
@@ -510,9 +512,9 @@ export default function PanelTable({
                                                                 href={safeDatasheet}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="text-slate-400 hover:text-blue-600 transition-colors"
+                                                                className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-slate-500 hover:text-blue-600 transition-colors"
                                                                 title="View Manufacturer Datasheet"
-                                                                aria-label="View manufacturer datasheet"
+                                                                aria-label={`Datasheet for ${p.name} (opens in a new tab)`}
                                                             >
                                                                 <ExternalLink size={16} />
                                                             </a>
@@ -520,7 +522,7 @@ export default function PanelTable({
                                                         {p.isVocWarn && (
                                                             <AlertTriangle
                                                                 size={16}
-                                                                className="text-orange-500"
+                                                                className="text-status-warning-fg"
                                                                 title="Voltage Warning: Cold Voc is within 6% of MPPT limit. Margin is dangerously tight."
                                                             />
                                                         )}
@@ -546,14 +548,14 @@ export default function PanelTable({
                                                     range={col.hotVmp}
                                                     incompatible={inc}
                                                     formatter={(v) => `${Number(v).toFixed(1)} V`}
-                                                    className={!p.isVmpOk ? 'font-bold text-orange-500' : 'text-slate-700'}
+                                                    className={!p.isVmpOk ? 'font-bold text-status-warning-fg' : 'text-slate-700'}
                                                 />
                                                 <BarCell
                                                     value={p.arrayIscHot}
                                                     range={col.arrayIscHot}
                                                     incompatible={inc}
                                                     formatter={(v) => `${Number(v).toFixed(2)} A`}
-                                                    className={!p.isIscOk ? 'font-bold text-orange-500' : 'text-slate-700'}
+                                                    className={!p.isIscOk ? 'font-bold text-status-warning-fg' : 'text-slate-700'}
                                                 />
                                                 <BarCell
                                                     value={p.width}
@@ -622,7 +624,7 @@ export default function PanelTable({
                                         className="py-8 px-4 text-center text-slate-500 italic"
                                     >
                                         <AlertTriangle
-                                            className="mx-auto mb-2 text-slate-400"
+                                            className="mx-auto mb-2 text-slate-500"
                                             size={24}
                                         />
                                         No active panels meet both the physical format and the

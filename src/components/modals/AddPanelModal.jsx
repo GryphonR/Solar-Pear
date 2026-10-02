@@ -108,7 +108,7 @@ export default function AddPanelModal({ open, data = {}, existingModelIds = [], 
                 </div>
                 <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Design Notes</label>
-                    <p className="text-xs text-slate-400 mb-1">
+                    <p className="text-xs text-slate-500 mb-1">
                         If this panel joins an existing series, copy that series&apos; note text here so every panel in the series matches. Leave blank only if it has no series.
                     </p>
                     <textarea className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" value={d.notes ?? ''} onChange={(e) => update('notes', e.target.value)} />

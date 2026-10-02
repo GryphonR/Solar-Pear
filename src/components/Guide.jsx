@@ -156,7 +156,7 @@ const EntryRoute = ({ icon, accent, title, forWho, children, action, onAction })
             {icon}
         </div>
         <h3 className="text-base font-bold text-slate-800">{title}</h3>
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mt-1">{forWho}</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mt-1">{forWho}</p>
         <p className="text-slate-600 leading-relaxed text-sm mt-2 flex-1">{children}</p>
         <button
             type="button"
@@ -220,7 +220,7 @@ const ReferenceSection = ({ title, children }) => (
             <span className="text-sm font-semibold text-slate-800">{title}</span>
             <ChevronDown
                 size={16}
-                className="text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180"
+                className="text-slate-500 flex-shrink-0 transition-transform group-open:rotate-180"
             />
         </summary>
         <div className="px-5 pb-5 pt-1 text-sm text-slate-600 leading-relaxed space-y-3">
@@ -275,6 +275,7 @@ const Guide = () => {
             </div>
 
             <header className="text-center space-y-4 pt-2">
+                <h1 className="sr-only">How Solar Pear works</h1>
                 <SolarPearLogo className="w-56 h-auto text-slate-900 mx-auto" />
                 <p className="text-lg text-slate-600 max-w-xl mx-auto leading-relaxed">
                     Free roofspace, panel, and controller matching. Check that the panels you want
@@ -338,7 +339,7 @@ const Guide = () => {
                 </div>
 
                 <div className="px-5 pb-5">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
                         {targetArray ? `${targetArray.name} needs all three` : 'Every array needs all three'}
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -456,29 +457,29 @@ const Guide = () => {
                         <div className="mt-3 overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    <tr className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                                         <th className="py-1.5 pr-3 font-bold">Wiring</th>
                                         <th className="py-1.5 pr-3 font-bold">
                                             Datasheet Voc
-                                            <span className="block font-medium normal-case tracking-normal text-slate-400">
+                                            <span className="block font-medium normal-case tracking-normal text-slate-500">
                                                 at {STC_TEMP_C}&nbsp;°C
                                             </span>
                                         </th>
                                         <th className="py-1.5 pr-3 font-bold">
                                             Cold Voc
-                                            <span className="block font-medium normal-case tracking-normal text-slate-400">
+                                            <span className="block font-medium normal-case tracking-normal text-slate-500">
                                                 max {EXAMPLE_CONTROLLER.maxV}&nbsp;V
                                             </span>
                                         </th>
                                         <th className="py-1.5 pr-3 font-bold">
                                             Hot Vmp
-                                            <span className="block font-medium normal-case tracking-normal text-slate-400">
+                                            <span className="block font-medium normal-case tracking-normal text-slate-500">
                                                 min {EXAMPLE_STARTUP_V}&nbsp;V
                                             </span>
                                         </th>
                                         <th className="py-1.5 font-bold">
                                             Hot Isc
-                                            <span className="block font-medium normal-case tracking-normal text-slate-400">
+                                            <span className="block font-medium normal-case tracking-normal text-slate-500">
                                                 max {EXAMPLE_CONTROLLER.maxIsc}&nbsp;A
                                             </span>
                                         </th>

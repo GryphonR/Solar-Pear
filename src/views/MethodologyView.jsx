@@ -95,7 +95,7 @@ export default function MethodologyView({ onOpenAbout }) {
                                 <tr key={c.name} className="align-top">
                                     <td className="py-3 pr-4">
                                         <span className="font-semibold text-slate-800">{c.name}</span>
-                                        <span className="block text-xs text-slate-400">{c.group}</span>
+                                        <span className="block text-xs text-slate-500">{c.group}</span>
                                     </td>
                                     <td className="py-3 pr-4">{c.rule}</td>
                                     <td className="py-3">

@@ -31,7 +31,7 @@ export default function ChargersDbView({ rowAction } = {}) {
             <div className="pb-4 border-b border-slate-200">
                 <div className="flex justify-between items-end">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-800">PV Controllers Database</h2>
+                        <h1 className="text-2xl font-bold text-slate-800">PV Controllers Database</h1>
                         <p className="text-slate-500">Standalone MPPT chargers and hybrid inverters.</p>
                         <AffiliateNotice className="mt-1" />
                     </div>
@@ -50,12 +50,12 @@ export default function ChargersDbView({ rowAction } = {}) {
                 return (
                     <div key={mfr}>
                         <div className="flex items-center justify-between mb-2 px-1">
-                            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+                            <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
                                 {mfr}{' '}
-                                <span className="font-normal text-slate-400 normal-case">
+                                <span className="font-normal text-slate-500 normal-case">
                                     ({mfrChargers.length} controllers)
                                 </span>
-                            </h3>
+                            </h2>
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => toggleAllChargersMfr(mfr, true)}
@@ -144,7 +144,7 @@ export default function ChargersDbView({ rowAction } = {}) {
                                                         <DiscontinuedBadge item={c} />
                                                     </td>
                                                     <td className="p-1 px-4">
-                                                        <span className="text-xs text-slate-400 font-mono whitespace-nowrap">
+                                                        <span className="text-xs text-slate-500 font-mono whitespace-nowrap">
                                                             {c.id}
                                                         </span>
                                                     </td>
@@ -152,7 +152,7 @@ export default function ChargersDbView({ rowAction } = {}) {
                                                         <div className="flex justify-center items-center gap-1">
                                                             <button
                                                                 onClick={() => setInfoModalChargerId(c.id)}
-                                                                className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
+                                                                className="p-2 text-slate-500 hover:text-blue-600 transition-colors"
                                                                 title="View Technical Specs"
                                                                 aria-label={`View technical specs for ${c.name || c.id}`}
                                                             >
@@ -163,9 +163,9 @@ export default function ChargersDbView({ rowAction } = {}) {
                                                                     href={safeDatasheet}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
+                                                                    className="p-2 text-slate-500 hover:text-blue-600 transition-colors"
                                                                     title="View Manufacturer Datasheet"
-                                                                    aria-label="View manufacturer datasheet"
+                                                                    aria-label={`Datasheet for ${c.name || c.id} (opens in a new tab)`}
                                                                 >
                                                                     <ExternalLink size={18} />
                                                                 </a>
@@ -199,6 +199,7 @@ export default function ChargersDbView({ rowAction } = {}) {
                                                             value={c.price || ''}
                                                             placeholder="—"
                                                             title={c.price ? '' : 'Price unavailable: enter your own'}
+                                                            aria-label={`Price for ${c.name || c.id} (£)`}
                                                             onChange={(e) =>
                                                                 updateCharger(c.id, 'price', parseFloat(e.target.value) || 0)
                                                             }

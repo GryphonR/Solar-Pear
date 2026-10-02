@@ -68,7 +68,7 @@ export default function SummaryView() {
                     {analysis.panel ? (
                         `${analysis.panel.name} (${array.count}x)`
                     ) : (
-                        <span className="text-slate-400 italic">No Panel</span>
+                        <span className="text-slate-500 italic">No Panel</span>
                     )}
                 </td>
                 <td className="py-3 px-4 font-medium text-blue-700">
@@ -145,7 +145,7 @@ export default function SummaryView() {
         <div className="space-y-8">
             <div className="flex justify-between items-end pb-4 border-b border-slate-200">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800">System Summary</h2>
+                    <h1 className="text-2xl font-bold text-slate-800">System Summary</h1>
                     <p className="text-slate-500">Overview of all configured arrays and total hardware cost.</p>
                     <ResultsDisclaimer className="mt-1" />
                 </div>
@@ -161,18 +161,18 @@ export default function SummaryView() {
                         return (
                             <div className="bg-emerald-700 p-6 rounded-lg text-white shadow-md flex justify-between items-end col-span-full md:col-span-1">
                                 <div>
-                                    <p className="text-sm text-emerald-300 uppercase tracking-wider font-semibold mb-1">
+                                    <p className="text-sm text-emerald-100 uppercase tracking-wider font-semibold mb-1">
                                         System Total Peak
                                     </p>
                                     <p className="text-4xl font-light">
                                         {systemTotalPower.toLocaleString()} <span className="text-xl">W</span>
                                     </p>
-                                    <p className="text-sm text-emerald-300 mt-1">
+                                    <p className="text-sm text-emerald-100 mt-1">
                                         {formatMoney(systemTotalCost)} total{unpriced.size > 0 ? ' (incomplete)' : ''}
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-xs text-emerald-300 uppercase tracking-wider font-semibold mb-1">
+                                    <p className="text-xs text-emerald-100 uppercase tracking-wider font-semibold mb-1">
                                         Blended Cost
                                     </p>
                                     <p className="text-xl font-medium text-emerald-100">
@@ -191,7 +191,7 @@ export default function SummaryView() {
                             className={`${bgClass} p-6 rounded-lg text-white shadow-md flex justify-between items-end`}
                         >
                             <div>
-                                <p className="text-sm text-slate-400 uppercase tracking-wider font-semibold mb-1">
+                                <p className="text-sm text-slate-300 uppercase tracking-wider font-semibold mb-1">
                                     {areaName} Peak Power
                                 </p>
                                 <p className="text-4xl font-light">
@@ -199,7 +199,7 @@ export default function SummaryView() {
                                 </p>
                             </div>
                             <div className="text-right">
-                                <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">
+                                <p className="text-xs text-slate-300 uppercase tracking-wider font-semibold mb-1">
                                     Hardware Cost
                                 </p>
                                 <p className="text-xl font-medium text-slate-300">
@@ -400,7 +400,7 @@ function BomPriceAge({ item }) {
     const age = knownPrice(item) == null ? null : priceAge(item.priceCheckedAt);
     if (!age) return null;
     return (
-        <span className={`block text-xs ${age.isStale ? 'text-amber-700' : 'text-slate-400'}`}>
+        <span className={`block text-xs ${age.isStale ? 'text-amber-700' : 'text-slate-500'}`}>
             Price checked {age.label}
             {age.isStale ? ' (may be out of date)' : ''}
         </span>
