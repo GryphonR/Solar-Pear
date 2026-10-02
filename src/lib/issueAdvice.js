@@ -42,6 +42,11 @@ export const ISSUE_ADVICE = Object.freeze({
         fix: 'Use shorter strings: fewer panels in series.',
         fields: fields(VOC, VOC_COEF, ['maxSystemVoltage', 'panel', 'maxSystemVoltage', 'V']),
     },
+    vocStartup: {
+        title: 'Voc is below the startup voltage',
+        fix: 'Put more panels in series (fewer parallel strings), choose a controller with a lower startup voltage, or for a battery charger use a lower battery voltage. On a microinverter, choose a panel with a higher Voc or a different micro.',
+        fields: fields(VOC, ['startupV', 'controller', 'startupV', 'V']),
+    },
     vmpStartup: {
         title: 'Hot Vmp is below the startup voltage',
         fix: 'Put more panels in series (fewer parallel strings), or choose a controller with a lower startup voltage.',

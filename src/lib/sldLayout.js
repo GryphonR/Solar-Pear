@@ -40,7 +40,7 @@ const worst = (statuses) => statuses.reduce((w, s) => (SEVERITY_RANK[s] > SEVERI
 
 /** Issue codes shown on the array-to-port link, split by the metric they concern. */
 const VOLTAGE_CODES = ['voc', 'vocMargin', 'panelSystemVoltage', 'noPvInput', 'wiring'];
-const VMP_CODES = ['vmpStartup', 'mpptMin', 'mpptMax'];
+const VMP_CODES = ['vocStartup', 'vmpStartup', 'mpptMin', 'mpptMax'];
 const CURRENT_CODES = ['iscRating', 'currentClip'];
 const MICRO_CODES = ['microModulePower', 'microAcClip'];
 export const LINK_CODES = Object.freeze([...VOLTAGE_CODES, ...VMP_CODES, ...CURRENT_CODES, ...MICRO_CODES]);
@@ -129,7 +129,9 @@ function linkChip(entry, model) {
     const voc = { text: `Voc ${r(a.coldVoc)} / ${model?.maxV ?? '—'} V`, status: statusOf(issues, VOLTAGE_CODES) };
     const vmpStatus = statusOf(issues, VMP_CODES);
     const vmp = {
-        text: has('vmpStartup')
+        text: has('vocStartup')
+            ? `Voc ${r(a.stcVoc)} V < ${r(a.effectiveStartupV)} start`
+            : has('vmpStartup')
             ? `Vmp ${r(a.hotVmp)} V < ${r(a.effectiveStartupV)} start`
             : has('mpptMin')
               ? `Vmp ${r(a.hotVmp)} V < ${model.mpptRangeMin} min`

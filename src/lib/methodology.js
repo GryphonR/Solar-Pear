@@ -95,6 +95,13 @@ export const CHECKS = [
     },
     {
         group: 'Voltage',
+        name: 'Startup (open-circuit)',
+        codes: ['vocStartup'],
+        severity: 'error',
+        rule: `Before a controller starts, no current flows, so the string sits at its open-circuit voltage. If the datasheet Voc of the string (at ${STC_TEMP_C} °C) is below the controller’s startup voltage, the controller never starts and the array produces nothing. ${STC_TEMP_C} °C is used because controllers start at dawn, when cells are cool. For battery chargers that need the PV voltage to exceed the battery voltage, the battery voltage is added.`,
+    },
+    {
+        group: 'Voltage',
         name: 'Startup voltage',
         codes: ['vmpStartup'],
         severity: 'warning',

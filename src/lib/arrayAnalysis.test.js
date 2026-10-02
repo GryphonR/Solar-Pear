@@ -89,7 +89,8 @@ describe("panelPassesControllerLimits", () => {
     });
 
     it("returns true when only Vmp is below startup (not a hard gate)", () => {
-        const highStartup = { maxV: 200, maxIsc: 30, startupV: 500, v_start_vbat_dependent: false };
+        // 2 × 40 V = 80 V Voc reaches 70 V startup; hot Vmp ≈ 53.8 V does not.
+        const highStartup = { maxV: 200, maxIsc: 30, startupV: 70, v_start_vbat_dependent: false };
         expect(panelPassesControllerLimits(array, panel, highStartup, 48)).toBe(true);
     });
 });
@@ -385,7 +386,7 @@ describe("analyzeArray", () => {
                 name: "High Startup Controller",
                 maxV: 200,
                 maxIsc: 20,
-                startupV: 500, // well above any possible hotVmp
+                startupV: 140, // above hot Vmp (≈110 V) but below the 160 V string Voc, so it still starts
             },
         ];
         const siteControllersHs = [

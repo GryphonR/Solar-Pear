@@ -53,14 +53,17 @@ export function checkRows(a) {
     if (p.maxSystemVoltage) {
         rows.push({ label: 'Cold Voc vs panel rating', value: `${round(a.coldVoc)} / ${p.maxSystemVoltage} V`, status: statusFor(issues, ['panelSystemVoltage']) });
     }
-    if (a.effectiveStartupV) {
-        rows.push({ label: `Hot Vmp vs startup (${a.conditions.hotTempC} °C)`, value: `${round(a.hotVmp)} / ${a.effectiveStartupV} V`, status: statusFor(issues, ['vmpStartup']) });
-    }
-    // The engine reports some findings only once: MPPT-min is not raised when startup already fails, and
-    // clipping is not raised when Isc is over the rating. Those rows take the covering check's status.
+    // The engine reports some findings only once: hot Vmp below startup is not raised when Voc already is,
+    // MPPT-min is not raised when startup already fails, and clipping is not raised when Isc is over the
+    // rating. Those rows take the covering check's status.
     const flags = a.flags || {};
+    if (a.effectiveStartupV) {
+        rows.push({ label: 'Voc vs startup (25 °C)', value: `${round(a.stcVoc)} / ${a.effectiveStartupV} V`, status: statusFor(issues, ['vocStartup']) });
+        const startupCodes = flags.isVocStartupOk === false ? ['vmpStartup', 'vocStartup'] : ['vmpStartup'];
+        rows.push({ label: `Hot Vmp vs startup (${a.conditions.hotTempC} °C)`, value: `${round(a.hotVmp)} / ${a.effectiveStartupV} V`, status: statusFor(issues, startupCodes) });
+    }
     if (c.mpptRangeMin > 0 && c.v_start_vbat_dependent !== true) {
-        const codes = flags.isVmpOk === false ? ['mpptMin', 'vmpStartup'] : ['mpptMin'];
+        const codes = flags.isVmpOk === false ? ['mpptMin', 'vmpStartup', 'vocStartup'] : ['mpptMin'];
         rows.push({ label: 'Hot Vmp vs MPPT min', value: `${round(a.hotVmp)} / ${c.mpptRangeMin} V`, status: statusFor(issues, codes) });
     }
     if (c.mpptRangeMax > 0) rows.push({ label: 'Cold Vmp vs MPPT max', value: `${round(a.coldVmp)} / ${c.mpptRangeMax} V`, status: statusFor(issues, ['mpptMax']) });

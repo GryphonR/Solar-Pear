@@ -22,6 +22,8 @@ Status key: OPEN / FIXED. Update this file as issues are resolved.
 
 23. **FIXED** – The layout planner ranked many small leisure panels (e.g. 16 × 180 W) above far more efficient house panels on hipped, triangular and obstructed roofs. The cause was the packer, not the panels: `computePlannerLayouts` used one grid for the whole roof, so every panel that didn't fit near a hip or chimney wasted a full panel width in every row, which penalises big modules most. Its vertical offsets were also computed from the obstacles' x positions. *Fixed 2026-09-30:* each row is packed and centred on its own, the rows try several heights (including flush with the eaves and with each obstacle's edges), and layouts within 3% of each other's power rank by fewer panels (`src/lib/layoutRanking.js`). A hipped face of 8 m eaves, 3 m ridge and 4 m slope went from 4 to 6 panels at the top of the list.
 
+25. **FIXED** – Voc was never compared with the controller's startup voltage, so a string too short to ever start a controller (e.g. 1S4P of 12 V panels on a 24 V SmartSolar) only showed the hot Vmp warning. Now an error, `vocStartup`, at 25 °C (roadmap 1.14, decision D12).
+
 ## State and persistence
 9. **FIXED – Stale prices for returning users.** `mergePanels`/`mergeChargers` (`src/lib/migration.js`) always keep the saved `price` (and charger `notes`) from localStorage. Because the full catalogue is persisted on first visit, refreshed catalogue prices never reach returning users. Only store user **overrides**, e.g. a `priceOverrides` map.
 10. **FIXED – Zero-price panels rank as cheapest.** 46 panels have `price: 0`, which gives £0/kWp in rankings and totals. Treat 0 or missing as "unknown".

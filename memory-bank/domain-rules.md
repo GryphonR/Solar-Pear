@@ -27,7 +27,8 @@ These are per-area settings: `designLowC` (default −10 °C), `designHighC` (de
 | `voc` | cold Voc > controller `maxV` | error |
 | `panelSystemVoltage` | cold Voc > panel `maxSystemVoltage` | error |
 | `vocMargin` | cold Voc > 94% of `maxV` | warning |
-| `vmpStartup` | hot Vmp < effective startup (Vbat + startupV when `v_start_vbat_dependent`) | warning |
+| `vocStartup` | string Voc at 25 °C < effective startup: the controller never starts (decision D12) | error |
+| `vmpStartup` | hot Vmp < effective startup (Vbat + startupV when `v_start_vbat_dependent`) | warning (suppressed when `vocStartup` fires) |
 | `mpptMin` | hot Vmp < `mpptRangeMin` (skipped for Vbat-referenced chargers) | warning |
 | `mpptMax` | cold Vmp > `mpptRangeMax` | warning |
 | `iscRating` | hot Isc (× 1.25 in strict mode) > `maxIsc` | error (warning if `iscSelfLimiting`) |

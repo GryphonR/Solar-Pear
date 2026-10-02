@@ -183,7 +183,7 @@ describe("evaluateElectrical: reference designs", () => {
 
     it("picks the parallel wiring that keeps Isc within the rating", () => {
         // 2 panels on a 20 A input: 1S2P puts ~27.9 A in; 2S1P is the only passing wiring.
-        const ctrl = { ...HYBRID, maxV: 600 };
+        const ctrl = { ...HYBRID, maxV: 600, startupV: 60 };
         expect(panelPassesControllerLimits({ count: 2, parallelStrings: 2 }, PANEL_400, ctrl)).toBe(false);
         expect(panelPassesControllerLimits({ count: 2, parallelStrings: 1 }, PANEL_400, ctrl)).toBe(true);
     });
@@ -203,6 +203,53 @@ describe("evaluateElectrical: reference designs", () => {
         expect(r.flags.isCurrentClipping).toBe(false);
         const r2 = evaluateElectrical(PANEL_400, { ...ctrl, maxOperatingI: 12 }, { count: 10 });
         expect(r2.flags.isCurrentClipping).toBe(true);
+    });
+});
+
+describe("startup voltage (Voc and Vmp)", () => {
+    // A 36-cell "12 V" module.
+    const PANEL_12V = { ...PANEL_400, model: "P100", power: 100, voc: 22, vmp: 18, isc: 6, imp: 5.6 };
+
+    it("errors when the string's 25 °C Voc is below startup, and drops the covered Vmp warning", () => {
+        // 2 × 37.5 = 75 V < 80 V startup.
+        const r = evaluateElectrical(PANEL_400, HYBRID, { count: 2 });
+        expect(r.stcVoc).toBeCloseTo(75, 6);
+        expect(r.flags.isVocStartupOk).toBe(false);
+        const issue = r.issues.find((i) => i.code === "vocStartup");
+        expect(issue.severity).toBe("error");
+        expect(issue.message).toContain("25°C");
+        expect(codes(r)).not.toContain("vmpStartup");
+        expect(r.hardOk).toBe(false);
+    });
+
+    it("passes at 25 °C but keeps the hot Vmp warning when only hot Vmp is short", () => {
+        // 3 × 37.5 = 112.5 V Voc ≥ 100 V; hot Vmp ≈ 83.5 V < 100 V.
+        const r = evaluateElectrical(PANEL_400, { ...HYBRID, startupV: 100 }, { count: 3 });
+        expect(r.flags.isVocStartupOk).toBe(true);
+        expect(codes(r)).toEqual(expect.arrayContaining(["vmpStartup"]));
+        expect(codes(r)).not.toContain("vocStartup");
+    });
+
+    it("adds the battery voltage for battery-referenced chargers", () => {
+        // 24 V battery + 5 V = 29 V startup; one 22 V panel never starts, two (44 V) do.
+        const one = evaluateElectrical(PANEL_12V, CHARGER_100_30, { count: 1, systemVoltage: 24 });
+        expect(codes(one)).toContain("vocStartup");
+        const two = evaluateElectrical(PANEL_12V, CHARGER_100_30, { count: 2, systemVoltage: 24 });
+        expect(codes(two)).not.toContain("vocStartup");
+        // On a 12 V battery (17 V startup) a single panel starts.
+        const twelve = evaluateElectrical(PANEL_12V, CHARGER_100_30, { count: 1, systemVoltage: 12 });
+        expect(codes(twelve)).not.toContain("vocStartup");
+    });
+
+    it("checks each panel against a microinverter's startup", () => {
+        const r = evaluateElectrical({ ...PANEL_400, voc: 20 }, MICRO, { count: 4 });
+        expect(r.stcVoc).toBe(20);
+        expect(r.issues.find((i) => i.code === "vocStartup").message).toContain("microinverter");
+    });
+
+    it("skips the check when the controller publishes no startup voltage", () => {
+        const r = evaluateElectrical(PANEL_400, { ...HYBRID, startupV: 0 }, { count: 1 });
+        expect(codes(r)).not.toContain("vocStartup");
     });
 });
 

@@ -173,7 +173,7 @@ const fmt = (n, dp = 1) => Number(n).toFixed(dp);
  *           conditions?: { coldTempC?: number, hotTempC?: number, strictCurrent?: boolean } }} opts
  * @returns {{
  *   wiringValid: boolean, seriesLength: number, stringsPerInput: number, isMicro: boolean,
- *   coldVoc: number, coldVmp: number, hotVmp: number, arrayIscHot: number, arrayImpHot: number,
+ *   stcVoc: number, coldVoc: number, coldVmp: number, hotVmp: number, arrayIscHot: number, arrayImpHot: number,
  *   iscForLimit: number, effectiveStartupV: number | null, currentClipLimit: number | null,
  *   flags: Record<string, boolean>, issues: Array<{ code: string, severity: 'error'|'warning'|'info', message: string }>,
  *   hardOk: boolean,
@@ -192,6 +192,7 @@ export function evaluateElectrical(panel, controller, opts = {}) {
     const seriesLength = !wiringValid ? 0 : isMicro ? 1 : c / pRaw;
     const stringsPerInput = isMicro ? 1 : pRaw;
 
+    const stcVoc = panel.voc * seriesLength;
     const coldVoc = panel.voc * seriesLength * coldVocFactor(panel, coldTempC);
     const coldVmp = panel.vmp * seriesLength * coldVmpFactor(panel, coldTempC);
     const hotVmp = panel.vmp * seriesLength * hotVmpFactor(panel, hotTempC);
@@ -206,6 +207,7 @@ export function evaluateElectrical(panel, controller, opts = {}) {
     const flags = {
         isVocOk: true,
         isVocWarn: false,
+        isVocStartupOk: true,
         isVmpOk: true,
         isBelowMpptMin: false,
         isAboveMpptMax: false,
@@ -284,8 +286,23 @@ export function evaluateElectrical(panel, controller, opts = {}) {
         }
 
         effectiveStartupV = getEffectiveStartupV(controller, systemVoltage);
+        // Before the tracker starts, no current flows, so the PV voltage is the open-circuit voltage. Controllers
+        // start at dawn with cool cells, so the datasheet (25 °C) Voc is the test: below startup, it never starts.
+        if (stcVoc < effectiveStartupV) {
+            flags.isVocStartupOk = false;
+            add(
+                'vocStartup',
+                'error',
+                isMicro
+                    ? `FATAL: Panel Voc (${fmt(stcVoc)}V at ${STC_TEMP_C}°C) is below the microinverter startup voltage (${effectiveStartupV}V). It will not start, so the panel produces nothing.`
+                    : `FATAL: String Voc (${fmt(stcVoc)}V at ${STC_TEMP_C}°C) is below the controller startup voltage (${effectiveStartupV}V). The MPPT will not start, so the array produces nothing.`
+            );
+        }
         if (hotVmp < effectiveStartupV) {
             flags.isVmpOk = false;
+        }
+        // Reported only when the controller can start at all; otherwise vocStartup covers it.
+        if (!flags.isVmpOk && flags.isVocStartupOk) {
             add(
                 'vmpStartup',
                 'warning',
@@ -369,6 +386,7 @@ export function evaluateElectrical(panel, controller, opts = {}) {
         seriesLength,
         stringsPerInput,
         isMicro,
+        stcVoc,
         coldVoc,
         coldVmp,
         hotVmp,
@@ -747,6 +765,7 @@ export const analyzeArray = (
         panelPriceKnown,
         controllerPriceKnown,
         costPerKWp: costIncomplete ? null : peakPower > 0 ? cost / (peakPower / 1000) : 0,
+        stcVoc: electrical?.stcVoc ?? 0,
         coldVoc: electrical?.coldVoc ?? 0,
         coldVmp: electrical?.coldVmp ?? 0,
         hotVmp: electrical?.hotVmp ?? 0,
