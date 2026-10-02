@@ -32,7 +32,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | Phase | Theme | Priority | Done / Total |
 | ----- | ----- | -------- | ------------ |
 | 0 | Housekeeping | P0 | 7 / 8 |
-| 1 | Calculation correctness & safety | P0 | 11 / 14 |
+| 1 | Calculation correctness & safety | P0 | 12 / 14 |
 | 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 5 / 14 |
 | 4 | Affiliate infrastructure | P1 | 0 / 14 |
@@ -45,7 +45,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
 | 13 | UX overhaul | P1 | 9 / 9 |
-| **Total** | | | **48 / 154** |
+| **Total** | | | **49 / 154** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -119,9 +119,9 @@ The app's value and credibility, and liability, rest on these checks. Each task 
   - Acceptance: an array on a controller's larger tracker is checked against that tracker's limits, and the same array on the smaller tracker is flagged. Controllers without `mpptInputs` behave exactly as before.
   - Follow-up: update the **Fronius Primo GEN24 Plus** records (added in 3.11), which currently store only the smaller tracker's limits (12 A rather than 22 A), to use per-input limits.
 
-- [ ] 🚧 **1.14 Check Voc against the startup voltage** – Before a controller starts, no current flows, so the string sits at its open-circuit voltage. If that is below the controller's startup voltage, the controller never starts and the array produces nothing. Until now only hot Vmp was compared with startup, as a warning. Add an **error** when the string's datasheet (25 °C) Voc is below the effective startup voltage (battery voltage + `startupV` for battery-referenced chargers; per panel on microinverters). Record the temperature choice in the Decision log (D12).
+- [x] **1.14 Check Voc against the startup voltage** – Before a controller starts, no current flows, so the string sits at its open-circuit voltage. If that is below the controller's startup voltage, the controller never starts and the array produces nothing. Until now only hot Vmp was compared with startup, as a warning. Add an **error** when the string's datasheet (25 °C) Voc is below the effective startup voltage (battery voltage + `startupV` for battery-referenced chargers; per panel on microinverters). Record the temperature choice in the Decision log (D12).
   - Acceptance: a 1S4P array of 22.5 V panels on a SmartSolar 100/30 at 24 V (29 V startup) is an error; 2S2P passes. Hot Vmp below startup stays a warning when Voc passes, and is not repeated when Voc fails. The methodology page and issue advice cover the new code.
-  - Done on branch `claude/git-roadmap-review-be5612`: `vocStartup` in `evaluateElectrical` (`stcVoc` in the result), methodology entry, issue advice, the diagram's link chip, a "Voc vs startup (25 °C)" row in the array checks table, and tests. Verified in the browser. Tick once merged.
+  - Done (4097edc): `vocStartup` in `evaluateElectrical` (`stcVoc` in the result), methodology entry, issue advice, the diagram's link chip, a "Voc vs startup (25 °C)" row in the array checks table, and tests. Verified in the browser.
 
 ### 1C. Environmental assumptions
 - [x] **1.10 Make design temperatures configurable** – Add per-site "design low" and "design high" settings (defaults −10 °C / 65 °C cell) to the project settings, and show them in every message ("at −10 °C"). Tighten the fallback cold-Voc factor from 1.084 to a conservative value (for example −0.30 %/°C ⇒ 1.105) and flag panels that have no coefficient. *(KI-6)*
