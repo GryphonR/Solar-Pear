@@ -13,4 +13,4 @@ Persistent project context for AI assistants and new contributors. Read this fol
 | [affiliate-research.md](affiliate-research.md) | UK retailers, their affiliate programmes and terms, and the order to apply in (roadmap 4.14) |
 | [roadmap.md](roadmap.md) | **Launch and monetisation roadmap**: 153 tickable tasks across 14 phases, with a decision log |
 
-Last full review: 2026-09-25 (at commit `5507f6a`).
+Last full review: 2026-09-25 (at commit `5507f6a`). Status review: 2026-10-02.

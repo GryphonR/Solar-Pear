@@ -36,7 +36,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 5 / 14 |
 | 4 | Affiliate infrastructure | P1 | 0 / 14 |
-| 5 | Hosting, routing & SEO | P1 | 0 / 13 |
+| 5 | Hosting, routing & SEO | P1 | 1 / 13 |
 | 6 | Trust, legal & compliance | P0 | 7 / 11 |
 | 7 | Product & UX improvements | P1/P2 | 2 / 17 |
 | 8 | Analytics & measurement | P1 | 0 / 7 |
@@ -45,7 +45,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
 | 13 | UX overhaul | P1 | 9 / 9 |
-| **Total** | | | **47 / 153** |
+| **Total** | | | **48 / 153** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -152,10 +152,10 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
 
 ### 3A. Accuracy
 - [x] **3.1 Fix the known data errors** – *(KI-11, KI-12)*
-  - [ ] Replace the Trina `dev.cclcomponents.com` category link with a product URL, or remove it.
-  - [ ] Fix `VS-FL-200-M36-E` and `SGM2-180W` efficiency (stated about 22.5% against a calculated 19.2–19.5%).
+  - [x] Replace the Trina `dev.cclcomponents.com` category link with a product URL, or remove it.
+  - [x] Fix `VS-FL-200-M36-E` and `SGM2-180W` efficiency (stated about 22.5% against a calculated 19.2–19.5%).
   - [ ] Check the Viridian `PV16-*` efficiencies (about 0.8 pp high; possibly aperture area rather than module area).
-  - [ ] Fix `GBS-Custom-350` (weight 0, price 0, custom product; consider `active: false`).
+  - [x] Fix `GBS-Custom-350` (weight 0, price 0, custom product; consider `active: false`).
   - Done: Trina dev link removed; SGM2-180W and VS-FL efficiency corrected to module values (they quoted cell efficiency); VS-FL no longer GSE-compatible; FLEXmax 100-300 `maxOperatingI` cleared (it held the 100 A charge current). GBS-Custom-350's datasheet has no weight, so it stays unknown. Viridian PV16 still open (KI-12).
 - [x] **3.2 Add automated sanity rules** to `verification_scripts/lib/reviewCore.js`, and fail CI on errors:
   - Voc > Vmp and Isc > Imp;
