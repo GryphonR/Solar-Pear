@@ -9,6 +9,7 @@ import {
     panelPassesControllerLimits,
     resolveDesignConditions,
     coldVocFactor,
+    controllerForInput,
 } from "./arrayAnalysis";
 
 // A typical 400 W half-cell module (values in line with mainstream 108-cell datasheets).
@@ -458,5 +459,84 @@ describe("unknown panel weight", () => {
 
     it("is irrelevant when no limit is set", () => {
         expect(evaluatePhysicalFit({ mounting: "On Roof" }, { ...PANEL_400, weight: 0 }).isWeightOk).toBe(true);
+    });
+});
+
+describe("per-MPPT input limits (roadmap 1.13)", () => {
+    // Fronius Primo GEN24 Plus style: MPPT1 22 A / 41.25 A Isc, MPPT2 12 A / 22 A Isc. The controller-level
+    // fields hold the smaller MPPT2 limits.
+    const ASYM = {
+        ...HYBRID,
+        id: "asym",
+        maxV: 600,
+        maxIsc: 22,
+        maxOperatingI: 12,
+        mpptRangeMin: 65,
+        mpptRangeMax: 530,
+        MaxDCPower: 9000,
+        trackers: 2,
+        mpptInputs: [
+            { maxIsc: 41.25, maxOperatingI: 22 },
+            { maxIsc: 22, maxOperatingI: 12 },
+        ],
+    };
+    // 8S2P: hot Isc ≈ 2 × 11.5 × 1.018 = 23.4 A, hot Imp ≈ 21.4 A.
+    const PANEL = { ...PANEL_400, isc: 11.5, imp: 10.5 };
+    const opts = { count: 16, parallelStrings: 2 };
+
+    it("merges an input's limits over the controller-level fields", () => {
+        expect(controllerForInput(ASYM, 1)).toMatchObject({ maxIsc: 41.25, maxOperatingI: 22, mpptRangeMin: 65 });
+        expect(controllerForInput(ASYM, 2)).toMatchObject({ maxIsc: 22, maxOperatingI: 12 });
+        expect(controllerForInput(ASYM, null)).toBe(ASYM);
+        expect(controllerForInput(ASYM, 3)).toBe(ASYM);
+        expect(controllerForInput(HYBRID, 1)).toBe(HYBRID);
+        expect(controllerForInput({ ...MICRO, mpptInputs: [{ maxIsc: 99 }] }, 1).maxIsc).toBe(20);
+    });
+
+    it("checks an array against the port it is on", () => {
+        const big = evaluateElectrical(PANEL, ASYM, { ...opts, mpptIndex: 1 });
+        expect(big.hardOk).toBe(true);
+        expect(codes(big)).not.toContain("currentClip");
+        expect(big.limits).toMatchObject({ maxIsc: 41.25, maxOperatingI: 22 });
+
+        const small = evaluateElectrical(PANEL, ASYM, { ...opts, mpptIndex: 2 });
+        expect(small.issues.find((i) => i.code === "iscRating").severity).toBe("error");
+    });
+
+    it("uses the conservative controller-level limits when the array isn't on a port", () => {
+        const r = evaluateElectrical(PANEL, ASYM, opts);
+        expect(codes(r)).toContain("iscRating");
+    });
+
+    it("leaves controllers without mpptInputs unchanged", () => {
+        const a = evaluateElectrical(PANEL, HYBRID, { ...opts, mpptIndex: 2 });
+        const b = evaluateElectrical(PANEL, HYBRID, opts);
+        expect(a.issues).toEqual(b.issues);
+    });
+
+    it("panelPassesControllerLimits and auto-wiring follow the array's port", () => {
+        const onPort = (port) => ({ ...opts, controllerInstanceId: "I1", controllerMppt: port });
+        expect(panelPassesControllerLimits(onPort(1), PANEL, ASYM)).toBe(true);
+        expect(panelPassesControllerLimits(onPort(2), PANEL, ASYM)).toBe(false);
+        // Not on a port: controllerMppt alone doesn't select the larger input.
+        expect(panelPassesControllerLimits({ ...opts, controllerMppt: 1 }, PANEL, ASYM)).toBe(false);
+    });
+
+    it("analyzeArray reports the bound port's limits", () => {
+        const run = (port) =>
+            analyzeArray("A1", {
+                arraysData: [{ id: "A1", name: "Roof", area: "House", ...opts, mounting: "On Roof" }],
+                panelsData: [{ ...PANEL, model: "P400" }],
+                chargersData: [ASYM],
+                siteControllers: [{ id: "I1", modelId: "asym", area: "House", name: "Inverter" }],
+                selections: { A1: { panel: "P400", controllerInstanceId: "I1", controllerMppt: port } },
+            });
+        const one = run(1);
+        expect(one.status).toBe("valid");
+        expect(one.controller.maxIsc).toBe(41.25);
+        expect(one.controller.id).toBe("asym");
+        const two = run(2);
+        expect(two.status).toBe("error");
+        expect(two.controller.maxIsc).toBe(22);
     });
 });

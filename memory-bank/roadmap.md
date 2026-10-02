@@ -32,7 +32,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | Phase | Theme | Priority | Done / Total |
 | ----- | ----- | -------- | ------------ |
 | 0 | Housekeeping | P0 | 7 / 8 |
-| 1 | Calculation correctness & safety | P0 | 12 / 14 |
+| 1 | Calculation correctness & safety | P0 | 13 / 14 |
 | 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 5 / 14 |
 | 4 | Affiliate infrastructure | P1 | 0 / 14 |
@@ -45,7 +45,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
 | 13 | UX overhaul | P1 | 9 / 9 |
-| **Total** | | | **49 / 154** |
+| **Total** | | | **50 / 154** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -115,9 +115,10 @@ The app's value and credibility, and liability, rest on these checks. Each task 
   - Done and verified in the browser: 10 × IQ8M in the BoM (£1,400), with the wiring selector replaced by a one-panel-per-input note.
 - [x] **1.8 Check panel system voltage** – Error when string cold Voc is above the panel's `maxSystemVoltage` (1000 V or 1500 V).
 - [x] **1.9 Check string fusing** – With 3 or more parallel strings, warn that string fuses are required, and check `maxSeriesFuse` against (parallel − 1) × Isc × 1.25.
-- [ ] **1.13 Per-MPPT input limits** – Let a controller define different limits for each MPPT input, e.g. an optional `mpptInputs[]` array of per-tracker `maxIsc`, `maxOperatingI`, `mpptRangeMin`/`mpptRangeMax` and max DC power, falling back to the controller-level fields when absent. `evaluateElectrical` checks an array against the limits of the port it is bound to, and the port picker in `ControllerSection.jsx` shows each port's limits. Update the schemas, data-admin, `domain-rules.md` and tests.
+- [x] **1.13 Per-MPPT input limits** – Let a controller define different limits for each MPPT input, e.g. an optional `mpptInputs[]` array of per-tracker `maxIsc`, `maxOperatingI`, `mpptRangeMin`/`mpptRangeMax` and max DC power, falling back to the controller-level fields when absent. `evaluateElectrical` checks an array against the limits of the port it is bound to, and the port picker in `ControllerSection.jsx` shows each port's limits. Update the schemas, data-admin, `domain-rules.md` and tests.
   - Acceptance: an array on a controller's larger tracker is checked against that tracker's limits, and the same array on the smaller tracker is flagged. Controllers without `mpptInputs` behave exactly as before.
   - Follow-up: update the **Fronius Primo GEN24 Plus** records (added in 3.11), which currently store only the smaller tracker's limits (12 A rather than 22 A), to use per-input limits.
+  - Done: optional `mpptInputs[]` (`maxIsc`, `maxOperatingI`, `mpptRangeMin`, `mpptRangeMax` per tracker) and `controllerForInput` in `arrayAnalysis.js`. `evaluateElectrical` takes `opts.mpptIndex`; `analyzeArray`, the panel ranking, `panelPassesControllerLimits` and auto-wiring pass the bound port, and `analyzeArray` returns the port-resolved controller, so the checks table, Controllers tab, diagram chip and graphs show that port's limits. Arrays not on a port use the controller-level fields, which must hold the smallest tracker's limits. Port names show each input's limits where they differ ("MPPT 1 (22 A · 41.25 A Isc)"). Sanity rules check each input. The six Fronius GEN24 Plus records have per-input limits, confirmed against the datasheet (MPPT1 22 A / 41.25 A Isc, MPPT2 12 A / 22 A). Per-input DC power (the datasheet's "max. usable DC power" per MPPT) is not modelled. The data-admin form doesn't edit `mpptInputs` (edit the JSON, as for `iscSelfLimiting`). Verified in the browser.
 
 - [x] **1.14 Check Voc against the startup voltage** – Before a controller starts, no current flows, so the string sits at its open-circuit voltage. If that is below the controller's startup voltage, the controller never starts and the array produces nothing. Until now only hot Vmp was compared with startup, as a warning. Add an **error** when the string's datasheet (25 °C) Voc is below the effective startup voltage (battery voltage + `startupV` for battery-referenced chargers; per panel on microinverters). Record the temperature choice in the Decision log (D12).
   - Acceptance: a 1S4P array of 22.5 V panels on a SmartSolar 100/30 at 24 V (29 V startup) is an error; 2S2P passes. Hot Vmp below startup stays a warning when Voc passes, and is not repeated when Voc fails. The methodology page and issue advice cover the new code.
@@ -196,7 +197,7 @@ Data accuracy is the product. Affiliate revenue depends on coverage and live lin
   - Progress: 42 records added from manufacturer datasheets (unreviewed, prices unknown): Sunsynk ECCO 3.6–8K, Growatt SPH 3000–6000TL BL-UP and MIN 2500–6000TL-XH, Lux Power LXP 3–6K, Fronius Primo GEN24 Plus 3.0–6.0, SMA Sunny Boy 3.0–6.0, Sigenergy SigenStor EC SP 3.0–6.0, and Tesla Powerwall 3. Then 14 more at the owner's request: Deye SUN-SG03LP1 (3.6–6K) and SUN-SG05LP1-EU-SM2 (3.6–8K), and Fogstar (rebadged LuxpowerTek) GEN2-LB-EU 3.6K, GEN-LB-EU 10K, TriP2-LB-3P 20K, and the SNA 6K/14K off-grid units.
   - ❌ **SolarEdge** dropped for now (D7): its per-panel optimisers fix the string voltage, which breaks the series-string model every other inverter uses.
   - Still to do: the **Hypontech** micro needs a datasheet; Fogstar's Gen3 3–6K, GEN PRO 8–12K and SNA PRO-EU 6.5K have no published spec sheets yet. Buy links and prices come from the pricing scan (4.7).
-  - Modelling notes: Fronius GEN24 has asymmetric trackers (22 A and 12 A), so the smaller limits are stored until per-MPPT limits land (1.13). Sigenergy's datasheet doesn't list UK grid codes; G98/G99 certificates come from UK distributors. G98 is set only for units up to 3.68 kW (Powerwall 3 is G98 in its 3.68 kW configuration). Deye and Fogstar grid codes follow each datasheet exactly: the Deye SG05LP1-EU-SM2 lists G99 only, so its 3.6K is not marked G98.
+  - Modelling notes: Fronius GEN24 has asymmetric trackers (22 A and 12 A); since 1.13 each port is checked against its own limits. Sigenergy's datasheet doesn't list UK grid codes; G98/G99 certificates come from UK distributors. G98 is set only for units up to 3.68 kW (Powerwall 3 is G98 in its 3.68 kW configuration). Deye and Fogstar grid codes follow each datasheet exactly: the Deye SG05LP1-EU-SM2 lists G99 only, so its 3.6K is not marked G98.
 - [x] **3.12 Keep the catalogue fresh** – Run a scheduled GitHub Action weekly: the pricing scan plus a link check, which opens a PR with the diff (needs a `SERPER_API_KEY` repository secret). Dead links and price moves above 15% show up in the PR body.
   - Done: `.github/workflows/catalogue-refresh.yml` (Mondays 06:00 UTC plus manual). Datasheets and sanity always run; prices run only with the `SERPER_API_KEY` secret and `ENABLE_PRICE_REFRESH=true` variable. Opens a `bot/catalogue-refresh` PR with a report.
 - [ ] **3.13 Record inverter technology** – Add a field for the inverter's topology to inverter records, e.g. `inverterTopology`: `transformerless` (solid state / high-frequency), `hf-transformer`, `lf-transformer` or `toroidal-transformer`. Add it to the controller schema, data-admin and the sanity rules, backfill it from datasheets, and show it in the controller table, filters and info modal.

@@ -20,7 +20,7 @@ import { isMicroinverter } from '../../lib/arrayAnalysis';
 import { controllerTypeLabel } from '../../lib/controllerTypes';
 import { buildPath } from '../../lib/routes';
 import { formatMoney } from '../../lib/pricing';
-import { freePorts } from '../../lib/ports';
+import { freePorts, portName } from '../../lib/ports';
 import { kWp } from './ProjectOverview';
 import { useDataState, useUiState } from '../../context/AppStateContext';
 
@@ -97,7 +97,7 @@ function ControllerSlot({ entry, system, projectId, arraysData, siteControllers,
             <option value="">{a?.controller ? 'Change port…' : 'Assign a free port…'}</option>
             {free.map((f) => (
                 <option key={`${f.instanceId}|${f.port}`} value={`${f.instanceId}|${f.port}`}>
-                    {f.instance.name} · MPPT {f.port}
+                    {f.instance.name} · {portName(f.model, f.port)}
                 </option>
             ))}
         </select>

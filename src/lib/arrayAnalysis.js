@@ -148,6 +148,31 @@ export function getCurrentClipLimit(controller) {
 
 export const isMicroinverter = (controller) => controller?.type === 'microinverter';
 
+/** Per-tracker fields an entry of a controller's optional `mpptInputs[]` may override (roadmap 1.13). */
+export const MPPT_INPUT_FIELDS = Object.freeze(['maxIsc', 'maxOperatingI', 'mpptRangeMin', 'mpptRangeMax']);
+
+/**
+ * The controller as seen from one MPPT input: `mpptInputs[mpptIndex - 1]` merged over the controller-level
+ * fields. Controller-level fields are the fallback, and for asymmetric inverters they hold the smallest
+ * tracker's limits, so an array that isn't on a port yet is checked conservatively. Returns the controller
+ * unchanged when there is no port, no entry for it, or the controller is a microinverter.
+ */
+export function controllerForInput(controller, mpptIndex) {
+    const idx = Math.floor(Number(mpptIndex));
+    if (!controller || !(idx >= 1) || isMicroinverter(controller)) return controller;
+    const input = Array.isArray(controller.mpptInputs) ? controller.mpptInputs[idx - 1] : null;
+    if (!input || typeof input !== 'object') return controller;
+    const overrides = {};
+    for (const key of MPPT_INPUT_FIELDS) {
+        const v = Number(input[key]);
+        if (input[key] != null && input[key] !== '' && Number.isFinite(v) && v > 0) overrides[key] = v;
+    }
+    return Object.keys(overrides).length ? { ...controller, ...overrides } : controller;
+}
+
+/** The MPPT input an array is bound to, or null when it isn't on a controller instance's port. */
+export const arrayInputIndex = (array) => (array?.controllerInstanceId ? Number(array.controllerMppt) || 1 : null);
+
 /** Panels served by one microinverter unit (1 unless the model declares panelsPerUnit). */
 export function panelsPerMicroUnit(controller) {
     const n = Math.floor(Number(controller?.panelsPerUnit));
@@ -169,8 +194,9 @@ const fmt = (n, dp = 1) => Number(n).toFixed(dp);
  *
  * @param {object} panel
  * @param {object | null} controller
- * @param {{ count: number, parallelStrings?: number, systemVoltage?: number | null,
+ * @param {{ count: number, parallelStrings?: number, systemVoltage?: number | null, mpptIndex?: number | null,
  *           conditions?: { coldTempC?: number, hotTempC?: number, strictCurrent?: boolean } }} opts
+ *   mpptIndex: the input the array is bound to; its `mpptInputs` limits apply (see controllerForInput).
  * @returns {{
  *   wiringValid: boolean, seriesLength: number, stringsPerInput: number, isMicro: boolean,
  *   stcVoc: number, coldVoc: number, coldVmp: number, hotVmp: number, arrayIscHot: number, arrayImpHot: number,
@@ -179,8 +205,9 @@ const fmt = (n, dp = 1) => Number(n).toFixed(dp);
  *   hardOk: boolean,
  * }}
  */
-export function evaluateElectrical(panel, controller, opts = {}) {
+export function evaluateElectrical(panel, controllerRecord, opts = {}) {
     const { count, parallelStrings, systemVoltage = null } = opts;
+    const controller = controllerForInput(controllerRecord, opts.mpptIndex);
     const cond = resolveDesignConditions(opts.conditions);
     const { coldTempC, hotTempC, strictCurrent } = cond;
     const isMicro = isMicroinverter(controller);
@@ -395,6 +422,9 @@ export function evaluateElectrical(panel, controller, opts = {}) {
         iscForLimit,
         effectiveStartupV,
         currentClipLimit,
+        limits: controller
+            ? Object.fromEntries(['maxV', ...MPPT_INPUT_FIELDS].map((k) => [k, Number(controller[k]) || 0]))
+            : null,
         conditions: cond,
         flags,
         issues,
@@ -473,6 +503,7 @@ export function panelPassesControllerLimits(array, panel, controller, systemVolt
         parallelStrings: array.parallelStrings || 1,
         systemVoltage,
         conditions,
+        mpptIndex: arrayInputIndex(array),
     });
     return result.hardOk;
 }
@@ -745,6 +776,7 @@ export const analyzeArray = (
               parallelStrings: array.parallelStrings || 1,
               systemVoltage,
               conditions,
+              mpptIndex: controllerInstance ? mpptIndex : null,
           })
         : null;
     const cond = resolveDesignConditions(conditions);
@@ -834,7 +866,8 @@ export const analyzeArray = (
     return {
         array,
         panel,
-        controller,
+        // As seen from the bound port, so displays show that port's limits (roadmap 1.13).
+        controller: controllerForInput(controller, controllerInstance ? mpptIndex : null),
         controllerInstance,
         mpptIndex,
         status: statusFromIssues(issues),

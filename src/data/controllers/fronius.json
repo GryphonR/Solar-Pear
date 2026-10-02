@@ -19,12 +19,22 @@
         "startupV": 80,
         "v_start_vbat_dependent": false,
         "trackers": 2,
+        "mpptInputs": [
+            {
+                "maxIsc": 41.25,
+                "maxOperatingI": 22
+            },
+            {
+                "maxIsc": 22,
+                "maxOperatingI": 12
+            }
+        ],
         "price": 0,
         "priceCheckedAt": "",
         "MaxACPower": 3000,
         "MaxDCPower": 4500,
         "islanding": true,
-        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc); the checks here use the smaller MPPT2 limits, so larger strings belong on MPPT1. PV Point basic backup is built in; Full Backup needs extra components.",
+        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc), so larger strings belong on MPPT1. Each port is checked against its own limits; an array not yet on a port is checked against the smaller MPPT2 limits. PV Point basic backup is built in; Full Backup needs extra components.",
         "datasheetUrl": "https://www.fronius.com/en/~/downloads/Solar%20Energy/Datasheets/SE_DS_Fronius_Primo_GEN24_GEN24Plus_3_to_6_kW_EN.pdf",
         "buyLinks": [],
         "availableUK": true,
@@ -63,12 +73,22 @@
         "startupV": 80,
         "v_start_vbat_dependent": false,
         "trackers": 2,
+        "mpptInputs": [
+            {
+                "maxIsc": 41.25,
+                "maxOperatingI": 22
+            },
+            {
+                "maxIsc": 22,
+                "maxOperatingI": 12
+            }
+        ],
         "price": 0,
         "priceCheckedAt": "",
         "MaxACPower": 3680,
         "MaxDCPower": 5520,
         "islanding": true,
-        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc); the checks here use the smaller MPPT2 limits, so larger strings belong on MPPT1. PV Point basic backup is built in; Full Backup needs extra components.",
+        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc), so larger strings belong on MPPT1. Each port is checked against its own limits; an array not yet on a port is checked against the smaller MPPT2 limits. PV Point basic backup is built in; Full Backup needs extra components.",
         "datasheetUrl": "https://www.fronius.com/en/~/downloads/Solar%20Energy/Datasheets/SE_DS_Fronius_Primo_GEN24_GEN24Plus_3_to_6_kW_EN.pdf",
         "buyLinks": [],
         "availableUK": true,
@@ -107,12 +127,22 @@
         "startupV": 80,
         "v_start_vbat_dependent": false,
         "trackers": 2,
+        "mpptInputs": [
+            {
+                "maxIsc": 41.25,
+                "maxOperatingI": 22
+            },
+            {
+                "maxIsc": 22,
+                "maxOperatingI": 12
+            }
+        ],
         "price": 0,
         "priceCheckedAt": "",
         "MaxACPower": 4000,
         "MaxDCPower": 6000,
         "islanding": true,
-        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc); the checks here use the smaller MPPT2 limits, so larger strings belong on MPPT1. PV Point basic backup is built in; Full Backup needs extra components.",
+        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc), so larger strings belong on MPPT1. Each port is checked against its own limits; an array not yet on a port is checked against the smaller MPPT2 limits. PV Point basic backup is built in; Full Backup needs extra components.",
         "datasheetUrl": "https://www.fronius.com/en/~/downloads/Solar%20Energy/Datasheets/SE_DS_Fronius_Primo_GEN24_GEN24Plus_3_to_6_kW_EN.pdf",
         "buyLinks": [],
         "availableUK": true,
@@ -151,12 +181,22 @@
         "startupV": 80,
         "v_start_vbat_dependent": false,
         "trackers": 2,
+        "mpptInputs": [
+            {
+                "maxIsc": 41.25,
+                "maxOperatingI": 22
+            },
+            {
+                "maxIsc": 22,
+                "maxOperatingI": 12
+            }
+        ],
         "price": 0,
         "priceCheckedAt": "",
         "MaxACPower": 4600,
         "MaxDCPower": 6900,
         "islanding": true,
-        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc); the checks here use the smaller MPPT2 limits, so larger strings belong on MPPT1. PV Point basic backup is built in; Full Backup needs extra components.",
+        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc), so larger strings belong on MPPT1. Each port is checked against its own limits; an array not yet on a port is checked against the smaller MPPT2 limits. PV Point basic backup is built in; Full Backup needs extra components.",
         "datasheetUrl": "https://www.fronius.com/en/~/downloads/Solar%20Energy/Datasheets/SE_DS_Fronius_Primo_GEN24_GEN24Plus_3_to_6_kW_EN.pdf",
         "buyLinks": [],
         "availableUK": true,
@@ -195,12 +235,22 @@
         "startupV": 80,
         "v_start_vbat_dependent": false,
         "trackers": 2,
+        "mpptInputs": [
+            {
+                "maxIsc": 41.25,
+                "maxOperatingI": 22
+            },
+            {
+                "maxIsc": 22,
+                "maxOperatingI": 12
+            }
+        ],
         "price": 0,
         "priceCheckedAt": "",
         "MaxACPower": 5000,
         "MaxDCPower": 7500,
         "islanding": true,
-        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc); the checks here use the smaller MPPT2 limits, so larger strings belong on MPPT1. PV Point basic backup is built in; Full Backup needs extra components.",
+        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc), so larger strings belong on MPPT1. Each port is checked against its own limits; an array not yet on a port is checked against the smaller MPPT2 limits. PV Point basic backup is built in; Full Backup needs extra components.",
         "datasheetUrl": "https://www.fronius.com/en/~/downloads/Solar%20Energy/Datasheets/SE_DS_Fronius_Primo_GEN24_GEN24Plus_3_to_6_kW_EN.pdf",
         "buyLinks": [],
         "availableUK": true,
@@ -239,12 +289,22 @@
         "startupV": 80,
         "v_start_vbat_dependent": false,
         "trackers": 2,
+        "mpptInputs": [
+            {
+                "maxIsc": 41.25,
+                "maxOperatingI": 22
+            },
+            {
+                "maxIsc": 22,
+                "maxOperatingI": 12
+            }
+        ],
         "price": 0,
         "priceCheckedAt": "",
         "MaxACPower": 6000,
         "MaxDCPower": 9000,
         "islanding": true,
-        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc); the checks here use the smaller MPPT2 limits, so larger strings belong on MPPT1. PV Point basic backup is built in; Full Backup needs extra components.",
+        "notes": "Single-phase hybrid for high-voltage batteries (150–455 V, e.g. BYD HVS/HVM). MPPT1 takes 22 A (41.25 A Isc), MPPT2 12 A (22 A Isc), so larger strings belong on MPPT1. Each port is checked against its own limits; an array not yet on a port is checked against the smaller MPPT2 limits. PV Point basic backup is built in; Full Backup needs extra components.",
         "datasheetUrl": "https://www.fronius.com/en/~/downloads/Solar%20Energy/Datasheets/SE_DS_Fronius_Primo_GEN24_GEN24Plus_3_to_6_kW_EN.pdf",
         "buyLinks": [],
         "availableUK": true,

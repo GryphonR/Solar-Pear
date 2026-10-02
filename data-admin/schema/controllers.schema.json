@@ -143,6 +143,7 @@
     "reviewed": "boolean",
     "reviewedAt": "string",
     "reviewedBy": "string",
-    "notesReviewed": "boolean"
+    "notesReviewed": "boolean",
+    "mpptInputs": "array"
   }
 }

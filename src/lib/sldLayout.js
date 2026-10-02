@@ -11,7 +11,7 @@
  * row), so the layout is stable as the design grows.
  */
 
-import { isMicroinverter } from './arrayAnalysis';
+import { controllerForInput, isMicroinverter } from './arrayAnalysis';
 
 export const SLD_COLUMNS = Object.freeze([
     { id: 'arrays', label: 'PV ARRAYS', x: 0, width: 424 },
@@ -112,6 +112,14 @@ function settingsOutputs(settings = {}) {
     return Number(settings.systemVoltage) > 0 ? [battery] : [{ key: 'output', title: 'Outputs', subtitle: 'depend on the controller', placeholder: true }];
 }
 
+/** "22 A Isc per port", or "41.25 / 22 A Isc" when the inputs differ (roadmap 1.13). */
+function iscPerPort(model) {
+    const trackers = Math.max(1, Number(model.trackers) || 1);
+    const values = Array.from({ length: trackers }, (_, i) => Number(controllerForInput(model, i + 1)?.maxIsc) || 0);
+    if (!values.some((v) => v > 0)) return null;
+    return new Set(values).size === 1 ? `${values[0]} A Isc per port` : `${values.map((v) => v || '—').join(' / ')} A Isc`;
+}
+
 /** The metric chip on an array-to-port link. */
 function linkChip(entry, model) {
     const a = entry.analysis;
@@ -126,7 +134,9 @@ function linkChip(entry, model) {
             ],
         };
     }
-    const voc = { text: `Voc ${r(a.coldVoc)} / ${model?.maxV ?? '—'} V`, status: statusOf(issues, VOLTAGE_CODES) };
+    // Limits as seen from this port (per-input limits, roadmap 1.13).
+    const port = a.controller || model;
+    const voc = { text: `Voc ${r(a.coldVoc)} / ${port?.maxV ?? '—'} V`, status: statusOf(issues, VOLTAGE_CODES) };
     const vmpStatus = statusOf(issues, VMP_CODES);
     const vmp = {
         text: has('vocStartup')
@@ -134,16 +144,16 @@ function linkChip(entry, model) {
             : has('vmpStartup')
             ? `Vmp ${r(a.hotVmp)} V < ${r(a.effectiveStartupV)} start`
             : has('mpptMin')
-              ? `Vmp ${r(a.hotVmp)} V < ${model.mpptRangeMin} min`
+              ? `Vmp ${r(a.hotVmp)} V < ${port.mpptRangeMin} min`
               : has('mpptMax')
-                ? `Vmp ${r(a.coldVmp)} V > ${model.mpptRangeMax} max`
+                ? `Vmp ${r(a.coldVmp)} V > ${port.mpptRangeMax} max`
                 : `Vmp ${r(a.hotVmp)} V`,
         status: vmpStatus,
     };
     const iscStatus = statusOf(issues, CURRENT_CODES);
     const isc = {
         text: has('iscRating')
-            ? `Isc ${a.arrayIscHot.toFixed(1)} A > ${model.maxIsc}`
+            ? `Isc ${a.arrayIscHot.toFixed(1)} A > ${port.maxIsc}`
             : has('currentClip')
               ? `Imp ${a.arrayImpHot.toFixed(1)} A > ${a.currentClipLimit}`
               : `Isc ${a.arrayIscHot.toFixed(1)} A`,
@@ -320,7 +330,7 @@ export function sldLayout({ arrays = [], units = [], settings = {}, expanded = n
             ports,
             meter: power && power.limitW > 0 ? { value: power.totalWp, max: power.limitW, basis: power.basis, batteryV: power.batteryV } : null,
             powerIssue: powerIssue || null,
-            spec: model && !micro ? [`${model.maxV ?? '—'} V`, model.maxIsc ? `${model.maxIsc} A Isc per port` : null].filter(Boolean).join(' · ') : null,
+            spec: model && !micro ? [`${model.maxV ?? '—'} V`, iscPerPort(model)].filter(Boolean).join(' · ') : null,
             micro: micro ? { units: microUnits, perUnit: Number(model?.panelsPerUnit) || 1, expanded: isExpanded, rows: microRows } : null,
         });
 

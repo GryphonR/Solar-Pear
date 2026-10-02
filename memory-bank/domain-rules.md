@@ -46,6 +46,7 @@ Status: any error gives `error`, else any warning gives `warning`, else `valid`.
 - `maxIsc`: max PV short-circuit current per tracker.
 - `maxOperatingI`: max PV **input** operating current per tracker, or 0 if unpublished. **Never the battery charge current.**
 - `maxChargeCurrent`: battery-side charge current for chargers (e.g. 30 for a Victron 100/30), or 0 for inverters.
+- `mpptInputs` (optional, roadmap 1.13): per-tracker `maxIsc`, `maxOperatingI`, `mpptRangeMin`, `mpptRangeMax`. `controllerForInput(controller, mpptIndex)` merges the bound port's entry over the controller-level fields; `evaluateElectrical` applies it when given `opts.mpptIndex`, and `analyzeArray` returns the port-resolved controller so displays show that port's limits. Arrays not on a port (picker, unassigned) use the controller-level fields, which hold the smallest tracker's limits.
 
 ## Microinverters (`type: 'microinverter'`)
 Each panel has its own input, so the series length is 1 and the parallel-strings selector is hidden. Units = ceil(count ÷ `panelsPerUnit`), where `panelsPerUnit` is optional and defaults to 1. The array's cost and the BoM quantity use the unit count.

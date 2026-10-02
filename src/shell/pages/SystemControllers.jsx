@@ -13,7 +13,7 @@ import ControllerPicker from '../ControllerPicker';
 import { buildPath } from '../../lib/routes';
 import { controllerTypeLabel } from '../../lib/controllerTypes';
 import { formatMoney, knownPrice } from '../../lib/pricing';
-import { freePorts, unassignedArrays, unitPorts } from '../../lib/ports';
+import { freePorts, portLimitsLabel, unassignedArrays, unitPorts } from '../../lib/ports';
 import { useDataState, useUiState } from '../../context/AppStateContext';
 import { useIsPhone } from '../../hooks/useIsSmallScreen';
 
@@ -41,14 +41,17 @@ function AssignSelect({ port, unassigned, onAssign }) {
 }
 
 /** A port as a card, for phones (13.9): the same content as a table row, stacked. */
-function PortCard({ port, arrayEntry, projectId, systemId, unassigned, onAssign, onUnassign }) {
+function PortCard({ port, model, arrayEntry, projectId, systemId, unassigned, onAssign, onUnassign }) {
     const a = arrayEntry?.analysis;
     const c = a?.controller;
     const tone = arrayEntry?.status === 'warning' ? 'bg-[#FFF9EE]' : arrayEntry?.status === 'error' ? 'bg-status-error-bg/60' : '';
     return (
         <li className={`flex flex-col gap-2 border-t border-line-soft px-4 py-3 text-[13px] ${tone}`}>
             <div className="flex items-center justify-between gap-2">
-                <span className="font-plex-mono font-semibold">MPPT {port}</span>
+                <span className="font-plex-mono font-semibold">
+                    MPPT {port}
+                    {portLimitsLabel(model, port) ? <span className="ml-2 font-normal text-muted">{portLimitsLabel(model, port)}</span> : null}
+                </span>
                 {arrayEntry ? <StatusPill status={arrayEntry.status}>{arrayEntry.status === 'unset' ? 'Not checked' : undefined}</StatusPill> : null}
             </div>
             {arrayEntry ? (
@@ -83,7 +86,7 @@ function PortCard({ port, arrayEntry, projectId, systemId, unassigned, onAssign,
     );
 }
 
-function PortRow({ port, arrayEntry, projectId, systemId, unassigned, onAssign, onUnassign }) {
+function PortRow({ port, model, arrayEntry, projectId, systemId, unassigned, onAssign, onUnassign }) {
     const a = arrayEntry?.analysis;
     const c = a?.controller;
     const tone = arrayEntry?.status === 'warning' ? 'bg-[#FFF9EE]' : arrayEntry?.status === 'error' ? 'bg-status-error-bg/60' : '';
@@ -91,6 +94,7 @@ function PortRow({ port, arrayEntry, projectId, systemId, unassigned, onAssign, 
         <tr className={`border-t border-line-soft ${tone}`}>
             <th scope="row" className="px-5 py-3 text-left font-plex-mono font-semibold">
                 MPPT {port}
+                {portLimitsLabel(model, port) ? <span className="block text-[11px] font-normal text-muted">{portLimitsLabel(model, port)}</span> : null}
             </th>
             {arrayEntry ? (
                 <>
@@ -265,6 +269,7 @@ export default function SystemControllers({ design, system }) {
                                         <PortCard
                                             key={p.port}
                                             port={p.port}
+                                            model={model}
                                             arrayEntry={p.arrayId ? entryOf(p.arrayId) : null}
                                             projectId={projectId}
                                             systemId={system.id}
@@ -294,6 +299,7 @@ export default function SystemControllers({ design, system }) {
                                         <PortRow
                                             key={p.port}
                                             port={p.port}
+                                            model={model}
                                             arrayEntry={p.arrayId ? entryOf(p.arrayId) : null}
                                             projectId={projectId}
                                             systemId={system.id}

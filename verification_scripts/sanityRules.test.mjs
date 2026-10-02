@@ -90,6 +90,18 @@ describe('sanity rules', () => {
         expect(rules(f)).toEqual(expect.arrayContaining(['error:pv-current', 'error:mppt-range']));
     });
 
+    it('checks per-tracker limits (mpptInputs)', () => {
+        const c = { ...goodController, maxIsc: 20, maxOperatingI: 12, trackers: 2 };
+        expect(checkControllers([{ ...c, mpptInputs: [{ maxIsc: 40, maxOperatingI: 22 }, {}] }])).toEqual([]);
+        const bad = checkControllers([
+            { ...c, mpptInputs: [{ maxIsc: 15, maxOperatingI: 30 }, { mpptRangeMax: 150 }, { maxIsc: 40 }] },
+        ]);
+        expect(rules(bad)).toEqual(
+            expect.arrayContaining(['error:mppt-inputs', 'error:pv-current', 'error:mppt-range', 'warning:mppt-inputs'])
+        );
+        expect(rules(checkControllers([{ ...c, mpptInputs: [{ maxIsc: 40, bogus: 1 }] }]))).toContain('error:mppt-inputs');
+    });
+
     it('warns about chargers without a charge current or Isc rating', () => {
         const f = checkControllers([{ ...goodController, maxChargeCurrent: 0, maxIsc: 0 }]);
         expect(rules(f)).toEqual(expect.arrayContaining(['warning:charge-current', 'warning:max-isc']));

@@ -14,7 +14,7 @@ import Menu, { MenuItem } from '../../components/ui/Menu';
 import { Plus } from '../../components/Icons';
 import { conditionsFromAreaSettings } from '../../lib/arrayAnalysis';
 import { buildPath } from '../../lib/routes';
-import { unitPorts } from '../../lib/ports';
+import { portName, unitPorts } from '../../lib/ports';
 import { LINK_CODES, sldLayout } from '../../lib/sldLayout';
 import { sldToSvg } from '../../lib/sldExport';
 import { issueCounts, systemIssues } from '../../lib/systemIssues';
@@ -414,7 +414,7 @@ export default function SystemOverview({ design, system, onAddArray }) {
         setup: buildPath({ view: 'system', projectId, systemId: system.id, tab: 'setup' }),
     };
     const freeOptions = units.flatMap((u) =>
-        u.ports.filter((p) => !p.arrayId).map((p) => ({ value: `${u.instance.id}|${p.port}`, label: `${u.model?.name || u.instance.name} MPPT ${p.port}` }))
+        u.ports.filter((p) => !p.arrayId).map((p) => ({ value: `${u.instance.id}|${p.port}`, label: `${u.model?.name || u.instance.name} ${portName(u.model, p.port)}` }))
     );
     const assign = (arrayId, value) => {
         const [instanceId, port] = value.split('|');

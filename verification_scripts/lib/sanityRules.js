@@ -122,6 +122,49 @@ export function checkPanels(panels) {
     return findings;
 }
 
+const INPUT_FIELDS = ['maxIsc', 'maxOperatingI', 'mpptRangeMin', 'mpptRangeMax'];
+
+/**
+ * Per-tracker limits (`mpptInputs`, roadmap 1.13): one entry per tracker at most, each input's merged limits
+ * consistent, and the controller-level fields no larger than any input's, because they are what an array is
+ * checked against before it is on a port.
+ */
+function mpptInputFindings(c, add) {
+    if (c.mpptInputs == null) return;
+    if (!Array.isArray(c.mpptInputs)) {
+        add('error', 'mppt-inputs', 'mpptInputs must be an array');
+        return;
+    }
+    if (c.mpptInputs.length > num(c.trackers)) {
+        add('error', 'mppt-inputs', `${c.mpptInputs.length} mpptInputs entries but only ${c.trackers} trackers`);
+    }
+    c.mpptInputs.forEach((input, i) => {
+        const label = `MPPT ${i + 1}`;
+        if (!input || typeof input !== 'object') {
+            add('error', 'mppt-inputs', `${label}: entry must be an object`);
+            return;
+        }
+        const unknown = Object.keys(input).filter((k) => !INPUT_FIELDS.includes(k));
+        if (unknown.length) add('error', 'mppt-inputs', `${label}: unknown field(s) ${unknown.join(', ')}`);
+        const v = { ...c };
+        for (const k of INPUT_FIELDS) if (positive(input[k])) v[k] = num(input[k]);
+        if (positive(v.maxOperatingI) && positive(v.maxIsc) && num(v.maxOperatingI) > num(v.maxIsc)) {
+            add('error', 'pv-current', `${label}: PV operating current ${v.maxOperatingI} A exceeds PV Isc rating ${v.maxIsc} A`);
+        }
+        if (positive(v.mpptRangeMax) && num(v.mpptRangeMax) > num(c.maxV)) {
+            add('error', 'mppt-range', `${label}: MPPT maximum ${v.mpptRangeMax} V exceeds max PV voltage ${c.maxV} V`);
+        }
+        if (positive(v.mpptRangeMin) && positive(v.mpptRangeMax) && num(v.mpptRangeMin) >= num(v.mpptRangeMax)) {
+            add('error', 'mppt-range', `${label}: MPPT minimum ${v.mpptRangeMin} V is not below maximum ${v.mpptRangeMax} V`);
+        }
+        for (const k of ['maxIsc', 'maxOperatingI']) {
+            if (positive(input[k]) && positive(c[k]) && num(input[k]) < num(c[k])) {
+                add('warning', 'mppt-inputs', `${label}: ${k} ${input[k]} is below the controller-level ${c[k]}, which should hold the smallest tracker's limit`);
+            }
+        }
+    });
+}
+
 /**
  * @param {object[]} controllers
  * @returns {Finding[]}
@@ -161,6 +204,7 @@ export function checkControllers(controllers) {
                 add('warning', 'charge-current', 'Battery charger without maxChargeCurrent, so the power check is skipped');
             }
             if (!(num(c.trackers) >= 1)) add('error', 'trackers', `PV input but trackers = ${c.trackers}`);
+            mpptInputFindings(c, add);
         } else if (c.type !== 'ac_coupled_inverter' && c.type !== 'dc-dc-charger') {
             add('warning', 'no-pv-input', 'maxV is 0: this unit cannot take panels');
         }

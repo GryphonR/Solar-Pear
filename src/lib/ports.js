@@ -4,6 +4,8 @@
  * in the engine (see domain-rules.md, "Model assumptions"). Pure.
  */
 
+import { controllerForInput } from './arrayAnalysis';
+
 /** Number of MPPT ports on a controller model (at least 1). */
 export function portCount(model) {
     return Math.max(1, Number(model?.trackers) || 1);
@@ -40,4 +42,24 @@ export function freePorts(instances, arrays, chargers) {
 export function unassignedArrays(arrays, instances) {
     const ids = new Set(instances.map((i) => i.id));
     return arrays.filter((a) => !a.controllerInstanceId || !ids.has(a.controllerInstanceId));
+}
+
+/**
+ * Short limits of one port, e.g. "22 A · 41.25 A Isc", shown beside the port name only when the model's
+ * inputs differ (`mpptInputs`, roadmap 1.13); null otherwise.
+ */
+export function portLimitsLabel(model, port) {
+    if (!model || !Array.isArray(model.mpptInputs) || model.mpptInputs.length === 0) return null;
+    const c = controllerForInput(model, port);
+    const parts = [
+        Number(c.maxOperatingI) > 0 ? `${c.maxOperatingI} A` : null,
+        Number(c.maxIsc) > 0 ? `${c.maxIsc} A Isc` : null,
+    ].filter(Boolean);
+    return parts.length ? parts.join(' · ') : null;
+}
+
+/** "MPPT 1", or "MPPT 1 (22 A · 41.25 A Isc)" when the model's inputs differ. */
+export function portName(model, port) {
+    const limits = portLimitsLabel(model, port);
+    return limits ? `MPPT ${port} (${limits})` : `MPPT ${port}`;
 }

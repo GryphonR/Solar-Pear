@@ -119,7 +119,7 @@ export const CHECKS = [
         name: 'Short-circuit current rating',
         codes: ['iscRating'],
         severity: ISC_OVER_RATING_SEVERITY,
-        rule: `Array short-circuit current at the design high temperature (× ${STRICT_CURRENT_FACTOR} in strict mode) must not exceed the controller’s maximum PV short-circuit current per tracker. Manufacturers treat this as a hardware limit. Where a datasheet states the input limits its own current, it is a warning instead.`,
+        rule: `Array short-circuit current at the design high temperature (× ${STRICT_CURRENT_FACTOR} in strict mode) must not exceed the controller’s maximum PV short-circuit current for the input the array is on (where a datasheet gives different limits per input, each input is checked against its own). Manufacturers treat this as a hardware limit. Where a datasheet states the input limits its own current, it is a warning instead.`,
     },
     {
         group: 'Current',

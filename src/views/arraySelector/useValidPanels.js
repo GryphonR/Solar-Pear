@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { evaluateElectrical, evaluatePhysicalFit } from '../../lib/arrayAnalysis';
+import { controllerForInput, evaluateElectrical, evaluatePhysicalFit } from '../../lib/arrayAnalysis';
 import { knownPrice, compareMissingLast } from '../../lib/pricing';
 
 /**
@@ -38,7 +38,9 @@ export function useValidPanels(arrayId, options) {
             controllerInstance = siteControllers.find((sc) => sc.id === sel.controllerInstanceId);
         }
         if (controllerInstance) {
-            return chargersData.find((c) => c.id === controllerInstance.modelId) || null;
+            // Ranked against the limits of the port the array is on (roadmap 1.13).
+            const model = chargersData.find((c) => c.id === controllerInstance.modelId) || null;
+            return controllerForInput(model, sel.controllerMppt || 1);
         }
         if (sel.controller) {
             return chargersData.find((c) => c.id === sel.controller) || null;
