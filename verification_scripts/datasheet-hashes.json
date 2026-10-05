@@ -1,14 +1,14 @@
 {
   "https://aikosolar.com/wp-content/uploads/2024/02/AIKO-A-MAH54Mb-445-460W-35-frame-EN-V5.3.pdf": {
     "lastError": "HTTP 404",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://ar.risen.com/uploads/20240806/RSM108-11-490-515BNDG%20IEC1500V-30mm%202024H2-1-EN-Black%20frame.pdf": {
     "sha256": "20d8ee0d5bb3ec83ffedd00ba56c9363fb7f696900a38998e9763e023e02225b",
     "bytes": 581592,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "RSM108-11-490BNDG",
       "RSM108-11-505BNDG",
@@ -20,7 +20,7 @@
     "bytes": 343601,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "Q.TRON BLK S-G3R.12+ 435",
       "Q.TRON BLK S-G3R.12+ 440",
@@ -32,7 +32,7 @@
     "bytes": 8986807,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "ET-NR48TBH440GB",
       "ET-NR48TBH460GB"
@@ -43,7 +43,7 @@
     "bytes": 8442750,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "ET-N754TBH430GB"
     ]
@@ -53,7 +53,7 @@
     "bytes": 1507188,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "RS41-425NXG-E3"
     ]
@@ -63,7 +63,7 @@
     "bytes": 1078904,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "MB_TG120ByB_370",
       "MB_TG120ByB_380",
@@ -75,7 +75,7 @@
     "bytes": 7692714,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM66D50-645/GB",
       "JAM66D50-650/GB",
@@ -90,7 +90,7 @@
     "bytes": 6037825,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM54D51-515/GR",
       "JAM54D51-520/GR",
@@ -105,7 +105,7 @@
     "bytes": 1214289,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM54D40-460/LB",
       "JAM54D40-465/LB"
@@ -116,7 +116,7 @@
     "bytes": 735914,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fogstar_gen_lb_eu_10k"
     ]
@@ -126,7 +126,7 @@
     "bytes": 675132,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fogstar_gen2_lb_eu_3.6k"
     ]
@@ -136,7 +136,7 @@
     "bytes": 716955,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fogstar_sna_14k"
     ]
@@ -146,7 +146,7 @@
     "bytes": 832310,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fogstar_sna_6k"
     ]
@@ -156,7 +156,7 @@
     "bytes": 789211,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fogstar_trip2_lb_3p_20k"
     ]
@@ -166,7 +166,7 @@
     "bytes": 6938510,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "RNG-100DB-H"
     ]
@@ -176,7 +176,7 @@
     "bytes": 1203597,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "RNG-175DB-H"
     ]
@@ -186,7 +186,7 @@
     "bytes": 3171072,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "RSP100D-BK"
     ]
@@ -196,7 +196,7 @@
     "bytes": 5253339,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "RSP200D"
     ]
@@ -206,7 +206,7 @@
     "bytes": 5743464,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "conversol_v5_5k"
     ]
@@ -216,7 +216,7 @@
     "bytes": 957437,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "elios_g99_3k",
       "elios_g99_5k"
@@ -227,7 +227,7 @@
     "bytes": 333973,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "AIKO-A450-MAH54Mw",
       "AIKO-A465-MAH54Mw",
@@ -240,7 +240,7 @@
     "bytes": 1805437,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "AIKO-A475-MCE54Mb"
     ]
@@ -250,7 +250,7 @@
     "bytes": 1231053,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "UKS-S108/M10N-440"
     ]
@@ -260,7 +260,7 @@
     "bytes": 6684739,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR7-60HTB-505M"
     ]
@@ -270,7 +270,7 @@
     "bytes": 98508,
     "contentType": "text/html; charset=utf-8",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "growatt_sph3000tl_bl_up",
       "growatt_sph3600tl_bl_up",
@@ -285,7 +285,7 @@
     "bytes": 1852649,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "tesla_powerwall_3"
     ]
@@ -295,7 +295,7 @@
     "bytes": 871021,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "enphase_iq8ac",
       "enphase_iq8hc",
@@ -310,7 +310,7 @@
     "bytes": 987151,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "renogy_dcc30s",
       "renogy_dcc50s"
@@ -321,7 +321,7 @@
     "bytes": 1602543,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "CS6.2-66TB-600",
       "CS6.2-66TB-610",
@@ -330,21 +330,21 @@
     ]
   },
   "https://givenergy.co.uk/hardware/ac-coupled-inverter/": {
-    "sha256": "2011d67d3a643c137458934ea55dbacb5c1afaf84df8d58167d28c66f53eb35c",
-    "bytes": 7039,
+    "sha256": "1e1abb135eb26438a0ae8533cb4e432a78ee140487aca806696a19921d480af9",
+    "bytes": 9845,
     "contentType": "text/html; charset=UTF-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "giv_ac3.0"
     ]
   },
   "https://givenergy.co.uk/hardware/hybrid-inverter-low-voltage-gen-3/": {
-    "sha256": "194c598659336383db323e1bf5065577726bedaeb9ca52a434abde8763e9dec8",
-    "bytes": 7053,
+    "sha256": "1748347ac170d1bfc24529e8243531d400976ce774c74ff48a46d27d2a8740ed",
+    "bytes": 9859,
     "contentType": "text/html; charset=UTF-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "giv_hy10.0_g3"
     ]
@@ -354,7 +354,7 @@
     "bytes": 790061,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "giv_hy11.0_3ph"
     ],
@@ -365,7 +365,7 @@
     "bytes": 164826,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "giv_hy3.6_g3",
       "giv_hy5.0_g3"
@@ -373,11 +373,11 @@
     "lastError": "HTTP 403"
   },
   "https://givenergy.com/hardware/all-in-one-2-standalone/": {
-    "sha256": "82d3a045cbc76ac0a5928e84218ca4a36232c1b9a494f9ea5c995cd595dfafdd",
+    "sha256": "bb4f97f13c5607f7e20ed77ef0d9230edd9c81cb7627d0e70ac2b170b169a37a",
     "bytes": 339307,
     "contentType": "text/html; charset=UTF-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "giv_aio_2"
     ]
@@ -387,7 +387,7 @@
     "bytes": 2011372,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR8-66HYD-635M",
       "LR8-66HYD-650M",
@@ -400,7 +400,7 @@
     "bytes": 8673611,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "growatt_min2500tl_xh",
       "growatt_min3000tl_xh",
@@ -416,7 +416,7 @@
     "bytes": 2451700,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "renogy_rover_20",
       "renogy_rover_40"
@@ -427,7 +427,7 @@
     "bytes": 703373,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JKM440N-54HL4-V"
     ]
@@ -437,7 +437,7 @@
     "bytes": 487512,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JKM510N-60HL4-V"
     ]
@@ -447,7 +447,7 @@
     "bytes": 437503,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JKM460N-48QL6-DV",
       "JKM465N-48QL6-DV",
@@ -462,7 +462,7 @@
     "bytes": 678324,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JKM460N-48QL6-BDV",
       "JKM465N-48QL6-BDV",
@@ -477,7 +477,7 @@
     "bytes": 387364,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JKM430N-54HL4-V"
     ]
@@ -487,7 +487,7 @@
     "bytes": 427445,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JKM580N-72HL4-V"
     ]
@@ -497,7 +497,7 @@
     "bytes": 463954,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JKM630N-66HL4-V"
     ]
@@ -507,7 +507,7 @@
     "bytes": 788348,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "lux_lxp_3000",
       "lux_lxp_3600",
@@ -518,11 +518,11 @@
     ]
   },
   "https://makeskyblue.com/products/60a-mppt-solar-charge-controller": {
-    "sha256": "c377436256857419db434b9e84a1ebdcbcac185b54d49bf8b9161f1785c9b5c7",
-    "bytes": 484231,
+    "sha256": "d9e095270daf2ebe9ec801ac9854d5bf244276e4bd2124b05144184e3cd61a6a",
+    "bytes": 489359,
     "contentType": "text/html; charset=utf-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "makeskyblue_v118_60"
     ]
@@ -532,7 +532,7 @@
     "bytes": 714799,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "SPR-MAX6-425-BLK",
       "SPR-MAX6-440"
@@ -543,7 +543,7 @@
     "bytes": 1984154,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "Q.PEAK DUO M-G11S+ 400",
       "Q.PEAK DUO M-G11S+ 405",
@@ -557,7 +557,7 @@
     "bytes": 13997319,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR5-54HTB-440M",
       "LR5-54HTB-445M"
@@ -568,7 +568,7 @@
     "bytes": 4909587,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR8-66HGD-595M",
       "LR8-66HGD-605M",
@@ -581,7 +581,7 @@
     "bytes": 212754,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "sma_sb3.0_1av_41",
       "sma_sb3.6_1av_41",
@@ -592,14 +592,14 @@
   },
   "https://outbackpower.com/downloads/documents/flexmax_100/fm100_datasheet.pdf": {
     "lastError": "HTTP 404",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://portal.segensolar.de/reseller/docs/Neostar_3SPlus_54_AIKO-A-MCE54Db_1762_1134_30_460-485W_DSDr_EN_2405_V1.5.pdf": {
     "sha256": "3f6ef93a975d3e1270e1825f693c8a8d1399298431110ecabd6d7b32ed1d2a81",
     "bytes": 2340450,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "AIKO-A460-MCE54Db",
       "AIKO-A465-MCE54Db",
@@ -611,14 +611,14 @@
   },
   "https://powmr.com/products/mppt-solar-charge-controller-60a": {
     "lastError": "HTTP 404",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://pub-493f128c789642909ff4ab27a5f41128.r2.dev/product-datasheets/uk/UK_Maxeon_Solar_Panels_Maxeon_3_DC_Black_410_420_W__Product_Datasheets.pdf": {
     "sha256": "14cac4de84eac6d125d887e254d8f48dcb2c32c6e8553f7a64dd8da52e903537",
     "bytes": 699695,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "SPR-MAX3-410-BLK",
       "SPR-MAX3-415-BLK",
@@ -630,7 +630,7 @@
     "bytes": 973818,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "SPR-MAX7-435-PT",
       "SPR-MAX7-440-PT",
@@ -642,7 +642,7 @@
     "bytes": 718120,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "MB_W120AyB_380",
       "MB_W120AyB_390",
@@ -651,14 +651,14 @@
   },
   "https://solar.huawei.com/download?p=%2F-%2Fmedia%2FSolar%2Fpdf%2Feu%2Fdatasheet%2FSUN2000-2-6KTL-L1.pdf": {
     "lastError": "HTTP 500",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://solar.huawei.com/en-GB/download?p=%2F-%2Fmedia%2FSolar%2Fpdf%2Feu%2Fdatasheet%2FSUN2000-30-36-40KTL-M3.pdf": {
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "bytes": 0,
     "contentType": "text/html",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "huawei_sun2000_50"
     ]
@@ -668,21 +668,21 @@
     "bytes": 901874,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "CS6R-430T"
     ]
   },
   "https://static.csisolar.com/wp-content/uploads/sites/3/2023/10/24083838/CS-Datasheet-TOPHiKu6_CS6R-T_v1.0C21_F23_P1_NA-US-EN-425-450W.pdf": {
     "lastError": "HTTP 403",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://static.csisolar.com/wp-content/uploads/sites/3/2024/01/25141819/CS-Datasheet-TOPHiKu6-All-Black_CS6.1-54TM-H_v1.1C25_F23_P1_NA-US-445-470W.pdf": {
     "sha256": "d49074e6b88a71346b2377ee26918dcb286ecf32520fad4432d2900f57b1d46c",
     "bytes": 1219869,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "CS6.1-54TM-460",
       "CS6.1-54TM-465",
@@ -694,7 +694,7 @@
     "bytes": 2386048,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR5-54HTB-430M"
     ]
@@ -704,7 +704,7 @@
     "bytes": 8262132,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR5-54HTB-450M"
     ]
@@ -714,7 +714,7 @@
     "bytes": 1161476,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "TSM-700NEG21C.20",
       "TSM-710NEG21C.20",
@@ -724,14 +724,14 @@
   },
   "https://sunpower.maxeon.com/int/sites/default/files/2022-02/SPR-MAX3-430%20SPR-MAX3-425%20SPR-MAX3-415_0.pdf": {
     "lastError": "fetch failed",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://usercontent.one/wp/www.gingroup.it/wp-content/uploads/2026/05/Longi-LR7-54HVB-Datasheet-EN.pdf": {
     "sha256": "2315a2107c432802aeaadecb16544ad401d82289961018847ef49733ffe33192",
     "bytes": 359525,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR7-54HVB-475M",
       "LR7-54HVB-480M",
@@ -746,7 +746,7 @@
     "bytes": 488969,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "TSM-430NEG9R.28",
       "TSM-435NEG9R.28",
@@ -761,7 +761,7 @@
     "bytes": 302959,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "TSM-500NEG18R.28",
       "TSM-505NEG18R.28",
@@ -769,11 +769,11 @@
     ]
   },
   "https://voltaconsolar.com/products/420w-solar-panel-black-frame-half-cut-cell": {
-    "sha256": "23e91fda580ddddedc6a6a49e89e6648a941a3b648a0a6c364d0ea9e04d9aac9",
-    "bytes": 2025179,
+    "sha256": "510b0a62821f3730d38b3ef81c5d52da8cfb38ce39de326d2d7a7bcecc5878bd",
+    "bytes": 1605008,
     "contentType": "text/html; charset=utf-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "SPV-450W-B-HC"
     ]
@@ -783,27 +783,29 @@
     "bytes": 1993941,
     "contentType": "text/html; charset=utf-8",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "conversol_ultra_max_11k"
-    ]
+    ],
+    "lastError": "HTTP 500"
   },
   "https://voltaconsolar.com/products/conversol-max-ii-8kw-offgrid-inverter-charger": {
     "sha256": "88f7df23f1e33796cf67e70e260d201363cfd845e4e2eab7ba15ca45bafbb443",
     "bytes": 2006735,
     "contentType": "text/html; charset=utf-8",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "conversol_max_8k"
-    ]
+    ],
+    "lastError": "HTTP 500"
   },
   "https://voltaconsolar.com/products/flexible-solar-panel-195w": {
-    "sha256": "284758664df0dae965818062b766c437752eb6c880d5ee76fa08797edcaa0192",
-    "bytes": 2004743,
+    "sha256": "fe8ea45abb3f68f9ee20b74aeb70c8fc943852587ff59bc5dfe1034061efac8e",
+    "bytes": 1584578,
     "contentType": "text/html; charset=utf-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "VS-FL-200-M36-E"
     ]
@@ -813,7 +815,7 @@
     "bytes": 313369,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "sunsynk_ecco_3.6k",
       "sunsynk_ecco_5k",
@@ -823,11 +825,11 @@
     ]
   },
   "https://www.cityplumbing.co.uk/p/dmegc-465w-g12-all-black-solar-panel/p/231059": {
-    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "bytes": 0,
-    "contentType": "text/html; charset=UTF-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "sha256": "1105864e88652cb14303343c6c4afe44480a2739070a00960226ebedf360d897",
+    "bytes": 525959,
+    "contentType": "text/html; charset=utf-8",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "DM465G12RT-G48HBB"
     ]
@@ -837,17 +839,18 @@
     "bytes": 0,
     "contentType": "text/html; charset=UTF-8",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR5-54HPB-410M"
-    ]
+    ],
+    "lastError": "HTTP 404"
   },
   "https://www.deyeinverter.com/deyeinverter/2024/04/16/datasheet_sun-3.6-8k-sg05lp1-eu-sm2_240416_en.pdf": {
     "sha256": "105abd4626040e338e3490779aedc5fe07a264bdff071684533c584f2211444c",
     "bytes": 295422,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "deye_sun_3.6k_sg05lp1",
       "deye_sun_5k_sg05lp1",
@@ -862,7 +865,7 @@
     "bytes": 303771,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "deye_sun_3.6k_sg03lp1",
       "deye_sun_5k_sg03lp1",
@@ -874,7 +877,7 @@
     "bytes": 3665109,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "DM450M10RT-B54HBT-L",
       "DM455M10RT-B54HBT-L",
@@ -888,7 +891,7 @@
     "bytes": 1174282,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "AIKO-A465-MCE54Mb",
       "AIKO-A470-MCE54Mb",
@@ -903,7 +906,7 @@
     "bytes": 289836,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "epever_tracer_1210an",
       "epever_tracer_2210an",
@@ -916,7 +919,7 @@
     "bytes": 52338,
     "contentType": "text/html; charset=utf-8",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fangpusun_flexmax_60",
       "fangpusun_flexmax_80"
@@ -927,7 +930,7 @@
     "bytes": 36168,
     "contentType": "text/html; charset=utf-8",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fangpusun_flexmax_100_300"
     ]
@@ -937,7 +940,7 @@
     "bytes": 38457,
     "contentType": "text/html; charset=utf-8",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fangpusun_vt_65",
       "fangpusun_vt_80"
@@ -945,14 +948,14 @@
   },
   "https://www.fox-ess.com/products/h3-pro": {
     "lastError": "HTTP 404",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://www.fox-ess.com/products/hybrid-inverter": {
-    "sha256": "3e07e6a4e8d21cc4a31ecf49f2aae637353f5e0b16fc518ec9e538f5fc7d76c2",
-    "bytes": 244681,
+    "sha256": "309d3d4fa1e07191bc490cfcc4f91ed128f8f2f912886c6c111cd438a527ff7d",
+    "bytes": 244684,
     "contentType": "text/html; charset=utf-8",
-    "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fox_h1_3.6",
       "fox_h1_5.0",
@@ -961,14 +964,14 @@
   },
   "https://www.fox-ess.com/products/r-series": {
     "lastError": "HTTP 404",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://www.fronius.com/en/~/downloads/Solar%20Energy/Datasheets/SE_DS_Fronius_Primo_GEN24_GEN24Plus_3_to_6_kW_EN.pdf": {
     "sha256": "926ceb9f6a0e50d12cfe6f3f87ebe56112f55cbf73e2350c6e82a94a20d6b350",
     "bytes": 2158572,
     "contentType": "application/octet-stream",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "fronius_primo_gen24_plus_3.0",
       "fronius_primo_gen24_plus_3.6",
@@ -983,37 +986,40 @@
     "bytes": 2720656,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM66S30-505/MR"
-    ]
+    ],
+    "lastError": "HTTP 403"
   },
   "https://www.jasolar.com/uploadfile/fujian/2024/0328/a85bf0dfe569316.pdf": {
     "sha256": "225fecda05581eadca80ad0b3d3a71b870d4a29283b15343631ba357fb1ec787",
     "bytes": 1970817,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM54D41-450/LB"
-    ]
+    ],
+    "lastError": "HTTP 403"
   },
   "https://www.jasolar.com/uploadfile/fujian/2024/0807/57de8d106c8d247.pdf": {
     "sha256": "8931c5904b419a72302c78bdca1a90b5ed8b9f4e01594c11482ef1ab6f849d50",
     "bytes": 1051739,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM66S30-510/MR"
-    ]
+    ],
+    "lastError": "HTTP 403"
   },
   "https://www.jasolar.eu/en/product/deepblue-3-0-pro": {
-    "sha256": "b08b206d94f015f51b9a82c5df7a84ef98a5de08de94eb25843fd527aaa41f82",
+    "sha256": "35e45c8903ad0f5b4de3ba87139abaefe11120f0000d34e4c8cd2a38973b06b6",
     "bytes": 116115,
     "contentType": "text/html; charset=utf-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM66S30-500/MR"
     ]
@@ -1023,7 +1029,7 @@
     "bytes": 1893594,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM54S31-420/MR"
     ]
@@ -1033,7 +1039,7 @@
     "bytes": 1211851,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM54D40-435/MB",
       "JAM54D40-440/MB",
@@ -1045,7 +1051,7 @@
     "bytes": 1922395,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM54S31-430/LR",
       "JAM54S31-435/LR"
@@ -1056,7 +1062,7 @@
     "bytes": 1063271,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JAM72D40-600/MB"
     ]
@@ -1066,17 +1072,17 @@
     "bytes": 476159,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "JKM475N-60HL4-V"
     ]
   },
   "https://www.longi.com/en/products/modules/hi-mo-5/": {
-    "sha256": "2e4b8322e636e4e7c0b0446ff989a28a511f192eecf90ce4d64660830eea5553",
+    "sha256": "6129209bf19bf07e61f49d33a81827525c9c86c2ee1c5d2f2ddde9a59e2ad660",
     "bytes": 182949,
     "contentType": "text/html",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR5-66HPH-500M",
       "LR5-66HPH-505M",
@@ -1088,7 +1094,7 @@
     "bytes": 319568,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "GBS-Custom-350"
     ]
@@ -1098,7 +1104,7 @@
     "bytes": 1303713,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "votronic_mpp_165_duo_dig",
       "votronic_mpp_250_duo_dig",
@@ -1111,7 +1117,7 @@
     "bytes": 1263236,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "REC400AA Pure-R",
       "REC410AA Pure-R",
@@ -1124,7 +1130,7 @@
     "bytes": 1020515,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "REC450AA Pure-RX",
       "REC455AA Pure-RX",
@@ -1136,18 +1142,18 @@
   },
   "https://www.renogy.com/content/Manual/Rover%2060%20Manual.pdf": {
     "lastError": "HTTP 404",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://www.sigenergy.com/uploads/en_download/1729071058291440.pdf": {
     "lastError": "HTTP 403",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://www.solarmarkt.ch/herstimg/10-Solarmodule/Longi_Solar/DB_EN_LONGi_HiMOS10_EcoLife_LR7-54HJBB-490-505M.pdf": {
     "sha256": "511e4c130b7fc3bd86972f73b4f9bf8ce2565459287254a50b26ecf3d68e70f9",
     "bytes": 2333699,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "LR7-54HJBB-490M",
       "LR7-54HJBB-495M",
@@ -1160,7 +1166,7 @@
     "bytes": 933874,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "solax_x1_hybrid_g4_3.7",
       "solax_x1_hybrid_g4_5",
@@ -1172,7 +1178,7 @@
     "bytes": 182239,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "solax_x3_forth_80"
     ]
@@ -1182,7 +1188,7 @@
     "bytes": 397547,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "solax_x3_hybrid_g4_10",
       "solax_x3_hybrid_g4_15"
@@ -1190,22 +1196,22 @@
   },
   "https://www.solisinverters.com/uk/energy_storage_inverters1/10_100kw_s6_series.html": {
     "lastError": "HTTP 404",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://www.solisinverters.com/uk/energy_storage_inverters1/3_6kw_s6_series.html": {
     "lastError": "HTTP 404",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://www.solisinverters.com/uk/string_inverters1/25_50kw_s6_series.html": {
     "lastError": "HTTP 404",
-    "lastCheckedAt": "2026-09-30"
+    "lastCheckedAt": "2026-10-05"
   },
   "https://www.srnesolar.com/userfiles/files/2023/07/18/Shiner_User%20Manual_V1.05.pdf": {
     "sha256": "eb1fde6a86d01f80c23e9f0566cfac7f2fb415e052e142b351f304e0e00f6e5d",
     "bytes": 1514879,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "srne_mc2460"
     ]
@@ -1215,7 +1221,7 @@
     "bytes": 386186,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "SGM2-180W"
     ]
@@ -1225,7 +1231,7 @@
     "bytes": 1468212,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "AIKO-A600-MAH72Mw",
       "AIKO-A610-MAH72Mw",
@@ -1237,7 +1243,7 @@
     "bytes": 605347,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "bs75_10",
       "bs75_15",
@@ -1250,7 +1256,7 @@
     "bytes": 245949,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "bs100_30",
       "bs100_50"
@@ -1261,7 +1267,7 @@
     "bytes": 221638,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "bs150_35",
       "bs150_45"
@@ -1272,7 +1278,7 @@
     "bytes": 162145,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "SPM041303603",
       "SPM041501200",
@@ -1294,7 +1300,7 @@
     "bytes": 338489,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "easysolar_12_1600_70",
       "easysolar_24_1600_40"
@@ -1305,7 +1311,7 @@
     "bytes": 338319,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "easysolar_ii_24_3000_70_gx",
       "easysolar_ii_48_3000_35_gx",
@@ -1317,7 +1323,7 @@
     "bytes": 728460,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "victron_orion_tr_smart_12_12_18",
       "victron_orion_tr_smart_12_12_30",
@@ -1331,7 +1337,7 @@
     "bytes": 354052,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "victron_orion_xs"
     ]
@@ -1341,7 +1347,7 @@
     "bytes": 227555,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "ss100_30",
       "ss100_50"
@@ -1352,7 +1358,7 @@
     "bytes": 225049,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "ss150_35",
       "ss150_45"
@@ -1363,7 +1369,7 @@
     "bytes": 383765,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "ss150_60"
     ]
@@ -1373,7 +1379,7 @@
     "bytes": 410508,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "ss150_70",
       "ss150_85_can",
@@ -1385,7 +1391,7 @@
     "bytes": 384245,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "ss250_70_can",
       "ss250_85_can",
@@ -1397,7 +1403,7 @@
     "bytes": 285373,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "ss75_10",
       "ss75_15",
@@ -1410,39 +1416,39 @@
     "bytes": 400830,
     "contentType": "application/pdf",
     "firstSeenAt": "2026-09-25",
-    "lastCheckedAt": "2026-09-30",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "rs450_100",
       "rs450_200"
     ]
   },
   "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-445AG-M10-Data-Sheet.pdf": {
-    "sha256": "9627a1418b9a3c056f039402b0d35781a750e13afc75f9ff07a404da03ca8341",
-    "bytes": 217951,
+    "sha256": "30c6937b5e4e073580c8a48af9d21a1eb95733664d7de0e6a54bd2320d935ec2",
+    "bytes": 217957,
     "contentType": "text/html; charset=UTF-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "PV16-445AG-M10"
     ]
   },
   "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-G1-Data-Sheet.pdf": {
-    "sha256": "9627a1418b9a3c056f039402b0d35781a750e13afc75f9ff07a404da03ca8341",
-    "bytes": 217951,
+    "sha256": "30c6937b5e4e073580c8a48af9d21a1eb95733664d7de0e6a54bd2320d935ec2",
+    "bytes": 217957,
     "contentType": "text/html; charset=UTF-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "PV16-335-G1",
       "PV16-340-G1"
     ]
   },
   "https://www.viridiansolar.co.uk/assets/files/Clearline-fusion-PV16-M10-Data-Sheet.pdf": {
-    "sha256": "9627a1418b9a3c056f039402b0d35781a750e13afc75f9ff07a404da03ca8341",
-    "bytes": 217951,
+    "sha256": "30c6937b5e4e073580c8a48af9d21a1eb95733664d7de0e6a54bd2320d935ec2",
+    "bytes": 217957,
     "contentType": "text/html; charset=UTF-8",
-    "firstSeenAt": "2026-09-30",
-    "lastCheckedAt": "2026-09-30",
+    "firstSeenAt": "2026-10-05",
+    "lastCheckedAt": "2026-10-05",
     "products": [
       "PV16-405-MP10"
     ]
