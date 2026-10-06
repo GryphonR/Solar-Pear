@@ -8,15 +8,21 @@ Solar Pear is a browser-based tool for designing solar PV setups: define your ro
 
 *No fruit was harmed in the making of this app.*
 
+![A house system in Solar Pear: two roof arrays on the two MPPT inputs of a hybrid inverter, drawn as a single line diagram with each string's voltage and current against the controller's limits](documentation/images/solar-pear-system-overview.png)
+
 ---
 
 ## What it does
 
-- **Arrays** — Model multiple roof areas (orientation, panel count, format, mounting). One place for your whole site.
-- **Panels** — Browse a multi-brand panel database, filter by size/weight and in-roof (GSE) compatibility, and see peak power and cost per kWp per array.
-- **PV controllers** — Pick controllers that match your strings. Voc is validated as a hard limit (hardware safety); Vmp below startup and Isc overage are flagged as warnings (harvest loss / clipping, not damage). System voltage and type (grid / off-grid / DC charger) are respected.
-- **Summary & BoM** — Overview of your system and a bill of materials (panels and controllers; harnesses and mounting are on you).
-- **Backup & restore** — Export your full configuration to a JSON file and import it elsewhere. Your data lives in the browser—the download button is the closest thing to a “save” button.
+- **Projects, systems and arrays**: a project holds one or more systems (one complete installation, such as the house or the garage), and each system holds its roof arrays (orientation, panel count, format, mounting).
+- **Layout planner**: draw the roof, add obstacles, and let the planner rank layouts by power or cost. Preview any layout and see what changes before you apply it.
+- **Panels**: browse a multi-brand panel database, filter by size, weight and in-roof (GSE) compatibility, and see peak power and cost per kWp for each array.
+- **PV controllers**: pick MPPT chargers, hybrid and string inverters or microinverters, and give each array its own MPPT input. Each array is checked against the input it's on.
+- **Single line diagram**: every system is drawn from the arrays through DC protection and the controller to the battery, loads and grid. Each problem is listed with the cause, the datasheet figures behind it and a suggested fix. Export the diagram as SVG or PNG.
+- **Summary and BoM**: totals and a bill of materials for panels and controllers. Harnesses and mounting are up to you.
+- **Backup and restore**: everything lives in your browser. Export it to a JSON file and import it elsewhere.
+
+![An array's page: layout, panel and controller choices, with each check's value against its limit](documentation/images/solar-pear-array.png)
 
 ---
 
@@ -52,9 +58,10 @@ Each array is checked against its assigned MPPT input using worst-case cell temp
 | Cold Voc | String Voc at the design low exceeds the controller's max PV voltage | Error (can destroy hardware) |
 | Panel system voltage | String Voc at the design low exceeds the panel's rated system voltage | Error |
 | Voc margin | Cold Voc is above 94% of the controller limit | Warning |
-| Startup | String Vmp at the design high is below the controller's startup voltage | Warning (harvest loss) |
+| Startup (open circuit) | String Voc at 25 °C is below the controller's startup voltage, so it never starts | Error |
+| Startup (hot) | String Vmp at the design high is below the controller's startup voltage | Warning (harvest loss) |
 | MPPT window | Hot Vmp is below, or cold Vmp above, the controller's MPPT range | Warning (harvest loss) |
-| Short-circuit current | Array Isc at the design high exceeds the controller's max PV Isc (optionally × 1.25 in strict mode) | Error (can damage hardware) |
+| Short-circuit current | Array Isc at the design high exceeds the max PV Isc of the controller input it's on (optionally × 1.25 in strict mode) | Error (can damage hardware) |
 | Operating current | Array Imp exceeds the controller's PV input current | Warning (clipping) |
 | Charger / inverter power | Total array watts on a controller exceed what it can deliver (charge current × battery voltage) or its max PV input | Info or warning |
 | String fuses | Three or more parallel strings whose reverse current can exceed the panel's fuse rating | Info or warning |
@@ -80,11 +87,11 @@ Temperature coefficients come from each panel's datasheet. The full rules, const
 
 | Area                              | Purpose                                                  |
 | --------------------------------- | -------------------------------------------------------- |
-| `src/App.jsx`                     | Main app shell, tabs, backup/restore                     |
+| `src/App.jsx`, `src/shell/`        | App shell, routing, pages (systems, arrays, planner, diagram) |
 | `src/context/AppStateContext.jsx` | Shared state and persistence                             |
-| `src/views/`                      | Summary, array selector, panels/chargers/arrays DB views |
+| `src/views/`                      | Summary, panel table, Library and Learn views            |
 | `src/components/`                 | Modals, guide, logo, icons                               |
-| `src/lib/`                        | Array analysis, compatibility, migration                 |
+| `src/lib/`                        | Compatibility engine (`arrayAnalysis.js`), diagram layout, planner, storage and migration |
 | `src/data/`                       | Panels and controllers: one JSON file per manufacturer in `panels/` and `controllers/`; new files are picked up automatically (`loadData.js`). |
 
 

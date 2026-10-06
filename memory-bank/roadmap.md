@@ -31,7 +31,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 
 | Phase | Theme | Priority | Done / Total |
 | ----- | ----- | -------- | ------------ |
-| 0 | Housekeeping | P0 | 7 / 8 |
+| 0 | Housekeeping | P0 | 8 / 8 |
 | 1 | Calculation correctness & safety | P0 | 13 / 14 |
 | 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 5 / 14 |
@@ -45,7 +45,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
 | 13 | UX overhaul | P1 | 9 / 9 |
-| **Total** | | | **51 / 154** |
+| **Total** | | | **52 / 154** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -68,8 +68,8 @@ Quick wins that clean the repo before bigger work starts.
 - [x] **0.5 Remove dead code** – Remove the no-op ternary `pStrings = wiringValid ? pStringsRaw : pStringsRaw` and the unused `systemVoltage` param in `panelPassesControllerLimits` (`src/lib/arrayAnalysis.js`). *(KI-8)*
   - Note: the `systemVoltage` param is kept as `_systemVoltage` rather than removed, because task 1.5 will need it.
 - [x] **0.6 Update the schema docs** – Add `dc-dc-charger` (and `inverter_charger`, if it's used) to the `type` list in `controllers/SCHEMA.md`. Change the `buyLinks` type from "object" to "array" in both schema docs. *(KI-13)*
-- [ ] 🚧 **0.7 Improve the README** – Add a screenshot or GIF, a live-site link, a "How the checks work" link, and a contributing section.
-  - Progress: live link, checks table, contributing section and the Node version fix (18+ → 20.19+) are done. The screenshot or GIF is still to do.
+- [x] **0.7 Improve the README** – Add a screenshot or GIF, a live-site link, a "How the checks work" link, and a contributing section.
+  - Done: live link, checks table, contributing section and the Node version fix (18+ → 20.19+), then two screenshots of the new UI (`documentation/images/`, captured at 2× from a demo design with headless Edge) and a refreshed feature list and checks table (startup and per-input rows, project structure).
 - [x] **0.8 Add issue and PR templates** – Create `.github/ISSUE_TEMPLATE/` with "data correction", "bug" and "missing product" templates, so public users can report bad specs in a structured way.
 
 ---
