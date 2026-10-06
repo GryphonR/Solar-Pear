@@ -1,7 +1,7 @@
 # Active context
 
 ## Current state (2026-10-06)
-- `main` holds phases 0–2, phase 6 (trust and legal, PR #12), the 4.14 supplier research (PR #13) and **all of phase 13, the UX overhaul**. Phase 13 was pushed to `origin` on 2026-10-02, so the new shell is live. See the roadmap progress table (48 / 153).
+- `main` holds phases 0–2, phase 6 (trust and legal, PR #12), the 4.14 supplier research (PR #13) and **all of phase 13, the UX overhaul**. Phase 13 was pushed to `origin` on 2026-10-02, so the new shell is live. Since then 1.13, 1.14, 6.11 and 0.7 have landed; see the roadmap progress table (52 / 154).
 - Phase 13 summary: storage v3 projects (`solar_projects`, backup v6), URL routing (`src/lib/routes.js`), the app shell (`src/shell/`), System Setup and the "What are you building?" chooser (delivers 7.1), the array hub and the system Controllers tab, the single line diagram and Issues list (delivers 7.9), the layout planner redesign (`src/shell/planner/`), and the switch-over: the flag and the classic UI are gone, and the app works from phone width (drawer navigation, cards for ports and panels, a view-only planner below 960 px).
 - Planner packing fix (KI-23): rows are packed independently and near-tied layouts rank by fewer panels (`src/lib/layoutRanking.js`), so small leisure panels no longer out-rank efficient modules.
 - Phase 6 legal text is a draft without legal advice. The operator is given as "eChook" and the only contact route is GitHub; a private contact address is still needed.
