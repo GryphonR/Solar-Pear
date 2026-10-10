@@ -28,9 +28,11 @@ const positive = (v) => Number.isFinite(num(v)) && num(v) > 0;
  * @typedef {{ severity: 'error'|'warning', id: string, rule: string, message: string }} Finding
  */
 
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
 function linkFindings(item, id, add) {
     const links = Array.isArray(item.buyLinks) ? item.buyLinks : [];
-    const urls = [item.datasheetUrl, ...links.map((l) => l?.URL || l?.url)].filter(Boolean);
+    const urls = [item.datasheetUrl, ...links.flatMap((l) => [l?.URL || l?.url, l?.affiliateUrl])].filter(Boolean);
     for (const url of urls) {
         let host;
         try {
@@ -42,6 +44,43 @@ function linkFindings(item, id, add) {
         if (NON_PRODUCT_HOST.test(host)) {
             add('error', 'url-non-production', `Link points at a non-production host (${host}): ${url}`);
         }
+    }
+    links.forEach((link) => buyLinkFieldFindings(link, add));
+}
+
+// Buy link entry fields (roadmap 4.3): URL is the canonical product page that the pricing scan
+// checks; affiliateUrl, when set, is what users click.
+function buyLinkFieldFindings(link, add) {
+    if (!link || typeof link !== 'object') {
+        add('error', 'buy-link-shape', 'buyLinks entry is not an object');
+        return;
+    }
+    const who = link.Supplier || link.URL || '?';
+    const hasAffiliateUrl = typeof link.affiliateUrl === 'string' && link.affiliateUrl.trim() !== '';
+    if (link.affiliateUrl != null && typeof link.affiliateUrl !== 'string') {
+        add('error', 'buy-link-affiliate-url', `${who}: affiliateUrl must be a string`);
+    } else if (hasAffiliateUrl && !/^https:\/\//i.test(link.affiliateUrl)) {
+        add('error', 'buy-link-affiliate-url', `${who}: affiliateUrl must be an https:// URL`);
+    }
+    if (link.isAffiliate === true && !hasAffiliateUrl) {
+        add('error', 'buy-link-affiliate', `${who}: isAffiliate is true but there is no affiliateUrl (keep URL canonical and put the tracking link in affiliateUrl)`);
+    }
+    if (hasAffiliateUrl && link.isAffiliate !== true) {
+        add('error', 'buy-link-affiliate', `${who}: affiliateUrl is set but isAffiliate is not true`);
+    }
+    if (link.network != null && (typeof link.network !== 'string' || link.network.trim() === '')) {
+        add('error', 'buy-link-network', `${who}: network must be a non-empty string when present`);
+    } else if (link.network != null && !hasAffiliateUrl) {
+        add('warning', 'buy-link-network', `${who}: network is set but there is no affiliateUrl`);
+    }
+    if (link.price != null && !(typeof link.price === 'number' && Number.isFinite(link.price) && link.price >= 0)) {
+        add('error', 'buy-link-price', `${who}: price must be a number of 0 or more (0 = unknown)`);
+    }
+    if (link.priceCheckedAt != null && link.priceCheckedAt !== '' && !ISO_DATE.test(String(link.priceCheckedAt))) {
+        add('error', 'buy-link-price-date', `${who}: priceCheckedAt must be YYYY-MM-DD or ""`);
+    }
+    if (link.inStock != null && typeof link.inStock !== 'boolean') {
+        add('error', 'buy-link-in-stock', `${who}: inStock must be true or false when present`);
     }
 }
 

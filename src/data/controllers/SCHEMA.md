@@ -43,7 +43,7 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `islanding` | boolean | Whether unit supports islanding / backup. |
 | `notes` | string | Engineering or selection notes. |
 | `datasheetUrl` | string | URL to datasheet. |
-| `buyLinks` | array | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
+| `buyLinks` | array | One entry per retailer: `Supplier`, `URL` (canonical), `isAffiliate`, `Checked`, plus optional `affiliateUrl`, `network`, `price`, `priceCheckedAt`, `inStock`. The fields are the same as for panels: see [Buy links](../panels/SCHEMA.md#buy-links-buylinks). |
 | `availableUK` | boolean | True if the controller is readily available in the UK|
 | `discontinued` | boolean | `true` when the manufacturer no longer makes the controller or has stopped trading. Discontinued products stay selectable, so people designing around existing or second-hand kit can still check it; the app labels them "Discontinued". Use `src/data/replacements.json` instead when a product is renamed or has a direct successor that saved designs should move to. |
 | `discontinuedNote` | string | Why it was discontinued, shown to users (e.g. warranty no longer honoured), or `""`. Only set when `discontinued` is `true`. |

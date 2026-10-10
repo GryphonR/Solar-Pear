@@ -41,7 +41,7 @@ They carry the flat `areasData` / `arraysData` / `siteControllers` / `areaSettin
 ### `catalogueOverrides`
 `Diff = { overrides: { [id]: { field: value } }, custom: item[], removed: id[] }`, with ids being panel `model` or controller `id`.
 
-On import, the diff is applied over the catalogue bundled with the running app. Overrides for items no longer in the catalogue are ignored. Custom items whose id now matches a bundled item give way to the bundled record. URLs in overrides and custom items (`datasheetUrl`, `buyLinks`) are sanitised to http(s) only.
+On import, the diff is applied over the catalogue bundled with the running app. Overrides for items no longer in the catalogue are ignored. Custom items whose id now matches a bundled item give way to the bundled record. URLs in overrides and custom items (`datasheetUrl`, and each `buyLinks` entry's `URL` and `affiliateUrl`) are sanitised to http(s) only.
 
 ### Legacy `panelsData` / `chargersData` (≤ v4)
 These are treated as snapshots and converted with the same rule as the localStorage v1 → v2 migration (see `LOCAL_STORAGE_KEYS.md`): only genuine user edits are kept, and the import reports how many stale values were replaced. A legacy top-level `selections` object is merged into `arraysData`.

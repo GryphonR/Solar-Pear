@@ -85,6 +85,30 @@ describe('sanity rules', () => {
         expect(rules(f)).toEqual(expect.arrayContaining(['error:duplicate-id', 'error:url-non-production']));
     });
 
+    it('checks the buy link entry fields (roadmap 4.3)', () => {
+        const link = { Supplier: 'Shop', URL: 'https://shop.example.com/p', isAffiliate: false, Checked: true };
+        const affiliate = {
+            ...link,
+            affiliateUrl: 'https://www.awin1.com/cread.php?awinmid=1&awinaffid=2&ued=x',
+            network: 'awin',
+            isAffiliate: true,
+            price: 129.99,
+            priceCheckedAt: '2026-10-01',
+            inStock: true,
+        };
+        expect(checkPanels([{ ...goodPanel, buyLinks: [link, affiliate] }])).toEqual([]);
+
+        const linkRules = (l) => rules(checkPanels([{ ...goodPanel, buyLinks: [l] }]));
+        expect(linkRules({ ...link, isAffiliate: true })).toContain('error:buy-link-affiliate');
+        expect(linkRules({ ...affiliate, isAffiliate: false })).toContain('error:buy-link-affiliate');
+        expect(linkRules({ ...affiliate, affiliateUrl: 'http://aff.example.com/x' })).toContain('error:buy-link-affiliate-url');
+        expect(linkRules({ ...affiliate, affiliateUrl: 'https://staging.aff.example.com/x' })).toContain('error:url-non-production');
+        expect(linkRules({ ...link, network: 'awin' })).toContain('warning:buy-link-network');
+        expect(linkRules({ ...link, price: '£10' })).toContain('error:buy-link-price');
+        expect(linkRules({ ...link, priceCheckedAt: 'Oct 2026' })).toContain('error:buy-link-price-date');
+        expect(linkRules({ ...link, inStock: 'yes' })).toContain('error:buy-link-in-stock');
+    });
+
     it('flags battery charge current stored as PV current, and a bad MPPT window', () => {
         const f = checkControllers([{ ...goodController, maxOperatingI: 50, mpptRangeMax: 120 }]);
         expect(rules(f)).toEqual(expect.arrayContaining(['error:pv-current', 'error:mppt-range']));
