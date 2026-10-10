@@ -30,6 +30,9 @@ export default defineConfig({
         environment: "jsdom",
         setupFiles: "./src/test/setupTests.js",
         globals: true,
+        // The shell UI tests render whole pages and run close to the 5 s default
+        // when the full suite runs in parallel on a busy machine or CI runner.
+        testTimeout: 20000,
         coverage: {
             provider: "v8",
             reportsDirectory: "coverage",
