@@ -46,7 +46,7 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `gseCompatibility` | string | In-roof (GSE) format: `"Both"`, `"None"`, `"Portrait Only"`, or `"Landscape Only"`. |
 | `datasheetUrl` | string | URL to datasheet. |
 | `notes` | string | **Design Notes** — see [Design notes](#design-notes-notes) below. Shown to users as "Design Notes" in the app. |
-| `buyLinks` | array | Array of vendor objects, each object with keys `"Supplier"`, `"URL"`, `"isAffiliate"`, `"Checked"` |
+| `buyLinks` | array | One entry per retailer: `Supplier`, `URL` (canonical), `isAffiliate`, `Checked`, plus optional `affiliateUrl`, `network`, `price`, `priceCheckedAt`, `inStock`. See [Buy links](#buy-links-buylinks). |
 | `active` | boolean | If `true`, panel appears in selectors. |
 | `availableUK` | boolean | True if panel is readily available in the UK|
 | `discontinued` | boolean | `true` when the manufacturer no longer makes the panel or has stopped trading. Discontinued products stay selectable, so people designing around existing or second-hand kit can still check it; the app labels them "Discontinued". Use `src/data/replacements.json` instead when a product is renamed or has a direct successor that saved designs should move to. |
@@ -57,6 +57,26 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `notesReviewed` | bool | `true` once a person has checked or rewritten the design `notes`. Otherwise notes are labelled as AI-generated. |
 
 All fields listed above are required for the app to function properly. When adding a new panel, include every field; use neutral values (e.g. `0`, `""`, `false`, `{}`) where a value is not applicable.
+
+---
+
+## Buy links (`buyLinks`)
+
+An array with one entry per retailer (roadmap 4.3). The pricing scan adds and updates ordinary entries; affiliate entries are edited by hand in data-admin.
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `Supplier` | string | Retailer name shown to users (e.g. "Bimble Solar"). |
+| `URL` | string | **Canonical** product page, with no tracking parameters. The pricing scan checks and updates this. |
+| `affiliateUrl` | string | Optional. The tracking link users are sent to instead of `URL` (an `https://` network deeplink such as Awin's `cread.php?…&ued=<URL>`). Leave it out for ordinary links. |
+| `network` | string | Optional. Affiliate network, e.g. `awin`, `cj`, `impact`, `webgains`, `partnerize`, `paid-on-results`, `in-house`, `amazon`. Only with `affiliateUrl`. |
+| `isAffiliate` | boolean | `true` exactly when `affiliateUrl` is set (data-admin keeps them in step; the sanity rules error otherwise). The app labels the link as an affiliate link. |
+| `Checked` | boolean | A person has opened the link and confirmed it is the right product. |
+| `price` | number | Optional. This retailer's price in £ (0 = unknown). Filled by 4.6. |
+| `priceCheckedAt` | string | Optional. ISO date (`YYYY-MM-DD`) this retailer's price was checked, or `""`. |
+| `inStock` | boolean | Optional. Whether this retailer had it in stock when checked. |
+
+**The pricing scan never changes an affiliate entry** (one with `affiliateUrl` or `isAffiliate`): it doesn't strip its parameters, replace it with another page on the same domain, or remove it as a dead link. When a domain has both an affiliate and an ordinary entry, the scan keeps the affiliate one. Affiliate link health is checked separately (4.11).
 
 ---
 

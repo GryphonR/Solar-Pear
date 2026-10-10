@@ -6,7 +6,7 @@ export function normalizeBuyLinks(buyLinks) {
     if (Array.isArray(buyLinks)) {
         return buyLinks.map((link) => ({
             ...link,
-            isAffiliate: link.isAffiliate || false,
+            isAffiliate: link.isAffiliate || (typeof link.affiliateUrl === "string" && link.affiliateUrl.trim() !== "") || false,
             Checked: Object.prototype.hasOwnProperty.call(link, "Checked") ? link.Checked : false,
         }));
     }

@@ -11,7 +11,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import process from 'process';
-import { stripTrackingParams, supplierDomain, upsertBuyLinkByDomain } from './buyLinks.js';
+import { isAffiliateLink, stripTrackingParams, supplierDomain, upsertBuyLinkByDomain } from './buyLinks.js';
 import { LOGS_DIR } from './paths.js';
 import { extractPriceFromHtml, fetchMerchantPage, medianPrice, parsePriceText } from './priceExtract.js';
 import { REQUEST_DELAY_MS, searchDistributorLink, searchShopping, sleep } from './serper.js';
@@ -43,7 +43,9 @@ export function needsPriceCheck(item, opts = {}) {
 
 /**
  * Drops known-bad existing buyLinks (PDF, Google aggregator, clearance, soft-error path,
- * duplicate domains) and strips tracking params. Returns whether the list changed.
+ * duplicate domains) and strips tracking params. Affiliate entries are left exactly as they are
+ * (roadmap 4.4), and when a domain has both, the affiliate entry is the one kept. Returns whether
+ * the list changed.
  * @param {object} item
  */
 export function cleanExistingBuyLinks(item) {
@@ -52,20 +54,25 @@ export function cleanExistingBuyLinks(item) {
         return false;
     }
     const linksBefore = item.buyLinks.length;
+    const affiliateDomains = new Set(
+        item.buyLinks.filter(isAffiliateLink).map((link) => supplierDomain(link.URL)).filter(Boolean)
+    );
     const seenDomains = new Set();
     item.buyLinks = item.buyLinks
         .filter(
             (link) =>
-                !isPdfLink(link.URL) &&
-                !isGoogleAggregatorLink(link.URL) &&
-                !isClearanceOrDamagedListing(link.Supplier, link.URL) &&
-                !isSoftErrorPageUrl(link.URL)
+                isAffiliateLink(link) ||
+                (!isPdfLink(link.URL) &&
+                    !isGoogleAggregatorLink(link.URL) &&
+                    !isClearanceOrDamagedListing(link.Supplier, link.URL) &&
+                    !isSoftErrorPageUrl(link.URL))
         )
-        .map((link) => ({ ...link, URL: stripTrackingParams(link.URL) }))
+        .map((link) => (isAffiliateLink(link) ? link : { ...link, URL: stripTrackingParams(link.URL) }))
         .filter((link) => {
+            if (isAffiliateLink(link)) return true;
             const domain = supplierDomain(link.URL);
             if (!domain) return true;
-            if (seenDomains.has(domain)) return false;
+            if (affiliateDomains.has(domain) || seenDomains.has(domain)) return false;
             seenDomains.add(domain);
             return true;
         });
@@ -224,7 +231,10 @@ export async function runPricingScan(config) {
                         if (softError) {
                             softErrorsDropped++;
                             const before = item.buyLinks.length;
-                            item.buyLinks = item.buyLinks.filter((link) => link.URL !== info.link);
+                            // Affiliate entries are never removed automatically; link health is checked separately (4.11).
+                            item.buyLinks = item.buyLinks.filter(
+                                (link) => link.URL !== info.link || isAffiliateLink(link)
+                            );
                             if (item.buyLinks.length !== before) fileModified = true;
                             continue;
                         }
