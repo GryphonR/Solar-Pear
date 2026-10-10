@@ -35,7 +35,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 1 | Calculation correctness & safety | P0 | 13 / 14 |
 | 2 | State, persistence & pricing integrity | P0 | 6 / 6 |
 | 3 | Catalogue quality & coverage | P0/P1 | 5 / 14 |
-| 4 | Affiliate infrastructure | P1 | 2 / 14 |
+| 4 | Affiliate infrastructure | P1 | 3 / 14 |
 | 5 | Hosting, routing & SEO | P1 | 1 / 13 |
 | 6 | Trust, legal & compliance | P0 | 8 / 11 |
 | 7 | Product & UX improvements | P1/P2 | 2 / 17 |
@@ -45,7 +45,7 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
 | 13 | UX overhaul | P1 | 9 / 9 |
-| **Total** | | | **55 / 154** |
+| **Total** | | | **56 / 154** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -251,7 +251,8 @@ Currently 0 of 122 links are affiliate links, and 178 products have no link at a
   - Done: kept the existing `Supplier`, `URL`, `isAffiliate` and `Checked` keys (no renaming across the catalogue) and added optional `affiliateUrl`, `network`, `price`, `priceCheckedAt` and `inStock`, documented in `src/data/panels/SCHEMA.md`. The app sends clicks to `affiliateUrl` and always labels such a link as an affiliate link (`src/lib/buyLinks.js`, used by BuyButton); backups sanitise it. Sanity rules error when `isAffiliate` and `affiliateUrl` disagree, on a non-https `affiliateUrl`, and on bad types. The data-admin editor gained Affiliate URL and Network columns, sets `isAffiliate` from the URL, and no longer drops fields it doesn't show. Nothing in the catalogue uses the new fields yet; 4.6 fills the per-retailer prices.
 - [x] **4.4 Keep affiliate tags safe from the scanner** – `stripTrackingParams` and `upsertBuyLinkByDomain` (`verification_scripts/lib/buyLinks.js`) must never overwrite an `affiliateUrl`, or drop an existing affiliate entry in favour of a non-affiliate one from the same domain. Add tests.
   - Done: the pricing scan leaves affiliate entries (`affiliateUrl` or `isAffiliate`) exactly as they are: no parameter stripping, no same-domain replacement, no removal by the PDF, clearance or dead-link filters, and when a domain has both kinds the affiliate entry is kept. Tests in `verification_scripts/buyLinks.test.mjs`.
-- [ ] **4.5 Build link rewrite rules** – Add a config file (e.g. `src/data/affiliates.json`) mapping a domain to its affiliate URL template, such as an Awin deeplink (`https://www.awin1.com/cread.php?awinmid=X&awinaffid=Y&ued={url}`) or an Amazon `?tag=`. Links are then generated at build time rather than stored by hand in 245 records.
+- [x] **4.5 Build link rewrite rules** – Add a config file (e.g. `src/data/affiliates.json`) mapping a domain to its affiliate URL template, such as an Awin deeplink (`https://www.awin1.com/cread.php?awinmid=X&awinaffid=Y&ued={url}`) or an Amazon `?tag=`. Links are then generated at build time rather than stored by hand in 245 records.
+  - Done: `src/data/affiliates.json` maps a retailer domain (subdomains included) to a deeplink `template` with `{url}`, or to `params` added to the product URL, with an `enabled` switch. `src/data/loadData.js` applies the rules when the bundled catalogue loads (so they are in the build), filling `affiliateUrl`, `network` and `isAffiliate`; the JSON files and the pricing scan only ever see canonical URLs. A hand-written `affiliateUrl` wins. A test validates the shipped file (https, `{url}` present, no unfilled placeholders). Format and examples in `src/data/AFFILIATES.md`. The file has no programmes yet: add each one when it approves the site (4.1).
 - [ ] **4.6 Show a price per retailer** – Store the price for each retailer, and sort the BuyButton dropdown by price with the supplier name and "checked" date.
 - [ ] **4.7 Fill the missing links** – Run the pricing scan for the 178 products without links, and prioritise those that have an affiliate-capable retailer.
 
