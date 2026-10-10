@@ -22,7 +22,7 @@ Vite 7, React 19, Tailwind v4 (theme in `src/index.css`), uPlot for graphs, and 
 | `src/lib/catalogueOverrides.js` | Catalogue persistence as user edits only: diff/apply, legacy v1 → v2 migration, storage load/save |
 | `src/lib/pricing.js` | Unknown-price handling (0/blank means unknown), GBP formatting, price-age labels (stale after 60 days) |
 | `src/lib/backupValidation.js`, `src/hooks/useBackupRestore.js` | JSON import/export (`documentation/BACKUP_SCHEMA.md`) |
-| `src/data/loadData.js` | `import.meta.glob` eager-loads every `panels/*.json` and `controllers/*.json` into the bundle |
+| `src/data/loadData.js` | `import.meta.glob` eager-loads every `panels/*.json` and `controllers/*.json` into the bundle, and fills buy links' `affiliateUrl` from the per-retailer rules in `src/data/affiliates.json` (`src/lib/affiliateLinks.js`, format in `src/data/AFFILIATES.md`); the JSON files keep canonical URLs |
 | `data-admin/` | Separate local Express and React app for editing the catalogue JSON (binds to 127.0.0.1, optional `DATA_ADMIN_TOKEN`) |
 | `verification_scripts/` | Node scripts for schema review and Serper-based price/buy-link scans |
 | `.agent/workflows/` | Agent prompts for adding and verifying panels/controllers from datasheets |

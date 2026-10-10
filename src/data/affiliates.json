@@ -1,0 +1,4 @@
+{
+    "$comment": "Affiliate link rewrite rules (roadmap 4.5). Keyed by retailer domain without www. Format and examples: src/data/AFFILIATES.md. Add a programme only once it has approved the site.",
+    "programmes": {}
+}
