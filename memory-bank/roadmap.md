@@ -40,12 +40,12 @@ Created: 2026-09-25 (baseline commit `5507f6a`). Owner: Rowan.
 | 6 | Trust, legal & compliance | P0 | 8 / 11 |
 | 7 | Product & UX improvements | P1/P2 | 2 / 17 |
 | 8 | Analytics & measurement | P1 | 0 / 7 |
-| 9 | Engineering, performance & CI | P1/P2 | 0 / 11 |
+| 9 | Engineering, performance & CI | P1/P2 | 1 / 11 |
 | 10 | Internationalisation | P2 | 0 / 8 |
 | 11 | Launch | P1 | 0 / 10 |
 | 12 | Growth & ongoing operations | P2 | 0 / 12 |
 | 13 | UX overhaul | P1 | 9 / 9 |
-| **Total** | | | **52 / 154** |
+| **Total** | | | **53 / 154** |
 
 ### Milestones
 - **M1 – "Safe to share"**: phases 0, 1, 2 and the P0 items in 3 and 6 are done. At this point the app gives correct advice and you can show it to friends and forums without risk.
@@ -374,7 +374,8 @@ The app is currently a single URL with no indexable content. Search is the main 
 - [ ] **9.1 Split the catalogue out of the bundle** – It is currently inlined into one 870 kB JavaScript chunk. Load it as separate hashed JSON (`fetch`), or per-manufacturer chunks, and lazy-load the planner and guide views.
   - Acceptance: initial JS under 250 kB gzipped, with no Vite chunk warning.
 - [ ] **9.2 Code-split the large components** – `ArrayPlanner.jsx` (~2,000 lines) and `AppStateContext.jsx` (~1,000 lines). Split the context into catalogue, design and UI slices, or move it to Zustand, to reduce re-renders and improve maintainability.
-- [ ] **9.3 CI on pull requests** – `deploy.yml` only runs on pushes to `main`. Add a `pull_request` workflow for tests, the build and the data sanity checks (3.2), plus preview deploys (5.1).
+- [x] **9.3 CI on pull requests** – `deploy.yml` only runs on pushes to `main`. Add a `pull_request` workflow for tests, the build and the data sanity checks (3.2), plus preview deploys (5.1).
+  - Done: `.github/workflows/ci.yml` runs on every pull request (and manually): root tests (which include the catalogue sanity rules), data-admin tests and build, and the app build. Vitest's `testTimeout` is now 20 s, because the shell UI tests ran close to the 5 s default in a full parallel run. Preview deploys wait for 5.1.
 - [ ] **9.4 Separate test projects** – Split Vitest into projects: `app` (jsdom), `data-admin` and `scripts` (node). The scripts don't need jsdom, which dominates the 40 s run.
 - [ ] **9.5 Add TypeScript, or JSDoc type-checking** – At least for `src/lib/*` and the data schemas (generate types from `data-admin/schema/*.schema.json`). Catalogue shape errors are the main source of bugs.
 - [ ] **9.6 Golden test fixtures** – Hand-verified reference designs, e.g. "Victron 100/30, 12 V, 2 × 400 W in series, −10 °C ⇒ cold Voc 81.3 V, OK", covering each controller type. Every calculation change is checked against them.

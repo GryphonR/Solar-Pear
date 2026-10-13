@@ -1,0 +1,50 @@
+name: CI
+
+# Runs the same checks as the deploy workflow on every pull request, without
+# deploying. The catalogue sanity rules (3.2) run as part of the Vitest suite.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npx vitest run
+
+      - name: Install data-admin dependencies
+        working-directory: data-admin
+        run: npm ci
+
+      - name: Run data-admin tests
+        working-directory: data-admin
+        run: npm run test
+
+      - name: Build data-admin
+        working-directory: data-admin
+        run: npm run build
+
+      - name: Build
+        env:
+          BASE_PATH: /
+        run: npm run build
