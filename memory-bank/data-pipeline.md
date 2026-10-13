@@ -15,7 +15,7 @@
 ## Tooling
 - `npm run verify:{panels,controllers}:review` checks schema fill, key order, zeros and link report.
 - `npm run verify:{panels,controllers}:pricing` scans Serper Google Shopping plus whitelisted retailers. It updates `price`, `buyLinks` (upserted by domain, tracking params stripped) and `priceCheckedAt`. It needs `SERPER_API_KEY` in `.env`.
-- **Warning:** `stripTrackingParams` removes query strings. That would also strip affiliate tags (e.g. `?tag=`, `?aff=`) if affiliate URLs are ever fed through the scanner.
+- Affiliate links live in each entry's `affiliateUrl`, with `URL` kept canonical (4.3, fields in `src/data/panels/SCHEMA.md`). The scan never strips, replaces or removes an affiliate entry, and keeps it over an ordinary entry on the same domain (4.4, `verification_scripts/buyLinks.test.mjs`).
 - `data-admin/` (`cd data-admin && npm run dev`) is a local browser/editor for the JSON with URL checks.
 - `npm run verify:sanity` runs read-only physical/consistency rules (`verification_scripts/lib/sanityRules.js`). **The same rules run in Vitest over the shipped catalogue, so CI fails on data errors.**
 - `npm run verify:review-queue` shows review coverage (target: 80% of products with buy links) and what to review next. A review is recorded with `reviewed`, `reviewedAt`, `reviewedBy` and `notesReviewed`. Review status is internal and is not shown in the app (owner decision, 2026-09-25). The only public effect is that notes are labelled as AI-generated unless `notesReviewed` is set.

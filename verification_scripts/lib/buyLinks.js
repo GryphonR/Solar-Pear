@@ -34,9 +34,22 @@ export function supplierDomain(url) {
 }
 
 /**
+ * Whether a buy link earns commission (roadmap 4.3). An entry is an affiliate entry when it has
+ * an `affiliateUrl` or is flagged `isAffiliate`. Affiliate entries are maintained by hand: the
+ * pricing scan never rewrites, replaces or removes them (roadmap 4.4).
+ * @param {{ isAffiliate?: boolean, affiliateUrl?: string } | null | undefined} link
+ */
+export function isAffiliateLink(link) {
+    if (!link) return false;
+    return link.isAffiliate === true || (typeof link.affiliateUrl === 'string' && link.affiliateUrl.trim() !== '');
+}
+
+/**
  * Inserts `newLink` into `buyLinks`, replacing any existing entry from the same supplier
- * domain. Same exact URL is a no-op. Returns whether the list changed.
- * @param {Array<{ Supplier: string, URL: string, isAffiliate?: boolean, Checked?: boolean }>} buyLinks
+ * domain. Same exact URL is a no-op. An existing affiliate entry for the domain is never
+ * replaced, so a scanned non-affiliate link can't knock out an affiliate one. Returns whether
+ * the list changed.
+ * @param {Array<{ Supplier: string, URL: string, affiliateUrl?: string, isAffiliate?: boolean, Checked?: boolean }>} buyLinks
  * @param {{ Supplier: string, URL: string, isAffiliate?: boolean, Checked?: boolean }} newLink
  * @returns {boolean}
  */
@@ -55,6 +68,10 @@ export function upsertBuyLinkByDomain(buyLinks, newLink) {
         return true;
     }
 
+    // An affiliate entry for this retailer is kept as-is, even if the scan found a different
+    // product URL: its affiliateUrl was set up by hand and must not be lost.
+    if (isAffiliateLink(buyLinks[existingIndex])) return false;
+
     // Same domain already present: replace unless the URL is already identical (avoids flipping
     // Checked/Supplier fields on a no-op re-discovery of the same page).
     if (buyLinks[existingIndex].URL === newLink.URL) return false;
@@ -71,7 +88,7 @@ export function normalizeBuyLinks(buyLinks) {
     if (Array.isArray(buyLinks)) {
         return buyLinks.map((link) => ({
             ...link,
-            isAffiliate: link.isAffiliate || false,
+            isAffiliate: link.isAffiliate || isAffiliateLink(link),
             Checked: Object.prototype.hasOwnProperty.call(link, 'Checked') ? link.Checked : false,
         }));
     }

@@ -1,53 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ShoppingCart, ChevronDown } from './Icons';
-import { safeHttpUrl } from '../lib/safeUrl';
+import { resolveBuyLinks } from '../lib/buyLinks';
 
 /** Smart buy button: disabled if no links, plain link if one, dropdown if many */
 export default function BuyButton({ buyLinks }) {
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
 
-    // Normalise legacy object format and new array-of-objects format; drop unsafe URLs
-    const links = useMemo(() => {
-        if (!buyLinks) return [];
-
-        const mapEntry = (supplier, url, isAffiliate, index) => {
-            const safe = safeHttpUrl(url);
-            if (!safe) return null;
-            return {
-                key: `${index}-${supplier}-${safe}`,
-                supplier,
-                url: safe,
-                isAffiliate: !!isAffiliate,
-            };
-        };
-
-        // New format: array of vendor objects
-        if (Array.isArray(buyLinks)) {
-            return buyLinks
-                .map((entry, index) => {
-                    if (!entry) return null;
-                    const url = entry.URL || entry.url;
-                    if (typeof url !== 'string' || !url.trim()) return null;
-                    return mapEntry(
-                        entry.Supplier || `Supplier ${index + 1}`,
-                        url,
-                        entry.isAffiliate,
-                        index
-                    );
-                })
-                .filter(Boolean);
-        }
-
-        // Legacy format: object map of supplier -> URL
-        return Object.entries(buyLinks)
-            .map(([supplier, url], index) =>
-                typeof url === 'string' && url.trim()
-                    ? mapEntry(supplier, url, false, index)
-                    : null
-            )
-            .filter(Boolean);
-    }, [buyLinks]);
+    // Canonical URL or affiliate URL per entry, unsafe URLs dropped (src/lib/buyLinks.js)
+    const links = useMemo(() => resolveBuyLinks(buyLinks), [buyLinks]);
 
     useEffect(() => {
         if (!open) return;

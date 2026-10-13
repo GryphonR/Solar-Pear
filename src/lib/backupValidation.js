@@ -3,7 +3,7 @@ import { sanitizeCatalogueDiff } from './catalogueOverrides';
 import { sanitizeStore } from './projects';
 
 /**
- * Sanitize buyLinks (array or legacy object) to http(s) URLs only.
+ * Sanitize buyLinks (array or legacy object) to http(s) URLs only, including any affiliateUrl.
  * @param {unknown} buyLinks
  * @returns {unknown}
  */
@@ -16,7 +16,13 @@ export function sanitizeBuyLinks(buyLinks) {
                 const raw = entry.URL || entry.url;
                 const url = safeHttpUrl(raw);
                 if (!url) return null;
-                return { ...entry, URL: url, url };
+                const out = { ...entry, URL: url, url };
+                if (entry.affiliateUrl != null) {
+                    const affiliateUrl = safeHttpUrl(entry.affiliateUrl);
+                    if (affiliateUrl) out.affiliateUrl = affiliateUrl;
+                    else delete out.affiliateUrl;
+                }
+                return out;
             })
             .filter(Boolean);
     }
