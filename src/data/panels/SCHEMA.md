@@ -76,6 +76,8 @@ An array with one entry per retailer (roadmap 4.3). The pricing scan adds and up
 | `priceCheckedAt` | string | Optional. ISO date (`YYYY-MM-DD`) this retailer's price was checked, or `""`. |
 | `inStock` | boolean | Optional. Whether this retailer had it in stock when checked. |
 
+Usually `affiliateUrl` is not written here at all: it is generated when the app loads the catalogue, from the per-retailer rules in [`affiliates.json`](../AFFILIATES.md) (4.5). Write one by hand only for a link the rules can't produce; a hand-written `affiliateUrl` wins over the rules.
+
 **The pricing scan never changes an affiliate entry** (one with `affiliateUrl` or `isAffiliate`): it doesn't strip its parameters, replace it with another page on the same domain, or remove it as a dead link. When a domain has both an affiliate and an ordinary entry, the scan keeps the affiliate one. Affiliate link health is checked separately (4.11).
 
 ---
