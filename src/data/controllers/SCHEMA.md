@@ -36,8 +36,8 @@ Each JSON file in this folder is a **single array of controller objects** (PV ch
 | `startupV` | number | Minimum voltage to start MPPT (V). If hot Vmp falls below this the controller will not track during peak heat (harvest loss warning, not hard incompatibility). |
 | `v_start_vbat_dependent` | boolean | If `true`, startup voltage is relative to battery (e.g. Vbat + 5V). |
 | `trackers` | number | Number of MPPT trackers. Used in UI and compatibility. |
-| `price` | number | Estimated unit price (user can override in app). |
-| `priceCheckedAt` | string | ISO date (`YYYY-MM-DD`) the `price`/`buyLinks` were last verified by `verification_scripts/controller-pricing-scan.js`. Blank (`""`) if never checked. |
+| `price` | number | Estimated unit price in £ **including VAT** (user can override in app). The pricing scan converts ex-VAT trade prices (× 1.2); prices checked before 2026-10 may be ex VAT. |
+| `priceCheckedAt` | string | ISO date (`YYYY-MM-DD`) the `price` was last confirmed by `verification_scripts/controller-pricing-scan.js`. Only stamped when the scan writes a price; scans that find nothing are recorded in `verification_scripts/pricing-scan-state.json` instead. Blank (`""`) if never checked. |
 | `MaxACPower` | number | Max AC output power (W). Use `0` for DC-only chargers. |
 | `MaxDCPower` | number | Max DC charge/PV power (W). Use `0` when N/A. |
 | `islanding` | boolean | Whether unit supports islanding / backup. |

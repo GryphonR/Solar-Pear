@@ -18,6 +18,8 @@ export const CONTROLLERS_DIR = path.join(ROOT, 'src/data/controllers');
 export const PANELS_SCHEMA_PATH = path.join(ROOT, 'data-admin/schema/panels.schema.json');
 export const CONTROLLERS_SCHEMA_PATH = path.join(ROOT, 'data-admin/schema/controllers.schema.json');
 export const SERPER_SITES_PATH = path.join(ROOT, 'data-admin/config/serper-sites.json');
+/** When each product was last scanned for prices, priced or not (committed with the catalogue). */
+export const PRICING_STATE_PATH = path.join(ROOT, 'verification_scripts/pricing-scan-state.json');
 
 /**
  * Loads `./.env` into `process.env` when present (Node built-in; no dotenv dependency).

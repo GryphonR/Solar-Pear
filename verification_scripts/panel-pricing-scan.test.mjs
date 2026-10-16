@@ -436,7 +436,8 @@ describe('priceLooksPlausible', () => {
 
     it('accepts prices at the edge of the plausible range', () => {
         expect(priceLooksPlausible(0.08 * 400, 400)).toBe(true);
-        expect(priceLooksPlausible(1.2 * 400, 400)).toBe(true);
+        expect(priceLooksPlausible(0.6 * 400, 400)).toBe(true);
+        expect(priceLooksPlausible(0.61 * 400, 400)).toBe(false);
     });
 
     it('is a no-op when wattage is unknown', () => {

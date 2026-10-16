@@ -11,19 +11,49 @@
  * link) are rejected outright.
  */
 
+import {
+    containsIdentifier,
+    identityVerdict,
+    listingHaystack,
+    quotesOtherOrderCode,
+} from './listingMatch.js';
 import { manufacturerMentioned } from './serper.js';
 
-/** Absolute GBP bands by controller `type` (min inclusive, max inclusive). */
+/** Absolute GBP bands (inc VAT) by controller `type` (min inclusive, max inclusive). */
 const TYPE_PRICE_BANDS = {
-    charger: { min: 20, max: 800 },
     hybrid_inverter: { min: 200, max: 8000 },
     ac_coupled_inverter: { min: 200, max: 6000 },
-    string_inverter: { min: 150, max: 5000 },
+    string_inverter: { min: 150, max: 6000 },
     microinverter: { min: 50, max: 500 },
+    'dc-dc-charger': { min: 30, max: 1000 },
+    inverter_charger: { min: 250, max: 6000 },
 };
+
+/**
+ * Chargers range from a £40 75/10 to a £1,500 RS 450/200, so their band scales with the charge
+ * current: roughly £1–£12 per amp, with a floor of £20 and a ceiling of at least £150 for small units.
+ */
+const CHARGER_PER_AMP = { min: 1, max: 12 };
+const CHARGER_FLAT_BAND = { min: 20, max: 2500 };
 
 /** Fallback band when type is unknown / missing. */
 const DEFAULT_PRICE_BAND = { min: 20, max: 8000 };
+
+/**
+ * The GBP band for a controller.
+ * @param {{ type?: string, maxChargeCurrent?: number }} controller
+ */
+export function controllerPriceBand(controller) {
+    if (controller?.type === 'charger') {
+        const amps = Number(controller.maxChargeCurrent) || 0;
+        if (amps <= 0) return CHARGER_FLAT_BAND;
+        return {
+            min: Math.max(20, Math.round(amps * CHARGER_PER_AMP.min)),
+            max: Math.max(150, Math.round(amps * CHARGER_PER_AMP.max)),
+        };
+    }
+    return TYPE_PRICE_BANDS[controller?.type] || DEFAULT_PRICE_BAND;
+}
 
 /**
  * Serper query identity: prefer the human display `name` (how UK retailers title products);
@@ -50,10 +80,16 @@ export function modelTokens(identifier) {
         .filter((t) => t.length >= 3);
 }
 
+/** A number standing on its own: "15" is in "75/15" but not in "150". */
+function numberMentioned(normalizedTitle, digits) {
+    return new RegExp(`(?<!\\d)${digits}(?!\\d)`).test(normalizedTitle);
+}
+
 /**
  * True if a single identifier string (display name or order code) is reflected in the title.
- * Prefers an exact substring match; otherwise requires every meaningful token plus *every*
- * distinct digit run (so "75/10" cannot match a "75/15" listing that only shares "75").
+ * Prefers an exact match (ignoring punctuation); otherwise requires every meaningful token plus
+ * *every* distinct number, each standing on its own, so "75/10" cannot match a "75/15" listing
+ * and "75/15" cannot match "75/150". Retailers who run the rating together ("7515") also match.
  * @param {string} normalizedTitle already-lowercased title
  * @param {string} identifier
  */
@@ -61,57 +97,141 @@ export function identifierLooksRelevant(normalizedTitle, identifier) {
     const id = String(identifier || '').trim().toLowerCase();
     if (!id) return false;
 
-    // Exact (case-insensitive) substring - covers order codes pasted into retailer titles/URLs.
-    if (normalizedTitle.includes(id)) return true;
+    if (containsIdentifier(normalizedTitle, id)) return true;
 
-    const tokens = modelTokens(id);
-    if (tokens.length === 0) return false;
+    const tokens = modelTokens(id).filter((t) => !/^\d+$/.test(t));
     if (!tokens.every((t) => normalizedTitle.includes(t))) return false;
 
-    // Require every distinct digit run so sibling SKUs that share a prefix (75/10 vs 75/15)
-    // cannot match each other on the shared "75" alone.
-    const shortNums = [...new Set(id.match(/\d+/g) || [])];
-    if (shortNums.length > 0) {
-        return shortNums.every((n) => normalizedTitle.includes(n));
+    const nums = [...new Set(id.match(/\d+/g) || [])];
+    if (nums.length > 0) {
+        return (
+            nums.every((n) => numberMentioned(normalizedTitle, n)) ||
+            numberMentioned(normalizedTitle, (id.match(/\d+/g) || []).join(''))
+        );
     }
 
     // No digits in the identifier - insist on at least two word tokens to keep the signal strong.
     return tokens.length >= 2;
 }
 
+// Variant markers that tell otherwise identically named products apart. A listing that carries
+// a marker our record doesn't (or the opposite marker) is a different product.
+const EXCLUSIVE_VARIANTS = [
+    ['tr', 'mc4'], // Victron SmartSolar "-Tr" (screw terminals) vs "MC4" connectors
+];
+const OPTIONAL_VARIANTS = ['vecan', 'gx', 'smart', 'isolated'];
+
+function hasWord(text, word) {
+    return new RegExp(`(?:^|[^a-z0-9])${word}(?:[^a-z0-9]|$)`).test(text);
+}
+
 /**
- * Title must mention the manufacturer and match either the display `name` or the `modelNumber`
- * (order code). Either cue is enough - retailers vary which they echo.
+ * True when the listing is a differently specified variant: it carries the opposite of one of
+ * our exclusive markers, or an optional feature (VE.Can, GX, isolated) that our record lacks.
+ * @param {string} haystack lowercased
+ * @param {string} ownText our name + modelNumber, lowercased
+ */
+export function conflictingVariant(haystack, ownText) {
+    for (const pair of EXCLUSIVE_VARIANTS) {
+        for (const marker of pair) {
+            const other = pair.find((m) => m !== marker);
+            if (hasWord(ownText, marker) && hasWord(haystack, other) && !hasWord(haystack, marker)) return true;
+        }
+    }
+    const flat = (t) => t.replace(/\./g, '');
+    return OPTIONAL_VARIANTS.some((v) => hasWord(flat(haystack), v) && !hasWord(flat(ownText), v));
+}
+
+function ownIdentifiers(controller) {
+    const ids = [];
+    const modelNumber = String(controller?.modelNumber || '').trim();
+    const name = String(controller?.name || '').trim();
+    if (modelNumber) {
+        ids.push(modelNumber);
+        // Retailers often drop Victron's trailing revision letter ("SCC075015060R" → "...060").
+        if (/^[a-z]{3}\d{6,}[a-z]$/i.test(modelNumber)) ids.push(modelNumber.slice(0, -1));
+    }
+    if (name) ids.push(name);
+    return ids;
+}
+
+/**
+ * Whether a search result (title, plus its URL when known) is for this exact controller.
+ *
+ *   - It must name the manufacturer.
+ *   - Quoting another order code from our family (SCC115085511 when we are SCC115085411) rejects.
+ *   - Naming a sibling's model number or name instead of ours rejects.
+ *   - Our exact order code is decisive. Otherwise the display name or model number must match
+ *     (tokens and every number), and the listing must not be a conflicting variant (MC4 vs Tr,
+ *     an added VE.Can or GX).
+ *
  * @param {string} title
  * @param {{ manufacturer?: string, modelNumber?: string, name?: string }} controller
+ * @param {{ url?: string, siblings?: object[] }} [ctx] siblings: other catalogue controllers
+ *   from the same manufacturer
  */
-export function titleLooksRelevant(title, controller) {
+export function titleLooksRelevant(title, controller, ctx = {}) {
     if (!title) return false;
-    const normalizedTitle = title.toLowerCase();
-    if (!manufacturerMentioned(normalizedTitle, controller.manufacturer)) return false;
+    const haystack = listingHaystack(title, ctx.url);
+    if (!manufacturerMentioned(haystack, controller.manufacturer)) return false;
 
     const name = String(controller?.name || '').trim();
     const modelNumber = String(controller?.modelNumber || '').trim();
     if (!name && !modelNumber) return false;
 
-    if (name && identifierLooksRelevant(normalizedTitle, name)) return true;
-    if (modelNumber && identifierLooksRelevant(normalizedTitle, modelNumber)) return true;
+    if (quotesOtherOrderCode(haystack, modelNumber)) return false;
+
+    const siblings = Array.isArray(ctx.siblings) ? ctx.siblings : [];
+    const ownIds = ownIdentifiers(controller);
+    const verdict = identityVerdict(haystack, ownIds, siblings.flatMap((s) => ownIdentifiers(s)));
+    if (verdict === 'sibling') return false;
+
+    const codeIds = ownIds.filter((id) => id !== name);
+    if (codeIds.some((id) => containsIdentifier(haystack, id))) return true;
+
+    if (conflictingVariant(haystack, `${name} ${modelNumber}`.toLowerCase())) return false;
+    if (verdict === 'own') return true;
+
+    if (name && identifierLooksRelevant(haystack, name)) return true;
+    if (modelNumber && identifierLooksRelevant(haystack, modelNumber)) return true;
     return false;
 }
 
 /**
- * Type-aware absolute band. When `hasBuyLink` is false (PRICE ONLY), reject rather than risk
- * writing a shopping-snippet price with no corroborating merchant page.
+ * Same manufacturer, excluding the controller itself.
+ * @param {object} controller
+ * @param {object[]} catalogue
+ */
+export function controllerSiblings(controller, catalogue) {
+    return catalogue.filter(
+        (c) => c !== controller && c.id !== controller.id && c.manufacturer === controller.manufacturer
+    );
+}
+
+/**
+ * Why a price is not plausible for this controller, or null when it is. A "PRICE ONLY" result
+ * (no corroborating buy link) is always rejected: the bands are too wide to trust a bare
+ * shopping snippet.
+ * @param {number} price inc VAT
+ * @param {{ type?: string, maxChargeCurrent?: number }} controller
+ * @param {{ hasBuyLink?: boolean }} [opts]
+ * @returns {string | null}
+ */
+export function priceRejectionReason(price, controller, opts = {}) {
+    if (!Number.isFinite(price) || price <= 0) return 'not a positive price';
+    if (!opts.hasBuyLink) return `£${price} is PRICE ONLY (no corroborating buy link)`;
+    const band = controllerPriceBand(controller);
+    if (price < band.min || price > band.max) {
+        return `£${price} outside the £${band.min}–£${band.max} band for type "${controller?.type || 'unknown'}"`;
+    }
+    return null;
+}
+
+/**
  * @param {number} price
- * @param {{ type?: string }} controller
+ * @param {{ type?: string, maxChargeCurrent?: number }} controller
  * @param {{ hasBuyLink?: boolean }} [opts]
  */
 export function priceLooksPlausible(price, controller, opts = {}) {
-    if (!Number.isFinite(price) || price <= 0) return false;
-
-    // PRICE ONLY with no buy link is too weak a signal for controllers (wide price bands).
-    if (!opts.hasBuyLink) return false;
-
-    const band = TYPE_PRICE_BANDS[controller?.type] || DEFAULT_PRICE_BAND;
-    return price >= band.min && price <= band.max;
+    return priceRejectionReason(price, controller, opts) === null;
 }

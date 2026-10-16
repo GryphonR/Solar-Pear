@@ -131,9 +131,9 @@ export default function AboutView({ onOpenMethodology }) {
                         <li>
                             Prices are gathered from UK retailer websites by a mix of automated searches and manual
                             checks, and each one shows the month it was last checked. A price older than{' '}
-                            {PRICE_STALE_DAYS} days is flagged as possibly out of date. Prices do not include delivery,
-                            and may be shown with or without VAT depending on how the retailer lists them (trade
-                            suppliers usually quote ex-VAT).
+                            {PRICE_STALE_DAYS} days is flagged as possibly out of date. Prices include VAT at 20% but
+                            not delivery; where a trade supplier quotes ex-VAT, 20% is added. Some prices checked
+                            before October 2026 may still be ex-VAT trade prices.
                         </li>
                         <li>
                             Products with no known price are shown with a dash and left out of totals rather than

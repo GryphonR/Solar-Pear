@@ -69,7 +69,12 @@ jobs:
             echo
             if [ "$PRICE_REFRESH" = "true" ]; then
               echo "### Prices"
+              echo "All prices inc VAT. Products listed under each review heading need a look before merging; everything else passed every check."
               echo '```'; cat price-panels.txt price-controllers.txt 2>/dev/null; echo '```'
+              # Review lists from the scans (capped so the PR body stays under GitHub's limit).
+              for f in logs/panel-pricing-review.md logs/controller-pricing-review.md; do
+                if [ -f "$f" ]; then echo; sed 's/^# /#### /; s/^## /##### /' "$f" | head -n 250; fi
+              done
             else
               echo "_Price refresh skipped (set secret SERPER_API_KEY and variable ENABLE_PRICE_REFRESH=true to enable)._"
             fi
@@ -94,4 +99,5 @@ jobs:
           add-paths: |
             src/data/**/*.json
             verification_scripts/datasheet-hashes.json
+            verification_scripts/pricing-scan-state.json
           labels: data

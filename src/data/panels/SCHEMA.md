@@ -33,8 +33,8 @@ Each JSON file in this folder is a **single array of panel objects** for one man
 | `vmp` | number | Voltage at max power (V). Used for MPPT range and hot-temperature checks. |
 | `isc` | number | Short-circuit current (A). Compared to controller current rating to flag clipping (efficiency loss, not a hard incompatibility). |
 | `imp` | number | Current at max power (A). |
-| `price` | number | Estimated unit price (user can override in app). |
-| `priceCheckedAt` | string | ISO date (`YYYY-MM-DD`) the `price`/`buyLinks` were last verified by `verification_scripts/panel-pricing-scan.js`. Blank (`""`) if never checked. |
+| `price` | number | Estimated unit price in £ **including VAT** (user can override in app). The pricing scan converts ex-VAT trade prices (× 1.2); prices checked before 2026-10 may be ex VAT. |
+| `priceCheckedAt` | string | ISO date (`YYYY-MM-DD`) the `price` was last confirmed by `verification_scripts/panel-pricing-scan.js`. Only stamped when the scan writes a price; scans that find nothing are recorded in `verification_scripts/pricing-scan-state.json` instead. Blank (`""`) if never checked. |
 | `efficiency` | number | Module efficiency (%). |
 | `tempCoefPmax` | number | Temperature coefficient of Pmax (%/°C). Used for Pmax temp sweeps and as √P fallback for hot Vmp when `tempCoefVmp` is absent. |
 | `tempCoefVoc` | number | Temperature coefficient of Voc (%/°C). Used for cold Voc checks. |
@@ -72,7 +72,7 @@ An array with one entry per retailer (roadmap 4.3). The pricing scan adds and up
 | `network` | string | Optional. Affiliate network, e.g. `awin`, `cj`, `impact`, `webgains`, `partnerize`, `paid-on-results`, `in-house`, `amazon`. Only with `affiliateUrl`. |
 | `isAffiliate` | boolean | `true` exactly when `affiliateUrl` is set (data-admin keeps them in step; the sanity rules error otherwise). The app labels the link as an affiliate link. |
 | `Checked` | boolean | A person has opened the link and confirmed it is the right product. |
-| `price` | number | Optional. This retailer's price in £ (0 = unknown). Filled by 4.6. |
+| `price` | number | Optional. This retailer's price in £ inc VAT (0 = unknown), written by the pricing scan when it reads the retailer's page. Shown per retailer by 4.6. |
 | `priceCheckedAt` | string | Optional. ISO date (`YYYY-MM-DD`) this retailer's price was checked, or `""`. |
 | `inStock` | boolean | Optional. Whether this retailer had it in stock when checked. |
 

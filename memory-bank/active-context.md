@@ -15,6 +15,7 @@
 - Finish 4.14 (trust signals, Bimble T&Cs, Voltacon's current rate, emails to TradeSparky, Fogstar and 12 Volt Planet), then the owner applies to programmes in the ranked order (4.1).
 - M2: 4.3–4.5 are done. Buy links carry an optional `affiliateUrl`, which the scanner never touches, generated at load from the per-retailer rules in `src/data/affiliates.json` (empty until a programme approves the site; add each one then). Next: 4.6 per-retailer prices, 4.8 the labelled buy button, and 5.1 the move to Cloudflare (D10).
 - Phase 13 leftovers: computed fixes in the Issues list (7.6), planner touch editing and card views for the summary, BoM and Library tables (7.7).
+- Pricing scan accuracy pass (KI-26, 2026-10-16): stricter matching, inc-VAT prices, consensus pricing and a review list. The catalogue's prices are still from the August run until a scan runs (`npm run verify:panels:pricing -- --force`, then controllers), and its first run will move many trade prices up by 20%. Review `logs/*-pricing-review.md` before committing it.
 - 9.3 is done: `ci.yml` runs the tests and builds on every pull request, and Vitest's `testTimeout` is 20 s so the slow shell UI tests no longer time out in a full parallel run.
 
 ## Open decisions
