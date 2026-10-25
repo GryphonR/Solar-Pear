@@ -137,6 +137,13 @@ export const CHECKS = [
     },
     {
         group: 'Power',
+        name: 'Battery voltage',
+        codes: ['batteryVoltage'],
+        severity: 'error',
+        rule: 'When the system has a battery voltage set, a battery charger must list that voltage among the battery voltages it supports.',
+    },
+    {
+        group: 'Power',
         name: 'Charger output',
         codes: ['chargerPower'],
         severity: 'info',

@@ -416,7 +416,10 @@ export async function runPricingScan(config) {
                 }
 
                 for (const info of kept) {
-                    if (recordBuyLink(item.buyLinks, info)) file.modified = true;
+                    // The same sanity rules as the product price apply to each retailer's price.
+                    const reason = Number.isFinite(info.price) ? priceRejectionReason(info.price, item, { hasBuyLink: true, catalogue }) : null;
+                    if (reason) flags.push(`${info.source}: page price £${info.price} not stored on the link (${reason})`);
+                    if (recordBuyLink(item.buyLinks, reason ? { ...info, price: null } : info)) file.modified = true;
                 }
 
                 const hasBuyLink = kept.length > 0;

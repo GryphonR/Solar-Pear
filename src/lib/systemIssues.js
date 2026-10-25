@@ -9,7 +9,7 @@ import { adviceFor } from './issueAdvice';
 import { LINK_CODES } from './sldLayout';
 import { hasKnownPrice } from './pricing';
 
-const POWER_CODES = ['chargerPower', 'dcPower'];
+const POWER_CODES = ['batteryVoltage', 'chargerPower', 'dcPower'];
 const RANK = { error: 0, warning: 1, info: 2 };
 
 /**

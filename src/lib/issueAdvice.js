@@ -77,6 +77,11 @@ export const ISSUE_ADVICE = Object.freeze({
         fix: 'Fit a gPV fuse on each string, in the range the message gives, or use fewer parallel strings.',
         fields: fields(ISC, ['maxSeriesFuse', 'panel', 'maxSeriesFuse', 'A']),
     },
+    batteryVoltage: {
+        title: "Charger doesn't support the battery voltage",
+        fix: 'Choose a charger that lists this battery voltage, or change the battery voltage in System Setup.',
+        fields: fields(['maxChargeCurrent', 'controller', 'maxChargeCurrent', 'A']),
+    },
     chargerPower: {
         title: 'More panel power than the charger can deliver',
         fix: 'Choose a larger charger, a higher battery voltage, or fewer panels. Mild overpanelling is often worthwhile.',

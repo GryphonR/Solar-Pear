@@ -506,6 +506,17 @@ function AppStateProviderInner({ children }) {
         }
     }, [projectsStore, loadStatus]);
 
+    // Another tab saved: adopt its copy so this tab's next save doesn't overwrite it.
+    useEffect(() => {
+        const onStorage = (e) => {
+            if (e.key !== PROJECTS_KEY) return;
+            const store = loadProjectsStore();
+            if (store) setProjectsStore(store);
+        };
+        window.addEventListener('storage', onStorage);
+        return () => window.removeEventListener('storage', onStorage);
+    }, []);
+
     // Warn once per session when the browser refuses to save (storage full, private mode, etc.).
     const storageWarningShown = useRef(false);
     useEffect(() => {
