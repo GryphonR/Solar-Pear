@@ -44,7 +44,7 @@ const VMP_CODES = ['vocStartup', 'vmpStartup', 'mpptMin', 'mpptMax'];
 const CURRENT_CODES = ['iscRating', 'currentClip'];
 const MICRO_CODES = ['microModulePower', 'microAcClip'];
 export const LINK_CODES = Object.freeze([...VOLTAGE_CODES, ...VMP_CODES, ...CURRENT_CODES, ...MICRO_CODES]);
-const POWER_CODES = ['chargerPower', 'dcPower'];
+const POWER_CODES = ['batteryVoltage', 'chargerPower', 'dcPower'];
 
 const r = (v) => (Number.isFinite(v) ? Math.round(v) : '—');
 const TYPE_LABELS = {

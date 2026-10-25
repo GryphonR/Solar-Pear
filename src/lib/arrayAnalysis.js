@@ -454,6 +454,16 @@ export function evaluateControllerPower(controller, totalWp, opts = {}) {
         const volts = (controller.systemVoltages || []).filter((v) => Number(v) > 0);
         const batteryV = opts.systemVoltage != null ? Number(opts.systemVoltage) : volts.length ? Math.min(...volts) : null;
         if (!(batteryV > 0)) return none;
+        if (opts.systemVoltage != null && volts.length > 0 && !volts.map(Number).includes(batteryV)) {
+            return {
+                ...none,
+                issue: {
+                    code: 'batteryVoltage',
+                    severity: 'error',
+                    message: `FATAL: ${controller.name || 'This charger'} does not support a ${batteryV}V battery (it supports ${volts.join('V, ')}V). Choose a charger for ${batteryV}V or change the system battery voltage.`,
+                },
+            };
+        }
         const limitW = Math.round(chargeI * batteryV * CHARGE_VOLTAGE_FACTOR);
         const ratio = totalWp / limitW;
         if (ratio <= 1) return { limitW, ratio, basis: 'charge', batteryV, issue: null };

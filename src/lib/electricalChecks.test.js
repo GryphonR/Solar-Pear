@@ -266,6 +266,16 @@ describe("getCurrentClipLimit", () => {
     });
 });
 
+describe("battery voltage support", () => {
+    it("errors when a charger does not support the chosen battery voltage", () => {
+        const r = evaluateControllerPower(CHARGER_100_30, 1000, { systemVoltage: 48 });
+        expect(r.issue).toMatchObject({ code: "batteryVoltage", severity: "error" });
+    });
+    it("passes a supported voltage", () => {
+        expect(evaluateControllerPower(CHARGER_100_30, 100, { systemVoltage: 24 }).issue).toBeNull();
+    });
+});
+
 describe("evaluateControllerPower", () => {
     it("1 kW on a 100/30 at 12 V is a warning: about 432 W deliverable", () => {
         const r = evaluateControllerPower(CHARGER_100_30, 1000, { systemVoltage: 12 });

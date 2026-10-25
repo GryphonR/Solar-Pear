@@ -1,5 +1,6 @@
 import { copyFile } from "node:fs/promises";
 import path from "node:path";
+import { configDefaults } from "vitest/config";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -30,6 +31,8 @@ export default defineConfig({
         environment: "jsdom",
         setupFiles: "./src/test/setupTests.js",
         globals: true,
+        // Stale copies of the repo made by agent worktrees would otherwise be tested too.
+        exclude: [...configDefaults.exclude, ".claude/**"],
         // The shell UI tests render whole pages and run close to the 5 s default
         // when the full suite runs in parallel on a busy machine or CI runner.
         testTimeout: 20000,

@@ -51,7 +51,8 @@ export function fitOf(controller, targets, settings) {
     }
     const totalWp = checked.reduce((sum, t) => sum + t.panel.power * (t.array.count || 0), 0);
     const power = evaluateControllerPower(controller, totalWp, { systemVoltage: settings.systemVoltage, arrayCount: checked.length });
-    if (power.issue?.severity === 'warning') bump('warning');
+    if (power.issue?.severity === 'error') bump('error');
+    else if (power.issue?.severity === 'warning') bump('warning');
     return worst;
 }
 
